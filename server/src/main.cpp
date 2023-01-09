@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2023
-** rtype
+** server
 ** File description:
 ** main.cpp by thibb1
 */
@@ -8,6 +8,6 @@
 #include <iostream>
 
 int main(int ac, char *av[]) {
-    std::cout << "hello world !" << std::endl;
-    return 0;
+  std::cout << "hello world !" << std::endl;
+  return 0;
 }
