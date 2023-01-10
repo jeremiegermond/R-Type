@@ -1,16 +1,22 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+#fail_fast: false
 repos:
- - repo: https://github.com/pre-commit/pre-commit-hooks
-   rev: v4.4.0
-   hooks:
-    - id: trailing-whitespace
-    - id: end-of-file-fixer
-    - id: check-yaml
-    - id: check-added-large-files
-    - id: check-executables-have-shebangs
-    - id: check-shebang-scripts-are-executable
- - repo: https://github.com/pre-commit/mirrors-clang-format
-   rev: v15.0.6
-   hooks:
-    - id: clang-format
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+
+  - repo: https://github.com/Takishima/cmake-pre-commit-hooks # https://github.com/pocc/pre-commit-hooks
+    # requires the 'cppcheck' tool, 'sudo dnf install cppcheck'
+    rev: v1.5.3 # master
+    hooks:
+      - id: clang-tidy
+        args: [--fix-errors]
+      - id: cppcheck
+      - id: clang-format

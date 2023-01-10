@@ -4,7 +4,7 @@ if (WIN32)
 endif()
 set(RENDERER renderer)
 set(BUILD_SHARED_LIBS ON)
-add_compile_options(-fno-gnu-unique)
+#add_compile_options(-fno-gnu-unique)
 add_library(${RENDERER} SHARED src/sfml.cpp)
 target_include_directories(${RENDERER} PRIVATE
         ../../includes
