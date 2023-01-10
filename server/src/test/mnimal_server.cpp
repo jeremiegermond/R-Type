@@ -25,7 +25,7 @@ class UdpServer
     void do_send(std::size_t length) {
         std::cout << "Received message: " << recv_buf_.data() << std::endl;
 
-        socket_.async_send_to(asio::buffer(recv_buf_), sender_endpoint_,
+        socket_.async_send_to(asio::buffer("OK"), sender_endpoint_,
         [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
             do_receive();
         });
