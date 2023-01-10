@@ -12,11 +12,12 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
 
-  - repo: https://github.com/Takishima/cmake-pre-commit-hooks # https://github.com/pocc/pre-commit-hooks
+  - repo: https://github.com/Takishima/cmake-pre-commit-hooks
     # requires the 'cppcheck' tool, 'sudo dnf install cppcheck'
     rev: v1.5.3 # master
     hooks:
       - id: clang-tidy
-        args: [--fix-errors]
+        args: [--fix-errors, -Bbuild]
       - id: cppcheck
+        args: [-Bbuild]
       - id: clang-format

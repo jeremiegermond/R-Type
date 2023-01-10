@@ -4,3 +4,4 @@ build/
 *.so
 rtype
 bin
+compile_commands.json
