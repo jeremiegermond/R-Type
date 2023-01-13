@@ -23,7 +23,7 @@ namespace rtype {
         SetTargetFPS(60);
         std::srand(time(nullptr));
         try {
-            scenes = SceneManager(this);
+            //scenes = SceneManager(this);
         } catch (...) {
             exit(84);
             //throw (CriticalError("Loading failed, aborting.", __FILE__, __LINE__));
