@@ -5,6 +5,8 @@
 ** 
 */
 
+namespace ecs {
+
 struct Position {
     float x, y;
 };
@@ -12,3 +14,5 @@ struct Position {
 struct Velocity {
     float x, y;
 };
+
+}

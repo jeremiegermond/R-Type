@@ -5,9 +5,11 @@
 ** 
 */
 
-#include "ecs/core/entity_manager.hpp"
+#include "sparsemap.hpp"
+#include <string>
+#include <iostream>
 
-int main() {
+/* int main() {
     InitWindow(1280, 720, "Window");
 
     EntityManager entities;
@@ -33,5 +35,14 @@ int main() {
     CloseWindow();
 
     return 0;
-}
+} */
 
+int main() {
+    ecs::SparseMap<std::string> sparsemap;
+
+    for (int i = 0; i < 20; ++i) {
+        sparsemap.insert(i, "block");
+        std::cout << sparsemap[i] << std::endl;
+        std::cout << i << std::endl;
+    }
+}
