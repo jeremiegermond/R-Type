@@ -23,7 +23,10 @@ endif()
 # Default client
 include_directories(includes)
 add_executable(${CLIENT}
-    src/main.cpp)
+    src/main.cpp
+    src/Scenes/Scenes.cpp
+    src/Scenes/ScenesManager.cpp
+    src/Game.cpp)
 # Link library
 target_link_libraries(${CLIENT} raylib)
 #add_dependencies(${CLIENT} renderer)

@@ -5,24 +5,17 @@
 ** main.cpp by thibb1
 */
 
-#include "raylib.h"
+#include <iostream>
+#include <raylib.h>
+#include "Main.hpp"
 
-int screenWidth = 800;
-int screenHeight = 450;
+int main()
+{
+    try {
+        rtype::Game game;
 
-void UpdateDrawFrame() {
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-    EndDrawing();
-}
-
-int main(int ac, char *av[]) {
-    InitWindow(screenWidth, screenHeight, "it rayworks !");
-    SetTargetFPS(60);
-    while (!WindowShouldClose()) {
-        UpdateDrawFrame();
-    }
-    CloseWindow();
+        game.createWindow();
+        game.run();
+    } catch (...) {}
     return 0;
 }
