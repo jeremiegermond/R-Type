@@ -19,9 +19,7 @@ private:
         Component *sparse[BLOCK_SIZE]{};
     };
 public:
-    SparseMap() : blocks({new Block()}), size(0) {
-
-    }
+    SparseMap() : blocks({new Block()}), size(0) {}
 
     ~SparseMap() {
         for (auto block : this->blocks) {
@@ -29,6 +27,10 @@ public:
         }
     }
 
+    /**
+     * @brief create a block containing his id and its value
+     * @param id, value 
+     */
     void insert(entity_type id, const Component &value) {    
         Block *block = this->blocks[id / BLOCK_SIZE];
         size_t index = id % BLOCK_SIZE;
@@ -45,6 +47,11 @@ public:
         }
     }
 
+    /**
+     * @brief overriding opreator[]
+     * @param id 
+     * @return data of the block
+     */
     Component &operator[](entity_type id) {
         Block *block = this->blocks[id / BLOCK_SIZE];
         size_t index = id % BLOCK_SIZE;

@@ -5,7 +5,8 @@
 ** 
 */
 
-#include "sparsemap.hpp"
+#include "archetype.hpp"
+#include "components.hpp"
 #include <string>
 #include <iostream>
 
@@ -38,11 +39,21 @@
 } */
 
 int main() {
-    ecs::SparseMap<std::string> sparsemap;
+    ecs::Archetype<ecs::Position, ecs::Velocity> archetype;
 
-    for (int i = 0; i < 20; ++i) {
-        sparsemap.insert(i, "block");
-        std::cout << sparsemap[i] << std::endl;
-        std::cout << i << std::endl;
-    }
+    ecs::entity_type entity = archetype.create_entity(ecs::Position{0, 0}, ecs::Velocity{1, 2});
+    ecs::entity_type entity2 = archetype.create_entity(ecs::Position{1, 2}, ecs::Velocity{3, 4});
+
+    auto [position, velocity] = archetype.query<0, 1>(entity);
+    std::cout << "Entity: " << entity << " position: " << position.x << ", " << position.y << std::endl;
+    std::cout << "Entity: " << entity << " position: " << velocity.x << ", " << velocity.y << std::endl;
+
+    auto [position2, velocity2] = archetype.query<0, 1>(entity2);
+    std::cout << "Entity: " << entity2 << " position: " << position2.x << ", " << position2.y << std::endl;
+    std::cout << "Entity: " << entity2 << " position: " << velocity2.x << ", " << velocity2.y << std::endl;
+
+    ecs::Position &position3 = archetype.query<0>(entity);
+    std::cout << "Entity: " << entity << " position: " << position3.x << ", " << position3.y << std::endl;
+
+    return 0;
 }
