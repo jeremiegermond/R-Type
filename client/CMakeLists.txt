@@ -4,6 +4,7 @@ project(${CLIENT})
 # Dependencies
 set(RAYLIB_VERSION 4.2.0)
 find_package(raylib ${RAYLIB_VERSION} QUIET)
+#add_subdirectory(lib/renderer)
 if (NOT raylib_FOUND) # If there's none, fetch and build raylib
   include(FetchContent)
   FetchContent_Declare(
@@ -22,10 +23,7 @@ endif()
 # Default client
 include_directories(includes)
 add_executable(${CLIENT}
-    src/main.cpp
-    src/Scenes/Scenes.cpp
-    src/Scenes/ScenesManager.cpp
-    src/Game.cpp)
+    src/main.cpp)
 # Link library
 target_link_libraries(${CLIENT} raylib)
 #add_dependencies(${CLIENT} renderer)
