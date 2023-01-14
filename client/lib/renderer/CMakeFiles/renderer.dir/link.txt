@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -shared -Wl,-soname,engine_renderer.so -o ../../../bin/lib/engine_renderer.so CMakeFiles/renderer.dir/src/sfml.cpp.o  -lsfml-graphics -lsfml-audio -lsfml-system -lsfml-window 
