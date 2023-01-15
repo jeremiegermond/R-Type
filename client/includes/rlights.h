@@ -48,6 +48,7 @@ typedef struct {
     Vector3 position;
     Vector3 target;
     Color color;
+    float intensity;
     bool enabled;
 
     // Shader locations
@@ -56,6 +57,7 @@ typedef struct {
     int posLoc;
     int targetLoc;
     int colorLoc;
+    int intensityLoc;
 } Light;
 
 // Light type
@@ -68,8 +70,8 @@ extern "C" { // Prevents name mangling of functions
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shader shader); // Create a light and get shader locations
-void UpdateLightValues(Shader shader, Light light);                                        // Send light properties to shader
+Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shader shader, float intensity); // Create a light and get shader locations
+void UpdateLightValues(Shader shader, Light light);                                                         // Send light properties to shader
 
 #ifdef __cplusplus
 }
@@ -112,7 +114,7 @@ static int lightsCount = 0; // Current amount of created lights
 //----------------------------------------------------------------------------------
 
 // Create a light and get shader locations
-Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shader shader) {
+Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shader shader, float intensity) {
     Light light = {0};
 
     if (lightsCount < MAX_LIGHTS) {
@@ -121,6 +123,7 @@ Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shade
         light.position = position;
         light.target = target;
         light.color = color;
+        light.intensity = intensity;
 
         // TODO: Below code doesn't look good to me,
         // it assumes a specific shader naming and structure
@@ -130,6 +133,7 @@ Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shade
         char posName[32] = "lights[x].position\0";
         char targetName[32] = "lights[x].target\0";
         char colorName[32] = "lights[x].color\0";
+        char intensityName[32] = "lights[x].intensity\0";
 
         // Set location name [x] depending on lights count
         enabledName[7] = '0' + lightsCount;
@@ -137,12 +141,14 @@ Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shade
         posName[7] = '0' + lightsCount;
         targetName[7] = '0' + lightsCount;
         colorName[7] = '0' + lightsCount;
+        intensityName[7] = '0' + lightsCount;
 
         light.enabledLoc = GetShaderLocation(shader, enabledName);
         light.typeLoc = GetShaderLocation(shader, typeName);
         light.posLoc = GetShaderLocation(shader, posName);
         light.targetLoc = GetShaderLocation(shader, targetName);
         light.colorLoc = GetShaderLocation(shader, colorName);
+        light.intensityLoc = GetShaderLocation(shader, intensityName);
 
         UpdateLightValues(shader, light);
 
@@ -171,6 +177,9 @@ void UpdateLightValues(Shader shader, Light light) {
     float color[4] = {(float)light.color.r / (float)255, (float)light.color.g / (float)255, (float)light.color.b / (float)255,
                       (float)light.color.a / (float)255};
     SetShaderValue(shader, light.colorLoc, color, SHADER_UNIFORM_VEC4);
+
+    // Send to shader light intensity value
+    SetShaderValue(shader, light.intensityLoc, &light.intensity, SHADER_UNIFORM_FLOAT);
 }
 
 #endif // RLIGHTS_IMPLEMENTATION

@@ -8,14 +8,16 @@
 #define RLIGHTS_IMPLEMENTATION
 #include "raylib.h"
 #include "raymath.h"
-#include "rlights.h"
-// include for backface culling rlEnableBackfaceCulling();
+//#include "rlights.h"
+#include "light.hpp"
 #include "rlgl.h"
 
 #include <chrono>
 #include <iostream>
 #include <thread>
 #include <vector>
+
+#define f static_cast<float>
 
 void setModelShader(Model *m, Shader *s) {
     for (int i = 0; i < m->materialCount; i++) {
@@ -25,9 +27,26 @@ void setModelShader(Model *m, Shader *s) {
 
 typedef struct {
     Vector3 position;
-    unsigned char alpha;
     float scale;
 } Particle;
+
+typedef struct {
+    Texture2D texture;
+    Vector2 position;
+    int totalFrames;
+    int currentFrame;
+    int speed;
+    int spriteWidth;
+    int spriteHeight;
+    int columns;
+    int rows;
+} Particle2D;
+
+typedef struct {
+    Vector3 position;
+    Vector3 velocity;
+    float scale;
+} Bullet;
 
 int main(int ac, char *av[]) {
     int screenHeight = 450;
@@ -44,8 +63,9 @@ int main(int ac, char *av[]) {
     SetWindowSize(screenWidth, screenHeight);
     ToggleFullscreen();
 
-    std::vector<Vector3> bullets;
+    std::vector<Bullet> bullets;
     std::vector<Particle> particles;
+    std::vector<Particle2D> particles2D;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     BeginDrawing();
@@ -73,38 +93,33 @@ int main(int ac, char *av[]) {
     // Get some required shader locations
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
+    // Sprite Sheet
+    Texture2D spriteSheet = LoadTexture("assets/sprites/explosion-sprite-sheet.png");
+
     // Load models
     Model model = LoadModel("assets/models/lp_spaceship/spaceship.obj");
+    Model black = LoadModel("assets/models/ehr_type/ertype_delme.obj");
     Model corridor = LoadModel("assets/models/corridor/corridor.obj");
-    Model sphere = LoadModelFromMesh(GenMeshSphere(1, 20, 20));
+    Model sphere = LoadModelFromMesh(GenMeshSphere(.1, 4, 4));
 
     Vector3 positionModel = Vector3Zero();
     Vector3 rotationModel = {0, 1.5, 0};
+    Vector3 rotationBlack = {0, -1.5, 0};
     Vector3 positionCorridor = {0, 0, 0};
     Vector3 rotationCorridor = {0, 0, 0};
 
     model.transform = MatrixRotateZYX(rotationModel);
+    black.transform = MatrixRotateZYX(rotationBlack);
     corridor.transform = MatrixRotateZYX(rotationCorridor);
-    corridor.materials[0].shader = shader;
+    setModelShader(&corridor, &shader);
+    setModelShader(&black, &shader);
+    // black.materials[0].shader = shader;
+    // corridor.materials[0].shader = shader;
 
     // Ambient light level (some basic lighting)
     int ambientLoc = GetShaderLocation(shader, "ambient");
-    float lightPos[4] = {0.2f, 0.2f, 0.2f, 1.0f};
+    float lightPos[4] = {.1, .1, .1, 1};
     SetShaderValue(shader, ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
-
-    // Create lights
-    Light lights[MAX_LIGHTS] = {0};
-    lights[0] = CreateLight(LIGHT_POINT, {-2, 1, -2}, Vector3Zero(), YELLOW, shader);
-    lights[1] = CreateLight(LIGHT_POINT, {2, 1, 2}, Vector3Zero(), RED, shader);
-    lights[2] = CreateLight(LIGHT_POINT, {-2, 1, 2}, Vector3Zero(), GREEN, shader);
-    lights[3] = CreateLight(LIGHT_POINT, {2, 1, -2}, Vector3Zero(), BLUE, shader);
-    lights[4] = CreateLight(LIGHT_POINT, {0, 2, 6}, Vector3Zero(), WHITE, shader);
-
-    lights[0].enabled = false;
-    lights[1].enabled = false;
-    lights[2].enabled = false;
-    lights[3].enabled = false;
-    lights[4].enabled = true;
 
     // normal shader
     Shader normShader = LoadShader("assets/shaders/norm.vs", "assets/shaders/norm.fs");
@@ -119,32 +134,52 @@ int main(int ac, char *av[]) {
     float speed = 0.1f;
     float scale = 0.1f;
     float tp = 7.22f;
-    bool update = true;
+
+    float bullet_size = 1;
+    float bullet_speed = .1;
+    float shrink_speed = .02;
+
+    Vector3 modelRotationGoal = rotationModel;
+    float rotSpeed = .1;
+
+    // Create lights
+    std::vector<Light> lights;
+    lights.emplace_back(0, LIGHT_POINT, (Vector3){-2, 4.5, 0}, Vector3Zero(), WHITE, shader, .1);
+    lights.emplace_back(1, LIGHT_POINT, (Vector3){0, 4, 1}, Vector3Zero(), RED, shader, .05);
+    lights[1].setEnabled(false);
 
     while (!WindowShouldClose()) {
-        Vector3 tilt = rotationModel;
+        rotationModel = Vector3Lerp(rotationModel, modelRotationGoal, rotSpeed);
+        model.transform = MatrixRotateZYX(rotationModel);
 
         positionCorridor.x -= speed;
         if (positionCorridor.x < -tp)
             positionCorridor.x = 0;
         if (IsKeyDown(KEY_LEFT) && positionModel.x > -8) {
             positionModel.x -= speed;
-            tilt.y = -1.5;
+            modelRotationGoal.y = -1.5;
         }
         if (IsKeyDown(KEY_RIGHT) && positionModel.x < 8) {
             positionModel.x += speed;
+            modelRotationGoal.y = 1.5;
         }
         if (IsKeyDown(KEY_UP) && positionModel.y < 4.4) {
-            tilt.x -= speed * 2;
             positionModel.y += speed;
+            modelRotationGoal.x = -speed * 2;
         }
         if (IsKeyDown(KEY_DOWN) && positionModel.y > -4.4) {
-            tilt.x += speed * 2;
             positionModel.y -= speed;
+            modelRotationGoal.x = speed * 2;
         }
-        model.transform = MatrixRotateZYX(tilt);
+        // Reset up down tilt if up or down is not pressed
+        if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) {
+            modelRotationGoal.x = 0;
+        }
         if (IsKeyPressed(KEY_V)) {
-            bullets.emplace_back(positionModel);
+            Bullet b = {positionModel, {rotationModel.y < 0 ? -bullet_speed : bullet_speed, -rotationModel.x * bullet_speed, 0}, bullet_size};
+            bullets.emplace_back(b);
+            lights[1].setPosition(positionModel);
+            lights[1].setEnabled(true);
         }
         if (IsKeyPressed(KEY_P)) {
             std::cout << "bullets:" << std::endl;
@@ -179,77 +214,66 @@ int main(int ac, char *av[]) {
             std::cout << positionModel.y << std::endl;
             std::cout << positionModel.z << std::endl;
         }
-        if (IsKeyPressed(KEY_L))
-            update = !update;
-        if (IsKeyPressed(KEY_SPACE)) {
-            update = true;
-            scale = 0.1f;
-            positionModel = Vector3Zero();
-            lights[0].enabled = false;
-            lights[1].enabled = false;
-            lights[2].enabled = false;
-            lights[3].enabled = false;
-            lights[4].enabled = true;
-        }
-        if (IsKeyPressed(KEY_PAGE_DOWN)) {
-            tp -= 0.01f;
-        }
-        if (IsKeyPressed(KEY_PAGE_UP)) {
-            tp += 0.01f;
-        }
 
         UpdateCamera(&camera);
 
         // Update bullets
         for (auto it = particles.begin(); it != particles.end();) {
-            it->scale -= .01;
-            it->alpha -= 20;
-            if (it->position.x > 10 || it->scale <= 0) {
+            it->scale -= shrink_speed;
+            if (it->scale <= 0) {
                 it = particles.erase(it);
             } else {
                 ++it;
             }
         }
+
+        Vector3 xx = {1, 1, 1};
+        BoundingBox b = {Vector3Subtract({1, 0, 0}, xx), Vector3Add({1, 0, 0}, xx)};
         for (auto it = bullets.begin(); it != bullets.end();) {
-            it->x += .1;
-            Particle a = {*it, 255, .1};
-            particles.emplace_back(a);
-            if (it->x > 10) {
+            Vector3 x = {.11, .11, .11};
+            it->position = Vector3Add(it->position, it->velocity);
+            BoundingBox bbb = {Vector3Subtract(it->position, x), Vector3Add(it->position, x)};
+            lights[1].setPosition(it->position);
+            if (CheckCollisionBoxes(b, bbb)) {
+                Particle2D boom = {
+                    spriteSheet, (Vector2){it->position.x, it->position.y}, 32, 0, 30, spriteSheet.width / 8, spriteSheet.height / 4, 8, 4};
+                particles2D.emplace_back(boom);
                 it = bullets.erase(it);
+                lights[1].setEnabled(false);
+            } else if (it->position.x > 10 || it->position.x < -10) {
+                it = bullets.erase(it);
+                lights[1].setEnabled(false);
             } else {
+                if (particles.size() >= 4500) {
+                    it++;
+                    continue;
+                }
+                Particle a = {it->position, 1};
+                particles.emplace_back(a);
                 ++it;
             }
         }
 
         float cameraPos[3] = {camera.target.x, camera.target.y, camera.target.z};
 
-        // Check key inputs to enable/disable lights
-        if (IsKeyPressed(KEY_Y)) {
-            lights[0].enabled = !lights[0].enabled;
-        }
         if (IsKeyPressed(KEY_R)) {
-            lights[1].enabled = !lights[1].enabled;
+            scale = 0.1f;
+            positionModel = Vector3Zero();
+            // Remove all bullets and particles
+            bullets.clear();
+            particles.clear();
+            // Reset model rotation
+            rotationModel = {0, 1.5, 0};
+            modelRotationGoal = rotationModel;
         }
-        if (IsKeyPressed(KEY_G)) {
-            lights[2].enabled = !lights[2].enabled;
-        }
-        if (IsKeyPressed(KEY_B)) {
-            lights[3].enabled = !lights[3].enabled;
-        }
-        if (IsKeyPressed(KEY_W)) {
-            lights[4].enabled = !lights[4].enabled;
-        }
-
+        lights[0].setPosition(Vector3Add(positionModel, {1, 1, 0}));
         for (auto &light : lights) {
-            UpdateLightValues(shader, light);
-            UpdateLightValues(normShader, light);
+            light.UpdateLightValues(shader);
         }
 
         // update the light shader with the camera view position
-        if (update) {
-            SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
-            SetShaderValue(normShader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
-        }
+        SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+        SetShaderValue(normShader, normShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
         BeginDrawing();
         BeginTextureMode(target);
@@ -259,13 +283,11 @@ int main(int ac, char *av[]) {
         setModelShader(&sphere, &normShader);
         DrawModel(model, positionModel, scale, WHITE);
 
-        for (auto it = particles.begin(); it != particles.end();) {
-            DrawModel(sphere, it->position, it->scale, {255, 255, 255, it->alpha});
-            ++it;
+        for (auto &particle : particles) {
+            DrawModel(sphere, particle.position, particle.scale, WHITE);
         }
-        for (auto it = bullets.begin(); it != bullets.end();) {
-            DrawModel(sphere, *it, 0.1, WHITE);
-            ++it;
+        for (auto &bullet : bullets) {
+            DrawModel(sphere, bullet.position, bullet.scale, WHITE);
         }
         EndMode3D();
         EndTextureMode();
@@ -281,21 +303,51 @@ int main(int ac, char *av[]) {
         DrawModel(corridor, positionCorridor, 1, WHITE);
         DrawModel(corridor, {positionCorridor.x + tp, positionCorridor.y, positionCorridor.z}, 1, WHITE);
         DrawModel(corridor, {positionCorridor.x + tp * 2, positionCorridor.y, positionCorridor.z}, 1, WHITE);
+        // Draw player
         DrawModel(model, positionModel, scale, WHITE);
-        for (auto &light : lights) {
-            if (light.enabled)
-                DrawSphereEx(light.position, 0.2f, 8, 8, light.color);
-            else
-                DrawSphereWires(light.position, 0.2f, 8, 8, ColorAlpha(light.color, 0.3f));
-        }
+        // Draw black
+        DrawModel(black, {1, 0, 0}, scale, WHITE);
 
-        for (auto it = particles.begin(); it != particles.end();) {
-            DrawModel(sphere, it->position, it->scale, {255, 255, 255, it->alpha});
-            ++it;
+        DrawBoundingBox(b, RED);
+        for (auto &light : lights) {
+            if (!light.isEnabled())
+                DrawSphereEx(light.getPosition(), 0.2f, 8, 8, light.getColor());
+            else
+                DrawSphereWires(light.getPosition(), 0.2f, 8, 8, ColorAlpha(light.getColor(), 0.3f));
         }
-        for (auto it = bullets.begin(); it != bullets.end();) {
-            DrawModel(sphere, *it, 0.1, WHITE);
-            ++it;
+        for (auto particle : bullets) {
+            DrawModel(sphere, particle.position, particle.scale, WHITE);
+        }
+        for (auto bullet : bullets) {
+            Vector3 x = {.11, .11, .11};
+            BoundingBox bbb = {Vector3Subtract(bullet.position, x), Vector3Add(bullet.position, x)};
+            DrawBoundingBox(bbb, RED);
+            DrawModel(sphere, bullet.position, 1, WHITE);
+            if (CheckCollisionBoxes(GetModelBoundingBox(model), bbb)) {
+                std::cout << "Collision" << std::endl;
+            }
+        }
+        // update 2d particles
+        for (auto it = particles2D.begin(); it != particles2D.end();) {
+            // it->currentFrame = (int)(GetTime() * it->speed) % it->totalFrames + 1;
+            it->currentFrame += 1;
+            if (it->currentFrame == it->totalFrames) {
+                it = particles2D.erase(it);
+            } else {
+
+                auto x = (float)(it->spriteWidth * (it->currentFrame % it->columns));
+                auto y = (float)(it->spriteHeight * (it->currentFrame / it->rows));
+                std::cout << "it->position.x: " << it->position.x << " it->position.y: " << it->position.y << std::endl;
+
+                // DrawTexturePro(it->texture, (Rectangle){x, y, (float)it->spriteWidth, (float)it->spriteHeight},
+                //                (Rectangle){screenWidth/2 + it->position.x * 500 - it->spriteWidth/2 ,
+                //                            screenHeight/2 + it->position.y * 500 - it->spriteHeight/2,
+                //                            (float)it->spriteWidth, (float)it->spriteHeight},
+                //                {0, 0}, 0, WHITE);
+                DrawBillboardPro(camera, it->texture, (Rectangle){x, y, (float)it->spriteWidth, (float)it->spriteHeight},
+                                 (Vector3){it->position.x, it->position.y, 3}, (Vector3){0, 1, 0}, {5, 5}, Vector2Zero(), 0, WHITE);
+                ++it;
+            }
         }
         EndMode3D();
 
@@ -304,10 +356,37 @@ int main(int ac, char *av[]) {
                        (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
                        WHITE);
         EndShaderMode();
-        // show the modified normals texture
-        DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
-                       (Rectangle){0, 0, static_cast<float>(target.texture.width / 4.0), static_cast<float>(target.texture.height / 4.0)},
-                       Vector2Zero(), 0, WHITE);
+
+        //// update 2d particles
+        // for (auto it = particles2D.begin(); it != particles2D.end();) {
+        //     //it->currentFrame = (int)(GetTime() * it->speed) % it->totalFrames + 1;
+        //     it->currentFrame += 1;
+        //     if (it->currentFrame == it->totalFrames) {
+        //         it = particles2D.erase(it);
+        //     } else {
+        //
+        //         auto x = (float)(it->spriteWidth * (it->currentFrame % it->columns));
+        //         auto y = (float)(it->spriteHeight * (it->currentFrame / it->rows));
+        //         std::cout << "it->position.x: " << it->position.x << " it->position.y: " << it->position.y << std::endl;
+        //         DrawTexturePro(it->texture, (Rectangle){x, y, (float)it->spriteWidth, (float)it->spriteHeight},
+        //                        (Rectangle){screenWidth/2 + it->position.x * 500 - it->spriteWidth/2 ,
+        //                                    screenHeight/2 + it->position.y * 500 - it->spriteHeight/2,
+        //                                    (float)it->spriteWidth, (float)it->spriteHeight},
+        //                        {0, 0}, 0, WHITE);
+        //         ++it;
+        //     }
+        // }
+        float w = static_cast<float>(spriteSheet.width) / 8;
+        float h = static_cast<float>(spriteSheet.height) / 4;
+        // Get number from 0 to 7 with Getime
+        auto n = (int)(GetTime() * 60) % 32;
+        // 8 long 4 high
+        // DrawTexturePro(spriteSheet, (Rectangle){w * (n % 8), h * (n / 8), h, w},
+        //               (Rectangle){0, 0, w, h}, Vector2Zero(), 0, WHITE);
+        //// show the modified normals texture
+        // DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
+        //                (Rectangle){0, 0, static_cast<float>(target.texture.width / 4.0), static_cast<float>(target.texture.height / 4.0)},
+        //                Vector2Zero(), 0, WHITE);
         DrawFPS(10, 10);
         DrawText("Use keys [Y][R][G][B][W] to toggle lights", 10, 40, 20, DARKGRAY);
         EndDrawing();
@@ -319,6 +398,7 @@ int main(int ac, char *av[]) {
     UnloadModel(sphere);
     UnloadModel(corridor);
     UnloadRenderTexture(target);
+    UnloadTexture(spriteSheet);
     CloseWindow();
     return 0;
 }
