@@ -22,10 +22,10 @@ public:
      * @param values
      * @return id of this entity
      */ 
-    template <typename... Components>
-    entity_type create_entity(Components&&... values) {
-        (insert(next_entity_id, std::forward<Components>(values)), ...);
-        return next_entity_id++;
+    template <typename... Component>
+    entity_type create_entity(Component&&... values) {
+        (insert(nextEntityId, std::forward<Component>(values)), ...);
+        return nextEntityId++;
     }
 
     /**
