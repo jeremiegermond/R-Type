@@ -19,7 +19,7 @@ private:
     struct Block {
         Component dense[BLOCK_SIZE];
         Component *sparse[BLOCK_SIZE]{};
-        entity_type **newDense[BLOCK_SIZE];
+        entity_type *newDense[BLOCK_SIZE];
     };
 public:
     SparseMap() : blocks({new Block()}), size(0) {}
@@ -28,6 +28,17 @@ public:
         for (auto block : this->blocks) {
             delete block;
         }
+    }
+
+    void setDense(entity_type id, Block *block, size_t index, const Component &value) {
+        // Update the dense array
+        block->dense[index] = value;
+
+        // Update the newDense array
+        //block->newDense[index] = &id;
+
+        // Update the sparse pointer
+        *block->sparse[index] = value;
     }
 
     /**
@@ -41,6 +52,8 @@ public:
         if (!block->sparse[index]) {
             block->sparse[index] = &this->blocks[size / BLOCK_SIZE]->dense[size % BLOCK_SIZE];
             *block->sparse[index] = value;
+            //*block->newDense[index] = id;
+            std::cout << id << std::endl;
             ++size;
             if (size == blocks.size() * BLOCK_SIZE) {
                 blocks.push_back(new Block());
@@ -60,8 +73,11 @@ public:
         auto &block = blocks[block_index];
 
         // copy his value to the position of the deleted element
-        block->dense[index] = block->dense[size - 1];
-        block->sparse[index] = &block->dense[index];
+        //block->dense[index] = block->dense[size - 1];
+        //block->sparse[index] = &block->dense[index];
+        std::cout << "before delete" << std::endl;
+        //setDense(**block->newDense[size - 1], block, index, block->dense[size - 1]);
+        std::cout << "after delete" << std::endl;
         block->sparse[size - 1] = nullptr;
         --size;
         std::cout << "Entity deleted:" << id << std::endl;
