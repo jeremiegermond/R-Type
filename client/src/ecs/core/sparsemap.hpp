@@ -6,6 +6,8 @@
 */
 
 #include <vector>
+#include <cstddef>
+#include <iostream>
 #include "ecs_traits.hpp"
 
 namespace ecs {
@@ -58,9 +60,9 @@ public:
         auto &block = blocks[block_index];
 
         // copy his value to the position of the deleted element
-        block->dense[index] = block->dense[last_index];
+        block->dense[index] = block->dense[size - 1];
         block->sparse[index] = &block->dense[index];
-        block->sparse[last_index] = nullptr;
+        block->sparse[size - 1] = nullptr;
         --size;
         std::cout << "Entity deleted:" << id << std::endl;
 
@@ -91,7 +93,6 @@ public:
 private:
     std::vector<Block *> blocks;
     size_t size;
-    std::vector<size_t> entity_indices;
     
     /**
      * @brief delete a block containing his id if the last block is empty and if the penultimate is half or less of the block size
