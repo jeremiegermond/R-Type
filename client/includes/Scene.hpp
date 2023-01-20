@@ -11,20 +11,21 @@
 #include <vector>
 
 namespace rtype {
-    class Scene {
-    private:
-        bool Hover{};
-    public:
-        Scene() = default;
+class Scene {
+  private:
+    bool Hover{};
 
-        virtual ~Scene() = default;
+  public:
+    Scene() = default;
 
-        void AddEntity();
-        void StartScene();
-        void DrawScene();
-        void Draw2DAssets();
-        void UnloadScene();
-    };
-}
+    virtual ~Scene() = default;
 
-#endif //RTYPE_SCENE_HPP
+    void AddEntity();
+    void StartScene();
+    void DrawScene();
+    void Draw2DAssets();
+    void UnloadScene();
+};
+} // namespace rtype
+
+#endif // RTYPE_SCENE_HPP

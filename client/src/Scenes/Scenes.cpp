@@ -8,18 +8,13 @@
 #include "Scene.hpp"
 
 namespace rtype {
-    void Scene::AddEntity() {
-    }
+void Scene::AddEntity() {}
 
-    void Scene::StartScene() {
-    }
+void Scene::StartScene() {}
 
-    void Scene::DrawScene() {
-    }
+void Scene::DrawScene() {}
 
-    void Scene::Draw2DAssets() {
-    }
+void Scene::Draw2DAssets() {}
 
-    void Scene::UnloadScene() {
-    }
-}
+void Scene::UnloadScene() {}
+} // namespace rtype

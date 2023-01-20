@@ -13,6 +13,7 @@
 enum LightType { LIGHT_DIRECTIONAL, LIGHT_POINT };
 class Light {
   private:
+    int _index;
     int _type;
     Vector3 _position;
     Vector3 _target;
@@ -28,14 +29,14 @@ class Light {
 
   public:
     // Constructor
-    Light(int i, LightType type, Vector3 position, Vector3 target, Color color, Shader shader, float intensity)
-        : _type(type), _position(position), _target(target), _color(color), _intensity(intensity), _enabled(true) {
-        _enabledLoc = GetShaderLocation(shader, TextFormat("lights[%i].enabled", i));
-        _typeLoc = GetShaderLocation(shader, TextFormat("lights[%i].type", i));
-        _posLoc = GetShaderLocation(shader, TextFormat("lights[%i].position", i));
-        _targetLoc = GetShaderLocation(shader, TextFormat("lights[%i].target", i));
-        _colorLoc = GetShaderLocation(shader, TextFormat("lights[%i].color", i));
-        _intensityLoc = GetShaderLocation(shader, TextFormat("lights[%i].intensity", i));
+    Light(int index, LightType type, Vector3 position, Vector3 target, Color color, Shader shader, float intensity)
+        : _index(index), _type(type), _position(position), _target(target), _color(color), _intensity(intensity), _enabled(true) {
+        _enabledLoc = GetShaderLocation(shader, TextFormat("lights[%i].enabled", _index));
+        _typeLoc = GetShaderLocation(shader, TextFormat("lights[%i].type", _index));
+        _posLoc = GetShaderLocation(shader, TextFormat("lights[%i].position", _index));
+        _targetLoc = GetShaderLocation(shader, TextFormat("lights[%i].target", _index));
+        _colorLoc = GetShaderLocation(shader, TextFormat("lights[%i].color", _index));
+        _intensityLoc = GetShaderLocation(shader, TextFormat("lights[%i].intensity", _index));
         UpdateLightValues(shader);
     }
 
@@ -47,6 +48,7 @@ class Light {
     [[nodiscard]] Vector3 getPosition() const { return _position; }
     [[nodiscard]] bool isEnabled() const { return _enabled; }
     [[nodiscard]] float getIntensity() const { return _intensity; }
+    [[nodiscard]] int getIndex() const { return _index; }
 
     // Setters
     void setPosition(Vector3 position) { _position = position; }

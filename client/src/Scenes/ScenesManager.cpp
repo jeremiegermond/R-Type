@@ -5,17 +5,15 @@
 ** SceneManager.cpp [WIP]
 */
 
-#include "SceneManager.hpp"
 #include "Game.hpp"
+#include "SceneManager.hpp"
 
 namespace rtype {
-    SceneManager::SceneManager(Game *pGame) {
-        gameRef = pGame;
-        CreateMenuScene();
-        scenes.front()->StartScene();
-    }
-
-    void SceneManager::CreateMenuScene() {
-        auto *menu = new Scene;
-    }
+SceneManager::SceneManager(Game *pGame) {
+    gameRef = pGame;
+    CreateMenuScene();
+    scenes.front()->StartScene();
 }
+
+void SceneManager::CreateMenuScene() { auto *menu = new Scene; }
+} // namespace rtype

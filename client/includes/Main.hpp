@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <iostream>
-#include <cmath>
-#include "raylib.h"
 #include "Game.hpp"
+#include "raylib.h"
+#include <cmath>
+#include <iostream>

@@ -10,37 +10,36 @@
 #include "Scene.hpp"
 
 namespace rtype {
-    class Game;
-    class SceneManager {
-    private:
-        std::vector<Scene *> scenes;
-        Game *gameRef{};
+class Game;
+class SceneManager {
+  private:
+    std::vector<Scene *> scenes;
+    Game *gameRef{};
 
-    public:
-        SceneManager() = default;
-        explicit SceneManager(Game *pGame);
+  public:
+    SceneManager() = default;
+    explicit SceneManager(Game *pGame);
 
-        virtual ~SceneManager() = default;
+    virtual ~SceneManager() = default;
 
-        void CreateMenuScene();
+    void CreateMenuScene();
 
-        void CreateLevelScene();
+    void CreateLevelScene();
 
-        Scene *GetScene(int sceneId);
+    Scene *GetScene(int sceneId);
 
-        void CreateUiScene();
+    void CreateUiScene();
 
-        void CreateSettingsScene();
+    void CreateSettingsScene();
 
-        void CreateHowToPlayScene();
+    void CreateHowToPlayScene();
 
-        void CreateVictoryOrDefeatScene();
+    void CreateVictoryOrDefeatScene();
 
-        void CreateTieScene();
+    void CreateTieScene();
 
-        void display_loading(int percentage) {
-        }
-    };
-}
+    void display_loading(int percentage) {}
+};
+} // namespace rtype
 
-#endif //RTYPE_SCENEMANAGER_HPP
+#endif // RTYPE_SCENEMANAGER_HPP
