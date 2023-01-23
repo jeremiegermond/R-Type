@@ -29,34 +29,42 @@
     return 0;
 } */
 
+int main() {
+    ecs::Archetype<ecs::Position, ecs::Velocity> archetype;
+    ecs::entity_type entity = archetype.create_entity(ecs::Position{0, 0}, ecs::Velocity{1, 2});
+
+    auto [position, velocity] = archetype.query<0, 1>(entity);
+    archetype.delete_entity(entity);
+    if (archetype.getDeletedEntities().count(entity) == 0) {
+        std::cout << "Entity: " << entity << " position: " << position.x << ", " << position.y << std::endl;
+        std::cout << "Entity: " << entity << " position: " << velocity.x << ", " << velocity.y << std::endl;
+        std::cout << "Entity: " << entity << " position: " << positionb.x << ", " << positionb.y << std::endl;
+        std::cout << "Entity: " << entity << " position: " << velocityb.x << ", " << velocityb.y << std::endl;
+    } else {
+        std::cout << "The entity "<< entity << " is deleted" << std::endl;
+    }
+
+    return 0;
+}
+
 //int main() {
-//    ecs::Archetype<ecs::Position, ecs::Velocity> archetype;
+//    ecs::SparseMap<int> sm;
 //
-//    ecs::entity_type entity = archetype.create_entity(ecs::Position{0, 0}, ecs::Velocity{1, 2});
-//    ecs::entity_type entity2 = archetype.create_entity(ecs::Position{1, 2}, ecs::Velocity{3, 4});
+//    sm.insert(5, 10);
+//    sm.insert(8, 20);
+//    sm.insert(1, 30);
+//    sm.insert(3, 40);
 //
-//    auto [position, velocity] = archetype.query<0, 1>(entity);
-//    std::cout << "Entity: " << entity << " position: " << position.x << ", " << position.y << std::endl;
-//    std::cout << "Entity: " << entity << " position: " << velocity.x << ", " << velocity.y << std::endl;
+//    std::cout << sm[5] << std::endl; // Outputs 10
+//    std::cout << sm[8] << std::endl; // Outputs 20
+//    std::cout << sm[1] << std::endl; // Outputs 30
+//    std::cout << sm[3] << std::endl; // Outputs 40
 //
-//    auto [position2, velocity2] = archetype.query<0, 1>(entity2);
-//    std::cout << "Entity: " << entity2 << " position: " << position2.x << ", " << position2.y << std::endl;
-//    std::cout << "Entity: " << entity2 << " position: " << velocity2.x << ", " << velocity2.y << std::endl;
+//    sm.erase(5);
+//    std::cout << sm[5] << std::endl; // Outputs 0
 //
-//    ecs::Position &position3 = archetype.query<0>(entity);
-//    std::cout << "Entity: " << entity << " position: " << position3.x << ", " << position3.y << std::endl;
+//    sm.insert(5, 20);
+//    std::cout << sm[5] << std::endl; // Outputs 20
 //
 //    return 0;
 //}
-
-int main() {
-    ecs::SparseMap<int> sm;
-
-    for (size_t i = 0; i < 35; ++i) {
-        std::cout << "start: " << i << std::endl;
-        sm.insert(i, i);
-        std::cout << "after insert: " << i << std::endl;
-        sm.erase(i);
-        std::cout << "delete: " << i << std::endl;
-    }
-}

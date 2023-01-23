@@ -9,6 +9,7 @@
 #include <utility>
 #include <tuple>
 #include <functional>
+#include <unordered_set>
 
 namespace ecs {
 
@@ -28,6 +29,13 @@ public:
         return nextEntityId++;
     }
 
+    template <typename... Component>
+    void delete_entity(entity_type id) {
+        if (deletedEntities.count(id) > 0) return;
+        deletedEntities.insert(id);
+        (delete_component<Component>(id), ...);
+    }
+
     /**
      * @brief query entities components
      * @param id 
@@ -43,14 +51,23 @@ public:
         }
     }
 
+    std::unordered_set<entity_type> &getDeletedEntities() { return deletedEntities; }
+
 private:
     entity_type nextEntityId;
     std::tuple<SparseMap<Components>...> componentMaps;
+    std::unordered_set<entity_type> deletedEntities;
 
     template <typename Component>
     void insert(entity_type id, Component &&value) {
         SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
         map.insert(id, std::forward<Component>(value));
+    }
+
+    template <typename Component>
+    void delete_component(entity_type id) {
+        SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
+        map.erase(id);
     }
 };
 

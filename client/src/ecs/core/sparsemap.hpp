@@ -66,18 +66,20 @@ public:
         if (previousSparseValue != NULL_ENTITY) {
             block->sparse[index] = NULL_ENTITY;
         }
-        if (size == 1) return;
+
+        block->sparse[index] = block->dense[index];
         entity_type *lastDensePtr = &this->blocks[blockIndex(this->size - 1)]->dense[inBlockIndex(this->size - 1)];
         if (*lastDensePtr == id) return;
-        //block->sparse[index] = block->dense[index];
-        //recupérer position du sparse et le donner dans le dense
+        block->dense[index] = *lastDensePtr;
+        *lastDensePtr = id;
+        block->sparse[inBlockIndex(*lastDensePtr)] = index;
+        --size;
     }
 
     Component &operator[](entity_type id) {
         Block *block = this->blocks[blockIndex(id)];
-        size_t sparseIndex = inBlockIndex(id);
-
-        return *block->sparse[sparseIndex];
+        size_t denseIndex = block->sparse[inBlockIndex(id)];
+        return block->components[denseIndex];
     }
 
 private:
