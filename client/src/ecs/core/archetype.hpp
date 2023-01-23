@@ -9,7 +9,7 @@
 #include <utility>
 #include <tuple>
 #include <functional>
-#include <unordered_set>
+#include <set>
 
 namespace ecs {
 
@@ -51,12 +51,12 @@ public:
         }
     }
 
-    std::unordered_set<entity_type> &getDeletedEntities() { return deletedEntities; }
+    std::set<entity_type> &getDeletedEntities() { return deletedEntities; }
 
 private:
     entity_type nextEntityId;
     std::tuple<SparseMap<Components>...> componentMaps;
-    std::unordered_set<entity_type> deletedEntities;
+    std::set<entity_type> deletedEntities;
 
     template <typename Component>
     void insert(entity_type id, Component &&value) {
