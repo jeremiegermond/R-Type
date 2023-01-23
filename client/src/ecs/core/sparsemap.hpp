@@ -31,6 +31,10 @@ public:
         }
     }
 
+    /**
+     * @brief create a block containing his id and its value
+     * @param id, value 
+     */
     void insert(entity_type id, const Component &value) {
         size_t sparseIndex = inBlockIndex(id);
 
@@ -50,6 +54,10 @@ public:
         }
     }
 
+    /**
+     * @brief erase an entity corresponding to the given id
+     * @param id 
+     */
     void erase(entity_type id) {
         size_t index = inBlockIndex(id);
         Block *block = this->blocks[blockIndex(id)];
@@ -76,6 +84,11 @@ public:
         --size;
     }
 
+    /**
+     * @brief overriding opreator[]
+     * @param id 
+     * @return data of the block
+     */
     Component &operator[](entity_type id) {
         Block *block = this->blocks[blockIndex(id)];
         size_t denseIndex = block->sparse[inBlockIndex(id)];

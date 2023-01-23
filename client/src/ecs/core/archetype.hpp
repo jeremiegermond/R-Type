@@ -20,7 +20,7 @@ public:
 
     /**
      * @brief create an entity
-     * @param values
+     * @param values of the component
      * @return id of this entity
      */ 
     template <typename... Component>
@@ -29,6 +29,10 @@ public:
         return nextEntityId++;
     }
 
+    /**
+     * @brief delete an entity
+     * @param id of the entity
+     */ 
     template <typename... Component>
     void delete_entity(entity_type id) {
         if (deletedEntities.count(id) > 0) return;
@@ -51,6 +55,11 @@ public:
         }
     }
 
+    /**
+     * @brief get deleted entities
+     * @param id 
+     * @return deleted entites
+     */
     std::set<entity_type> &getDeletedEntities() { return deletedEntities; }
 
 private:
