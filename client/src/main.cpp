@@ -53,12 +53,10 @@ int main() {
     ecs::SparseMap<int> sm;
 
     for (size_t i = 0; i < 35; ++i) {
+        std::cout << "start: " << i << std::endl;
         sm.insert(i, i);
+        std::cout << "after insert: " << i << std::endl;
+        sm.erase(i);
+        std::cout << "delete: " << i << std::endl;
     }
-    
-    sm.deleteEntity(13);
-    sm.deleteEntity(1);
-    sm.deleteEntity(12);
-
-    sm.printSparseMap();
 }
