@@ -12,12 +12,20 @@
 #include "rlgl.h"
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
+#include <fstream>
 #include <iostream>
+#include <map>
 #include <memory>
+#include <mutex>
+#include <nlohmann/json.hpp>
 #include <set>
 #include <thread>
+#include <unordered_map>
 #include <vector>
+
+using json = nlohmann::json;
 
 #define MAX_LIGHTS 100
 
@@ -33,24 +41,44 @@ typedef struct {
 } Particle;
 
 typedef struct {
-    Texture2D texture;
-    Vector2 position;
-    int totalFrames;
-    int currentFrame;
-    int spriteWidth;
-    int spriteHeight;
-    int columns;
-    int rows;
-    double rotation;
-} Particle2D;
-
-typedef struct {
     Vector3 position;
     Vector3 velocity;
     float scale;
     int lightIndex;
     std::shared_ptr<Light> light;
 } Bullet;
+
+typedef struct {
+    Vector3 position;
+    Vector3 rotation;
+    Vector3 rotationGoal;
+    float scale;
+    ModelAnimation *animations;
+    unsigned int animationCount;
+    int currentAnimation;
+    int currentFrame;
+    Model model;
+    std::vector<Texture2D *> textures;
+} MyObject;
+
+typedef struct {
+    Texture2D texture;
+    Vector2 scale;
+    int columns;
+    int rows;
+} MyTexture;
+
+typedef struct {
+    MyTexture *texture;
+    Vector2 position;
+    int totalFrames;
+    int currentFrame;
+    int columns;
+    int rows;
+    int width;
+    int height;
+    float rotation;
+} Particle2D;
 
 BoundingBox getBounds(Vector3 position, float scale) {
     Vector3 scaleVector = {scale, scale, scale};
@@ -59,12 +87,125 @@ BoundingBox getBounds(Vector3 position, float scale) {
     return {min, max};
 }
 
+std::mutex mutex;
+
+// loadAssets
+void loadAssets(std::unordered_map<std::string, MyObject> &objects, std::unordered_map<std::string, MyTexture> &textures,
+                std::unordered_map<std::string, Shader> &shaders, std::atomic<bool> &loading, const std::string &assetsPath) {
+    // open json file
+    std::ifstream f(assetsPath);
+    json data = json::parse(f);
+
+    // Load objects
+    // mutex.lock();
+    std::cout << "Loading objects..." << std::endl;
+    for (auto &object : data["models"]) {
+        MyObject myObject;
+        myObject.position = Vector3Zero();
+        myObject.rotation = Vector3Zero();
+        myObject.rotationGoal = Vector3Zero();
+        myObject.scale = 1;
+        std::string name = object["name"];
+        std::string path = object["path"];
+        myObject.model = LoadModel(path.c_str());
+        if (object.contains("scale")) {
+            myObject.scale = object["scale"];
+        }
+        if (object.contains("rotation") && object["rotation"].size() == 3) {
+            myObject.rotation = {object["rotation"][0], object["rotation"][1], object["rotation"][2]};
+            myObject.rotationGoal = myObject.rotation;
+            myObject.model.transform = MatrixRotateXYZ(myObject.rotation);
+        }
+        if (object.contains("position") && object["position"].size() == 3) {
+            myObject.position = {object["position"][0], object["position"][1], object["position"][2]};
+        }
+        myObject.animationCount = 0;
+        if (object.contains("animation")) {
+            std::string animationPath = object["animation"]["path"];
+            myObject.animations = LoadModelAnimations(animationPath.c_str(), &myObject.animationCount);
+        }
+        if (object.contains("textures")) {
+            for (auto &texture : object["textures"]) {
+                std::string type = texture["type"];
+                std::string pathTexture = texture["path"];
+                int materialIndex = texture["materialIndex"];
+                myObject.textures.push_back(new Texture2D(LoadTexture(pathTexture.c_str())));
+                if (type == "diffuse") {
+                    SetMaterialTexture(&myObject.model.materials[materialIndex], MATERIAL_MAP_DIFFUSE, *myObject.textures.back());
+                } else if (type == "normal") {
+                    SetMaterialTexture(&myObject.model.materials[materialIndex], MATERIAL_MAP_NORMAL, *myObject.textures.back());
+                } else if (type == "metallic") {
+                    SetMaterialTexture(&myObject.model.materials[materialIndex], MATERIAL_MAP_METALNESS, *myObject.textures.back());
+                }
+            }
+        }
+        objects[name] = myObject;
+    }
+    std::cout << "Loaded " << objects.size() << " objects" << std::endl;
+
+    // Load sprites
+    for (auto &sprite : data["sprites"]) {
+        std::string name = sprite["name"];
+        std::string path = sprite["path"];
+        int columns = sprite["columns"];
+        int rows = sprite["rows"];
+        MyTexture myTexture;
+        myTexture.texture = LoadTexture(path.c_str());
+        myTexture.columns = columns;
+        myTexture.rows = rows;
+        myTexture.scale = {1, 1};
+        if (sprite.find("scale") != sprite.end() && sprite["scale"].size() == 2) {
+            myTexture.scale = {sprite["scale"][0], sprite["scale"][1]};
+        }
+        textures[name] = myTexture;
+    }
+    std::cout << "Loaded " << textures.size() << " sprites" << std::endl;
+
+    // Load shaders
+    for (auto &shader : data["shaders"]) {
+        std::string name = shader["name"];
+        // check vertex
+        Shader s;
+        std::string pathFragment = shader["path_fragment"];
+        if (shader.contains("path_vertex")) {
+            std::string pathVertex = shader["path_vertex"];
+            std::cout << "Loading shader " << name << " with vertex shader " << pathVertex << " and fragment shader " << pathFragment << std::endl;
+            mutex.lock();
+            s = LoadShader(pathVertex.c_str(), pathFragment.c_str());
+            mutex.unlock();
+        } else {
+            mutex.lock();
+            s = LoadShader(nullptr, pathFragment.c_str());
+            mutex.unlock();
+        }
+        if (shader.contains("locs")) {
+            for (auto &loc : shader["locs"]) {
+                std::string nameLoc = loc["name"];
+                std::string from = loc["from"];
+                if (nameLoc == "loc_matrix_model") {
+                    s.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(s, from.c_str());
+                } else if (nameLoc == "loc_vector_light") {
+                    s.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(s, from.c_str());
+                }
+            }
+        }
+        shaders[name] = s;
+    }
+    std::cout << "Loaded " << shaders.size() << " shaders" << std::endl;
+    loading = false;
+    // mutex.unlock();
+    //  Unload json file
+    f.close();
+}
+
 int main(int ac, char *av[]) {
     int screenHeight = 450;
     int screenWidth = 800;
+    std::atomic<bool> loading(true);
+
     InitWindow(screenWidth, screenHeight, "it rayworks !");
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
-    SetWindowMonitor(1);
+    SetWindowMonitor(0);
     rlDisableBackfaceCulling();
     SetTargetFPS(60);
 
@@ -77,21 +218,13 @@ int main(int ac, char *av[]) {
     std::vector<Bullet> bullets;
     std::vector<Particle> particles;
     std::vector<Particle2D> particles2D;
+    std::unordered_map<std::string, Shader> shaders;
+    std::unordered_map<std::string, MyObject> objects;
+    std::unordered_map<std::string, MyTexture> textures;
     std::set<int> availableLights;
     for (int i = 0; i < MAX_LIGHTS; i++) {
         availableLights.insert(i);
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    BeginDrawing();
-    ClearBackground(BLACK);
-    EndDrawing();
-
-    BeginDrawing();
-    ClearBackground(BLACK);
-    DrawText("Loading...", screenWidth / 2, screenHeight / 2, 24, WHITE);
-    EndDrawing();
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Define the camera to look into our 3d world
     Camera camera;
@@ -100,138 +233,89 @@ int main(int ac, char *av[]) {
     camera.up = {0, 1, 0};                  // Camera up vector (rotation towards target)
     camera.fovy = 20;                       // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE; // Camera mode type
-                                            // SetCameraMode(camera, CAMERA_ORBITAL);    // Set an orbital camera mode
+    // SetCameraMode(camera, CAMERA_ORBITAL);    // Set an orbital camera mode
 
-    // Load basic lighting shader
-    Shader shader = LoadShader("assets/shaders/lighting.vs", "assets/shaders/lighting.fs");
-
-    // Get some required shader locations
-    shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
-
-    // Sprite Sheet
-    Texture2D spriteSheet = LoadTexture("assets/sprites/explosion-sprite-sheet.png");
-    Texture2D spriteBoss = LoadTexture("assets/sprites/boss.png");
-
-    // Load models
-    Model model = LoadModel("assets/models/lp_spaceship/spaceship.obj");
-    Model enemy = LoadModel("assets/enemies.iqm");
-    Texture2D enemyTexture = LoadTexture("assets/models/e116/enemies.png");
-    Texture2D enemyNormal = LoadTexture("assets/models/e116/enemies_normal.png");
-    Texture2D enemyMetallic = LoadTexture("assets/models/e116/enemies_metallic.png");
-    SetMaterialTexture(&enemy.materials[0], MATERIAL_MAP_DIFFUSE, enemyTexture);
-    SetMaterialTexture(&enemy.materials[0], MATERIAL_MAP_NORMAL, enemyNormal);
-    SetMaterialTexture(&enemy.materials[0], MATERIAL_MAP_METALNESS, enemyMetallic);
-
-    Model corridor = LoadModel("assets/models/corridor/corridor.obj");
     Model cube = LoadModelFromMesh(GenMeshCube(.1, .1, .1));
 
-    Vector3 positionModel = Vector3Zero();
-    Vector3 rotationModel = {0, 1.5, 0};
-    Vector3 rotationEnemy = {-1.5, 0, 0};
-    Vector3 positionCorridor = {0, 0, 0};
-    Vector3 rotationCorridor = {0, 0, 0};
-
-    model.transform = MatrixRotateZYX(rotationModel);
-    enemy.transform = MatrixRotateZYX(rotationEnemy);
-    corridor.transform = MatrixRotateZYX(rotationCorridor);
-    setModelShader(&corridor, &shader);
-
-    // animation
-    unsigned int animsCount = 0;
-    ModelAnimation *anims = LoadModelAnimations("assets/models/e116/enemies.iqm", &animsCount);
-    int animFrame = 0;
-
     // Ambient light level (some basic lighting)
-    int ambientLoc = GetShaderLocation(shader, "ambient");
-    float lightPos[4] = {.1, .1, .1, 1};
-    SetShaderValue(shader, ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
+    // int ambientLoc = GetShaderLocation(shader, "ambient");
+    // float lightPos[4] = {.1, .1, .1, 1};
+    // SetShaderValue(shader, ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
 
-    // normal shader
-    Shader normShader = LoadShader("assets/shaders/norm.vs", "assets/shaders/norm.fs");
-    normShader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(normShader, "matModel");
-
-    // outline shader
-    Shader outline = LoadShader(nullptr, "assets/shaders/outline.fs");
-
-    std::cout << "\n\nScreen target is: " << screenWidth << "px width, " << screenHeight << "px height.\n" << std::endl;
     RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     float speed = 0.1f;
-    float scale = 0.1f;
     float tp = 7.22f;
 
     float bulletSize = 1;
     float bulletSpeed = .2;
     float shrinkSpeed = .1;
 
-    Vector3 modelRotationGoal = rotationModel;
     float rotSpeed = .1;
 
     // Create lights
     std::vector<std::shared_ptr<Light>> lights;
     int newIndex = *availableLights.begin();
-    lights.emplace_back(new Light(newIndex, LIGHT_POINT, Vector3Zero(), Vector3Zero(), WHITE, shader, .2));
-    availableLights.erase(newIndex);
+
+    // Thread for loading
+    std::thread LoadingThread(&loadAssets, std::ref(objects), std::ref(textures), std::ref(shaders), std::ref(loading), "assets/assets.json");
+
+    // temp
+    float lightPos[4] = {.1, .1, .1, 1};
+    int ambientLoc;
 
     while (!WindowShouldClose()) {
-        rotationModel = Vector3Lerp(rotationModel, modelRotationGoal, rotSpeed);
-        model.transform = MatrixRotateZYX(rotationModel);
+        if (loading) {
+            BeginDrawing();
+            ClearBackground(BLACK);
+            DrawText("Loading...", screenWidth / 2, screenHeight / 2, 24, WHITE);
+            EndDrawing();
+            continue;
+        }
 
-        positionCorridor.x -= speed;
-        if (positionCorridor.x < -tp)
-            positionCorridor.x = 0;
-        if (IsKeyDown(KEY_LEFT) && positionModel.x > -8) {
-            positionModel.x -= speed;
-            modelRotationGoal.y = -1.5;
+        // Create first light
+        if (lights.empty()) {
+            // Ambient light level (some basic lighting)
+            ambientLoc = GetShaderLocation(shaders["lighting"], "ambient");
+            SetShaderValue(shaders["lighting"], ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
+
+            lights.emplace_back(new Light(newIndex, LIGHT_POINT, Vector3Zero(), Vector3Zero(), WHITE, shaders["lighting"], .2));
+            availableLights.erase(newIndex);
+            setModelShader(&objects["corridor"].model, &shaders["lighting"]);
+
+            LoadingThread.join();
         }
-        if (IsKeyDown(KEY_RIGHT) && positionModel.x < 8) {
-            positionModel.x += speed;
-            modelRotationGoal.y = 1.5;
+
+        // LoadingThread.join();
+        objects["spaceship1"].rotation = Vector3Lerp(objects["spaceship1"].rotation, objects["spaceship1"].rotationGoal, rotSpeed);
+        objects["spaceship1"].model.transform = MatrixRotateXYZ(objects["spaceship1"].rotation);
+
+        // positionCorridor.x -= speed;
+        objects["corridor"].position.x -= speed;
+        if (objects["corridor"].position.x < -tp)
+            objects["corridor"].position.x = 0;
+        if (IsKeyDown(KEY_LEFT) && objects["spaceship1"].position.x > -8) {
+            objects["spaceship1"].position.x -= speed;
+            objects["spaceship1"].rotationGoal.y = -1.5;
         }
-        if (IsKeyDown(KEY_UP) && positionModel.y < 4.4) {
-            positionModel.y += speed;
-            modelRotationGoal.x = -speed * 2;
+        if (IsKeyDown(KEY_RIGHT) && objects["spaceship1"].position.x < 8) {
+            objects["spaceship1"].position.x += speed;
+            objects["spaceship1"].rotationGoal.y = 1.5;
         }
-        if (IsKeyDown(KEY_DOWN) && positionModel.y > -4.4) {
-            positionModel.y -= speed;
-            modelRotationGoal.x = speed * 2;
+        if (IsKeyDown(KEY_UP) && objects["spaceship1"].position.y < 4.4) {
+            objects["spaceship1"].position.y += speed;
+            objects["spaceship1"].rotationGoal.x = -speed * 2;
+        }
+        if (IsKeyDown(KEY_DOWN) && objects["spaceship1"].position.y > -4.4) {
+            objects["spaceship1"].position.y -= speed;
+            objects["spaceship1"].rotationGoal.x = speed * 2;
         }
         // Reset up down tilt if up or down is not pressed
         if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) {
-            modelRotationGoal.x = 0;
+            objects["spaceship1"].rotationGoal.x = 0;
         }
         if (IsKeyPressed(KEY_P)) {
-            std::cout << "bullets:" << std::endl;
-            std::cout << bullets.size() << std::endl;
-            std::cout << "particles:" << std::endl;
-            std::cout << particles.size() << std::endl;
-            std::cout << "corridor:" << std::endl;
-            std::cout << "corridor position:" << std::endl;
-            std::cout << positionCorridor.x << std::endl;
-            std::cout << positionCorridor.y << std::endl;
-            std::cout << positionCorridor.z << std::endl;
-            std::cout << "corridor rotation:" << std::endl;
-            std::cout << rotationCorridor.x << std::endl;
-            std::cout << rotationCorridor.y << std::endl;
-            std::cout << rotationCorridor.z << std::endl;
-            std::cout << "camera:" << std::endl;
-            std::cout << "camera target:" << std::endl;
-            std::cout << camera.target.x << std::endl;
-            std::cout << camera.target.y << std::endl;
-            std::cout << camera.target.z << std::endl;
-            std::cout << "camera up:" << std::endl;
-            std::cout << camera.up.x << std::endl;
-            std::cout << camera.up.y << std::endl;
-            std::cout << camera.up.z << std::endl;
-            std::cout << "scale:" << std::endl;
-            std::cout << scale << std::endl;
-            std::cout << "tp:" << std::endl;
-            std::cout << tp << std::endl;
-            std::cout << "model:" << std::endl;
-            std::cout << "model position:" << std::endl;
-            std::cout << positionModel.x << std::endl;
-            std::cout << positionModel.y << std::endl;
-            std::cout << positionModel.z << std::endl;
+            std::cout << "Some debug infos:" << std::endl;
         }
 
         if (IsKeyPressed(KEY_SPACE)) {
@@ -239,25 +323,24 @@ int main(int ac, char *av[]) {
 
             // random color GREEN RED or BLUE
             Color color = {GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 255};
-            lights.emplace_back(new Light(newLightIndex, LIGHT_POINT, (Vector3){-2, 4.5, 0}, Vector3Zero(), color, shader, .01));
-            Bullet b = {positionModel,
-                        {rotationModel.y < 0 ? -bulletSpeed : bulletSpeed, -rotationModel.x * bulletSpeed, 0},
+            lights.emplace_back(new Light(newLightIndex, LIGHT_POINT, (Vector3){-2, 4.5, 0}, Vector3Zero(), color, shaders["lighting"], .01));
+            Bullet b = {objects["spaceship1"].position,
+                        {objects["spaceship1"].rotation.y < 0 ? -bulletSpeed : bulletSpeed, -objects["spaceship1"].rotation.x * bulletSpeed, 0},
                         bulletSize,
                         newLightIndex,
                         lights.back()};
             availableLights.erase(newLightIndex);
             bullets.emplace_back(b);
-            lights.back().get()->setPosition(positionModel);
+            lights.back().get()->setPosition(objects["spaceship1"].position);
         }
         // Reset the scene
         if (IsKeyPressed(KEY_R)) {
-            scale = 0.1f;
-            positionModel = Vector3Zero();
+            objects["spaceship1"].position = Vector3Zero();
             bullets.clear();
             particles.clear();
-            rotationModel = {0, 1.5, 0};
-            modelRotationGoal = rotationModel;
-            animFrame = 0;
+            objects["spaceship1"].rotation = {0, 1.5, 0};
+            objects["spaceship1"].rotationGoal = objects["spaceship1"].rotation;
+            objects["e1116"].currentFrame = 0;
         }
 
         UpdateCamera(&camera);
@@ -273,9 +356,9 @@ int main(int ac, char *av[]) {
         }
 
         // Update animations
-        if (animFrame + 1 < anims[0].frameCount) {
-            animFrame++;
-            UpdateModelAnimation(enemy, anims[0], animFrame);
+        if (objects["e1116"].currentFrame + 1 < objects["e1116"].animations[0].frameCount) {
+            objects["e1116"].currentFrame++;
+            UpdateModelAnimation(objects["e1116"].model, objects["e1116"].animations[0], objects["e1116"].currentFrame);
         }
 
         BoundingBox enemyBounds = getBounds({1, 0, 0}, 1);
@@ -285,17 +368,18 @@ int main(int ac, char *av[]) {
             it->light->setPosition(it->position);
             if (CheckCollisionBoxes(enemyBounds, bulletBounds)) {
                 std::cout << "Collision" << std::endl;
-                Particle2D boom = {spriteSheet,
-                                   (Vector2){it->position.x, it->position.y},
-                                   32,
-                                   0,
-                                   spriteSheet.width / 8,
-                                   spriteSheet.height / 4,
-                                   8,
-                                   4,
-                                   sin(GetTime() * 10) * 90};
+                Particle2D boom;
+                boom.texture = &textures["explosion"];
+                boom.position.x = it->position.x;
+                boom.position.y = it->position.y;
+                boom.currentFrame = 0;
+                boom.rows = textures["explosion"].rows;
+                boom.columns = textures["explosion"].columns;
+                boom.totalFrames = boom.rows * boom.columns;
+                boom.rotation = (float)sin(GetTime() * 10) * 90;
+                boom.width = textures["explosion"].texture.width / boom.columns;
+                boom.height = textures["explosion"].texture.height / boom.rows;
                 particles2D.emplace_back(boom);
-                // particles2D.emplace_back(boss);
                 it->light->setEnabled(false);
                 it = bullets.erase(it);
             } else if (it->position.x > 10 || it->position.x < -10) {
@@ -314,51 +398,52 @@ int main(int ac, char *av[]) {
 
         float cameraPos[3] = {camera.target.x, camera.target.y, camera.target.z};
 
-        lights[0]->setPosition(Vector3Add(positionModel, {0, 2, 10}));
+        lights[0]->setPosition(Vector3Add(objects["spaceship1"].position, {0, 2, 10}));
         for (auto &light : lights) {
-            light->UpdateLightValues(shader);
+            light->UpdateLightValues(shaders["lighting"]);
         }
 
         // update the light shader with the camera view position
-        SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
-        SetShaderValue(normShader, normShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+        SetShaderValue(shaders["lighting"], shaders["lighting"].locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+        SetShaderValue(shaders["normal"], shaders["normal"].locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
         // Draw normal for outline shader
         BeginDrawing();
         BeginTextureMode(target);
         ClearBackground(WHITE);
         BeginMode3D(camera);
-        setModelShader(&enemy, &normShader);
-        setModelShader(&model, &normShader);
-        DrawModel(model, positionModel, scale, WHITE);
-        DrawModel(enemy, {1, 0, 0}, scale, WHITE);
+        // setModelShader(&objects["e1116"]->model, &shaders["normal"]);
+        // setModelShader(&objects["spaceship1"]->model, &shaders["normal"]);
+        // DrawModel(objects["spaceship1"]->model, objects["spaceship1"]->position, objects["spaceship1"]->scale, WHITE);
+        // DrawModel(objects["e1116"]->model, objects["e1116"]->position, objects["e1116"]->scale, WHITE);
         EndMode3D();
         EndTextureMode();
 
         // Draw the scene with lights
-        ClearBackground(GRAY);
+        ClearBackground(BLACK);
         BeginMode3D(camera);
-        setModelShader(&enemy, &shader);
-        setModelShader(&model, &shader);
-        DrawBoundingBox(GetModelBoundingBox(corridor), RED);
+        // setModelShader(&objects["e1116"]->model, &shaders["lighting"]);
+        // setModelShader(&objects["spaceship1"]->model, &shaders["lighting"]);
+
+        DrawBoundingBox(GetModelBoundingBox(objects["corridor"].model), RED);
 
         // Draw rotating corridor
-        DrawModel(corridor, {positionCorridor.x + -tp * 2, positionCorridor.y, positionCorridor.z}, 1, WHITE);
-        DrawModel(corridor, {positionCorridor.x + -tp, positionCorridor.y, positionCorridor.z}, 1, WHITE);
-        DrawModel(corridor, positionCorridor, 1, WHITE);
-        DrawModel(corridor, {positionCorridor.x + tp, positionCorridor.y, positionCorridor.z}, 1, WHITE);
-        DrawModel(corridor, {positionCorridor.x + tp * 2, positionCorridor.y, positionCorridor.z}, 1, WHITE);
+
+        DrawModel(objects["corridor"].model,
+                  {objects["corridor"].position.x + -tp * 2, objects["corridor"].position.y, objects["corridor"].position.z}, 1, WHITE);
+        DrawModel(objects["corridor"].model, {objects["corridor"].position.x + -tp, objects["corridor"].position.y, objects["corridor"].position.z},
+                  1, WHITE);
+        DrawModel(objects["corridor"].model, objects["corridor"].position, 1, WHITE);
+        DrawModel(objects["corridor"].model, {objects["corridor"].position.x + tp, objects["corridor"].position.y, objects["corridor"].position.z}, 1,
+                  WHITE);
+        DrawModel(objects["corridor"].model,
+                  {objects["corridor"].position.x + tp * 2, objects["corridor"].position.y, objects["corridor"].position.z}, 1, WHITE);
 
         // Draw player
-        DrawModel(model, positionModel, scale, WHITE);
+        DrawModel(objects["spaceship1"].model, objects["spaceship1"].position, objects["spaceship1"].scale, WHITE);
 
         // Draw enemy
-        DrawModel(enemy, {1, 0, 0}, scale, WHITE);
-
-        // Draw bones enemy
-        for (int i = 0; i < model.boneCount; i++) {
-            DrawCube(anims[0].framePoses[animFrame][i].translation, 0.2f, 0.2f, 0.2f, RED);
-        }
+        DrawModel(objects["e1116"].model, objects["e1116"].position, objects["e1116"].scale, WHITE);
 
         DrawBoundingBox(enemyBounds, RED);
         lights.erase(std::remove_if(lights.begin(), lights.end(),
@@ -371,9 +456,9 @@ int main(int ac, char *av[]) {
                                     }),
                      lights.end());
         // Draw light sphere
-        // for (auto &light : lights) {
-        //    DrawSphereWires(light->getPosition(), 0.2f, 8, 8, ColorAlpha(light->getColor(), 0.3f));
-        //}
+        for (auto &light : lights) {
+            DrawSphereWires(light->getPosition(), 0.2f, 8, 8, ColorAlpha(light->getColor(), 0.3f));
+        }
 
         // Draw particles
         for (const auto &particle : particles) {
@@ -391,32 +476,56 @@ int main(int ac, char *av[]) {
             if (it->currentFrame == it->totalFrames) {
                 it = particles2D.erase(it);
             } else {
-                auto x = (float)(it->spriteWidth * (it->currentFrame % it->columns));
-                auto y = (float)(it->spriteHeight * (it->currentFrame / it->rows));
-                DrawBillboardPro(camera, it->texture, (Rectangle){x, y, (float)it->spriteWidth, (float)it->spriteHeight},
-                                 (Vector3){it->position.x, it->position.y, 3}, (Vector3){0, 1, 0}, {5, 5}, Vector2Zero(), it->rotation, WHITE);
+                Rectangle source;
+                source.x = (float)(it->width * (it->currentFrame % it->columns));
+                source.y = (float)it->height * ((float)it->currentFrame / (float)it->rows);
+                source.width = (float)it->texture->texture.width;
+                source.height = (float)it->texture->texture.height;
+                Vector3 position = {it->position.x, it->position.y, 3};
+                Vector3 up = {0, 1, 0};
+                Vector2 scale = it->texture->scale;
+                DrawBillboardPro(camera, it->texture->texture, source, position, up, scale, Vector2Zero(), it->rotation, WHITE);
                 ++it;
             }
         }
         EndMode3D();
 
-        BeginShaderMode(outline);
-        DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
-                       (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
-                       WHITE);
-        EndShaderMode();
+        // BeginShaderMode(*shaders["outline"]);
+        // DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
+        //                (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
+        //                WHITE);
+        // EndShaderMode();
         DrawFPS(10, 10);
         DrawText("Use keys [LEFT][RIGHT][UP][DOWN][SPACE] to move and shoot", 10, 40, 20, DARKGRAY);
         EndDrawing();
     }
-    UnloadShader(outline);
-    UnloadShader(shader);
-    UnloadShader(normShader);
-    UnloadModel(model);
     UnloadModel(cube);
-    UnloadModel(corridor);
     UnloadRenderTexture(target);
-    UnloadTexture(spriteSheet);
+    // unloads all the models
+    for (auto &object : objects) {
+        UnloadModel(object.second.model);
+        for (auto &texture : object.second.textures) {
+            UnloadTexture(*texture);
+        }
+        if (object.second.animationCount > 0)
+            UnloadModelAnimations(object.second.animations, object.second.animationCount);
+    }
+    objects.clear();
+
+    // unloads all the shaders
+    for (auto &shader : shaders) {
+        UnloadShader(shader.second);
+    }
+    shaders.clear();
+
+    // unloads all the textures
+    for (auto &texture : textures) {
+        UnloadTexture(texture.second.texture);
+    }
+    textures.clear();
+
     CloseWindow();
+    // LoadingThread.join();
+
     return 0;
 }

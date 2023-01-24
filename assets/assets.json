@@ -1,0 +1,79 @@
+{
+  "models": [
+    {
+      "name": "spaceship1",
+      "path": "assets/models/lp_spaceship/spaceship.obj",
+      "scale": 0.1,
+      "rotation": [0, 1.5, 0]
+    },
+    {
+      "name": "e1116",
+      "path": "assets/models/e1116/enemies.iqm",
+      "textures": [
+        {
+          "type": "diffuse",
+          "path": "assets/models/e1116/enemies.png",
+          "materialIndex": 0
+        },
+        {
+          "type": "normal",
+          "path": "assets/models/e1116/enemies_normal.png",
+          "materialIndex": 0
+        },
+        {
+          "type": "metallic",
+          "path": "assets/models/e1116/enemies_metallic.png",
+          "materialIndex": 0
+        }
+      ],
+      "scale": 0.1,
+      "rotation": [-1.5, 0, 0],
+      "position": [1, 0, 0],
+      "animation": {
+        "path": "assets/models/e1116/enemies.iqm"
+      }
+    },
+    {
+      "name": "corridor",
+      "path": "assets/models/corridor/corridor.obj"
+    }
+  ],
+  "shaders": [
+    {
+      "name": "normal",
+      "path_vertex": "assets/shaders/norm.vs",
+      "path_fragment": "assets/shaders/norm.fs",
+      "locs": [
+        {
+          "name": "loc_matrix_model",
+          "from": "matModel"
+        }
+      ]
+    },
+    {
+      "name": "lighting",
+      "path_vertex": "assets/shaders/lighting.vs",
+      "path_fragment": "assets/shaders/lighting.fs",
+      "locs": [
+        {
+          "name": "loc_vector_light",
+          "from": "viewPos"
+        }
+      ]
+    },
+    {
+      "name": "outline",
+      "path_fragment": "assets/shaders/outline.fs"
+    }
+  ],
+  "sprites": [
+    {
+      "name": "explosion",
+      "type": "sprite_sheet",
+      "path": "assets/sprites/explosion-sprite-sheet.png",
+      "columns": 8,
+      "rows": 4,
+      "scale": [5, 5]
+    }
+  ]
+}
