@@ -86,12 +86,9 @@ BoundingBox getBounds(Vector3 position, float scale) {
     Vector3 max = Vector3Add(position, scaleVector);
     return {min, max};
 }
-
-std::mutex mutex;
-
 // loadAssets
 void loadAssets(std::unordered_map<std::string, MyObject> &objects, std::unordered_map<std::string, MyTexture> &textures,
-                std::unordered_map<std::string, Shader> &shaders, std::atomic<bool> &loading, const std::string &assetsPath) {
+                std::unordered_map<std::string, Shader> &shaders, const std::string &assetsPath) {
     // open json file
     std::ifstream f(assetsPath);
     json data = json::parse(f);
@@ -170,13 +167,9 @@ void loadAssets(std::unordered_map<std::string, MyObject> &objects, std::unorder
         if (shader.contains("path_vertex")) {
             std::string pathVertex = shader["path_vertex"];
             std::cout << "Loading shader " << name << " with vertex shader " << pathVertex << " and fragment shader " << pathFragment << std::endl;
-            mutex.lock();
             s = LoadShader(pathVertex.c_str(), pathFragment.c_str());
-            mutex.unlock();
         } else {
-            mutex.lock();
             s = LoadShader(nullptr, pathFragment.c_str());
-            mutex.unlock();
         }
         if (shader.contains("locs")) {
             for (auto &loc : shader["locs"]) {
@@ -192,28 +185,21 @@ void loadAssets(std::unordered_map<std::string, MyObject> &objects, std::unorder
         shaders[name] = s;
     }
     std::cout << "Loaded " << shaders.size() << " shaders" << std::endl;
-    loading = false;
-    // mutex.unlock();
     //  Unload json file
     f.close();
 }
 
 int main(int ac, char *av[]) {
-    int screenHeight = 450;
-    int screenWidth = 800;
+    int screenHeight = 600;
+    int screenWidth = 1070;
     std::atomic<bool> loading(true);
 
     InitWindow(screenWidth, screenHeight, "it rayworks !");
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
-    SetWindowMonitor(0);
+    MaximizeWindow();
+    // SetWindowMonitor(0);
     rlDisableBackfaceCulling();
     SetTargetFPS(60);
-
-    int display = GetCurrentMonitor();
-    screenHeight = GetMonitorHeight(display);
-    screenWidth = GetMonitorWidth(display);
-    SetWindowSize(screenWidth, screenHeight);
-    ToggleFullscreen();
 
     std::vector<Bullet> bullets;
     std::vector<Particle> particles;
@@ -236,12 +222,6 @@ int main(int ac, char *av[]) {
     // SetCameraMode(camera, CAMERA_ORBITAL);    // Set an orbital camera mode
 
     Model cube = LoadModelFromMesh(GenMeshCube(.1, .1, .1));
-
-    // Ambient light level (some basic lighting)
-    // int ambientLoc = GetShaderLocation(shader, "ambient");
-    // float lightPos[4] = {.1, .1, .1, 1};
-    // SetShaderValue(shader, ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
-
     RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     float speed = 0.1f;
@@ -257,40 +237,37 @@ int main(int ac, char *av[]) {
     std::vector<std::shared_ptr<Light>> lights;
     int newIndex = *availableLights.begin();
 
-    // Thread for loading
-    std::thread LoadingThread(&loadAssets, std::ref(objects), std::ref(textures), std::ref(shaders), std::ref(loading), "assets/assets.json");
+    // Loading screen
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    BeginDrawing();
+    ClearBackground(BLACK);
+    EndDrawing();
 
-    // temp
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawText("Loading...", screenWidth / 2, screenHeight / 2, 24, WHITE);
+    EndDrawing();
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    // load assets
+    loadAssets(objects, textures, shaders, "assets/assets.json");
+
+    // ambient light
     float lightPos[4] = {.1, .1, .1, 1};
-    int ambientLoc;
+    int ambientLoc = GetShaderLocation(shaders["lighting"], "ambient");
+    SetShaderValue(shaders["lighting"], ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
+
+    lights.emplace_back(new Light(newIndex, LIGHT_POINT, Vector3Zero(), Vector3Zero(), WHITE, shaders["lighting"], .2));
+    availableLights.erase(newIndex);
+    setModelShader(&objects["corridor"].model, &shaders["lighting"]);
+
+    // Disable raylib debug messages
+    SetTraceLogLevel(LOG_NONE);
 
     while (!WindowShouldClose()) {
-        if (loading) {
-            BeginDrawing();
-            ClearBackground(BLACK);
-            DrawText("Loading...", screenWidth / 2, screenHeight / 2, 24, WHITE);
-            EndDrawing();
-            continue;
-        }
-
-        // Create first light
-        if (lights.empty()) {
-            // Ambient light level (some basic lighting)
-            ambientLoc = GetShaderLocation(shaders["lighting"], "ambient");
-            SetShaderValue(shaders["lighting"], ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
-
-            lights.emplace_back(new Light(newIndex, LIGHT_POINT, Vector3Zero(), Vector3Zero(), WHITE, shaders["lighting"], .2));
-            availableLights.erase(newIndex);
-            setModelShader(&objects["corridor"].model, &shaders["lighting"]);
-
-            LoadingThread.join();
-        }
-
-        // LoadingThread.join();
         objects["spaceship1"].rotation = Vector3Lerp(objects["spaceship1"].rotation, objects["spaceship1"].rotationGoal, rotSpeed);
         objects["spaceship1"].model.transform = MatrixRotateXYZ(objects["spaceship1"].rotation);
 
-        // positionCorridor.x -= speed;
         objects["corridor"].position.x -= speed;
         if (objects["corridor"].position.x < -tp)
             objects["corridor"].position.x = 0;
@@ -321,16 +298,18 @@ int main(int ac, char *av[]) {
         if (IsKeyPressed(KEY_SPACE)) {
             int newLightIndex = *availableLights.begin();
 
-            // random color GREEN RED or BLUE
-            Color color = {GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 255};
+            unsigned char r = GetRandomValue(0, 255);
+            unsigned char g = GetRandomValue(0, 255);
+            unsigned char b = GetRandomValue(0, 255);
+            Color color = {r, g, b, 255};
             lights.emplace_back(new Light(newLightIndex, LIGHT_POINT, (Vector3){-2, 4.5, 0}, Vector3Zero(), color, shaders["lighting"], .01));
-            Bullet b = {objects["spaceship1"].position,
-                        {objects["spaceship1"].rotation.y < 0 ? -bulletSpeed : bulletSpeed, -objects["spaceship1"].rotation.x * bulletSpeed, 0},
-                        bulletSize,
-                        newLightIndex,
-                        lights.back()};
+            Bullet bullet = {objects["spaceship1"].position,
+                             {objects["spaceship1"].rotation.y < 0 ? -bulletSpeed : bulletSpeed, -objects["spaceship1"].rotation.x * bulletSpeed, 0},
+                             bulletSize,
+                             newLightIndex,
+                             lights.back()};
             availableLights.erase(newLightIndex);
-            bullets.emplace_back(b);
+            bullets.emplace_back(bullet);
             lights.back().get()->setPosition(objects["spaceship1"].position);
         }
         // Reset the scene
@@ -412,18 +391,18 @@ int main(int ac, char *av[]) {
         BeginTextureMode(target);
         ClearBackground(WHITE);
         BeginMode3D(camera);
-        // setModelShader(&objects["e1116"]->model, &shaders["normal"]);
-        // setModelShader(&objects["spaceship1"]->model, &shaders["normal"]);
-        // DrawModel(objects["spaceship1"]->model, objects["spaceship1"]->position, objects["spaceship1"]->scale, WHITE);
-        // DrawModel(objects["e1116"]->model, objects["e1116"]->position, objects["e1116"]->scale, WHITE);
+        setModelShader(&objects["e1116"].model, &shaders["normal"]);
+        setModelShader(&objects["spaceship1"].model, &shaders["normal"]);
+        DrawModel(objects["spaceship1"].model, objects["spaceship1"].position, objects["spaceship1"].scale, WHITE);
+        DrawModel(objects["e1116"].model, objects["e1116"].position, objects["e1116"].scale, WHITE);
         EndMode3D();
         EndTextureMode();
 
         // Draw the scene with lights
         ClearBackground(BLACK);
         BeginMode3D(camera);
-        // setModelShader(&objects["e1116"]->model, &shaders["lighting"]);
-        // setModelShader(&objects["spaceship1"]->model, &shaders["lighting"]);
+        setModelShader(&objects["e1116"].model, &shaders["lighting"]);
+        setModelShader(&objects["spaceship1"].model, &shaders["lighting"]);
 
         DrawBoundingBox(GetModelBoundingBox(objects["corridor"].model), RED);
 
@@ -478,9 +457,9 @@ int main(int ac, char *av[]) {
             } else {
                 Rectangle source;
                 source.x = (float)(it->width * (it->currentFrame % it->columns));
-                source.y = (float)it->height * ((float)it->currentFrame / (float)it->rows);
-                source.width = (float)it->texture->texture.width;
-                source.height = (float)it->texture->texture.height;
+                source.y = it->height * (it->currentFrame / it->rows);
+                source.width = (float)it->width;
+                source.height = (float)it->height;
                 Vector3 position = {it->position.x, it->position.y, 3};
                 Vector3 up = {0, 1, 0};
                 Vector2 scale = it->texture->scale;
@@ -490,15 +469,18 @@ int main(int ac, char *av[]) {
         }
         EndMode3D();
 
-        // BeginShaderMode(*shaders["outline"]);
-        // DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
-        //                (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
-        //                WHITE);
-        // EndShaderMode();
+        BeginShaderMode(shaders["outline"]);
+        DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
+                       (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
+                       WHITE);
+        EndShaderMode();
         DrawFPS(10, 10);
         DrawText("Use keys [LEFT][RIGHT][UP][DOWN][SPACE] to move and shoot", 10, 40, 20, DARKGRAY);
         EndDrawing();
     }
+    // Enable raylib log
+    SetTraceLogLevel(LOG_INFO);
+
     UnloadModel(cube);
     UnloadRenderTexture(target);
     // unloads all the models

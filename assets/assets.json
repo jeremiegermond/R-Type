@@ -73,7 +73,7 @@
       "path": "assets/sprites/explosion-sprite-sheet.png",
       "columns": 8,
       "rows": 4,
-      "scale": [5, 5]
+      "scale": [2, 2]
     }
   ]
 }
