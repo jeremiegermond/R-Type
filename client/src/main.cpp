@@ -6,11 +6,8 @@
 */
 
 #include "rtype-client.hpp"
-#include "archetype.hpp"
-#include "components.hpp"
-#include <string>
-#include <iostream>
-#include <raylib.h>
+#include "core/archetype.hpp"
+#include "core/components.hpp"
 
 void setModelShader(Model *m, Shader *s) {
     for (int i = 0; i < m->materialCount; i++) {
@@ -461,26 +458,26 @@ int main(int ac, char *av[]) {
     }
 
     return 0;
-} */
+}
 
-//int main() {
-//    ecs::SparseMap<int> sm;
-//
-//    sm.insert(5, 10);
-//    sm.insert(8, 20);
-//    sm.insert(1, 30);
-//    sm.insert(3, 40);
-//
-//    std::cout << sm[5] << std::endl; // Outputs 10
-//    std::cout << sm[8] << std::endl; // Outputs 20
-//    std::cout << sm[1] << std::endl; // Outputs 30
-//    std::cout << sm[3] << std::endl; // Outputs 40
-//
-//    sm.erase(5);
-//    std::cout << sm[5] << std::endl; // Outputs 0
-//
-//    sm.insert(5, 20);
-//    std::cout << sm[5] << std::endl; // Outputs 20
-//
-//    return 0;
-//}
+int main() {
+    ecs::SparseMap<int> sm;
+
+    sm.insert(5, 10);
+    sm.insert(8, 20);
+    sm.insert(1, 30);
+    sm.insert(3, 40);
+
+    std::cout << sm[5] << std::endl; // Outputs 10
+    std::cout << sm[8] << std::endl; // Outputs 20
+    std::cout << sm[1] << std::endl; // Outputs 30
+    std::cout << sm[3] << std::endl; // Outputs 40
+
+    sm.erase(5);
+    std::cout << sm[5] << std::endl; // Outputs 0
+
+    sm.insert(5, 20);
+    std::cout << sm[5] << std::endl; // Outputs 20
+
+    return 0;
+} */
