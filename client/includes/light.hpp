@@ -8,7 +8,7 @@
 #ifndef RTYPE_LIGHT_HPP
 #define RTYPE_LIGHT_HPP
 
-#include <raylib.h>
+#include "deps.hpp"
 
 enum LightType { LIGHT_DIRECTIONAL, LIGHT_POINT };
 class Light {

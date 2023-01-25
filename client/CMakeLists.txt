@@ -26,9 +26,8 @@ endif()
 include_directories(includes)
 add_executable(${CLIENT}
     src/main.cpp
-    src/Scenes/Scenes.cpp
-    src/Scenes/ScenesManager.cpp
-    src/Game.cpp)
+    src/load.cpp
+    src/box.cpp)
 # Link library
 target_link_libraries(${CLIENT} PRIVATE raylib nlohmann_json::nlohmann_json)
 #add_dependencies(${CLIENT} renderer)

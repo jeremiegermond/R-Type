@@ -5,29 +5,7 @@
 ** main.cpp by thibb1
 */
 
-#define RLIGHTS_IMPLEMENTATION
-#include "light.hpp"
-#include "raylib.h"
-#include "raymath.h"
-#include "rlgl.h"
-
-#include <algorithm>
-#include <atomic>
-#include <chrono>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <mutex>
-#include <nlohmann/json.hpp>
-#include <set>
-#include <thread>
-#include <unordered_map>
-#include <vector>
-
-using json = nlohmann::json;
-
-#define MAX_LIGHTS 100
+#include "rtype-client.hpp"
 
 void setModelShader(Model *m, Shader *s) {
     for (int i = 0; i < m->materialCount; i++) {
@@ -35,166 +13,12 @@ void setModelShader(Model *m, Shader *s) {
     }
 }
 
-typedef struct {
-    Vector3 position;
-    float scale;
-} Particle;
-
-typedef struct {
-    Vector3 position;
-    Vector3 velocity;
-    float scale;
-    int lightIndex;
-    std::shared_ptr<Light> light;
-} Bullet;
-
-typedef struct {
-    Vector3 position;
-    Vector3 rotation;
-    Vector3 rotationGoal;
-    float scale;
-    ModelAnimation *animations;
-    unsigned int animationCount;
-    int currentAnimation;
-    int currentFrame;
-    Model model;
-    std::vector<Texture2D *> textures;
-} MyObject;
-
-typedef struct {
-    Texture2D texture;
-    Vector2 scale;
-    int columns;
-    int rows;
-} MyTexture;
-
-typedef struct {
-    MyTexture *texture;
-    Vector2 position;
-    int totalFrames;
-    int currentFrame;
-    int columns;
-    int rows;
-    int width;
-    int height;
-    float rotation;
-} Particle2D;
-
-BoundingBox getBounds(Vector3 position, float scale) {
-    Vector3 scaleVector = {scale, scale, scale};
-    Vector3 min = Vector3Subtract(position, scaleVector);
-    Vector3 max = Vector3Add(position, scaleVector);
-    return {min, max};
-}
-// loadAssets
-void loadAssets(std::unordered_map<std::string, MyObject> &objects, std::unordered_map<std::string, MyTexture> &textures,
-                std::unordered_map<std::string, Shader> &shaders, const std::string &assetsPath) {
-    // open json file
-    std::ifstream f(assetsPath);
-    json data = json::parse(f);
-
-    // Load objects
-    // mutex.lock();
-    std::cout << "Loading objects..." << std::endl;
-    for (auto &object : data["models"]) {
-        MyObject myObject;
-        myObject.position = Vector3Zero();
-        myObject.rotation = Vector3Zero();
-        myObject.rotationGoal = Vector3Zero();
-        myObject.scale = 1;
-        std::string name = object["name"];
-        std::string path = object["path"];
-        myObject.model = LoadModel(path.c_str());
-        if (object.contains("scale")) {
-            myObject.scale = object["scale"];
-        }
-        if (object.contains("rotation") && object["rotation"].size() == 3) {
-            myObject.rotation = {object["rotation"][0], object["rotation"][1], object["rotation"][2]};
-            myObject.rotationGoal = myObject.rotation;
-            myObject.model.transform = MatrixRotateXYZ(myObject.rotation);
-        }
-        if (object.contains("position") && object["position"].size() == 3) {
-            myObject.position = {object["position"][0], object["position"][1], object["position"][2]};
-        }
-        myObject.animationCount = 0;
-        if (object.contains("animation")) {
-            std::string animationPath = object["animation"]["path"];
-            myObject.animations = LoadModelAnimations(animationPath.c_str(), &myObject.animationCount);
-        }
-        if (object.contains("textures")) {
-            for (auto &texture : object["textures"]) {
-                std::string type = texture["type"];
-                std::string pathTexture = texture["path"];
-                int materialIndex = texture["materialIndex"];
-                myObject.textures.push_back(new Texture2D(LoadTexture(pathTexture.c_str())));
-                if (type == "diffuse") {
-                    SetMaterialTexture(&myObject.model.materials[materialIndex], MATERIAL_MAP_DIFFUSE, *myObject.textures.back());
-                } else if (type == "normal") {
-                    SetMaterialTexture(&myObject.model.materials[materialIndex], MATERIAL_MAP_NORMAL, *myObject.textures.back());
-                } else if (type == "metallic") {
-                    SetMaterialTexture(&myObject.model.materials[materialIndex], MATERIAL_MAP_METALNESS, *myObject.textures.back());
-                }
-            }
-        }
-        objects[name] = myObject;
-    }
-    std::cout << "Loaded " << objects.size() << " objects" << std::endl;
-
-    // Load sprites
-    for (auto &sprite : data["sprites"]) {
-        std::string name = sprite["name"];
-        std::string path = sprite["path"];
-        int columns = sprite["columns"];
-        int rows = sprite["rows"];
-        MyTexture myTexture;
-        myTexture.texture = LoadTexture(path.c_str());
-        myTexture.columns = columns;
-        myTexture.rows = rows;
-        myTexture.scale = {1, 1};
-        if (sprite.find("scale") != sprite.end() && sprite["scale"].size() == 2) {
-            myTexture.scale = {sprite["scale"][0], sprite["scale"][1]};
-        }
-        textures[name] = myTexture;
-    }
-    std::cout << "Loaded " << textures.size() << " sprites" << std::endl;
-
-    // Load shaders
-    for (auto &shader : data["shaders"]) {
-        std::string name = shader["name"];
-        // check vertex
-        Shader s;
-        std::string pathFragment = shader["path_fragment"];
-        if (shader.contains("path_vertex")) {
-            std::string pathVertex = shader["path_vertex"];
-            std::cout << "Loading shader " << name << " with vertex shader " << pathVertex << " and fragment shader " << pathFragment << std::endl;
-            s = LoadShader(pathVertex.c_str(), pathFragment.c_str());
-        } else {
-            s = LoadShader(nullptr, pathFragment.c_str());
-        }
-        if (shader.contains("locs")) {
-            for (auto &loc : shader["locs"]) {
-                std::string nameLoc = loc["name"];
-                std::string from = loc["from"];
-                if (nameLoc == "loc_matrix_model") {
-                    s.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(s, from.c_str());
-                } else if (nameLoc == "loc_vector_light") {
-                    s.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(s, from.c_str());
-                }
-            }
-        }
-        shaders[name] = s;
-    }
-    std::cout << "Loaded " << shaders.size() << " shaders" << std::endl;
-    //  Unload json file
-    f.close();
-}
-
 int main(int ac, char *av[]) {
     int screenHeight = 600;
     int screenWidth = 1070;
-    std::atomic<bool> loading(true);
 
     InitWindow(screenWidth, screenHeight, "it rayworks !");
+    InitAudioDevice();
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     MaximizeWindow();
     // SetWindowMonitor(0);
@@ -204,9 +28,13 @@ int main(int ac, char *av[]) {
     std::vector<Bullet> bullets;
     std::vector<Particle> particles;
     std::vector<Particle2D> particles2D;
+
     std::unordered_map<std::string, Shader> shaders;
     std::unordered_map<std::string, MyObject> objects;
     std::unordered_map<std::string, MyTexture> textures;
+    std::unordered_map<std::string, MyMusic> musics;
+    std::unordered_map<std::string, Sound> sounds;
+
     std::set<int> availableLights;
     for (int i = 0; i < MAX_LIGHTS; i++) {
         availableLights.insert(i);
@@ -250,7 +78,10 @@ int main(int ac, char *av[]) {
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // load assets
-    loadAssets(objects, textures, shaders, "assets/assets.json");
+    loadAssets(objects, musics, sounds, textures, shaders, "assets/assets.json");
+
+    // Play menu music
+    PlayMusicStream(musics["02-Main_Menu"].music);
 
     // ambient light
     float lightPos[4] = {.1, .1, .1, 1};
@@ -260,22 +91,84 @@ int main(int ac, char *av[]) {
     lights.emplace_back(new Light(newIndex, LIGHT_POINT, Vector3Zero(), Vector3Zero(), WHITE, shaders["lighting"], .2));
     availableLights.erase(newIndex);
     setModelShader(&objects["corridor"].model, &shaders["lighting"]);
+    setModelShader(&objects["rock_01"].model, &shaders["lighting"]);
+    setModelShader(&objects["rock_02"].model, &shaders["lighting"]);
+    setModelShader(&objects["space_debris_01"].model, &shaders["lighting"]);
+    setModelShader(&objects["space_debris_02"].model, &shaders["lighting"]);
+    setModelShader(&objects["space_debris_03"].model, &shaders["lighting"]);
+    setModelShader(&objects["space_debris_04"].model, &shaders["lighting"]);
+    setModelShader(&objects["space_debris_05"].model, &shaders["lighting"]);
 
     // Disable raylib debug messages
     SetTraceLogLevel(LOG_NONE);
+
+    // temp
+    BoundingBox box;
+    Ray ray;
+    Vector2 mouse;
+    RayCollision collision;
+
+    // selected myObject
+    std::string selectedMyObjectName;
+    MyObject *selectedMyObject = nullptr;
+    // typedef struct {
+    //    Rectangle bounds;
+    //    float value;
+    //    float minValue;
+    //    float maxValue;
+    //    bool dragging;
+    //    bool enabled;
+    //    Color baseColor;
+    //    Color selectedColor;
+    //    Color disabledColor;
+    //} Slider;
+    // Create sliders to move selected object
+    Slider sliders[3];
 
     while (!WindowShouldClose()) {
         objects["spaceship1"].rotation = Vector3Lerp(objects["spaceship1"].rotation, objects["spaceship1"].rotationGoal, rotSpeed);
         objects["spaceship1"].model.transform = MatrixRotateXYZ(objects["spaceship1"].rotation);
 
+        box = GetMyObjectBoundingBox(objects["spaceship1"]);
         objects["corridor"].position.x -= speed;
         if (objects["corridor"].position.x < -tp)
             objects["corridor"].position.x = 0;
+
+        // Check if spaceship1 is in view
+        // Matrix cameraMatrix = GetCameraMatrix(camera);
+        Vector2 screenPos = GetWorldToScreen(objects["spaceship1"].position, camera);
+        // add a margin of 10 pixels
+        if (screenPos.x < -10 || screenPos.x > screenWidth + 10 || screenPos.y < -10 || screenPos.y > screenHeight + 10) {
+            std::cout << "out of view" << std::endl;
+        }
+
+        // Left click to raycast on the scene
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            mouse = GetMousePosition();
+            ray = GetMouseRay(mouse, camera);
+            // cycle through all objects of the scene
+            for (auto &object : objects) {
+                // check if the ray hits the object
+                BoundingBox objectBox = GetMyObjectBoundingBox(object.second);
+                collision = GetRayCollisionBox(ray, objectBox);
+                if (collision.hit) {
+                    std::cout << "hit " << object.first << std::endl;
+                    selectedMyObjectName = object.first;
+                    selectedMyObject = &object.second;
+                    break;
+                }
+            }
+            if (!collision.hit) {
+                selectedMyObjectName = "";
+                selectedMyObject = nullptr;
+            }
+        }
+
         if (IsKeyDown(KEY_LEFT) && objects["spaceship1"].position.x > -8) {
             objects["spaceship1"].position.x -= speed;
             objects["spaceship1"].rotationGoal.y = -1.5;
         }
-        if (IsKeyDown(KEY_RIGHT) && objects["spaceship1"].position.x < 8) {
+        if (IsKeyDown(KEY_RIGHT)) { //&& objects["spaceship1"].position.x < 8) {
             objects["spaceship1"].position.x += speed;
             objects["spaceship1"].rotationGoal.y = 1.5;
         }
@@ -322,7 +215,11 @@ int main(int ac, char *av[]) {
             objects["e1116"].currentFrame = 0;
         }
 
+        // Update camera
         UpdateCamera(&camera);
+
+        // Update music
+        UpdateMusicStream(musics["02-Main_Menu"].music);
 
         // Update bullets
         for (auto it = particles.begin(); it != particles.end();) {
@@ -340,10 +237,11 @@ int main(int ac, char *av[]) {
             UpdateModelAnimation(objects["e1116"].model, objects["e1116"].animations[0], objects["e1116"].currentFrame);
         }
 
-        BoundingBox enemyBounds = getBounds({1, 0, 0}, 1);
+        BoundingBox enemyBounds = GetMyObjectBoundingBox(objects["e1116"], {0, .5, 0});
         for (auto it = bullets.begin(); it != bullets.end();) {
             it->position = Vector3Add(it->position, it->velocity);
-            BoundingBox bulletBounds = getBounds(it->position, .11); //{Vector3Subtract(it->position, x), Vector3Add(it->position, x)};
+            BoundingBox bulletBounds =
+                GetBoundingBoxAroundPoint(it->position, .11); //{Vector3Subtract(it->position, x), Vector3Add(it->position, x)};
             it->light->setPosition(it->position);
             if (CheckCollisionBoxes(enemyBounds, bulletBounds)) {
                 std::cout << "Collision" << std::endl;
@@ -404,8 +302,15 @@ int main(int ac, char *av[]) {
         setModelShader(&objects["e1116"].model, &shaders["lighting"]);
         setModelShader(&objects["spaceship1"].model, &shaders["lighting"]);
 
-        DrawBoundingBox(GetModelBoundingBox(objects["corridor"].model), RED);
+        DrawModel(objects["rock_01"].model, objects["rock_01"].position, objects["rock_01"].scale, WHITE);
+        DrawModel(objects["rock_02"].model, objects["rock_02"].position, objects["rock_02"].scale, WHITE);
+        DrawModel(objects["space_debris_01"].model, objects["space_debris_01"].position, objects["space_debris_01"].scale, WHITE);
+        DrawModel(objects["space_debris_02"].model, objects["space_debris_02"].position, objects["space_debris_02"].scale, WHITE);
+        DrawModel(objects["space_debris_03"].model, objects["space_debris_03"].position, objects["space_debris_03"].scale, WHITE);
+        DrawModel(objects["space_debris_04"].model, objects["space_debris_04"].position, objects["space_debris_04"].scale, WHITE);
+        DrawModel(objects["space_debris_05"].model, objects["space_debris_05"].position, objects["space_debris_05"].scale, WHITE);
 
+        DrawBoundingBox(box, GREEN);
         // Draw rotating corridor
 
         DrawModel(objects["corridor"].model,
@@ -476,6 +381,17 @@ int main(int ac, char *av[]) {
         EndShaderMode();
         DrawFPS(10, 10);
         DrawText("Use keys [LEFT][RIGHT][UP][DOWN][SPACE] to move and shoot", 10, 40, 20, DARKGRAY);
+        // stats about selected object
+        DrawText(TextFormat("Selected object: %s", selectedMyObjectName.c_str()), 10, 70, 20, GREEN);
+        if (selectedMyObject != nullptr) {
+            DrawText(
+                TextFormat("Position: %.2f, %.2f, %.2f", selectedMyObject->position.x, selectedMyObject->position.y, selectedMyObject->position.z),
+                10, 100, 20, GREEN);
+            DrawText(TextFormat("Scale: %.2f", selectedMyObject->scale), 10, 130, 20, GREEN);
+            DrawText(
+                TextFormat("Rotation: %.2f, %.2f, %.2f", selectedMyObject->rotation.x, selectedMyObject->rotation.y, selectedMyObject->rotation.z),
+                10, 160, 20, GREEN);
+        }
         EndDrawing();
     }
     // Enable raylib log
@@ -483,6 +399,7 @@ int main(int ac, char *av[]) {
 
     UnloadModel(cube);
     UnloadRenderTexture(target);
+
     // unloads all the models
     for (auto &object : objects) {
         UnloadModel(object.second.model);
@@ -493,6 +410,18 @@ int main(int ac, char *av[]) {
             UnloadModelAnimations(object.second.animations, object.second.animationCount);
     }
     objects.clear();
+
+    // unloads all the music
+    for (auto &music : musics) {
+        UnloadMusicStream(music.second.music);
+    }
+    musics.clear();
+
+    // unloads all the sounds
+    for (auto &sound : sounds) {
+        UnloadSound(sound.second);
+    }
+    sounds.clear();
 
     // unloads all the shaders
     for (auto &shader : shaders) {
@@ -506,6 +435,7 @@ int main(int ac, char *av[]) {
     }
     textures.clear();
 
+    CloseAudioDevice();
     CloseWindow();
     // LoadingThread.join();
 
