@@ -1,16 +1,34 @@
-project(client)
-cmake_minimum_required(VERSION 3.20)
-set(CMAKE_CXX_STANDARD 20)
-include(raylib/Findraylib.cmake)
-add_compile_options(-Wall -fpermissive)
-include_directories(includes)
-include_directories(src/ecs/core)
+set(CLIENT client)
+project(${CLIENT})
 
-if(WIN32)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/build>)
+# Dependencies
+include(FetchContent)
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
+set(RAYLIB_VERSION 4.2.0)
+find_package(raylib ${RAYLIB_VERSION} QUIET)
+if (NOT raylib_FOUND) # If there's none, fetch and build raylib
+  include(FetchContent)
+  FetchContent_Declare(
+    raylib
+    URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+  )
+  FetchContent_GetProperties(raylib)
+  if (NOT raylib_POPULATED) # Have we downloaded raylib yet?
+    set(FETCHCONTENT_QUIET NO)
+    FetchContent_Populate(raylib)
+    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
+    add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
+  endif()
 endif()
 
-add_executable(client
-        src/main.cpp)
-
-target_link_libraries(client raylib)
+# Default client
+include_directories(includes)
+add_executable(${CLIENT}
+    src/main.cpp
+    src/load.cpp
+    src/box.cpp)
+# Link library
+target_link_libraries(${CLIENT} PRIVATE raylib nlohmann_json::nlohmann_json)
+#add_dependencies(${CLIENT} renderer)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)

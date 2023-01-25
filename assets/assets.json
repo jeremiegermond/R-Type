@@ -1,0 +1,302 @@
+{
+  "models": [
+    {
+      "name": "spaceship1",
+      "path": "assets/models/lp_spaceship/spaceship.obj",
+      "rotation": [
+        0,
+        1.5,
+        0
+      ],
+      "scale": 0.1
+    },
+    {
+      "animation": {
+        "path": "assets/models/e1116/enemies.iqm"
+      },
+      "name": "e1116",
+      "path": "assets/models/e1116/enemies.iqm",
+      "position": [
+        1,
+        0,
+        0
+      ],
+      "rotation": [
+        -1.5,
+        0,
+        0
+      ],
+      "scale": 0.1,
+      "textures": [
+        {
+          "path": "assets/models/e1116/enemies.png",
+          "type": "diffuse"
+        },
+        {
+          "path": "assets/models/e1116/enemies_normal.png",
+          "type": "normal"
+        },
+        {
+          "path": "assets/models/e1116/enemies_metallic.png",
+          "type": "metallic"
+        }
+      ]
+    },
+    {
+      "name": "corridor",
+      "path": "assets/models/corridor/corridor.obj"
+    },
+    {
+      "name": "rock_01",
+      "path": "assets/models/space_debris/rock_01.obj",
+      "position": [
+        -4,
+        2,
+        0
+      ],
+      "scale": 0.2,
+      "textures": [
+        {
+          "path": "assets/models/space_debris/textures/st_space_debris_001_m.png",
+          "type": "metallic"
+        }
+      ]
+    },
+    {
+      "name": "rock_02",
+      "path": "assets/models/space_debris/rock_02.obj",
+      "position": [
+        -2,
+        2,
+        0
+      ],
+      "scale": 0.2,
+      "textures": [
+        {
+          "path": "assets/models/space_debris/textures/st_space_debris_wall_02_m.png",
+          "type": "metallic"
+        }
+      ]
+    },
+    {
+      "name": "space_debris_01",
+      "path": "assets/models/space_debris/space_debris_01.obj",
+      "position": [
+        2,
+        2,
+        0
+      ],
+      "scale": 0.2,
+      "textures": [
+        {
+          "materialIndex": 0,
+          "path": "assets/models/space_debris/textures/st_space_debris_wall_01_m.png",
+          "type": "metallic"
+        },
+        {
+          "materialIndex": 1,
+          "path": "assets/models/space_debris/textures/st_space_debris_wall_02_m.png",
+          "type": "metallic"
+        }
+      ]
+    },
+    {
+      "name": "space_debris_02",
+      "path": "assets/models/space_debris/space_debris_02.obj",
+      "position": [
+        4,
+        2,
+        0
+      ],
+      "scale": 0.2,
+      "textures": [
+        {
+          "path": "assets/models/space_debris/textures/st_space_debris_001_m.png",
+          "type": "metallic"
+        }
+      ]
+    },
+    {
+      "name": "space_debris_03",
+      "path": "assets/models/space_debris/space_debris_03.obj",
+      "position": [
+        -6,
+        -2,
+        0
+      ],
+      "scale": 0.2,
+      "textures": [
+        {
+          "path": "assets/models/space_debris/textures/st_space_debris_010_m.png",
+          "type": "metallic"
+        }
+      ]
+    },
+    {
+      "name": "space_debris_04",
+      "path": "assets/models/space_debris/space_debris_04.obj",
+      "position": [
+        -2,
+        -2,
+        0
+      ],
+      "scale": 0.2,
+      "textures": [
+        {
+          "path": "assets/models/space_debris/textures/st_space_debris_010_m.png",
+          "type": "metallic"
+        }
+      ]
+    },
+    {
+      "name": "space_debris_05",
+      "path": "assets/models/space_debris/space_debris_05.obj",
+      "position": [
+        2,
+        -2,
+        0
+      ],
+      "scale": 0.2,
+      "textures": [
+        {
+          "materialIndex": 0,
+          "path": "assets/models/space_debris/textures/st_space_debris_wall_02_m.png",
+          "type": "metallic"
+        },
+        {
+          "materialIndex": 1,
+          "path": "assets/models/space_debris/textures/st_space_debris_wall_03_m.png",
+          "type": "metallic"
+        }
+      ]
+    }
+  ],
+  "musics": [
+    {
+      "index": 1,
+      "name": "01-Taking_off_again",
+      "path": "assets/musics/01-Taking_off_again.mp3"
+    },
+    {
+      "index": 2,
+      "name": "02-Main_Menu",
+      "path": "assets/musics/02-Main_Menu.mp3"
+    },
+    {
+      "index": 3,
+      "name": "03-Hangar",
+      "path": "assets/musics/03-Hangar.mp3"
+    },
+    {
+      "index": 4,
+      "name": "04-Investigation_Abandoned_Space_City",
+      "path": "assets/musics/04-Investigation_Abandoned_Space_City.mp3"
+    },
+    {
+      "index": 9,
+      "name": "09-R's_Museum",
+      "path": "assets/musics/09-R's_Museum.mp3"
+    },
+    {
+      "index": 10,
+      "name": "10-Where_Pilots_Meet",
+      "path": "assets/musics/10-Where_Pilots_Meet.mp3"
+    },
+    {
+      "index": 11,
+      "name": "11-Cleanup_Living_Organisms_on_the_Former_Space_Base",
+      "path": "assets/musics/11-Cleanup_Living_Organisms_on_the_Former_Space_Base.mp3"
+    },
+    {
+      "index": 19,
+      "name": "19-Mission_Completed",
+      "path": "assets/musics/19-Mission_Completed.mp3"
+    },
+    {
+      "index": 21,
+      "name": "21-Continue",
+      "path": "assets/musics/21-Continue.mp3"
+    },
+    {
+      "index": 28,
+      "name": "28-Light_(Instrumental)",
+      "path": "assets/musics/28-Light_(Instrumental).mp3"
+    },
+    {
+      "index": 29,
+      "name": "29-Light",
+      "path": "assets/musics/29-Light.mp3"
+    }
+  ],
+  "shaders": [
+    {
+      "locs": [
+        {
+          "from": "matModel",
+          "name": "loc_matrix_model"
+        }
+      ],
+      "name": "normal",
+      "path_fragment": "assets/shaders/norm.fs",
+      "path_vertex": "assets/shaders/norm.vs"
+    },
+    {
+      "locs": [
+        {
+          "from": "viewPos",
+          "name": "loc_vector_light"
+        }
+      ],
+      "name": "lighting",
+      "path_fragment": "assets/shaders/lighting.fs",
+      "path_vertex": "assets/shaders/lighting.vs"
+    },
+    {
+      "name": "outline",
+      "path_fragment": "assets/shaders/outline.fs"
+    }
+  ],
+  "sounds": [
+    {
+      "name": "decision",
+      "path": "assets/sounds/ui/1001_c_decision.ogg"
+    },
+    {
+      "name": "level_decision",
+      "path": "assets/sounds/ui/1009_s_decision.ogg"
+    },
+    {
+      "name": "cancel",
+      "path": "assets/sounds/ui/1003_c_cancel.ogg"
+    },
+    {
+      "name": "window_open",
+      "path": "assets/sounds/ui/1005_c_window_open.ogg"
+    },
+    {
+      "name": "window_close",
+      "path": "assets/sounds/ui/1006_c_window_close.ogg"
+    },
+    {
+      "name": "shot",
+      "path": "assets/sounds/ships/3000_h_shot.ogg"
+    },
+    {
+      "name": "enemy_bomb",
+      "path": "assets/sounds/ships/8006_enemy_bomb.ogg"
+    }
+  ],
+  "sprites": [
+    {
+      "columns": 8,
+      "name": "explosion",
+      "path": "assets/sprites/explosion-sprite-sheet.png",
+      "rows": 4,
+      "scale": [
+        2,
+        2
+      ],
+      "type": "sprite_sheet"
+    }
+  ]
+}
