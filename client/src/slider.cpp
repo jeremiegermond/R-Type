@@ -5,49 +5,61 @@
 ** slider.cpp by thibb1
 */
 
-#include "rtype-client.hpp"
+#include "slider.hpp"
 
-Slider CreateSlider(Rectangle bounds, float value, float minValue, float maxValue) {
-    Slider slider = {0};
-    slider.bounds = bounds;
-    slider.value = value;
-    slider.minValue = minValue;
-    slider.maxValue = maxValue;
-    slider.dragging = false;
-    slider.enabled = true;
-    slider.baseColor = Fade(LIGHTGRAY, .6);
-    slider.selectedColor = Fade(LIGHTGRAY, .9);
-    slider.disabledColor = Fade(LIGHTGRAY, .3);
-    return slider;
+Slider::Slider(std::string name, Rectangle bounds, float *value, float minValue, float maxValue) {
+    _name = name;
+    _bounds = bounds;
+    _value = value;
+    _minValue = minValue;
+    _maxValue = maxValue;
+    _dragging = false;
+    _enabled = true;
+    _baseColor = Fade(LIGHTGRAY, .6);
+    _selectedColor = Fade(LIGHTGRAY, .9);
+    _disabledColor = Fade(LIGHTGRAY, .3);
 }
 
-void UpdateSlider(Slider *slider) {
-    if (!slider->enabled)
-        return;
-    if (CheckCollisionPointRec(GetMousePosition(), slider->bounds)) {
+bool Slider::UpdateSlider() {
+    if (!_enabled)
+        return false;
+    if (CheckCollisionPointRec(GetMousePosition(), _bounds)) {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-            slider->dragging = true;
+            _dragging = true;
+        // check mouse over scroll up / down
+        float mouseWheelMove = GetMouseWheelMove();
+        if (mouseWheelMove != 0) {
+            *_value += mouseWheelMove * (_maxValue - _minValue) / 100;
+            *_value = Clamp(*_value, _minValue, _maxValue);
+        }
     }
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-        slider->dragging = false;
-    if (slider->dragging) {
-        slider->value = (GetMouseX() - slider->bounds.x) / slider->bounds.width;
-        slider->value = Clamp(slider->value, 0, 1);
+        _dragging = false;
+    if (_dragging) {
+        // set value between _minValue and _maxValue
+        float x = GetMousePosition().x - _bounds.x;
+        x = Clamp(x, 0, _bounds.width - 4);
+        *_value = x / (_bounds.width - 4) * (_maxValue - _minValue) + _minValue;
     }
+    return _dragging;
 }
 
-void DrawSlider(Slider slider) {
-    Color color = slider.baseColor;
-    if (!slider.enabled)
-        color = slider.disabledColor;
-    else if (slider.dragging)
-        color = slider.selectedColor;
+void Slider::Draw() {
+    Color color = _baseColor;
+    if (!_enabled)
+        color = _disabledColor;
+    else if (_dragging)
+        color = _selectedColor;
     // Draw slider base
-    DrawRectangleRec(slider.bounds, color);
+    DrawRectangleRec(_bounds, color);
     // Draw slider ball
-    int x = slider.bounds.x + (slider.bounds.width - 4) * slider.value;
-    int y = slider.bounds.y + 2;
+    float x = (*_value - _minValue) / (_maxValue - _minValue) * (_bounds.width - 4) + _bounds.x;
+    float y = _bounds.y + 2;
     int width = 4;
-    int height = slider.bounds.height - 4;
-    DrawRectangle(x, y, width, height, BLACK);
+    int height = int(_bounds.height) - 4;
+    DrawRectangle(int(x), int(y), width, height, BLACK);
+    // draw name on the right
+    DrawText(_name.c_str(), _bounds.x + _bounds.width + 10, _bounds.y + 4, 10, WHITE);
 }
+
+void Slider::SetEnabled(bool enabled) { _enabled = enabled; }

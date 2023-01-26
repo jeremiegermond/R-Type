@@ -61,16 +61,16 @@ typedef struct {
     float rotation;
 } Particle2D;
 
-typedef struct {
-    Rectangle bounds;
-    float value;
-    float minValue;
-    float maxValue;
-    bool dragging;
-    bool enabled;
-    Color baseColor;
-    Color selectedColor;
-    Color disabledColor;
-} Slider;
+// typedef struct {
+//     Rectangle bounds;
+//     float *value;
+//     float minValue;
+//     float maxValue;
+//     bool dragging;
+//     bool enabled;
+//     Color baseColor;
+//     Color selectedColor;
+//     Color disabledColor;
+// } Slider;
 
 #endif // RTYPE_STRUCTS_HPP
