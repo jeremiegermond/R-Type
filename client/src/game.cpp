@@ -7,7 +7,7 @@
 
 #include "rtype-client.hpp"
 
-void moveSpaceship(GameObject *&spaceship) {
+void moveSpaceship(GameObject *spaceship) {
     float speed = 0.1;
     Vector3 position = spaceship->GetPosition();
     Vector3 rotationGoal = spaceship->GetRotationGoal();

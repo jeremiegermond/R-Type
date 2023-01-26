@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** rtype
 ** File description:
-** 
+**
 */
 
 namespace ecs {
@@ -15,4 +15,4 @@ struct Velocity {
     float x, y;
 };
 
-}
+} // namespace ecs

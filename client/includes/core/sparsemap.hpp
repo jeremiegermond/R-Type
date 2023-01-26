@@ -2,27 +2,27 @@
 ** EPITECH PROJECT, 2023
 ** rtype
 ** File description:
-** 
+**
 */
 
-#include <vector>
+#include "ecs_traits.hpp"
+#include <algorithm>
 #include <cstddef>
 #include <iostream>
-#include <algorithm>
-#include "ecs_traits.hpp"
+#include <vector>
 
 namespace ecs {
 
-template <typename Component>
-class SparseMap {
-private:
+template <typename Component> class SparseMap {
+  private:
     static const size_t BLOCK_SIZE = 16;
     struct Block {
         Component components[BLOCK_SIZE];
         entity_type sparse[BLOCK_SIZE];
         entity_type dense[BLOCK_SIZE];
     };
-public:
+
+  public:
     SparseMap() : blocks({new Block()}), size(0) {}
 
     ~SparseMap() {
@@ -33,7 +33,7 @@ public:
 
     /**
      * @brief create a block containing his id and its value
-     * @param id, value 
+     * @param id, value
      */
     void insert(entity_type id, const Component &value) {
         size_t sparseIndex = inBlockIndex(id);
@@ -56,7 +56,7 @@ public:
 
     /**
      * @brief erase an entity corresponding to the given id
-     * @param id 
+     * @param id
      */
     void erase(entity_type id) {
         size_t index = inBlockIndex(id);
@@ -77,7 +77,8 @@ public:
 
         block->sparse[index] = block->dense[index];
         entity_type *lastDensePtr = &this->blocks[blockIndex(this->size - 1)]->dense[inBlockIndex(this->size - 1)];
-        if (*lastDensePtr == id) return;
+        if (*lastDensePtr == id)
+            return;
         block->dense[index] = *lastDensePtr;
         *lastDensePtr = id;
         block->sparse[inBlockIndex(*lastDensePtr)] = index;
@@ -86,7 +87,7 @@ public:
 
     /**
      * @brief overriding opreator[]
-     * @param id 
+     * @param id
      * @return data of the block
      */
     Component &operator[](entity_type id) {
@@ -95,18 +96,14 @@ public:
         return block->components[denseIndex];
     }
 
-private:
+  private:
     std::vector<Block *> blocks;
     size_t size;
     entity_type max;
 
-    size_t inBlockIndex(entity_type id) {
-        return id % BLOCK_SIZE;
-    }
+    size_t inBlockIndex(entity_type id) { return id % BLOCK_SIZE; }
 
-    size_t blockIndex(entity_type id) {
-        return id / BLOCK_SIZE;
-    }
+    size_t blockIndex(entity_type id) { return id / BLOCK_SIZE; }
 
     void updateMax() {
         for (auto i = max; i > 0; --i) {
@@ -119,4 +116,4 @@ private:
     }
 };
 
-}
+} // namespace ecs

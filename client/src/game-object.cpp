@@ -7,18 +7,9 @@
 
 #include "game-object.hpp"
 
-GameObject::GameObject(const std::string &pathModel) {
-    _position = Vector3Zero();
-    _velocity = Vector3Zero();
-    _rotation = Vector3Zero();
-    _rotationGoal = Vector3Zero();
-    _scale = 1;
-    _animations = nullptr;
-    _animationCount = 0;
-    _currentAnimation = 0;
-    _currentFrame = 0;
-    _playAnimation = false;
-    _loopAnimation = false;
+GameObject::GameObject(const std::string &pathModel)
+    : _position(Vector3Zero()), _velocity(Vector3Zero()), _rotation(Vector3Zero()), _rotationGoal(Vector3Zero()), _scale(1), _animations(nullptr),
+      _animationCount(0), _currentAnimation(0), _currentFrame(0), _playAnimation(false), _loopAnimation(false) {
     _model = LoadModel(pathModel.c_str());
 }
 
@@ -27,25 +18,18 @@ GameObject::~GameObject() {
     for (auto &texture : _textures) {
         UnloadTexture(*texture);
     }
-    if (_animationCount > 0)
+    if (_animationCount > 0 && _animations != nullptr)
         UnloadModelAnimations(_animations, _animationCount);
     _textures.clear();
 }
 
-void GameObject::Draw(Camera3D camera, Vector3 offset) {
-    Vector2 screenPosition = GetWorldToScreen(Vector3Add(_position, offset), camera);
-    float threshold = 1000;
-    if (screenPosition.x < -threshold || screenPosition.x > GetScreenWidth() + threshold || screenPosition.y < -threshold ||
-        screenPosition.y > GetScreenHeight() + threshold)
-        return;
-    DrawModel(_model, Vector3Add(_position, offset), _scale, WHITE);
-}
+void GameObject::Draw(Vector3 offset) { DrawModel(_model, Vector3Add(_position, offset), _scale, WHITE); }
 
 void GameObject::Update() {
     _position = Vector3Add(_position, _velocity);
     _rotation = Vector3Lerp(_rotation, _rotationGoal, 0.1f);
     _model.transform = MatrixRotateXYZ(_rotation);
-    if (_animationCount > 0 && _playAnimation) {
+    if (_animationCount > 0 && _playAnimation && _animations != nullptr) {
         _currentFrame++;
         if (_currentFrame >= _animations[_currentAnimation].frameCount) {
             if (_loopAnimation) {
@@ -68,7 +52,17 @@ void GameObject::PlayAnimation(int index, bool loop) {
     _loopAnimation = loop;
 }
 
+void GameObject::SetTag(const std::string &tag) {
+    for (auto &t : _tags) {
+        if (t == tag)
+            return;
+    }
+    _tags.push_back(tag);
+}
+
 void GameObject::SetPosition(Vector3 position) { _position = position; }
+
+void GameObject::SetVelocity(Vector3 velocity) { _velocity = velocity; }
 
 void GameObject::SetRotation(Vector3 rotation) {
     _rotation = rotation;
@@ -87,9 +81,23 @@ void GameObject::SetAnimations(const std::string &pathAnimations) {
         UpdateModelAnimation(_model, _animations[_currentAnimation], _currentFrame);
 }
 
-void GameObject::SetShader(Shader shader) {
+void GameObject::SetShader(Shader shader) const {
     for (int i = 0; i < _model.materialCount; i++)
         _model.materials[i].shader = shader;
+}
+
+void GameObject::SetTexture(const std::string &pathTexture, MaterialMapIndex mapIndex, int index) {
+    Texture2D texture = LoadTexture(pathTexture.c_str());
+    _textures.push_back(&texture);
+    if (index > 0 && index < _model.materialCount)
+        SetTextureMatIdx(texture, mapIndex, index);
+    else
+        for (int i = 0; i < _model.materialCount; i++)
+            SetTextureMatIdx(texture, mapIndex, i);
+}
+
+void GameObject::SetTextureMatIdx(Texture2D texture, MaterialMapIndex mapIndex, int index) const {
+    _model.materials[index].maps[mapIndex].texture = texture;
 }
 
 BoundingBox GameObject::GetMyObjectBoundingBox(Vector3 scale) {
@@ -106,18 +114,8 @@ BoundingBox GameObject::GetMyObjectBoundingBox(Vector3 scale) {
     return box;
 }
 
-void GameObject::SetTexture(std::string pathTexture, MaterialMapIndex mapIndex, int index) {
-    Texture2D texture = LoadTexture(pathTexture.c_str());
-    _textures.push_back(&texture);
-    if (index > 0 && index < _model.materialCount)
-        SetTextureMatIdx(texture, mapIndex, index);
-    else
-        for (int i = 0; i < _model.materialCount; i++)
-            SetTextureMatIdx(texture, mapIndex, i);
+bool GameObject::IsTagged(const std::string &tag) {
+    if (std::ranges::any_of(_tags, [&tag](const std::string &t) { return t == tag; }))
+        return true;
+    return false;
 }
-
-void GameObject::SetTextureMatIdx(Texture2D texture, MaterialMapIndex mapIndex, int index) const {
-    _model.materials[index].maps[mapIndex].texture = texture;
-}
-
-void GameObject::SetVelocity(Vector3 velocity) { _velocity = velocity; }

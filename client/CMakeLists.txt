@@ -26,9 +26,12 @@ endif()
 include_directories(includes)
 add_executable(${CLIENT}
     src/main.cpp
-    src/load.cpp
     src/box.cpp
-    src/slider.cpp src/game-object.cpp src/game.cpp)
+    src/slider.cpp
+    src/game-object.cpp
+    src/game.cpp
+    src/engine.cpp
+    src/bullet.cpp src/particle2d.cpp)
 # Link library
 target_link_libraries(${CLIENT} PRIVATE raylib nlohmann_json::nlohmann_json)
 #add_dependencies(${CLIENT} renderer)
