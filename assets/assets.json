@@ -14,6 +14,7 @@
       "animation": {
         "path": "assets/models/e1116/enemies.iqm"
       },
+      "tags": ["enemy"],
       "name": "e1116",
       "path": "assets/models/e1116/enemies.iqm",
       "position": [
@@ -44,6 +45,7 @@
     },
     {
       "name": "corridor",
+      "tags": ["background"],
       "path": "assets/models/corridor/corridor.obj"
     },
     {

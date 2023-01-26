@@ -1,3 +1,4 @@
+#!/bin/bash
 if ! command -v conan >> /dev/null
 then
     echo "First Build ? Installing conan using pip"
