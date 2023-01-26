@@ -1,0 +1,7 @@
+[requires]
+raylib/4.0.0
+asio/1.16.1
+boost/1.75.0
+
+[generators]
+cmake
