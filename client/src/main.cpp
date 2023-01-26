@@ -9,12 +9,6 @@
 #include "core/archetype.hpp"
 #include "core/components.hpp"
 
-void setModelShader(Model *m, Shader *s) {
-    for (int i = 0; i < m->materialCount; i++) {
-        m->materials[i].shader = *s;
-    }
-}
-
 int main(int ac, char *av[]) {
     int screenHeight = 600;
     int screenWidth = 1070;
@@ -32,7 +26,7 @@ int main(int ac, char *av[]) {
     std::vector<Particle2D> particles2D;
 
     std::unordered_map<std::string, Shader> shaders;
-    std::unordered_map<std::string, MyObject> objects;
+    std::unordered_map<std::string, GameObject *> objects;
     std::unordered_map<std::string, MyTexture> textures;
     std::unordered_map<std::string, MyMusic> musics;
     std::unordered_map<std::string, Sound> sounds;
@@ -60,8 +54,6 @@ int main(int ac, char *av[]) {
     float bulletSize = 1;
     float bulletSpeed = .2;
     float shrinkSpeed = .1;
-
-    float rotSpeed = .1;
 
     // Create lights
     std::vector<std::shared_ptr<Light>> lights;
@@ -92,15 +84,20 @@ int main(int ac, char *av[]) {
 
     lights.emplace_back(new Light(newIndex, LIGHT_POINT, Vector3Zero(), Vector3Zero(), WHITE, shaders["lighting"], .2));
     availableLights.erase(newIndex);
-    setModelShader(&objects["corridor"].model, &shaders["lighting"]);
-    setModelShader(&objects["rock_01"].model, &shaders["lighting"]);
-    setModelShader(&objects["rock_02"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_01"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_02"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_03"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_04"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_05"].model, &shaders["lighting"]);
 
+    // Set shaders
+    objects["corridor"]->SetShader(shaders["lighting"]);
+    objects["rock_01"]->SetShader(shaders["lighting"]);
+    objects["rock_02"]->SetShader(shaders["lighting"]);
+    objects["space_debris_01"]->SetShader(shaders["lighting"]);
+    objects["space_debris_02"]->SetShader(shaders["lighting"]);
+    objects["space_debris_03"]->SetShader(shaders["lighting"]);
+    objects["space_debris_04"]->SetShader(shaders["lighting"]);
+    objects["space_debris_05"]->SetShader(shaders["lighting"]);
+
+    objects["corridor"]->SetVelocity(Vector3{-speed, 0, 0});
+
+    objects["e1116"]->PlayAnimation(0, false);
     // Disable raylib debug messages
     SetTraceLogLevel(LOG_NONE);
 
@@ -112,80 +109,86 @@ int main(int ac, char *av[]) {
 
     // selected myObject
     std::string selectedMyObjectName;
-    MyObject *selectedMyObject = nullptr;
-    // typedef struct {
-    //    Rectangle bounds;
-    //    float value;
-    //    float minValue;
-    //    float maxValue;
-    //    bool dragging;
-    //    bool enabled;
-    //    Color baseColor;
-    //    Color selectedColor;
-    //    Color disabledColor;
-    //} Slider;
-    // Create sliders to move selected object
-    Slider sliders[3];
+    GameObject *selectedMyObject = nullptr;
+    Vector3 selectedMyObjectPos;
+    Vector3 selectedMyObjectRot;
+    float selectedMyObjectScale;
+    Rectangle bounds = {float(screenWidth - 200), 100, 100, 20};
+    std::vector<Slider> sliders;
+    bool sliderSelected = false;
 
     while (!WindowShouldClose()) {
-        objects["spaceship1"].rotation = Vector3Lerp(objects["spaceship1"].rotation, objects["spaceship1"].rotationGoal, rotSpeed);
-        objects["spaceship1"].model.transform = MatrixRotateXYZ(objects["spaceship1"].rotation);
+        box = objects["spaceship1"]->GetMyObjectBoundingBox();
+        Vector3 corridorPos = objects["corridor"]->GetPosition();
+        if (corridorPos.x < -tp) {
+            corridorPos.x = 0;
+            objects["corridor"]->SetPosition(corridorPos);
+        }
 
-        box = GetMyObjectBoundingBox(objects["spaceship1"]);
-        objects["corridor"].position.x -= speed;
-        if (objects["corridor"].position.x < -tp)
-            objects["corridor"].position.x = 0;
-
-        // Check if spaceship1 is in view
-        // Matrix cameraMatrix = GetCameraMatrix(camera);
-        Vector2 screenPos = GetWorldToScreen(objects["spaceship1"].position, camera);
-        // add a margin of 10 pixels
-        if (screenPos.x < -10 || screenPos.x > screenWidth + 10 || screenPos.y < -10 || screenPos.y > screenHeight + 10) {
-            std::cout << "out of view" << std::endl;
+        // update sliders data
+        if (selectedMyObject != nullptr) {
+            selectedMyObjectPos = selectedMyObject->GetPosition();
+            selectedMyObjectRot = selectedMyObject->GetRotationGoal();
+            selectedMyObjectScale = selectedMyObject->GetScale();
+        }
+        // Update sliders
+        for (auto &slider : sliders) {
+            sliderSelected = slider.UpdateSlider();
+            if (sliderSelected)
+                break;
         }
 
         // Left click to raycast on the scene
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (!sliderSelected && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             mouse = GetMousePosition();
             ray = GetMouseRay(mouse, camera);
             // cycle through all objects of the scene
             for (auto &object : objects) {
                 // check if the ray hits the object
-                BoundingBox objectBox = GetMyObjectBoundingBox(object.second);
+                BoundingBox objectBox = object.second->GetMyObjectBoundingBox();
                 collision = GetRayCollisionBox(ray, objectBox);
                 if (collision.hit) {
                     std::cout << "hit " << object.first << std::endl;
                     selectedMyObjectName = object.first;
-                    selectedMyObject = &object.second;
+                    selectedMyObject = object.second;
+                    selectedMyObjectPos = selectedMyObject->GetPosition();
+                    selectedMyObjectRot = selectedMyObject->GetRotationGoal();
+                    selectedMyObjectScale = selectedMyObject->GetScale();
+                    // clear sliders
+                    sliders.clear();
+                    // create sliders
+                    sliders.emplace_back("posX", bounds, &selectedMyObjectPos.x, -10, 10);
+                    bounds.y += 30;
+                    sliders.emplace_back("posY", bounds, &selectedMyObjectPos.y, -10, 10);
+                    bounds.y += 30;
+                    sliders.emplace_back("posZ", bounds, &selectedMyObjectPos.z, -10, 10);
+                    bounds.y += 30;
+                    sliders.emplace_back("rotX", bounds, &selectedMyObjectRot.x, -3, 3);
+                    bounds.y += 30;
+                    sliders.emplace_back("rotY", bounds, &selectedMyObjectRot.y, -3, 3);
+                    bounds.y += 30;
+                    sliders.emplace_back("rotZ", bounds, &selectedMyObjectRot.z, -3, 3);
+                    bounds.y += 30;
+                    sliders.emplace_back("scale", bounds, &selectedMyObjectScale, .1, 3);
+                    bounds.y = 100;
                     break;
                 }
             }
             if (!collision.hit) {
                 selectedMyObjectName = "";
                 selectedMyObject = nullptr;
+                sliders.clear();
             }
         }
 
-        if (IsKeyDown(KEY_LEFT) && objects["spaceship1"].position.x > -8) {
-            objects["spaceship1"].position.x -= speed;
-            objects["spaceship1"].rotationGoal.y = -1.5;
+        // update selected object
+        if (selectedMyObject != nullptr) {
+            selectedMyObject->SetPosition(selectedMyObjectPos);
+            selectedMyObject->SetRotationGoal(selectedMyObjectRot);
+            selectedMyObject->SetScale(selectedMyObjectScale);
         }
-        if (IsKeyDown(KEY_RIGHT)) { //&& objects["spaceship1"].position.x < 8) {
-            objects["spaceship1"].position.x += speed;
-            objects["spaceship1"].rotationGoal.y = 1.5;
-        }
-        if (IsKeyDown(KEY_UP) && objects["spaceship1"].position.y < 4.4) {
-            objects["spaceship1"].position.y += speed;
-            objects["spaceship1"].rotationGoal.x = -speed * 2;
-        }
-        if (IsKeyDown(KEY_DOWN) && objects["spaceship1"].position.y > -4.4) {
-            objects["spaceship1"].position.y -= speed;
-            objects["spaceship1"].rotationGoal.x = speed * 2;
-        }
-        // Reset up down tilt if up or down is not pressed
-        if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) {
-            objects["spaceship1"].rotationGoal.x = 0;
-        }
+
+        moveSpaceship(objects["spaceship1"]);
         if (IsKeyPressed(KEY_P)) {
             std::cout << "Some debug infos:" << std::endl;
         }
@@ -198,23 +201,15 @@ int main(int ac, char *av[]) {
             unsigned char b = GetRandomValue(0, 255);
             Color color = {r, g, b, 255};
             lights.emplace_back(new Light(newLightIndex, LIGHT_POINT, (Vector3){-2, 4.5, 0}, Vector3Zero(), color, shaders["lighting"], .01));
-            Bullet bullet = {objects["spaceship1"].position,
-                             {objects["spaceship1"].rotation.y < 0 ? -bulletSpeed : bulletSpeed, -objects["spaceship1"].rotation.x * bulletSpeed, 0},
+            Bullet bullet = {objects["spaceship1"]->GetPosition(),
+                             {objects["spaceship1"]->GetRotation().y < 0 ? -bulletSpeed : bulletSpeed,
+                              -objects["spaceship1"]->GetRotation().x * bulletSpeed * .2f, 0},
                              bulletSize,
                              newLightIndex,
                              lights.back()};
             availableLights.erase(newLightIndex);
             bullets.emplace_back(bullet);
-            lights.back().get()->setPosition(objects["spaceship1"].position);
-        }
-        // Reset the scene
-        if (IsKeyPressed(KEY_R)) {
-            objects["spaceship1"].position = Vector3Zero();
-            bullets.clear();
-            particles.clear();
-            objects["spaceship1"].rotation = {0, 1.5, 0};
-            objects["spaceship1"].rotationGoal = objects["spaceship1"].rotation;
-            objects["e1116"].currentFrame = 0;
+            lights.back().get()->setPosition(objects["spaceship1"]->GetPosition());
         }
 
         // Update camera
@@ -233,17 +228,10 @@ int main(int ac, char *av[]) {
             }
         }
 
-        // Update animations
-        if (objects["e1116"].currentFrame + 1 < objects["e1116"].animations[0].frameCount) {
-            objects["e1116"].currentFrame++;
-            UpdateModelAnimation(objects["e1116"].model, objects["e1116"].animations[0], objects["e1116"].currentFrame);
-        }
-
-        BoundingBox enemyBounds = GetMyObjectBoundingBox(objects["e1116"], {0, .5, 0});
+        BoundingBox enemyBounds = objects["e1116"]->GetMyObjectBoundingBox(Vector3{0, .5, 0});
         for (auto it = bullets.begin(); it != bullets.end();) {
             it->position = Vector3Add(it->position, it->velocity);
-            BoundingBox bulletBounds =
-                GetBoundingBoxAroundPoint(it->position, .11); //{Vector3Subtract(it->position, x), Vector3Add(it->position, x)};
+            BoundingBox bulletBounds = GetBoundingBoxAroundPoint(it->position, .11);
             it->light->setPosition(it->position);
             if (CheckCollisionBoxes(enemyBounds, bulletBounds)) {
                 std::cout << "Collision" << std::endl;
@@ -277,7 +265,7 @@ int main(int ac, char *av[]) {
 
         float cameraPos[3] = {camera.target.x, camera.target.y, camera.target.z};
 
-        lights[0]->setPosition(Vector3Add(objects["spaceship1"].position, {0, 2, 10}));
+        lights[0]->setPosition(Vector3Add(objects["spaceship1"]->GetPosition(), {0, 2, 10}));
         for (auto &light : lights) {
             light->UpdateLightValues(shaders["lighting"]);
         }
@@ -286,52 +274,42 @@ int main(int ac, char *av[]) {
         SetShaderValue(shaders["lighting"], shaders["lighting"].locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
         SetShaderValue(shaders["normal"], shaders["normal"].locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
+        // update GameObjects
+        for (auto &object : objects) {
+            object.second->Update();
+        }
+
         // Draw normal for outline shader
         BeginDrawing();
         BeginTextureMode(target);
         ClearBackground(WHITE);
         BeginMode3D(camera);
-        setModelShader(&objects["e1116"].model, &shaders["normal"]);
-        setModelShader(&objects["spaceship1"].model, &shaders["normal"]);
-        DrawModel(objects["spaceship1"].model, objects["spaceship1"].position, objects["spaceship1"].scale, WHITE);
-        DrawModel(objects["e1116"].model, objects["e1116"].position, objects["e1116"].scale, WHITE);
+        objects["spaceship1"]->SetShader(shaders["normal"]);
+        objects["e1116"]->SetShader(shaders["normal"]);
+        objects["spaceship1"]->Draw(camera);
+        objects["e1116"]->Draw(camera);
         EndMode3D();
         EndTextureMode();
 
         // Draw the scene with lights
         ClearBackground(BLACK);
         BeginMode3D(camera);
-        setModelShader(&objects["e1116"].model, &shaders["lighting"]);
-        setModelShader(&objects["spaceship1"].model, &shaders["lighting"]);
+        // set shaders
+        objects["spaceship1"]->SetShader(shaders["lighting"]);
+        objects["e1116"]->SetShader(shaders["lighting"]);
 
-        DrawModel(objects["rock_01"].model, objects["rock_01"].position, objects["rock_01"].scale, WHITE);
-        DrawModel(objects["rock_02"].model, objects["rock_02"].position, objects["rock_02"].scale, WHITE);
-        DrawModel(objects["space_debris_01"].model, objects["space_debris_01"].position, objects["space_debris_01"].scale, WHITE);
-        DrawModel(objects["space_debris_02"].model, objects["space_debris_02"].position, objects["space_debris_02"].scale, WHITE);
-        DrawModel(objects["space_debris_03"].model, objects["space_debris_03"].position, objects["space_debris_03"].scale, WHITE);
-        DrawModel(objects["space_debris_04"].model, objects["space_debris_04"].position, objects["space_debris_04"].scale, WHITE);
-        DrawModel(objects["space_debris_05"].model, objects["space_debris_05"].position, objects["space_debris_05"].scale, WHITE);
-
+        // draw GameObjects
+        for (auto &object : objects) {
+            object.second->Draw(camera);
+        }
         DrawBoundingBox(box, GREEN);
+
         // Draw rotating corridor
-
-        DrawModel(objects["corridor"].model,
-                  {objects["corridor"].position.x + -tp * 2, objects["corridor"].position.y, objects["corridor"].position.z}, 1, WHITE);
-        DrawModel(objects["corridor"].model, {objects["corridor"].position.x + -tp, objects["corridor"].position.y, objects["corridor"].position.z},
-                  1, WHITE);
-        DrawModel(objects["corridor"].model, objects["corridor"].position, 1, WHITE);
-        DrawModel(objects["corridor"].model, {objects["corridor"].position.x + tp, objects["corridor"].position.y, objects["corridor"].position.z}, 1,
-                  WHITE);
-        DrawModel(objects["corridor"].model,
-                  {objects["corridor"].position.x + tp * 2, objects["corridor"].position.y, objects["corridor"].position.z}, 1, WHITE);
-
-        // Draw player
-        DrawModel(objects["spaceship1"].model, objects["spaceship1"].position, objects["spaceship1"].scale, WHITE);
-
-        // Draw enemy
-        DrawModel(objects["e1116"].model, objects["e1116"].position, objects["e1116"].scale, WHITE);
-
-        DrawBoundingBox(enemyBounds, RED);
+        objects["corridor"]->Draw(camera, Vector3{-tp * 2, 0, 0});
+        objects["corridor"]->Draw(camera, Vector3{-tp, 0, 0});
+        objects["corridor"]->Draw(camera, Vector3{tp, 0, 0});
+        objects["corridor"]->Draw(camera, Vector3{tp * 2, 0, 0});
+        // DrawBoundingBox(enemyBounds, RED);
         lights.erase(std::remove_if(lights.begin(), lights.end(),
                                     [&availableLights](const std::shared_ptr<Light> &light) {
                                         if (!light->isEnabled()) {
@@ -385,14 +363,17 @@ int main(int ac, char *av[]) {
         DrawText("Use keys [LEFT][RIGHT][UP][DOWN][SPACE] to move and shoot", 10, 40, 20, DARKGRAY);
         // stats about selected object
         DrawText(TextFormat("Selected object: %s", selectedMyObjectName.c_str()), 10, 70, 20, GREEN);
+
         if (selectedMyObject != nullptr) {
-            DrawText(
-                TextFormat("Position: %.2f, %.2f, %.2f", selectedMyObject->position.x, selectedMyObject->position.y, selectedMyObject->position.z),
-                10, 100, 20, GREEN);
-            DrawText(TextFormat("Scale: %.2f", selectedMyObject->scale), 10, 130, 20, GREEN);
-            DrawText(
-                TextFormat("Rotation: %.2f, %.2f, %.2f", selectedMyObject->rotation.x, selectedMyObject->rotation.y, selectedMyObject->rotation.z),
-                10, 160, 20, GREEN);
+            DrawText(TextFormat("Position: %.2f, %.2f, %.2f", selectedMyObjectPos.x, selectedMyObjectPos.y, selectedMyObjectPos.z), 10, 100, 20,
+                     GREEN);
+            DrawText(TextFormat("Scale: %.2f", selectedMyObjectScale), 10, 130, 20, GREEN);
+            DrawText(TextFormat("Rotation Goal: %.2f, %.2f, %.2f", selectedMyObjectRot.x, selectedMyObjectRot.y, selectedMyObjectRot.z), 10, 160, 20,
+                     GREEN);
+        }
+        // draw sliders
+        for (auto &slider : sliders) {
+            slider.Draw();
         }
         EndDrawing();
     }
@@ -402,14 +383,12 @@ int main(int ac, char *av[]) {
     UnloadModel(cube);
     UnloadRenderTexture(target);
 
+    // unloads sliders
+    sliders.clear();
+
     // unloads all the models
     for (auto &object : objects) {
-        UnloadModel(object.second.model);
-        for (auto &texture : object.second.textures) {
-            UnloadTexture(*texture);
-        }
-        if (object.second.animationCount > 0)
-            UnloadModelAnimations(object.second.animations, object.second.animationCount);
+        delete object.second;
     }
     objects.clear();
 
@@ -439,7 +418,6 @@ int main(int ac, char *av[]) {
 
     CloseAudioDevice();
     CloseWindow();
-    // LoadingThread.join();
     
     return 0;
 }
@@ -456,7 +434,6 @@ int main(int ac, char *av[]) {
     } else {
         std::cout << "The entity "<< entity << " is deleted" << std::endl;
     }
-
     return 0;
 }
 
