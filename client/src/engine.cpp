@@ -15,6 +15,9 @@ Engine::Engine(const std::string &assetsPath) {
     _camera.projection = CAMERA_PERSPECTIVE; // Camera mode type
     // SetCameraMode(_camera, CAMERA_ORBITAL);  // Set an orbital camera mode
     _companionCube = LoadModelFromMesh(GenMeshCube(1, 1, 1));
+    _musicSheduled.first = 0;
+    _musicVolume = 1;
+    _soundVolume = 1;
     loadAssets(assetsPath);
     for (int i = 0; i < MAX_LIGHTS; i++) {
         _availableLights.insert(i);
@@ -98,9 +101,12 @@ void Engine::loadTextures(json data) {
 void Engine::loadMusics(json data) {
     TraceLog(LOG_INFO, "Loading musics...");
     for (auto &music : data["musics"]) {
-        MyMusic myMusic;
+        MyMusic myMusic{};
         std::string name = music["name"];
         std::string path = music["path"];
+        if (music.contains("index")) {
+            myMusic.index = music["index"];
+        }
         myMusic.name = name;
         myMusic.music = LoadMusicStream(path.c_str());
         myMusic.music.looping = true;
@@ -114,7 +120,14 @@ void Engine::loadSounds(json data) {
     for (auto &sound : data["sounds"]) {
         std::string name = sound["name"];
         std::string path = sound["path"];
-        _sounds[name] = LoadSound(path.c_str());
+        MySound mySound;
+        mySound.volume = 1;
+        mySound.sound = LoadSound(path.c_str());
+        if (sound.contains("volume")) {
+            mySound.volume = sound["volume"];
+            SetSoundVolume(mySound.sound, sound["volume"]);
+        }
+        _sounds[name] = mySound;
     }
     TraceLog(LOG_INFO, "Loaded %d sounds", _sounds.size());
 }
@@ -125,19 +138,24 @@ void Engine::loadObjects(json data) {
         std::string name = object["name"];
         std::string path = object["path"];
         auto gameObject = new GameObject(path);
+        // entity pos / rot / scale at 0
         if (object.contains("scale")) {
             gameObject->SetScale(object["scale"]);
+            // set scale
         }
         if (object.contains("rotation") && object["rotation"].size() == 3) {
             gameObject->SetRotation({object["rotation"][0], object["rotation"][1], object["rotation"][2]});
             gameObject->SetRotationGoal(gameObject->GetRotation());
+            // set rotation
         }
         if (object.contains("position") && object["position"].size() == 3) {
             gameObject->SetPosition({object["position"][0], object["position"][1], object["position"][2]});
+            // set position
         }
         if (object.contains("animation")) {
             std::string animationPath = object["animation"]["path"];
             gameObject->SetAnimations(animationPath);
+            // add animation component and set animation
         }
         if (object.contains("textures")) {
             for (auto &texture : object["textures"]) {
@@ -171,6 +189,7 @@ void Engine::loadObjects(json data) {
 void Engine::unloadAssets() {
     UnloadModel(_companionCube);
     clearSliders();
+    clearButtons();
     _bullets.clear();
     _particles2D.clear();
     _particles.clear();
@@ -184,7 +203,7 @@ void Engine::unloadAssets() {
     }
     _musics.clear();
     for (auto &sound : _sounds) {
-        UnloadSound(sound.second);
+        UnloadSound(sound.second.sound);
     }
     _sounds.clear();
     for (auto &texture : _textures) {
@@ -197,21 +216,53 @@ void Engine::unloadAssets() {
     _shaders.clear();
 }
 
-void Engine::clearSliders() { _sliders.clear(); }
+void Engine::clearSliders() {
+    for (auto &slider : _sliders) {
+        delete slider.second;
+    }
+    _sliders.clear();
+}
+
+void Engine::clearSlider(const std::string &name) {
+    if (_sliders.find(name) != _sliders.end()) {
+        delete _sliders[name];
+        _sliders.erase(name);
+    }
+}
+
+void Engine::clearButtons() {
+    for (auto &button : _buttons) {
+        delete button.second;
+    }
+    _buttons.clear();
+}
 
 bool Engine::updateSliders() {
     bool selected = false;
     for (auto &slider : _sliders) {
-        selected = slider.UpdateSlider();
+        selected = slider.second->UpdateSlider();
         if (selected)
             break;
     }
     return selected;
 }
 
+bool Engine::updateButton(const std::string &name) {
+    if (_buttons.find(name) != _buttons.end()) {
+        return _buttons[name]->UpdateButton();
+    }
+    return false;
+}
+
 void Engine::updateMusic() {
     if (IsMusicStreamPlaying(_musics[_musicPlaying].music)) {
         UpdateMusicStream(_musics[_musicPlaying].music);
+    }
+    if (_musicSheduled.first > 0) {
+        _musicSheduled.first -= GetFrameTime();
+        if (_musicSheduled.first <= 0) {
+            playMusic(_musicSheduled.second);
+        }
     }
 }
 
@@ -280,6 +331,8 @@ void Engine::updateBullets() {
                     position.z += 3;
                     addParticle2D("explosion", position, float(sin(GetTime() * 10) * 90));
                     getLight(lightIndex)->setEnabled(false);
+                    playSound("enemy_bomb");
+                    SetWindowTitle("Boooooooooooooom !");
                     it = _bullets.erase(it);
                     break;
                 }
@@ -333,14 +386,44 @@ void Engine::drawParticles2D() {
 
 void Engine::drawSliders() {
     for (auto &slider : _sliders) {
-        slider.Draw();
+        slider.second->Draw();
     }
 }
 
-void Engine::playMusic(const std::string &name) {
+void Engine::drawButtons() {
+    for (auto &button : _buttons) {
+        button.second->Draw();
+    }
+}
+
+void Engine::playMusic(const std::string &name, float delay) {
     if (_musics.find(name) != _musics.end()) {
-        PlayMusicStream(_musics[name].music);
-        _musicPlaying = name;
+        if (delay > 0) {
+            _musicSheduled.first = delay;
+            _musicSheduled.second = name;
+        } else {
+            if (_musics.find(_musicPlaying) != _musics.end() && _musics[_musicPlaying].index != _musics[name].index) {
+                StopMusicStream(_musics[_musicPlaying].music);
+            }
+            SetMusicVolume(_musics[name].music, _musicVolume);
+            PlayMusicStream(_musics[name].music);
+            _musicPlaying = name;
+        }
+    }
+}
+
+void Engine::playMusic(int index, float delay) {
+    for (auto &music : _musics) {
+        if (music.second.index == index) {
+            playMusic(music.first, delay);
+            break;
+        }
+    }
+}
+
+void Engine::playSound(const std::string &name) {
+    if (_sounds.find(name) != _sounds.end()) {
+        PlaySoundMulti(_sounds[name].sound);
     }
 }
 
@@ -350,8 +433,16 @@ void Engine::setShaderMode(const std::string &name) {
     }
 }
 
-void Engine::addSlider(const std::string &name, Rectangle bounds, float *value, float minValue, float maxValue) {
-    _sliders.emplace_back(name, bounds, value, minValue, maxValue);
+void Engine::addSlider(const std::string &name, Rectangle bounds, float *value, float minValue, float maxValue, bool enabled) {
+    if (_sliders.find(name) != _sliders.end())
+        return;
+    _sliders[name] = new Slider(name, bounds, value, minValue, maxValue, enabled);
+}
+
+void Engine::addButton(const std::string &name, const std::string &text, Rectangle bounds, bool enabled) {
+    if (_buttons.find(name) != _buttons.end())
+        return;
+    _buttons[name] = new Button(text, bounds, true);
 }
 
 int Engine::addLight(Vector3 position, float intensity, Color color) {
@@ -370,6 +461,7 @@ void Engine::addBullet(Vector3 position, Vector3 velocity) {
     unsigned char b = GetRandomValue(0, 255);
     Color color = {r, g, b, 255};
     int idx = addLight(position, .01, color);
+    playSound("shot");
     _bullets.emplace_back(position, velocity, .11, idx, color);
 }
 
@@ -401,10 +493,47 @@ Light *Engine::getLight(int index) {
 
 Camera3D *Engine::getCamera() { return &_camera; }
 
+Button *Engine::getButton(const std::string &name) {
+    if (_buttons.find(name) != _buttons.end()) {
+        return _buttons[name];
+    }
+    return nullptr;
+}
+
+Slider *Engine::getSlider(const std::string &name) {
+    if (_sliders.find(name) != _sliders.end()) {
+        return _sliders[name];
+    }
+    return nullptr;
+}
+
 void Engine::setShaderObject(const std::string &name, const std::string &shader) {
     if (_objects.find(name) != _objects.end() && _shaders.find(shader) != _shaders.end()) {
         _objects[name]->SetShader(_shaders[shader]);
     }
+}
+
+void Engine::setMusicVolume(float volume) {
+    _musicVolume = volume;
+    if (_musics.find(_musicPlaying) != _musics.end())
+        SetMusicVolume(_musics[_musicPlaying].music, _musicVolume);
+}
+
+void Engine::setSoundVolume(float volume) {
+    _soundVolume = volume;
+    for (auto &sound : _sounds) {
+        SetSoundVolume(sound.second.sound, _soundVolume * sound.second.volume);
+    }
+}
+
+void Engine::setPause(bool pause) {
+    SetWindowTitle(pause ? "Paused" : "it rayworks !");
+    playMusic(pause ? 2 : 1, 2);
+    getButton("resume_button")->SetEnabled(pause);
+    getButton("quit_button")->SetEnabled(pause);
+    getSlider("music_volume")->SetEnabled(pause);
+    getSlider("sound_volume")->SetEnabled(pause);
+    playSound("decision");
 }
 
 bool Engine::isInScreen(Vector3 position, float offset) {
@@ -412,3 +541,7 @@ bool Engine::isInScreen(Vector3 position, float offset) {
     return screenPosition.x > -offset && screenPosition.x < float(GetScreenWidth()) + offset && screenPosition.y > -offset &&
            screenPosition.y < float(GetScreenHeight()) + offset;
 }
+
+float *Engine::getMusicVolume() { return &_musicVolume; }
+
+float *Engine::getSoundVolume() { return &_soundVolume; }
