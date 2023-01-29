@@ -280,21 +280,25 @@ int main(int ac, char *av[]) {
 }
 
 /* int main() {
-    ecs::Archetype<ecs::Position, ecs::Velocity> archetype;
+    ecs::Archetype<ecs::Position, ecs::Velocity, ecs::Direction> archetype;
     ecs::entity_type entity = archetype.create_entity(ecs::Position{0, 0}, ecs::Velocity{1, 2});
 
     auto [position, velocity] = archetype.query<0, 1>(entity);
     //archetype.delete_entity(entity);
     if (archetype.getDeletedEntities().count(entity) == 0) {
         std::cout << "Entity: " << entity << " position: " << position.x << ", " << position.y << std::endl;
-        std::cout << "Entity: " << entity << " position: " << velocity.x << ", " << velocity.y << std::endl;
+        std::cout << "Entity: " << entity << " velocity: " << velocity.x << ", " << velocity.y << std::endl;
+        auto [position, velocity, direction] = archetype.query<0, 1, 2>(entity);
+        archetype.insert_component(entity, ecs::Direction{3, 3});
+        
+        std::cout << "Entity: " << entity << " direction: " << direction.x << ", " << direction.y << std::endl;
     } else {
         std::cout << "The entity "<< entity << " is deleted" << std::endl;
     }
     return 0;
-}
+} */
 
-int main() {
+/* int main() {
     ecs::SparseMap<int> sm;
 
     sm.insert(5, 10);

@@ -25,7 +25,7 @@ class Archetype {
      */
     template <typename... Component>
     entity_type create_entity(Component &&...values) {
-        (insert(nextEntityId, std::forward<Component>(values)), ...);
+        (insert_component(nextEntityId, std::forward<Component>(values)), ...);
         return nextEntityId++;
     }
 
@@ -39,6 +39,18 @@ class Archetype {
             return;
         deletedEntities.insert(id);
         (delete_component<Component>(id), ...);
+    }
+
+    template <typename Component>
+    void insert_component(entity_type id, Component &&value) {
+        SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
+        map.insert(id, std::forward<Component>(value));
+    }
+
+    template <typename Component>
+    void delete_component(entity_type id) {
+        SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
+        map.erase(id);
     }
 
     /**
@@ -67,18 +79,6 @@ class Archetype {
     entity_type nextEntityId;
     std::tuple<SparseMap<Components>...> componentMaps;
     std::set<entity_type> deletedEntities;
-
-    template <typename Component>
-    void insert(entity_type id, Component &&value) {
-        SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
-        map.insert(id, std::forward<Component>(value));
-    }
-
-    template <typename Component>
-    void delete_component(entity_type id) {
-        SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
-        map.erase(id);
-    }
 };
 
 } // namespace ecs

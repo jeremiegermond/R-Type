@@ -15,4 +15,8 @@ struct Velocity {
     float x, y;
 };
 
+struct Direction {
+    float x, y;
+};
+
 } // namespace ecs
