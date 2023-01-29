@@ -9,16 +9,18 @@
 #define RTYPE_RTYPE_CLIENT_HPP
 #define MAX_LIGHTS 100
 
+#include "bullet.hpp"
+#include "button.hpp"
 #include "deps.hpp"
+#include "game-object.hpp"
 #include "light.hpp"
+#include "particle2d.hpp"
+#include "slider.hpp"
 #include "structs.hpp"
+// should always be included last
+#include "engine.hpp"
 
-void loadAssets(std::unordered_map<std::string, MyObject> &objects, std::unordered_map<std::string, MyMusic> &musics,
-                std::unordered_map<std::string, Sound> &sounds, std::unordered_map<std::string, MyTexture> &textures,
-                std::unordered_map<std::string, Shader> &shaders, const std::string &assetsPath);
-BoundingBox GetMyObjectBoundingBox(const MyObject &myObject, Vector3 scale = Vector3Zero());
+// BoundingBox GetMyObjectBoundingBox(const GameObject &myObject, Vector3 scale = Vector3Zero());
 BoundingBox GetBoundingBoxAroundPoint(Vector3 position, float scale);
-Slider CreateSlider(Rectangle bounds, float value, float minValue, float maxValue);
-void UpdateSlider(Slider *slider);
-void DrawSlider(Slider slider);
+void moveSpaceship(GameObject *spaceship);
 #endif // RTYPE_RTYPE_CLIENT_HPP

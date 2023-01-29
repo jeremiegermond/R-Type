@@ -67,5 +67,7 @@ class Light {
         SetShaderValue(shader, _colorLoc, color, SHADER_UNIFORM_VEC4);
         SetShaderValue(shader, _intensityLoc, &_intensity, SHADER_UNIFORM_FLOAT);
     }
+
+    void DrawSphere() { DrawSphereWires(_position, .2, 4, 4, _color); }
 };
 #endif // RTYPE_LIGHT_HPP

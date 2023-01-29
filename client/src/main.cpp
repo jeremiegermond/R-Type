@@ -2,18 +2,12 @@
 ** EPITECH PROJECT, 2023
 ** rtype
 ** File description:
-** 
+**
 */
 
-#include "rtype-client.hpp"
 #include "core/archetype.hpp"
 #include "core/components.hpp"
-
-void setModelShader(Model *m, Shader *s) {
-    for (int i = 0; i < m->materialCount; i++) {
-        m->materials[i].shader = *s;
-    }
-}
+#include "rtype-client.hpp"
 
 int main(int ac, char *av[]) {
     int screenHeight = 600;
@@ -27,45 +21,12 @@ int main(int ac, char *av[]) {
     rlDisableBackfaceCulling();
     SetTargetFPS(60);
 
-    std::vector<Bullet> bullets;
-    std::vector<Particle> particles;
-    std::vector<Particle2D> particles2D;
-
-    std::unordered_map<std::string, Shader> shaders;
-    std::unordered_map<std::string, MyObject> objects;
-    std::unordered_map<std::string, MyTexture> textures;
-    std::unordered_map<std::string, MyMusic> musics;
-    std::unordered_map<std::string, Sound> sounds;
-
-    std::set<int> availableLights;
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-        availableLights.insert(i);
-    }
-
-    // Define the camera to look into our 3d world
-    Camera camera;
-    camera.position = {0, 0, 30};           // Camera position
-    camera.target = Vector3Zero();          // Camera looking at point
-    camera.up = {0, 1, 0};                  // Camera up vector (rotation towards target)
-    camera.fovy = 20;                       // Camera field-of-view Y
-    camera.projection = CAMERA_PERSPECTIVE; // Camera mode type
-    // SetCameraMode(camera, CAMERA_ORBITAL);    // Set an orbital camera mode
-
-    Model cube = LoadModelFromMesh(GenMeshCube(.1, .1, .1));
     RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
-    float speed = 0.1f;
-    float tp = 7.22f;
+    float speed = .01;
+    float tp = 7.22;
 
-    float bulletSize = 1;
     float bulletSpeed = .2;
-    float shrinkSpeed = .1;
-
-    float rotSpeed = .1;
-
-    // Create lights
-    std::vector<std::shared_ptr<Light>> lights;
-    int newIndex = *availableLights.begin();
 
     // Loading screen
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -79,84 +40,119 @@ int main(int ac, char *av[]) {
     EndDrawing();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    // load assets
-    loadAssets(objects, musics, sounds, textures, shaders, "assets/assets.json");
+    // load engine
+    Engine engine("assets/assets.json");
+
+    // disable esc closing the window
+    SetExitKey(0);
 
     // Play menu music
-    PlayMusicStream(musics["02-Main_Menu"].music);
+    engine.playMusic("02-Main_Menu");
 
-    // ambient light
-    float lightPos[4] = {.1, .1, .1, 1};
-    int ambientLoc = GetShaderLocation(shaders["lighting"], "ambient");
-    SetShaderValue(shaders["lighting"], ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
+    // Pause menu buttons / slider
+    bool pause = false;
+    bool quit = false;
+    engine.addButton("resume_button", "Resume", Rectangle{float(screenWidth / 2 - 100), 200, 200, 50}, pause);
+    engine.addButton("quit_button", "Quit", Rectangle{float(screenWidth / 2 - 100), 300, 200, 50}, pause);
+    engine.getButton("quit_button")->SetCallback([&engine, &quit]() {
+        engine.playSound("decision");
+        SetWindowTitle("Bye bye !");
+        quit = true;
+    });
+    engine.getButton("resume_button")->SetCallback([&pause, &engine]() {
+        pause = !pause;
+        engine.setPause(pause);
+    });
+    engine.addSlider("music_volume", Rectangle{float(screenWidth - 200), 100, 100, 20}, engine.getMusicVolume(), 0, 2, pause);
+    engine.addSlider("sound_volume", Rectangle{float(screenWidth - 200), 150, 100, 20}, engine.getSoundVolume(), 0, 2, pause);
+    engine.getSlider("music_volume")->SetCallback([&engine](const float *value) { engine.setMusicVolume(*value); });
+    engine.getSlider("sound_volume")->SetCallback([&engine](const float *value) { engine.setSoundVolume(*value); });
+    engine.addLight(Vector3Zero());
 
-    lights.emplace_back(new Light(newIndex, LIGHT_POINT, Vector3Zero(), Vector3Zero(), WHITE, shaders["lighting"], .2));
-    availableLights.erase(newIndex);
-    setModelShader(&objects["corridor"].model, &shaders["lighting"]);
-    setModelShader(&objects["rock_01"].model, &shaders["lighting"]);
-    setModelShader(&objects["rock_02"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_01"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_02"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_03"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_04"].model, &shaders["lighting"]);
-    setModelShader(&objects["space_debris_05"].model, &shaders["lighting"]);
+    engine.getObject("corridor")->SetVelocity(Vector3{-speed, 0, 0});
 
-    // Disable raylib debug messages
-    SetTraceLogLevel(LOG_NONE);
+    engine.getObject("e1116")->PlayAnimation(0, false);
 
     // temp
-    BoundingBox box;
     Ray ray;
     Vector2 mouse;
     RayCollision collision;
 
     // selected myObject
     std::string selectedMyObjectName;
-    MyObject *selectedMyObject = nullptr;
-    // typedef struct {
-    //    Rectangle bounds;
-    //    float value;
-    //    float minValue;
-    //    float maxValue;
-    //    bool dragging;
-    //    bool enabled;
-    //    Color baseColor;
-    //    Color selectedColor;
-    //    Color disabledColor;
-    //} Slider;
-    // Create sliders to move selected object
-    Slider sliders[3];
+    GameObject *selectedMyObject = nullptr;
+    Vector3 selectedMyObjectPos;
+    Vector3 selectedMyObjectRot;
+    float selectedMyObjectScale;
+    Rectangle bounds = {float(screenWidth - 200), 100, 100, 20};
+    bool sliderSelected;
 
-    while (!WindowShouldClose()) {
-        objects["spaceship1"].rotation = Vector3Lerp(objects["spaceship1"].rotation, objects["spaceship1"].rotationGoal, rotSpeed);
-        objects["spaceship1"].model.transform = MatrixRotateXYZ(objects["spaceship1"].rotation);
-
-        box = GetMyObjectBoundingBox(objects["spaceship1"]);
-        objects["corridor"].position.x -= speed;
-        if (objects["corridor"].position.x < -tp)
-            objects["corridor"].position.x = 0;
-
-        // Check if spaceship1 is in view
-        // Matrix cameraMatrix = GetCameraMatrix(camera);
-        Vector2 screenPos = GetWorldToScreen(objects["spaceship1"].position, camera);
-        // add a margin of 10 pixels
-        if (screenPos.x < -10 || screenPos.x > screenWidth + 10 || screenPos.y < -10 || screenPos.y > screenHeight + 10) {
-            std::cout << "out of view" << std::endl;
+    while (!quit) {
+        Vector3 corridorPos = engine.getObject("corridor")->GetPosition();
+        if (corridorPos.x < -tp) {
+            corridorPos.x = 0;
+            engine.getObject("corridor")->SetPosition(corridorPos);
         }
 
+        // update sliders data
+        if (selectedMyObject != nullptr) {
+            selectedMyObjectPos = selectedMyObject->GetPosition();
+            selectedMyObjectRot = selectedMyObject->GetRotationGoal();
+            selectedMyObjectScale = selectedMyObject->GetScale();
+        }
+        // Update sliders
+        sliderSelected = engine.updateSliders();
+
+        // Update pause menu
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            pause = !pause;
+            engine.setPause(pause);
+        }
+        // Update buttons
+        engine.updateButton("resume_button");
+        engine.updateButton("quit_button");
+
         // Left click to raycast on the scene
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (!sliderSelected && !pause && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            engine.clearSlider("posX");
+            engine.clearSlider("posY");
+            engine.clearSlider("posZ");
+            engine.clearSlider("rotX");
+            engine.clearSlider("rotY");
+            engine.clearSlider("rotZ");
+            engine.clearSlider("scale");
             mouse = GetMousePosition();
-            ray = GetMouseRay(mouse, camera);
+            ray = GetMouseRay(mouse, *engine.getCamera());
             // cycle through all objects of the scene
-            for (auto &object : objects) {
+            for (auto &object : engine.getObjects()) {
+                if (object.second->IsTagged("background")) {
+                    continue;
+                }
                 // check if the ray hits the object
-                BoundingBox objectBox = GetMyObjectBoundingBox(object.second);
+                BoundingBox objectBox = object.second->GetMyObjectBoundingBox();
                 collision = GetRayCollisionBox(ray, objectBox);
                 if (collision.hit) {
                     std::cout << "hit " << object.first << std::endl;
                     selectedMyObjectName = object.first;
-                    selectedMyObject = &object.second;
+                    selectedMyObject = object.second;
+                    selectedMyObjectPos = selectedMyObject->GetPosition();
+                    selectedMyObjectRot = selectedMyObject->GetRotationGoal();
+                    selectedMyObjectScale = selectedMyObject->GetScale();
+                    // create sliders
+                    engine.addSlider("posX", bounds, &selectedMyObjectPos.x, -10, 10);
+                    bounds.y += 30;
+                    engine.addSlider("posY", bounds, &selectedMyObjectPos.y, -10, 10);
+                    bounds.y += 30;
+                    engine.addSlider("posZ", bounds, &selectedMyObjectPos.z, -10, 10);
+                    bounds.y += 30;
+                    engine.addSlider("rotX", bounds, &selectedMyObjectRot.x, -3, 3);
+                    bounds.y += 30;
+                    engine.addSlider("rotY", bounds, &selectedMyObjectRot.y, -3, 3);
+                    bounds.y += 30;
+                    engine.addSlider("rotZ", bounds, &selectedMyObjectRot.z, -3, 3);
+                    bounds.y += 30;
+                    engine.addSlider("scale", bounds, &selectedMyObjectScale, .1, 3);
+                    bounds.y = 100;
                     break;
                 }
             }
@@ -166,217 +162,93 @@ int main(int ac, char *av[]) {
             }
         }
 
-        if (IsKeyDown(KEY_LEFT) && objects["spaceship1"].position.x > -8) {
-            objects["spaceship1"].position.x -= speed;
-            objects["spaceship1"].rotationGoal.y = -1.5;
-        }
-        if (IsKeyDown(KEY_RIGHT)) { //&& objects["spaceship1"].position.x < 8) {
-            objects["spaceship1"].position.x += speed;
-            objects["spaceship1"].rotationGoal.y = 1.5;
-        }
-        if (IsKeyDown(KEY_UP) && objects["spaceship1"].position.y < 4.4) {
-            objects["spaceship1"].position.y += speed;
-            objects["spaceship1"].rotationGoal.x = -speed * 2;
-        }
-        if (IsKeyDown(KEY_DOWN) && objects["spaceship1"].position.y > -4.4) {
-            objects["spaceship1"].position.y -= speed;
-            objects["spaceship1"].rotationGoal.x = speed * 2;
-        }
-        // Reset up down tilt if up or down is not pressed
-        if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) {
-            objects["spaceship1"].rotationGoal.x = 0;
-        }
-        if (IsKeyPressed(KEY_P)) {
-            std::cout << "Some debug infos:" << std::endl;
+        // update selected object
+        if (selectedMyObject != nullptr) {
+            selectedMyObject->SetPosition(selectedMyObjectPos);
+            selectedMyObject->SetRotationGoal(selectedMyObjectRot);
+            selectedMyObject->SetScale(selectedMyObjectScale);
         }
 
-        if (IsKeyPressed(KEY_SPACE)) {
-            int newLightIndex = *availableLights.begin();
+        if (!pause)
+            moveSpaceship(engine.getObject("spaceship1"));
 
-            unsigned char r = GetRandomValue(0, 255);
-            unsigned char g = GetRandomValue(0, 255);
-            unsigned char b = GetRandomValue(0, 255);
-            Color color = {r, g, b, 255};
-            lights.emplace_back(new Light(newLightIndex, LIGHT_POINT, (Vector3){-2, 4.5, 0}, Vector3Zero(), color, shaders["lighting"], .01));
-            Bullet bullet = {objects["spaceship1"].position,
-                             {objects["spaceship1"].rotation.y < 0 ? -bulletSpeed : bulletSpeed, -objects["spaceship1"].rotation.x * bulletSpeed, 0},
-                             bulletSize,
-                             newLightIndex,
-                             lights.back()};
-            availableLights.erase(newLightIndex);
-            bullets.emplace_back(bullet);
-            lights.back().get()->setPosition(objects["spaceship1"].position);
-        }
-        // Reset the scene
-        if (IsKeyPressed(KEY_R)) {
-            objects["spaceship1"].position = Vector3Zero();
-            bullets.clear();
-            particles.clear();
-            objects["spaceship1"].rotation = {0, 1.5, 0};
-            objects["spaceship1"].rotationGoal = objects["spaceship1"].rotation;
-            objects["e1116"].currentFrame = 0;
+        if (!pause && IsKeyPressed(KEY_SPACE)) {
+            Vector3 bulletVelocity = Vector3Zero();
+            bulletVelocity.x = bulletSpeed;
+            bulletVelocity.y = -engine.getObject("spaceship1")->GetRotation().x * bulletSpeed * .5f;
+            Vector3 bulletPos = engine.getObject("spaceship1")->GetPosition();
+            engine.addBullet(bulletPos, bulletVelocity);
         }
 
         // Update camera
-        UpdateCamera(&camera);
+        engine.updateCamera();
 
         // Update music
-        UpdateMusicStream(musics["02-Main_Menu"].music);
+        engine.updateMusic();
 
-        // Update bullets
-        for (auto it = particles.begin(); it != particles.end();) {
-            it->scale -= shrinkSpeed;
-            if (it->scale <= 0) {
-                it = particles.erase(it);
-            } else {
-                ++it;
-            }
+        if (!pause) {
+            // Update bullets / particles
+            engine.updateParticles2D();
+            engine.updateParticles();
+            engine.updateBullets();
+            // update GameObjects
+            engine.updateObjects();
         }
 
-        // Update animations
-        if (objects["e1116"].currentFrame + 1 < objects["e1116"].animations[0].frameCount) {
-            objects["e1116"].currentFrame++;
-            UpdateModelAnimation(objects["e1116"].model, objects["e1116"].animations[0], objects["e1116"].currentFrame);
-        }
-
-        BoundingBox enemyBounds = GetMyObjectBoundingBox(objects["e1116"], {0, .5, 0});
-        for (auto it = bullets.begin(); it != bullets.end();) {
-            it->position = Vector3Add(it->position, it->velocity);
-            BoundingBox bulletBounds =
-                GetBoundingBoxAroundPoint(it->position, .11); //{Vector3Subtract(it->position, x), Vector3Add(it->position, x)};
-            it->light->setPosition(it->position);
-            if (CheckCollisionBoxes(enemyBounds, bulletBounds)) {
-                std::cout << "Collision" << std::endl;
-                Particle2D boom;
-                boom.texture = &textures["explosion"];
-                boom.position.x = it->position.x;
-                boom.position.y = it->position.y;
-                boom.currentFrame = 0;
-                boom.rows = textures["explosion"].rows;
-                boom.columns = textures["explosion"].columns;
-                boom.totalFrames = boom.rows * boom.columns;
-                boom.rotation = (float)sin(GetTime() * 10) * 90;
-                boom.width = textures["explosion"].texture.width / boom.columns;
-                boom.height = textures["explosion"].texture.height / boom.rows;
-                particles2D.emplace_back(boom);
-                it->light->setEnabled(false);
-                it = bullets.erase(it);
-            } else if (it->position.x > 10 || it->position.x < -10) {
-                it->light->setEnabled(false);
-                it = bullets.erase(it);
-            } else {
-                if (particles.size() >= 4500) {
-                    it++;
-                    continue;
-                }
-                Particle a = {it->position, bulletSize};
-                particles.emplace_back(a);
-                ++it;
-            }
-        }
-
-        float cameraPos[3] = {camera.target.x, camera.target.y, camera.target.z};
-
-        lights[0]->setPosition(Vector3Add(objects["spaceship1"].position, {0, 2, 10}));
-        for (auto &light : lights) {
-            light->UpdateLightValues(shaders["lighting"]);
-        }
+        engine.getLight(0)->setPosition(Vector3Add(engine.getObject("spaceship1")->GetPosition(), {0, 2, 10}));
+        engine.updateLights();
 
         // update the light shader with the camera view position
-        SetShaderValue(shaders["lighting"], shaders["lighting"].locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
-        SetShaderValue(shaders["normal"], shaders["normal"].locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+        engine.updateShaderLocView("lighting");
+        engine.updateShaderLocView("normal");
 
         // Draw normal for outline shader
         BeginDrawing();
         BeginTextureMode(target);
         ClearBackground(WHITE);
-        BeginMode3D(camera);
-        setModelShader(&objects["e1116"].model, &shaders["normal"]);
-        setModelShader(&objects["spaceship1"].model, &shaders["normal"]);
-        DrawModel(objects["spaceship1"].model, objects["spaceship1"].position, objects["spaceship1"].scale, WHITE);
-        DrawModel(objects["e1116"].model, objects["e1116"].position, objects["e1116"].scale, WHITE);
+        BeginMode3D(*engine.getCamera());
+        engine.setShaderObject("spaceship1", "normal");
+        engine.setShaderObject("e1116", "normal");
+        engine.drawObject("spaceship1");
+        engine.drawObject("e1116");
         EndMode3D();
         EndTextureMode();
 
         // Draw the scene with lights
         ClearBackground(BLACK);
-        BeginMode3D(camera);
-        setModelShader(&objects["e1116"].model, &shaders["lighting"]);
-        setModelShader(&objects["spaceship1"].model, &shaders["lighting"]);
+        BeginMode3D(*engine.getCamera());
+        // set shaders
+        engine.setShaderObject("spaceship1", "lighting");
+        engine.setShaderObject("e1116", "lighting");
 
-        DrawModel(objects["rock_01"].model, objects["rock_01"].position, objects["rock_01"].scale, WHITE);
-        DrawModel(objects["rock_02"].model, objects["rock_02"].position, objects["rock_02"].scale, WHITE);
-        DrawModel(objects["space_debris_01"].model, objects["space_debris_01"].position, objects["space_debris_01"].scale, WHITE);
-        DrawModel(objects["space_debris_02"].model, objects["space_debris_02"].position, objects["space_debris_02"].scale, WHITE);
-        DrawModel(objects["space_debris_03"].model, objects["space_debris_03"].position, objects["space_debris_03"].scale, WHITE);
-        DrawModel(objects["space_debris_04"].model, objects["space_debris_04"].position, objects["space_debris_04"].scale, WHITE);
-        DrawModel(objects["space_debris_05"].model, objects["space_debris_05"].position, objects["space_debris_05"].scale, WHITE);
+        // draw GameObjects
+        engine.drawObjects();
 
-        DrawBoundingBox(box, GREEN);
-        // Draw rotating corridor
-
-        DrawModel(objects["corridor"].model,
-                  {objects["corridor"].position.x + -tp * 2, objects["corridor"].position.y, objects["corridor"].position.z}, 1, WHITE);
-        DrawModel(objects["corridor"].model, {objects["corridor"].position.x + -tp, objects["corridor"].position.y, objects["corridor"].position.z},
-                  1, WHITE);
-        DrawModel(objects["corridor"].model, objects["corridor"].position, 1, WHITE);
-        DrawModel(objects["corridor"].model, {objects["corridor"].position.x + tp, objects["corridor"].position.y, objects["corridor"].position.z}, 1,
-                  WHITE);
-        DrawModel(objects["corridor"].model,
-                  {objects["corridor"].position.x + tp * 2, objects["corridor"].position.y, objects["corridor"].position.z}, 1, WHITE);
-
-        // Draw player
-        DrawModel(objects["spaceship1"].model, objects["spaceship1"].position, objects["spaceship1"].scale, WHITE);
-
-        // Draw enemy
-        DrawModel(objects["e1116"].model, objects["e1116"].position, objects["e1116"].scale, WHITE);
-
-        DrawBoundingBox(enemyBounds, RED);
-        lights.erase(std::remove_if(lights.begin(), lights.end(),
-                                    [&availableLights](const std::shared_ptr<Light> &light) {
-                                        if (!light->isEnabled()) {
-                                            availableLights.insert(light->getIndex());
-                                            return true;
-                                        }
-                                        return false;
-                                    }),
-                     lights.end());
-        // Draw light sphere
-        for (auto &light : lights) {
-            DrawSphereWires(light->getPosition(), 0.2f, 8, 8, ColorAlpha(light->getColor(), 0.3f));
+        // Draw selected object bounding box
+        if (selectedMyObject != nullptr) {
+            DrawBoundingBox(selectedMyObject->GetMyObjectBoundingBox(), GREEN);
         }
+
+        // Draw rotating corridor
+        engine.drawObject("corridor", Vector3{-tp * 2, 0, 0});
+        engine.drawObject("corridor", Vector3{-tp, 0, 0});
+        engine.drawObject("corridor", Vector3{tp, 0, 0});
+        engine.drawObject("corridor", Vector3{tp * 2, 0, 0});
+
+        // Draw light sphere
+        engine.drawLightsSpheres();
 
         // Draw particles
-        for (const auto &particle : particles) {
-            DrawModel(cube, particle.position, particle.scale, WHITE);
-        }
+        engine.drawParticles();
 
         // Draw bullets
-        for (const auto &bullet : bullets) {
-            DrawModel(cube, bullet.position, bulletSize, bullet.light->getColor());
-        }
+        engine.drawBullets();
 
-        // update 2d particles
-        for (auto it = particles2D.begin(); it != particles2D.end();) {
-            it->currentFrame += 1;
-            if (it->currentFrame == it->totalFrames) {
-                it = particles2D.erase(it);
-            } else {
-                Rectangle source;
-                source.x = (float)(it->width * (it->currentFrame % it->columns));
-                source.y = it->height * (it->currentFrame / it->rows);
-                source.width = (float)it->width;
-                source.height = (float)it->height;
-                Vector3 position = {it->position.x, it->position.y, 3};
-                Vector3 up = {0, 1, 0};
-                Vector2 scale = it->texture->scale;
-                DrawBillboardPro(camera, it->texture->texture, source, position, up, scale, Vector2Zero(), it->rotation, WHITE);
-                ++it;
-            }
-        }
+        // Draw particles2D
+        engine.drawParticles2D();
         EndMode3D();
 
-        BeginShaderMode(shaders["outline"]);
+        engine.setShaderMode("outline");
         DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
                        (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
                        WHITE);
@@ -385,82 +257,48 @@ int main(int ac, char *av[]) {
         DrawText("Use keys [LEFT][RIGHT][UP][DOWN][SPACE] to move and shoot", 10, 40, 20, DARKGRAY);
         // stats about selected object
         DrawText(TextFormat("Selected object: %s", selectedMyObjectName.c_str()), 10, 70, 20, GREEN);
+
         if (selectedMyObject != nullptr) {
-            DrawText(
-                TextFormat("Position: %.2f, %.2f, %.2f", selectedMyObject->position.x, selectedMyObject->position.y, selectedMyObject->position.z),
-                10, 100, 20, GREEN);
-            DrawText(TextFormat("Scale: %.2f", selectedMyObject->scale), 10, 130, 20, GREEN);
-            DrawText(
-                TextFormat("Rotation: %.2f, %.2f, %.2f", selectedMyObject->rotation.x, selectedMyObject->rotation.y, selectedMyObject->rotation.z),
-                10, 160, 20, GREEN);
+            DrawText(TextFormat("Position: %.2f, %.2f, %.2f", selectedMyObjectPos.x, selectedMyObjectPos.y, selectedMyObjectPos.z), 10, 100, 20,
+                     GREEN);
+            DrawText(TextFormat("Scale: %.2f", selectedMyObjectScale), 10, 130, 20, GREEN);
+            DrawText(TextFormat("Rotation Goal: %.2f, %.2f, %.2f", selectedMyObjectRot.x, selectedMyObjectRot.y, selectedMyObjectRot.z), 10, 160, 20,
+                     GREEN);
         }
+        // draw sliders
+        engine.drawSliders();
+        // draw buttons
+        engine.drawButtons();
         EndDrawing();
     }
-    // Enable raylib log
-    SetTraceLogLevel(LOG_INFO);
-
-    UnloadModel(cube);
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
     UnloadRenderTexture(target);
-
-    // unloads all the models
-    for (auto &object : objects) {
-        UnloadModel(object.second.model);
-        for (auto &texture : object.second.textures) {
-            UnloadTexture(*texture);
-        }
-        if (object.second.animationCount > 0)
-            UnloadModelAnimations(object.second.animations, object.second.animationCount);
-    }
-    objects.clear();
-
-    // unloads all the music
-    for (auto &music : musics) {
-        UnloadMusicStream(music.second.music);
-    }
-    musics.clear();
-
-    // unloads all the sounds
-    for (auto &sound : sounds) {
-        UnloadSound(sound.second);
-    }
-    sounds.clear();
-
-    // unloads all the shaders
-    for (auto &shader : shaders) {
-        UnloadShader(shader.second);
-    }
-    shaders.clear();
-
-    // unloads all the textures
-    for (auto &texture : textures) {
-        UnloadTexture(texture.second.texture);
-    }
-    textures.clear();
 
     CloseAudioDevice();
     CloseWindow();
-    // LoadingThread.join();
-    
     return 0;
 }
 
 /* int main() {
-    ecs::Archetype<ecs::Position, ecs::Velocity> archetype;
+    ecs::Archetype<ecs::Position, ecs::Velocity, ecs::Direction> archetype;
     ecs::entity_type entity = archetype.create_entity(ecs::Position{0, 0}, ecs::Velocity{1, 2});
 
     auto [position, velocity] = archetype.query<0, 1>(entity);
     //archetype.delete_entity(entity);
     if (archetype.getDeletedEntities().count(entity) == 0) {
         std::cout << "Entity: " << entity << " position: " << position.x << ", " << position.y << std::endl;
-        std::cout << "Entity: " << entity << " position: " << velocity.x << ", " << velocity.y << std::endl;
+        std::cout << "Entity: " << entity << " velocity: " << velocity.x << ", " << velocity.y << std::endl;
+        auto [position, velocity, direction] = archetype.query<0, 1, 2>(entity);
+        archetype.insert_component(entity, ecs::Direction{3, 3});
+        
+        std::cout << "Entity: " << entity << " direction: " << direction.x << ", " << direction.y << std::endl;
     } else {
         std::cout << "The entity "<< entity << " is deleted" << std::endl;
     }
-
     return 0;
-}
+} */
 
-int main() {
+/* int main() {
     ecs::SparseMap<int> sm;
 
     sm.insert(5, 10);

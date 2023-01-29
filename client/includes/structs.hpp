@@ -13,28 +13,8 @@
 typedef struct {
     Vector3 position;
     float scale;
+    Color color;
 } Particle;
-
-typedef struct {
-    Vector3 position;
-    Vector3 velocity;
-    float scale;
-    int lightIndex;
-    std::shared_ptr<Light> light;
-} Bullet;
-
-typedef struct {
-    Vector3 position;
-    Vector3 rotation;
-    Vector3 rotationGoal;
-    float scale;
-    ModelAnimation *animations;
-    unsigned int animationCount;
-    int currentAnimation;
-    int currentFrame;
-    Model model;
-    std::vector<Texture2D *> textures;
-} MyObject;
 
 typedef struct {
     Texture2D texture;
@@ -50,27 +30,8 @@ typedef struct {
 } MyMusic;
 
 typedef struct {
-    MyTexture *texture;
-    Vector2 position;
-    int totalFrames;
-    int currentFrame;
-    int columns;
-    int rows;
-    int width;
-    int height;
-    float rotation;
-} Particle2D;
-
-typedef struct {
-    Rectangle bounds;
-    float value;
-    float minValue;
-    float maxValue;
-    bool dragging;
-    bool enabled;
-    Color baseColor;
-    Color selectedColor;
-    Color disabledColor;
-} Slider;
+    Sound sound;
+    float volume;
+} MySound;
 
 #endif // RTYPE_STRUCTS_HPP
