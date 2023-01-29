@@ -23,6 +23,9 @@ endif()
 # Default client
 include_directories(includes)
 add_executable(${CLIENT}
+    src/id_generator.cpp
+    src/UdpClient.cpp
+    src/UdpRequest.cpp
     src/main.cpp)
 # Link library
 target_link_libraries(${CLIENT} raylib)
