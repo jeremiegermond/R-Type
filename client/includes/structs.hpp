@@ -29,4 +29,9 @@ typedef struct {
     Music music;
 } MyMusic;
 
+typedef struct {
+    Sound sound;
+    float volume;
+} MySound;
+
 #endif // RTYPE_STRUCTS_HPP

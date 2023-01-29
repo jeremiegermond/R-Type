@@ -7,17 +7,16 @@
 
 #include "slider.hpp"
 
-Slider::Slider(std::string name, Rectangle bounds, float *value, float minValue, float maxValue) {
+Slider::Slider(const std::string &name, Rectangle bounds, float *value, float minValue, float maxValue, bool enabled) {
     _name = name;
     _bounds = bounds;
     _value = value;
     _minValue = minValue;
     _maxValue = maxValue;
     _dragging = false;
-    _enabled = true;
+    _enabled = enabled;
     _baseColor = Fade(LIGHTGRAY, .6);
     _selectedColor = Fade(LIGHTGRAY, .9);
-    _disabledColor = Fade(LIGHTGRAY, .3);
 }
 
 bool Slider::UpdateSlider() {
@@ -31,10 +30,15 @@ bool Slider::UpdateSlider() {
         if (mouseWheelMove != 0) {
             *_value += mouseWheelMove * (_maxValue - _minValue) / 100;
             *_value = Clamp(*_value, _minValue, _maxValue);
+            if (_callback)
+                _callback(_value);
         }
     }
-    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
+    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
         _dragging = false;
+        if (_callback)
+            _callback(_value);
+    }
     if (_dragging) {
         // set value between _minValue and _maxValue
         float x = GetMousePosition().x - _bounds.x;
@@ -47,8 +51,8 @@ bool Slider::UpdateSlider() {
 void Slider::Draw() {
     Color color = _baseColor;
     if (!_enabled)
-        color = _disabledColor;
-    else if (_dragging)
+        return;
+    if (_dragging)
         color = _selectedColor;
     // Draw slider base
     DrawRectangleRec(_bounds, color);

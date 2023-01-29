@@ -285,7 +285,8 @@
     },
     {
       "name": "enemy_bomb",
-      "path": "assets/sounds/ships/8006_enemy_bomb.ogg"
+      "path": "assets/sounds/ships/8006_enemy_bomb.ogg",
+      "volume": 2
     }
   ],
   "sprites": [

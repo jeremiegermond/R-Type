@@ -43,14 +43,30 @@ int main(int ac, char *av[]) {
     // load engine
     Engine engine("assets/assets.json");
 
+    // disable esc closing the window
+    SetExitKey(0);
+
     // Play menu music
     engine.playMusic("02-Main_Menu");
 
-    // ambient light
-    // float lightPos[4] = {.1, .1, .1, 1};
-    // int ambientLoc = GetShaderLocation(shaders["lighting"], "ambient");
-    // SetShaderValue(shaders["lighting"], ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
-
+    // Pause menu buttons / slider
+    bool pause = false;
+    bool quit = false;
+    engine.addButton("resume_button", "Resume", Rectangle{float(screenWidth / 2 - 100), 200, 200, 50}, pause);
+    engine.addButton("quit_button", "Quit", Rectangle{float(screenWidth / 2 - 100), 300, 200, 50}, pause);
+    engine.getButton("quit_button")->SetCallback([&engine, &quit]() {
+        engine.playSound("decision");
+        SetWindowTitle("Bye bye !");
+        quit = true;
+    });
+    engine.getButton("resume_button")->SetCallback([&pause, &engine]() {
+        pause = !pause;
+        engine.setPause(pause);
+    });
+    engine.addSlider("music_volume", Rectangle{float(screenWidth - 200), 100, 100, 20}, engine.getMusicVolume(), 0, 2, pause);
+    engine.addSlider("sound_volume", Rectangle{float(screenWidth - 200), 150, 100, 20}, engine.getSoundVolume(), 0, 2, pause);
+    engine.getSlider("music_volume")->SetCallback([&engine](const float *value) { engine.setMusicVolume(*value); });
+    engine.getSlider("sound_volume")->SetCallback([&engine](const float *value) { engine.setSoundVolume(*value); });
     engine.addLight(Vector3Zero());
 
     engine.getObject("corridor")->SetVelocity(Vector3{-speed, 0, 0});
@@ -71,7 +87,7 @@ int main(int ac, char *av[]) {
     Rectangle bounds = {float(screenWidth - 200), 100, 100, 20};
     bool sliderSelected;
 
-    while (!WindowShouldClose()) {
+    while (!quit) {
         Vector3 corridorPos = engine.getObject("corridor")->GetPosition();
         if (corridorPos.x < -tp) {
             corridorPos.x = 0;
@@ -87,9 +103,24 @@ int main(int ac, char *av[]) {
         // Update sliders
         sliderSelected = engine.updateSliders();
 
+        // Update pause menu
+        if (IsKeyPressed(KEY_ESCAPE)) {
+            pause = !pause;
+            engine.setPause(pause);
+        }
+        // Update buttons
+        engine.updateButton("resume_button");
+        engine.updateButton("quit_button");
+
         // Left click to raycast on the scene
-        if (!sliderSelected && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            engine.clearSliders();
+        if (!sliderSelected && !pause && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            engine.clearSlider("posX");
+            engine.clearSlider("posY");
+            engine.clearSlider("posZ");
+            engine.clearSlider("rotX");
+            engine.clearSlider("rotY");
+            engine.clearSlider("rotZ");
+            engine.clearSlider("scale");
             mouse = GetMousePosition();
             ray = GetMouseRay(mouse, *engine.getCamera());
             // cycle through all objects of the scene
@@ -138,12 +169,10 @@ int main(int ac, char *av[]) {
             selectedMyObject->SetScale(selectedMyObjectScale);
         }
 
-        moveSpaceship(engine.getObject("spaceship1"));
-        if (IsKeyPressed(KEY_P)) {
-            std::cout << "Some debug infos:" << std::endl;
-        }
+        if (!pause)
+            moveSpaceship(engine.getObject("spaceship1"));
 
-        if (IsKeyPressed(KEY_SPACE)) {
+        if (!pause && IsKeyPressed(KEY_SPACE)) {
             Vector3 bulletVelocity = Vector3Zero();
             bulletVelocity.x = bulletSpeed;
             bulletVelocity.y = -engine.getObject("spaceship1")->GetRotation().x * bulletSpeed * .5f;
@@ -157,10 +186,14 @@ int main(int ac, char *av[]) {
         // Update music
         engine.updateMusic();
 
-        // Update bullets / particles
-        engine.updateParticles2D();
-        engine.updateParticles();
-        engine.updateBullets();
+        if (!pause) {
+            // Update bullets / particles
+            engine.updateParticles2D();
+            engine.updateParticles();
+            engine.updateBullets();
+            // update GameObjects
+            engine.updateObjects();
+        }
 
         engine.getLight(0)->setPosition(Vector3Add(engine.getObject("spaceship1")->GetPosition(), {0, 2, 10}));
         engine.updateLights();
@@ -168,9 +201,6 @@ int main(int ac, char *av[]) {
         // update the light shader with the camera view position
         engine.updateShaderLocView("lighting");
         engine.updateShaderLocView("normal");
-
-        // update GameObjects
-        engine.updateObjects();
 
         // Draw normal for outline shader
         BeginDrawing();
@@ -237,13 +267,15 @@ int main(int ac, char *av[]) {
         }
         // draw sliders
         engine.drawSliders();
+        // draw buttons
+        engine.drawButtons();
         EndDrawing();
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
     UnloadRenderTexture(target);
 
     CloseAudioDevice();
     CloseWindow();
-
     return 0;
 }
 

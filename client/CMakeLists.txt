@@ -31,7 +31,9 @@ add_executable(${CLIENT}
     src/game-object.cpp
     src/game.cpp
     src/engine.cpp
-    src/bullet.cpp src/particle2d.cpp)
+    src/bullet.cpp
+    src/particle2d.cpp
+    src/button.cpp)
 # Link library
 target_link_libraries(${CLIENT} PRIVATE raylib nlohmann_json::nlohmann_json)
 #add_dependencies(${CLIENT} renderer)

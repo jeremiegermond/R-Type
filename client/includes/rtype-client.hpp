@@ -10,6 +10,7 @@
 #define MAX_LIGHTS 100
 
 #include "bullet.hpp"
+#include "button.hpp"
 #include "deps.hpp"
 #include "game-object.hpp"
 #include "light.hpp"

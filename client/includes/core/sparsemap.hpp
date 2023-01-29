@@ -13,7 +13,8 @@
 
 namespace ecs {
 
-template <typename Component> class SparseMap {
+template <typename Component>
+class SparseMap {
   private:
     static const size_t BLOCK_SIZE = 16;
     struct Block {
