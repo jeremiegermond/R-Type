@@ -8,6 +8,7 @@
 #ifndef RTYPE_DEPS_HPP
 #define RTYPE_DEPS_HPP
 
+#include "nlohmann/json.hpp"
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -16,7 +17,6 @@
 #include <map>
 #include <memory>
 #include <mutex>
-#include <nlohmann/json.hpp>
 #include <set>
 #include <thread>
 #include <unordered_map>
