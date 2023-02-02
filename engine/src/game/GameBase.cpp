@@ -11,29 +11,29 @@
 
 namespace Engine {
 
-GameBase::GameBase() = default;
+    GameBase::GameBase() = default;
 
-GameBase::~GameBase() = default;
+    GameBase::~GameBase() = default;
 
-void GameBase::Init() {
-    InitWindow(800, 450, "R-Type");
-    InitGame();
-    RegisterComponents();
-}
-
-void GameBase::Update() {
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-        UpdateGame();
-        EndDrawing();
+    void GameBase::Init() {
+        InitWindow(800, 450, "R-Type");
+        InitGame();
+        RegisterComponents();
     }
-}
 
-void GameBase::Destroy() {
-    DestroyGame();
-    CloseWindow();
-}
+    void GameBase::Update() {
+        while (!WindowShouldClose()) {
+            BeginDrawing();
+            ClearBackground(BLACK);
+            UpdateGame();
+            EndDrawing();
+        }
+    }
 
-void GameBase::RegisterComponents() { RegisterComponentsGame(); }
-} // namespace Engine
+    void GameBase::Destroy() {
+        DestroyGame();
+        CloseWindow();
+    }
+
+    void GameBase::RegisterComponents() { RegisterComponentsGame(); }
+}

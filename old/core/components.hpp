@@ -7,16 +7,16 @@
 
 namespace ecs {
 
-struct Position {
-    float x, y;
-};
+    struct Position {
+            float x, y;
+    };
 
-struct Velocity {
-    float x, y;
-};
+    struct Velocity {
+            float x, y;
+    };
 
-struct Direction {
-    float x, y;
-};
+    struct Direction {
+            float x, y;
+    };
 
-} // namespace ecs
+}

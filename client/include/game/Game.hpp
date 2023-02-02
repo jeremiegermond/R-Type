@@ -12,15 +12,15 @@
 #include "manager/ECSManager.hpp"
 
 class Game : public Engine::GameBase {
-  public:
-    Game();
+    public:
+        Game();
 
-    void InitGame() override;
-    void UpdateGame() override;
-    void DestroyGame() override;
+        void InitGame() override;
+        void UpdateGame() override;
+        void DestroyGame() override;
 
-    void RegisterComponentsGame() override;
+        void RegisterComponentsGame() override;
 
-  private:
-    ECSManager *_ecsManager;
+    private:
+        ECSManager *_ecsManager;
 };

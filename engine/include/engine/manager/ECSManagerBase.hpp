@@ -7,50 +7,53 @@
 
 #pragma once
 
-#include "engine/components/CTransform.hpp"
-#include "engine/components/Sprite.hpp"
+#include "engine/graphics/Raylib.hpp"
 #include "engine/manager/Archetype.hpp"
 #include "engine/utils/Defines.hpp"
 
+#include "engine/components/CMovement.hpp"
+#include "engine/components/CPosition.hpp"
+#include "engine/components/CSprite.hpp"
+
 namespace Engine {
-class ECSManagerBase {
-  public:
-    ECSManagerBase();
+    class ECSManagerBase {
+        public:
+            ECSManagerBase();
 
-    virtual ~ECSManagerBase();
+            virtual ~ECSManagerBase();
 
-    /**
-     * @brief Init ECSManagerBase Archetypes
-     */
-    void Init();
+            /**
+             * @brief Init ECSManagerBase Archetypes
+             */
+            void Init();
 
-    /**
-     * @brief Update the ECSManagerBase
-     */
-    void Update();
+            /**
+             * @brief Update the ECSManagerBase
+             */
+            void Update();
 
-    /**
-     * @brief Destroy the ECSManagerBase
-     */
-    void Destroy();
+            /**
+             * @brief Destroy the ECSManagerBase
+             */
+            void Destroy();
 
-  private:
-    Archetype<float, int> *_testManager;
+        private:
+            Archetype<float, int> *_testManager;
 
-  protected:
-    /**
-     * @brief Init game Archetypes
-     */
-    virtual void InitGame() = 0;
+        protected:
+            /**
+             * @brief Init game Archetypes
+             */
+            virtual void InitGame() = 0;
 
-    /**
-     * @brief Update game Archetypes
-     */
-    virtual void UpdateGame() = 0;
+            /**
+             * @brief Update game Archetypes
+             */
+            virtual void UpdateGame() = 0;
 
-    /**
-     * @brief Destroy game Archetypes
-     */
-    virtual void DestroyGame() = 0;
-};
-} // namespace Engine
+            /**
+             * @brief Destroy game Archetypes
+             */
+            virtual void DestroyGame() = 0;
+    };
+}

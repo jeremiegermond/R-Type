@@ -7,31 +7,32 @@
 
 #include "manager/ECSManager.hpp"
 
-ECSManager::ECSManager() : _spriteManager(nullptr) {}
+ECSManager::ECSManager() : _spriteFactory(nullptr) {}
 
 void ECSManager::InitGame() {
-    _spriteManager = new Engine::Archetype<Engine::CTransform, Engine::Sprite>();
-    // auto transform = Engine::CTransform();
-    auto entity = _spriteManager->CreateEntity(Engine::CTransform());
-    // set transform position
-    auto transform = _spriteManager->Query<Engine::CTransform>(entity);
-    transform.Init();
-    Vector3 position;
-    position.x = 100;
-    position.y = 100;
-    position.z = 0;
-    // Engine::SetPositionMessage message(position);
-    ////transform.SendMessage(Engine::SetPositionMessage(position));
-    // transform.SendMessage(message);
-    //// get transform position
-    // Vector3 position2;
-    // transform.SendMessage(Engine::GetPositionMessage(position2));
-    // std::cout << "position2.x = " << position2.x << std::endl;
-    // std::cout << "position2.y = " << position2.y << std::endl;
-    // std::cout << "position2.z = " << position2.z << std::endl;
-    // transform.SetPosition(static_cast<Engine::SetPositionMessage &>(Engine::GetPositionMessage(position)));
+    _spriteFactory = new Engine::Archetype<Engine::CSprite, Engine::CPosition, Engine::CMovement>();
+    auto entity = _spriteFactory->CreateEntity(Engine::CSprite("assets/sprites/boss.png"));
+    _spriteMap["ship"] = entity;
+    _spriteFactory->AddComponent(entity, Engine::CPosition());
+    _spriteFactory->AddComponent(entity, Engine::CMovement());
+    // pointer to CPosition component
+    auto position = std::make_shared<Engine::CPosition>(_spriteFactory->GetComponent<Engine::CPosition>(entity));
+    _spriteFactory->GetComponent<Engine::CMovement>(entity).SetPosition(position);
+    _spriteFactory->GetComponent<Engine::CMovement>(entity).SetSpeed(Vector3{10, 10, 10});
+    _spriteFactory->GetComponent<Engine::CMovement>(entity).SetActive(true);
 }
 
-void ECSManager::UpdateGame() {}
+void ECSManager::UpdateGame() {
+    // Draw cSprite
+    auto movement = _spriteFactory->GetComponent<Engine::CMovement>(_spriteMap["ship"]);
+    movement.Update();
+    auto [cSprite, cPosition] = _spriteFactory->GetComponent<Engine::CSprite, Engine::CPosition>(_spriteMap["ship"]);
+    cPosition.AddPosition(movement.GetSpeed());
+    auto position = cPosition.GetPosition();
+    std::cout << "ECSManager::UpdateGame: " << position.x << " " << position.y << std::endl;
+    if (cSprite.GetTexture() == nullptr)
+        return;
+    DrawTexture(*cSprite.GetTexture(), position.x, position.y, WHITE);
+}
 
-void ECSManager::DestroyGame() { DELETE_PTR(_spriteManager); }
+void ECSManager::DestroyGame() { DELETE_PTR(_spriteFactory); }
