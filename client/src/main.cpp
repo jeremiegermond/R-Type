@@ -2,14 +2,77 @@
 ** EPITECH PROJECT, 2023
 ** rtype
 ** File description:
-**
+** main.cpp by thibb1
 */
 
-#include "core/archetype.hpp"
-#include "core/components.hpp"
 #include "rtype-client.hpp"
 
+// float speed = 1.0f;
+// if (IsKeyPressed(KEY_RIGHT)) {
+// cubePosition->x += speed;
+// client.request((std::string)"right:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
+// }
+// if (IsKeyPressed(KEY_LEFT)) {
+// cubePosition->x -= speed;
+// client.request((std::string)"left:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
+// }
+// if (IsKeyPressed(KEY_UP)) {
+// cubePosition->y += speed;
+// client.request((std::string)"up:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
+// }
+// if (IsKeyPressed(KEY_DOWN)) {
+// cubePosition->y -= speed;
+// client.request((std::string)"down:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
+// }
+
+// client.show_requests();
+// int cnt = 0;
+//     //DrawText("Pending calls :", 0, cnt, 15, LIGHTGRAY);
+//     /*for (auto it: client.pending) {
+//         cnt += 20;
+//         std::string str = std::to_string(it.first) + ":" + std::to_string(it.second->get_state());
+//         std::cout << str << std::endl;
+//         DrawText(str.c_str(), 0, cnt, 15, LIGHTGRAY);
+//     }*/
+// for (auto it: client.get_players()) {
+// Vector3 pos = {it->get_pos()[0], it->get_pos()[1], 0};
+// DrawCube(pos, 1, 1, 1, BLUE);
+// }
+
+// void process_requests(UdpClient& client, Vector3& cubePosition) {
+//     std::vector<UdpRequest*> requests = client.get_requests();
+//     for (auto it: requests) {
+//         if (it->get_state() == 1) {
+//             std::cout << "Request " << it->get_id() << " is done" << std::endl;
+//             std::cout << "Response: " << it->get_response() << std::endl;
+//             std::vector<std::string> response = split(it->get_response(), ':');
+//             if (response[1] == "KO")
+//                 replace_player(cubePosition, response[2], response[3]);
+//             client.pop_request(it->get_id());
+//             delete it;
+//         }
+//     }
+// }
+
+// if (!client.alive()) {
+//  if (client.disconnected() && client.connect("127.0.0.1", 12345) == false)
+//                 break;
+
 int main(int ac, char *av[]) {
+    if (ac != 3)
+        std::cout << "Usage: ./client [ip] [port]" << std::endl;
+
+    // Initialization
+    std::string ip = av[1];
+    int port = std::stoi(av[2]);
+
+    if (port < 0 || port > 65535) {
+        std::cout << "Invalid port" << std::endl;
+        return 84;
+    }
+    if (ip == "localhost")
+        ip = "127.0.0.1";
+
     int screenHeight = 600;
     int screenWidth = 1070;
 
@@ -36,12 +99,19 @@ int main(int ac, char *av[]) {
 
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawText("Loading...", screenWidth / 2, screenHeight / 2, 24, WHITE);
+    DrawText("Connecting to server...", screenWidth / 2, screenHeight / 2, 24, WHITE);
     EndDrawing();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // load engine
-    Engine engine("assets/assets.json");
+    Engine engine;
+
+    // check connection to server
+    if (engine.getUdpClient()->disconnected() && !engine.getUdpClient()->connect(ip, port))
+        return 84;
+
+    // load assets
+    engine.loadAssets("assets/assets.json");
 
     // disable esc closing the window
     SetExitKey(0);
@@ -87,14 +157,14 @@ int main(int ac, char *av[]) {
     Rectangle bounds = {float(screenWidth - 200), 100, 100, 20};
     bool sliderSelected;
 
-    while (!quit) {
+    while (!quit && !WindowShouldClose()) {
         Vector3 corridorPos = engine.getObject("corridor")->GetPosition();
         if (corridorPos.x < -tp) {
             corridorPos.x = 0;
             engine.getObject("corridor")->SetPosition(corridorPos);
         }
 
-        // update sliders data
+        // update sliders _data
         if (selectedMyObject != nullptr) {
             selectedMyObjectPos = selectedMyObject->GetPosition();
             selectedMyObjectRot = selectedMyObject->GetRotationGoal();
@@ -170,7 +240,7 @@ int main(int ac, char *av[]) {
         }
 
         if (!pause)
-            moveSpaceship(engine.getObject("spaceship1"));
+            moveSpaceship(engine.getObject("spaceship1"), engine.getUdpClient());
 
         if (!pause && IsKeyPressed(KEY_SPACE)) {
             Vector3 bulletVelocity = Vector3Zero();
@@ -202,6 +272,12 @@ int main(int ac, char *av[]) {
         engine.updateShaderLocView("lighting");
         engine.updateShaderLocView("normal");
 
+        // update requests
+        engine.updateUdpClient();
+
+        // show requests
+        engine.getUdpClient()->show_requests();
+
         // Draw normal for outline shader
         BeginDrawing();
         BeginTextureMode(target);
@@ -209,6 +285,11 @@ int main(int ac, char *av[]) {
         BeginMode3D(*engine.getCamera());
         engine.setShaderObject("spaceship1", "normal");
         engine.setShaderObject("e1116", "normal");
+        for (auto p : engine.getUdpClient()->get_players()) {
+            std::string id = std::to_string(p->get_id());
+            engine.setShaderObject(id, "lighting");
+            engine.drawObject(id);
+        }
         engine.drawObject("spaceship1");
         engine.drawObject("e1116");
         EndMode3D();
@@ -220,6 +301,9 @@ int main(int ac, char *av[]) {
         // set shaders
         engine.setShaderObject("spaceship1", "lighting");
         engine.setShaderObject("e1116", "lighting");
+        for (auto p : engine.getUdpClient()->get_players()) {
+            engine.setShaderObject(std::to_string(p->get_id()), "lighting");
+        }
 
         // draw GameObjects
         engine.drawObjects();
@@ -278,40 +362,3 @@ int main(int ac, char *av[]) {
     CloseWindow();
     return 0;
 }
-
-/* int main() {
-    ecs::Archetype<ecs::Position, ecs::Velocity> archetype;
-    ecs::entity_type entity = archetype.create_entity(ecs::Position{0, 0}, ecs::Velocity{1, 2});
-
-    auto [position, velocity] = archetype.query<0, 1>(entity);
-    //archetype.delete_entity(entity);
-    if (archetype.getDeletedEntities().count(entity) == 0) {
-        std::cout << "Entity: " << entity << " position: " << position.x << ", " << position.y << std::endl;
-        std::cout << "Entity: " << entity << " position: " << velocity.x << ", " << velocity.y << std::endl;
-    } else {
-        std::cout << "The entity "<< entity << " is deleted" << std::endl;
-    }
-    return 0;
-}
-
-int main() {
-    ecs::SparseMap<int> sm;
-
-    sm.insert(5, 10);
-    sm.insert(8, 20);
-    sm.insert(1, 30);
-    sm.insert(3, 40);
-
-    std::cout << sm[5] << std::endl; // Outputs 10
-    std::cout << sm[8] << std::endl; // Outputs 20
-    std::cout << sm[1] << std::endl; // Outputs 30
-    std::cout << sm[3] << std::endl; // Outputs 40
-
-    sm.erase(5);
-    std::cout << sm[5] << std::endl; // Outputs 0
-
-    sm.insert(5, 20);
-    std::cout << sm[5] << std::endl; // Outputs 20
-
-    return 0;
-} */

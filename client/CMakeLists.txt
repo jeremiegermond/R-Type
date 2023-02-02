@@ -24,6 +24,7 @@ endif()
 
 # Default client
 include_directories(includes)
+include_directories(network)
 add_executable(${CLIENT}
     src/main.cpp
     src/box.cpp
@@ -33,7 +34,8 @@ add_executable(${CLIENT}
     src/engine.cpp
     src/bullet.cpp
     src/particle2d.cpp
-    src/button.cpp)
+    src/button.cpp
+    src/Network/UdpClient.cpp src/utils.cpp)
 # Link library
 target_link_libraries(${CLIENT} PRIVATE raylib nlohmann_json::nlohmann_json)
 #add_dependencies(${CLIENT} renderer)

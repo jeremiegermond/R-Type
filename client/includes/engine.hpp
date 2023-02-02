@@ -31,8 +31,10 @@ class Engine {
     Model _companionCube{};
     float _musicVolume;
     float _soundVolume;
+    UdpClient _udpClient;
 
   public:
+    Engine();
     explicit Engine(const std::string &assetsPath);
 
     ~Engine();
@@ -59,6 +61,7 @@ class Engine {
     void updateShaderLocView(const std::string &shaderName);
     void updateParticles2D();
     void updateBullets();
+    void updateUdpClient();
 
     void drawObject(const std::string &name, Vector3 offset = Vector3Zero());
     void drawObjects();
@@ -87,6 +90,7 @@ class Engine {
     Camera3D *getCamera();
     Button *getButton(const std::string &name);
     Slider *getSlider(const std::string &name);
+    UdpClient *getUdpClient();
 
     void setShaderObject(const std::string &name, const std::string &shaderName);
     void setMusicVolume(float volume);

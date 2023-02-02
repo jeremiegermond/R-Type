@@ -7,7 +7,7 @@
 
 #include "engine.hpp"
 
-Engine::Engine(const std::string &assetsPath) {
+Engine::Engine() {
     _camera.position = {0, 0, 30};           // Camera position
     _camera.target = Vector3Zero();          // Camera looking at point
     _camera.up = {0, 1, 0};                  // Camera up vector (rotation towards target)
@@ -18,11 +18,12 @@ Engine::Engine(const std::string &assetsPath) {
     _musicSheduled.first = 0;
     _musicVolume = 1;
     _soundVolume = 1;
-    loadAssets(assetsPath);
     for (int i = 0; i < MAX_LIGHTS; i++) {
         _availableLights.insert(i);
     }
 }
+
+Engine::Engine(const std::string &assetsPath) : Engine() { loadAssets(assetsPath); }
 
 Engine::~Engine() {
     SetTraceLogLevel(LOG_INFO);
@@ -32,6 +33,11 @@ Engine::~Engine() {
 }
 
 void Engine::loadAssets(const std::string &assetsPath) {
+    // Show loading screen
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawText("Loading...", 1070 / 2, 600 / 2, 24, WHITE);
+    EndDrawing();
     // open json file
     std::ifstream f(assetsPath);
     json data = json::parse(f);
@@ -347,6 +353,41 @@ void Engine::updateBullets() {
     }
 }
 
+void Engine::updateUdpClient() {
+    if (_udpClient.alive()) {
+        std::vector<UdpRequest *> requests = _udpClient.get_requests();
+        for (auto it : requests) {
+            if (it->get_state() == 1) {
+                std::cout << "Request " << it->get_id() << " is done" << std::endl;
+                std::cout << "Response: " << it->get_response() << std::endl;
+                std::vector<std::string> response = split(it->get_response(), ':');
+                if (response[1] == "KO") {
+                    GameObject *ship = _objects["spaceship1"];
+                    Vector3 newPos = ship->GetPosition();
+                    newPos.x = std::stof(response[2]);
+                    newPos.y = std::stof(response[3]);
+                    ship->SetPosition(newPos);
+                }
+                _udpClient.pop_request(it->get_id());
+                delete it;
+            }
+        }
+        auto otherShips = _udpClient.get_players();
+        for (auto player : otherShips) {
+            auto pos = player->get_pos();
+            auto id = player->get_id();
+            auto ship = getObject(std::to_string(id));
+            if (ship == nullptr) {
+                ship = new GameObject("spaceship1");
+                ship->SetPosition(Vector3{pos[0], pos[1], 0});
+                _objects[std::to_string(id)] = ship;
+            } else {
+                ship->SetPosition(Vector3{pos[0], pos[1], 0});
+            }
+        }
+    }
+}
+
 void Engine::drawObject(const std::string &name, Vector3 offset) {
     if (_objects.find(name) != _objects.end() && isInScreen(_objects[name]->GetPosition())) {
         _objects[name]->Draw(offset);
@@ -442,7 +483,7 @@ void Engine::addSlider(const std::string &name, Rectangle bounds, float *value, 
 void Engine::addButton(const std::string &name, const std::string &text, Rectangle bounds, bool enabled) {
     if (_buttons.find(name) != _buttons.end())
         return;
-    _buttons[name] = new Button(text, bounds, true);
+    _buttons[name] = new Button(text, bounds, enabled);
 }
 
 int Engine::addLight(Vector3 position, float intensity, Color color) {
@@ -506,6 +547,8 @@ Slider *Engine::getSlider(const std::string &name) {
     }
     return nullptr;
 }
+
+UdpClient *Engine::getUdpClient() { return &_udpClient; }
 
 void Engine::setShaderObject(const std::string &name, const std::string &shader) {
     if (_objects.find(name) != _objects.end() && _shaders.find(shader) != _shaders.end()) {
