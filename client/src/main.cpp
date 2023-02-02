@@ -7,57 +7,6 @@
 
 #include "rtype-client.hpp"
 
-// float speed = 1.0f;
-// if (IsKeyPressed(KEY_RIGHT)) {
-// cubePosition->x += speed;
-// client.request((std::string)"right:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
-// }
-// if (IsKeyPressed(KEY_LEFT)) {
-// cubePosition->x -= speed;
-// client.request((std::string)"left:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
-// }
-// if (IsKeyPressed(KEY_UP)) {
-// cubePosition->y += speed;
-// client.request((std::string)"up:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
-// }
-// if (IsKeyPressed(KEY_DOWN)) {
-// cubePosition->y -= speed;
-// client.request((std::string)"down:" + std::to_string(cubePosition->x) + ":" + std::to_string(cubePosition->y));
-// }
-
-// client.show_requests();
-// int cnt = 0;
-//     //DrawText("Pending calls :", 0, cnt, 15, LIGHTGRAY);
-//     /*for (auto it: client.pending) {
-//         cnt += 20;
-//         std::string str = std::to_string(it.first) + ":" + std::to_string(it.second->get_state());
-//         std::cout << str << std::endl;
-//         DrawText(str.c_str(), 0, cnt, 15, LIGHTGRAY);
-//     }*/
-// for (auto it: client.get_players()) {
-// Vector3 pos = {it->get_pos()[0], it->get_pos()[1], 0};
-// DrawCube(pos, 1, 1, 1, BLUE);
-// }
-
-// void process_requests(UdpClient& client, Vector3& cubePosition) {
-//     std::vector<UdpRequest*> requests = client.get_requests();
-//     for (auto it: requests) {
-//         if (it->get_state() == 1) {
-//             std::cout << "Request " << it->get_id() << " is done" << std::endl;
-//             std::cout << "Response: " << it->get_response() << std::endl;
-//             std::vector<std::string> response = split(it->get_response(), ':');
-//             if (response[1] == "KO")
-//                 replace_player(cubePosition, response[2], response[3]);
-//             client.pop_request(it->get_id());
-//             delete it;
-//         }
-//     }
-// }
-
-// if (!client.alive()) {
-//  if (client.disconnected() && client.connect("127.0.0.1", 12345) == false)
-//                 break;
-
 int main(int ac, char *av[]) {
     if (ac != 3)
         std::cout << "Usage: ./client [ip] [port]" << std::endl;
@@ -276,7 +225,7 @@ int main(int ac, char *av[]) {
         engine.updateUdpClient();
 
         // show requests
-        engine.getUdpClient()->show_requests();
+        // engine.getUdpClient()->show_requests();
 
         // Draw normal for outline shader
         BeginDrawing();
@@ -286,7 +235,7 @@ int main(int ac, char *av[]) {
         engine.setShaderObject("spaceship1", "normal");
         engine.setShaderObject("e1116", "normal");
         for (auto p : engine.getUdpClient()->get_players()) {
-            std::string id = std::to_string(p->get_id());
+            std::string id = std::to_string(p->getId());
             engine.setShaderObject(id, "lighting");
             engine.drawObject(id);
         }
@@ -302,7 +251,7 @@ int main(int ac, char *av[]) {
         engine.setShaderObject("spaceship1", "lighting");
         engine.setShaderObject("e1116", "lighting");
         for (auto p : engine.getUdpClient()->get_players()) {
-            engine.setShaderObject(std::to_string(p->get_id()), "lighting");
+            engine.setShaderObject(std::to_string(p->getId()), "lighting");
         }
 
         // draw GameObjects

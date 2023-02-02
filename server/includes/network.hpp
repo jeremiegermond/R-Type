@@ -22,28 +22,26 @@
 using asio::ip::udp;
 using namespace std::chrono_literals;
 
+std::vector<std::string> split(const std::string &s, char delim);
+std::string floatToString(float number, int precision = 1);
+
 class Player {
   private:
-    std::array<float, 2> pos;
-    unsigned int id;
-    int hp;
+    std::array<float, 2> _position;
+    unsigned int _id;
+    int _hp;
 
   public:
-    Player(unsigned int id) {
-        this->id = id;
-        pos.fill(0);
-        hp = 100;
+    Player(unsigned int id) : _id(id), _position({0, 0}), _hp(100) {}
+    Player(int id, std::array<float, 2> position, int hp) : Player(id) {
+        _position = position;
+        _hp = hp;
     }
-    Player(int id, std::array<float, 2> pos, int hp) {
-        this->id = id;
-        this->pos = pos;
-        this->hp = hp;
-    }
-    std::array<float, 2> get_pos() { return pos; }
-    int get_hp() { return hp; }
-    int get_id() { return id; }
-    void set_pos(std::array<float, 2> pos) { this->pos = pos; }
-    void set_hp(int hp) { this->hp = hp; }
+    std::array<float, 2> getPos() { return _position; }
+    int getHp() const { return _hp; }
+    int getId() const { return _id; }
+    void setPos(std::array<float, 2> pos) { _position = pos; }
+    void setHp(int hp) { _hp = hp; }
 };
 
 class Session {
@@ -53,31 +51,31 @@ class Session {
 
   public:
     Session() {}
-    Session(unsigned int id) { _player = new Player(id, {0, 0}, 100); }
-    Session(Player *player) { this->_player = player; }
-    unsigned int get_player_id() { return _player->get_id(); }
-    Player *get_player() { return _player; }
-    Player *get_player(unsigned int id) {
-        for (int i = 0; i < _players.size(); i++) {
-            if (_players[i]->get_id() == id)
-                return _players[i];
+    explicit Session(int id) { _player = new Player(id, {0, 0}, 100); }
+    explicit Session(Player *player) { _player = player; }
+    int getPlayerId() { return _player->getId(); }
+    Player *getPlayer() { return _player; }
+    Player *getPlayer(int id) {
+        for (auto &player : _players) {
+            if (player->getId() == id)
+                return player;
         }
         return nullptr;
     }
-    std::vector<Player *> get_players() { return _players; }
-    void add_player(Player *player) { _players.push_back(player); }
-    void remove_player(int id) {
+    std::vector<Player *> getPlayers() { return _players; }
+    void addPlayer(Player *player) { _players.push_back(player); }
+    void removePlayer(int id) {
         for (int i = 0; i < _players.size(); i++) {
-            if (_players[i]->get_id() == id) {
+            if (_players[i]->getId() == id) {
                 _players.erase(_players.begin() + i);
                 break;
             }
         }
     }
-    void update_player_pos(int id, std::array<float, 2> pos) {
-        for (int i = 0; i < _players.size(); i++) {
-            if (_players[i]->get_id() == id) {
-                _players[i]->set_pos(pos);
+    void updatePlayerPos(int id, std::array<float, 2> pos) {
+        for (auto &player : _players) {
+            if (player->getId() == id) {
+                player->setPos(pos);
                 break;
             }
         }
@@ -101,88 +99,37 @@ class id_generator {
 class UdpRequest {
   private:
     std::string _data;
-    std::string response;
-    unsigned int id;
-    int state = 0; // -1: not processed,  0: pending, 1: response received, 2: timeout
+    std::string _response;
+    unsigned int _id;
+    int _state = 0; // -1: not processed,  0: pending, 1: _response received, 2: timeout
   public:
-    UdpRequest(std::string data, unsigned int id) : _data(std::move(data)), id(id) {}
+    UdpRequest(std::string data, unsigned int id) : _data(std::move(data)), _id(id) {}
     std::string get_data() { return _data; }
-    [[nodiscard]] unsigned int get_id() const { return id; }
-    [[nodiscard]] int get_state() const { return state; }
-    std::string get_response() { return response; }
+    [[nodiscard]] unsigned int get_id() const { return _id; }
+    [[nodiscard]] int get_state() const { return _state; }
+    std::string get_response() { return _response; }
     bool operator==(int num) const {
-        if (id == num) {
+        if (_id == num) {
             return true;
         }
         return false;
     }
     void set_response(std::string data) {
-        response = std::move(data);
-        state = 1;
+        _response = std::move(data);
+        _state = 1;
     }
-    void set_state(int new_state) { state = new_state; }
-};
-
-class UdpClient {
-  private:
-    struct pollfd *pfd;
-    struct sockaddr_in servaddr;
-    socklen_t len;
-    std::thread heartbeat;
-    std::thread listener;
-    std::string server_ip;
-    unsigned short server_port;
-    std::atomic<int> is_alive = -1; // -1: dead, 0: unknown, 1: alive
-    std::atomic<bool> shutdown = false;
-    std::vector<UdpRequest *> requests; // string to send to the server
-    id_generator rid;
-    std::atomic<bool> connected = false;
-    Session *session;
-
-  public:
-    UdpClient();
-    bool connect(const std::string &ip, unsigned short port);
-
-    void request(std::string data);
-
-    void send(std::string data, bool showDebug = false);
-
-    std::vector<UdpRequest *> get_requests();
-
-    void pop_request(unsigned int id);
-
-    void show_requests();
-
-    void loopListener();
-
-    void receive(bool showDebug = false);
-
-    void dispatcher(std::string data);
-
-    bool disconnected();
-
-    void loopHeartbeat();
-
-    bool sendConnect();
-
-    bool sendHeartbeat(bool first_connection = false);
-    bool alive();
-    std::vector<Player *> get_players();
-    ~UdpClient();
+    void setState(int new_state) { _state = new_state; }
 };
 
 class Client {
   private:
     std::array<float, 2> _serverPos;
-    unsigned int id;
+    int _id;
 
   public:
-    Client(uint id) {
-        _serverPos.fill(0);
-        this->id = id;
-    }
-    unsigned int get_id() { return id; }
-    bool move(const std::string &direction, std::array<float, 2> &client_pos) {
+    explicit Client(int id) : _serverPos({0, 0}), _id(id) {}
+    int getId() const { return _id; }
+    bool move(const std::string &direction, std::array<float, 2> &clientPos) {
         if (direction == "right")
             _serverPos[0] += .1;
         if (direction == "left")
@@ -191,16 +138,16 @@ class Client {
             _serverPos[1] += .1;
         if (direction == "down")
             _serverPos[1] -= .1f;
-        std::cout << "_serverPos: " << _serverPos[0] << " " << _serverPos[1] << std::endl;
-        std::cout << "client_pos: " << client_pos[0] << " " << client_pos[1] << std::endl;
-        if (_serverPos[0] != client_pos[0] || _serverPos[1] != client_pos[1])
+        std::cout << "_serverPos: " + floatToString(_serverPos[0]) + ":" + floatToString(_serverPos[1]) << std::endl;
+        std::cout << "clientPos: " + floatToString(clientPos[0]) + ":" + floatToString(clientPos[1]) << std::endl;
+        if (floatToString(_serverPos[0]) != floatToString(clientPos[0]) || floatToString(_serverPos[1]) != floatToString(clientPos[1]))
             return false;
         return true;
     }
-    std::array<float, 2> get_server_pos() { return _serverPos; }
-    bool process_movement(std::string data, std::array<float, 2> &server_pos) {
+    std::array<float, 2> getServerPos() { return _serverPos; }
+    bool processMovement(const std::string &data, std::array<float, 2> &clientPos) {
         if (data == "right" || data == "left" || data == "up" || data == "down") {
-            if (!move(data, server_pos))
+            if (!move(data, clientPos))
                 return false;
             return true;
         }
@@ -212,7 +159,7 @@ class UdpServer {
   private:
     udp::socket socket_;
     udp::endpoint sender_endpoint_;
-    std::array<char, 1024> recv_buf_;
+    std::array<char, 1024> recv_buf_{};
     std::map<asio::ip::udp::endpoint, Client *> clients;
 
     void do_receive();

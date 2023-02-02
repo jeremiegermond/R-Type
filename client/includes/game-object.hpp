@@ -26,7 +26,9 @@ class GameObject {
     std::vector<Texture2D *> _textures;
 
   public:
+    GameObject();
     explicit GameObject(const std::string &pathModel);
+    explicit GameObject(GameObject *other);
     ~GameObject();
 
     void Draw(Vector3 offset = Vector3Zero());

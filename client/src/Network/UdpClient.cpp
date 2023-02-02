@@ -53,7 +53,7 @@ void UdpClient::send(std::string data, bool showDebug) {
     sendto(pfd[0].fd, data.data(), data.size(), MSG_CONFIRM, (struct sockaddr *)&servaddr, sizeof(servaddr));
     if (showDebug)
         std::cout << "Sent :" << data << std::endl;
-    show_requests();
+    // show_requests();
 }
 
 std::vector<UdpRequest *> UdpClient::get_requests() { return requests; }
@@ -74,9 +74,6 @@ void UdpClient::show_requests() {
 }
 
 void UdpClient::loopListener() {
-    struct timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
     while (true) {
         if (shutdown) {
             std::cout << "Shutting down listener" << std::endl;
@@ -95,7 +92,7 @@ void UdpClient::receive(bool showDebug) {
     dispatcher(buffer);
 }
 
-void UdpClient::dispatcher(std::string data) {
+void UdpClient::dispatcher(const std::string &data) {
     std::string type = data.substr(0, data.find_first_of(':'));
     if (type == "heartbeat") {
         is_alive = 1;
@@ -105,34 +102,34 @@ void UdpClient::dispatcher(std::string data) {
         for (auto i = res.begin() + 2; i != res.end(); i++) {
             auto opt = split(*i, ',');
             std::array<float, 2> pos = {std::stof(opt[1]), std::stof(opt[2])};
-            session->add_player(new Player(std::stoul(opt[0]), pos, std::stoul(opt[3])));
+            session->addPlayer(new Player(std::stoi(opt[0]), pos, std::stoi(opt[3])));
         }
     } else if (type == "connexion") {
-        session->add_player(new Player(std::stoul(data.substr(data.find_first_of(':') + 1))));
+        session->addPlayer(new Player(std::stoi(data.substr(data.find_first_of(':') + 1))));
     } else if (type == "deconnexion") {
-        session->remove_player(std::stoul(data.substr(data.find_first_of(':') + 1)));
+        session->removePlayer(std::stoi(data.substr(data.find_first_of(':') + 1)));
     } else if (type.c_str()[0] == '[') {
         std::cout << data << std::endl;
-        unsigned int player_id = std::stoul(data.substr(1, data.find_first_of(']') - 1));
+        int player_id = std::stoi(data.substr(1, data.find_first_of(']') - 1));
         type = data.substr(data.find_first_of(']') + 1, data.find_first_of(':') - data.find_first_of(']') - 1);
-        if (type == "pos") { // HAS to be optimized
+        if (type == "_position") { // HAS to be optimized
             std::array<float, 2> pos = {std::stof(data.substr(data.find_first_of(':') + 1, data.find_first_of(',') - data.find_first_of(':') - 1)),
                                         std::stof(data.substr(data.find_first_of(',') + 1))};
-            auto player = session->get_player(player_id);
+            auto player = session->getPlayer(player_id);
             if (player != nullptr)
-                player->set_pos(pos);
+                player->setPos(pos);
             else
-                session->add_player(new Player(player_id, pos, 100)); // hp may have to be changed
+                session->addPlayer(new Player(player_id, pos, 100)); // _hp may have to be changed
         }
         //} else if (type == "disconnect") { to be added
-        //    session->remove_player(player_id);
+        //    session->removePlayer(player_id);
         //}
     } else {
         std::cout << data << std::endl;
         for (auto i : requests) {
             if (i->get_id() == std::stoi(type)) {
                 i->set_response(data);
-                show_requests();
+                // show_requests();
                 break;
             }
         }
@@ -162,9 +159,9 @@ void UdpClient::loopHeartbeat() {
 
 bool UdpClient::sendConnect() {
     int n;
-    // send(first_connection ? "connect:" + std::to_string(session->get_player_id()) : "heartbeat");
-    std::cout << "connect:" + std::to_string(session->get_player_id()) << std::endl;
-    send("connect:" + std::to_string(session->get_player_id()));
+    // send(first_connection ? "connect:" + std::to_string(session->getPlayerId()) : "heartbeat");
+    std::cout << "connect:" + std::to_string(session->getPlayerId()) << std::endl;
+    send("connect:" + std::to_string(session->getPlayerId()));
     auto to = std::chrono::system_clock::now() + 5s; // timeout val
     while (std::chrono::system_clock::now() < to) {
         if (connected) {
@@ -198,7 +195,7 @@ bool UdpClient::sendHeartbeat(bool first_connection) {
 
 bool UdpClient::alive() { return is_alive != -1; }
 
-std::vector<Player *> UdpClient::get_players() { return session->get_players(); }
+std::vector<Player *> UdpClient::get_players() { return session->getPlayers(); }
 
 UdpClient::~UdpClient() {
     send("disconnect");

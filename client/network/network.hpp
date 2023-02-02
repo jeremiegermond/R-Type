@@ -21,26 +21,26 @@ using namespace std::chrono_literals;
 
 class Player {
   private:
-    std::array<float, 2> pos;
-    int id;
-    int hp;
+    std::array<float, 2> _position;
+    int _id;
+    int _hp;
 
   public:
     Player(unsigned int id) {
-        this->id = id;
-        pos.fill(0);
-        hp = 100;
+        this->_id = id;
+        _position.fill(0);
+        _hp = 100;
     }
     Player(int id, std::array<float, 2> pos, int hp) {
-        this->id = id;
-        this->pos = pos;
-        this->hp = hp;
+        this->_id = id;
+        this->_position = pos;
+        this->_hp = hp;
     }
-    std::array<float, 2> get_pos() { return pos; }
-    int get_hp() { return hp; }
-    int get_id() { return id; }
-    void set_pos(std::array<float, 2> pos) { this->pos = pos; }
-    void set_hp(int hp) { this->hp = hp; }
+    std::array<float, 2> getPos() { return _position; }
+    int getHp() { return _hp; }
+    int getId() { return _id; }
+    void setPos(std::array<float, 2> pos) { this->_position = pos; }
+    void setHp(int hp) { this->_hp = hp; }
 };
 
 class Session {
@@ -52,29 +52,29 @@ class Session {
     Session() {}
     Session(unsigned int id) { _player = new Player(id, {0, 0}, 100); }
     Session(Player *player) { this->_player = player; }
-    unsigned int get_player_id() { return _player->get_id(); }
-    Player *get_player() { return _player; }
-    Player *get_player(unsigned int id) {
+    unsigned int getPlayerId() { return _player->getId(); }
+    Player *getPlayer() { return _player; }
+    Player *getPlayer(unsigned int id) {
         for (int i = 0; i < _players.size(); i++) {
-            if (_players[i]->get_id() == id)
+            if (_players[i]->getId() == id)
                 return _players[i];
         }
         return nullptr;
     }
-    std::vector<Player *> get_players() { return _players; }
-    void add_player(Player *player) { _players.push_back(player); }
-    void remove_player(int id) {
+    std::vector<Player *> getPlayers() { return _players; }
+    void addPlayer(Player *player) { _players.push_back(player); }
+    void removePlayer(int id) {
         for (int i = 0; i < _players.size(); i++) {
-            if (_players[i]->get_id() == id) {
+            if (_players[i]->getId() == id) {
                 _players.erase(_players.begin() + i);
                 break;
             }
         }
     }
-    void update_player_pos(int id, std::array<float, 2> pos) {
+    void updatePlayerPos(int id, std::array<float, 2> pos) {
         for (int i = 0; i < _players.size(); i++) {
-            if (_players[i]->get_id() == id) {
-                _players[i]->set_pos(pos);
+            if (_players[i]->getId() == id) {
+                _players[i]->setPos(pos);
                 break;
             }
         }
@@ -98,26 +98,26 @@ class id_generator {
 class UdpRequest {
   private:
     std::string _data;
-    std::string response;
-    unsigned int id;
-    int state = 0; // -1: not processed,  0: pending, 1: response received, 2: timeout
+    std::string _response;
+    unsigned int _id;
+    int _state = 0; // -1: not processed,  0: pending, 1: _response received, 2: timeout
   public:
-    UdpRequest(std::string data, unsigned int id) : _data(std::move(data)), id(id) {}
+    UdpRequest(std::string data, unsigned int id) : _data(std::move(data)), _id(id) {}
     std::string get_data() { return _data; }
-    [[nodiscard]] unsigned int get_id() const { return id; }
-    [[nodiscard]] int get_state() const { return state; }
-    std::string get_response() { return response; }
+    [[nodiscard]] unsigned int get_id() const { return _id; }
+    [[nodiscard]] int get_state() const { return _state; }
+    std::string get_response() { return _response; }
     bool operator==(int num) const {
-        if (id == num) {
+        if (_id == num) {
             return true;
         }
         return false;
     }
     void set_response(std::string data) {
-        response = std::move(data);
-        state = 1;
+        _response = std::move(data);
+        _state = 1;
     }
-    void set_state(int new_state) { state = new_state; }
+    void setState(int new_state) { _state = new_state; }
 };
 
 class UdpClient {
@@ -154,7 +154,7 @@ class UdpClient {
 
     void receive(bool showDebug = false);
 
-    void dispatcher(std::string data);
+    void dispatcher(const std::string &data);
 
     bool disconnected();
 

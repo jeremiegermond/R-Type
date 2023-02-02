@@ -144,7 +144,7 @@ void Engine::loadObjects(json data) {
         std::string name = object["name"];
         std::string path = object["path"];
         auto gameObject = new GameObject(path);
-        // entity pos / rot / scale at 0
+        // entity _position / rot / scale at 0
         if (object.contains("scale")) {
             gameObject->SetScale(object["scale"]);
             // set scale
@@ -374,11 +374,11 @@ void Engine::updateUdpClient() {
         }
         auto otherShips = _udpClient.get_players();
         for (auto player : otherShips) {
-            auto pos = player->get_pos();
-            auto id = player->get_id();
+            auto pos = player->getPos();
+            auto id = player->getId();
             auto ship = getObject(std::to_string(id));
             if (ship == nullptr) {
-                ship = new GameObject("spaceship1");
+                ship = new GameObject(getObject("spaceship1"));
                 ship->SetPosition(Vector3{pos[0], pos[1], 0});
                 _objects[std::to_string(id)] = ship;
             } else {

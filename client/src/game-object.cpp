@@ -7,10 +7,28 @@
 
 #include "game-object.hpp"
 
-GameObject::GameObject(const std::string &pathModel)
+GameObject::GameObject()
     : _position(Vector3Zero()), _velocity(Vector3Zero()), _rotation(Vector3Zero()), _rotationGoal(Vector3Zero()), _scale(1), _animations(nullptr),
       _animationCount(0), _currentAnimation(0), _currentFrame(0), _playAnimation(false), _loopAnimation(false) {
-    _model = LoadModel(pathModel.c_str());
+    _model = {};
+}
+
+GameObject::GameObject(const std::string &pathModel) : GameObject() { _model = LoadModel(pathModel.c_str()); }
+
+GameObject::GameObject(GameObject *other) : GameObject() {
+    _model = other->_model;
+    _position = other->_position;
+    _velocity = other->_velocity;
+    _rotation = other->_rotation;
+    _rotationGoal = other->_rotationGoal;
+    _scale = other->_scale;
+    _animations = other->_animations;
+    _animationCount = other->_animationCount;
+    _currentAnimation = other->_currentAnimation;
+    _currentFrame = other->_currentFrame;
+    _playAnimation = other->_playAnimation;
+    _loopAnimation = other->_loopAnimation;
+    _textures = other->_textures;
 }
 
 GameObject::~GameObject() {
