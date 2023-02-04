@@ -1,171 +1,61 @@
 #pragma once
 
-#include <algorithm>
-#include <arpa/inet.h>
-#include <array>
-#include <asio.hpp>
-#include <chrono>
-#include <cmath>
-#include <cstring>
-#include <functional>
-#include <future>
-#include <iomanip>
-#include <iostream>
-#include <map>
-#include <netinet/in.h>
-#include <poll.h>
-#include <queue>
-#include <string>
-#include <thread>
-#include <utility>
+#include "player.hpp"
+#include "utils.hpp"
+#include <set>
 
-using asio::ip::udp;
-using namespace std::chrono_literals;
+using namespace asio::ip;
+using namespace std::chrono;
 
-std::vector<std::string> split(const std::string &s, char delim);
-std::string floatToString(float number, int precision = 1);
-
-class Player {
-  private:
-    std::array<float, 2> _position;
-    unsigned int _id;
-    int _hp;
-
-  public:
-    explicit Player(unsigned int id) : _id(id), _position({0, 0}), _hp(100) {}
-    Player(int id, std::array<float, 2> position, int hp) : Player(id) {
-        _position = position;
-        _hp = hp;
-    }
-    std::array<float, 2> getPos() { return _position; }
-    int getHp() const { return _hp; }
-    int getId() const { return _id; }
-    void setPos(std::array<float, 2> pos) { _position = pos; }
-    void setHp(int hp) { _hp = hp; }
-};
-
-class Session {
-  private:
-    Player *_player = nullptr;
-    std::vector<Player *> _players;
-
-  public:
-    Session() {}
-    explicit Session(int id) { _player = new Player(id, {0, 0}, 100); }
-    explicit Session(Player *player) { _player = player; }
-    int getPlayerId() { return _player->getId(); }
-    Player *getPlayer() { return _player; }
-    Player *getPlayer(int id) {
-        for (auto &player : _players) {
-            if (player->getId() == id)
-                return player;
-        }
-        return nullptr;
-    }
-    std::vector<Player *> getPlayers() { return _players; }
-    void addPlayer(Player *player) { _players.push_back(player); }
-    void removePlayer(int id) {
-        for (int i = 0; i < _players.size(); i++) {
-            if (_players[i]->getId() == id) {
-                _players.erase(_players.begin() + i);
-                break;
-            }
-        }
-    }
-    void updatePlayerPos(int id, std::array<float, 2> pos) {
-        for (auto &player : _players) {
-            if (player->getId() == id) {
-                player->setPos(pos);
-                break;
-            }
-        }
+namespace std {
+template <>
+struct hash<udp::endpoint> {
+    std::size_t operator()(const udp::endpoint &endpoint) const noexcept {
+        std::size_t h1 = std::hash<std::string>()(endpoint.address().to_string());
+        std::size_t h2 = std::hash<unsigned short>()(endpoint.port());
+        return h1 ^ (h2 << 1);
     }
 };
+} // namespace std
 
-class idGenerator {
-  private:
-    std::vector<unsigned int> ids;
-
-  public:
-    idGenerator() = default;
-    unsigned int getUniqueId() {
-        unsigned int tmp = rand();
-        while (std::find(ids.begin(), ids.end(), tmp) != ids.end())
-            tmp = rand();
-        return tmp;
-    }
-};
-
-class UdpRequest {
-  private:
-    std::string _request;
-    std::string _response;
-    unsigned int _id;
-    int _state = 0; // -1: not processed,  0: pending, 1: _response received, 2: timeout
-  public:
-    UdpRequest(std::string data, unsigned int id) : _request(std::move(data)), _id(id) {}
-    std::string getRequest() { return _request; }
-    [[nodiscard]] unsigned int getId() const { return _id; }
-    [[nodiscard]] int getState() const { return _state; }
-    std::string getResponse() { return _response; }
-    bool operator==(int num) const {
-        if (_id == num) {
-            return true;
-        }
-        return false;
-    }
-    void setResponse(std::string data) {
-        _response = std::move(data);
-        _state = 1;
-    }
-    void setState(int new_state) { _state = new_state; }
-};
-
-class Client {
-  private:
-    std::array<float, 2> _serverPos;
-    int _id;
-
-  public:
-    explicit Client(int id) : _serverPos({0, 0}), _id(id) {}
-    int getId() const { return _id; }
-    bool move(const std::string &direction, std::array<float, 2> &clientPos) {
-        if (direction == "right")
-            _serverPos[0] += .1;
-        if (direction == "left")
-            _serverPos[0] -= .1;
-        if (direction == "up")
-            _serverPos[1] += .1;
-        if (direction == "down")
-            _serverPos[1] -= .1f;
-        // std::cout << "_serverPos: " + floatToString(_serverPos[0]) + ":" + floatToString(_serverPos[1]) << std::endl;
-        // std::cout << "clientPos: " + floatToString(clientPos[0]) + ":" + floatToString(clientPos[1]) << std::endl;
-        if (floatToString(_serverPos[0]) != floatToString(clientPos[0]) || floatToString(_serverPos[1]) != floatToString(clientPos[1]))
-            return false;
-        return true;
-    }
-    std::array<float, 2> getServerPos() { return _serverPos; }
-    bool processMovement(const std::string &data, std::array<float, 2> &clientPos) {
-        if (data == "right" || data == "left" || data == "up" || data == "down") {
-            if (!move(data, clientPos))
-                return false;
-            return true;
-        }
-        return false;
-    }
-};
-
+// udp server that can handle multiple clients
 class UdpServer {
   private:
-    udp::socket socket_;
-    udp::endpoint sender_endpoint_;
-    std::array<char, 1024> recv_buf_{};
-    std::map<asio::ip::udp::endpoint, Client *> clients;
-
-    void do_receive();
-
-    void do_send(std::size_t length);
+    asio::io_context _io_context;
+    udp::socket _socket;
+    std::unordered_map<udp::endpoint, Player> _clients;
+    std::set<int> _ids;
+    udp::endpoint _sender_endpoint;
+    std::array<char, 1024> _buffer{};
+    std::thread _timer;
+    std::mutex _mutex;
 
   public:
-    UdpServer(asio::io_context &io_context, short port) : socket_(io_context, udp::endpoint(udp::v4(), port)) { do_receive(); }
+    UdpServer() : _socket(_io_context, udp::endpoint(udp::v4(), 12345)) {
+        for (int i = 1; i <= 4; i++)
+            _ids.insert(i);
+    }
+
+    ~UdpServer();
+
+    // start the server
+    void start();
+
+    // handle request from client
+    void handleRequest(std::error_code ec, std::size_t bytes_recvd);
+
+    // send response to client
+    void sendResponse(const udp::endpoint &endpoint, const std::string &msg);
+
+    // receive request from client
+    void receiveRequest();
+
+    // check if client still alive
+    void checkAlive();
+
+    // send message to all clients
+    void sendAll(const std::string &msg, bool includeSender = true);
+
+    // remove client from server
+    void removeClient(const udp::endpoint &endpoint, bool erase = true);
 };

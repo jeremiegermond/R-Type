@@ -31,7 +31,8 @@ class Engine {
     Model _companionCube{};
     float _musicVolume;
     float _soundVolume;
-    UdpClient _udpClient;
+    UdpClient *_udpClient{};
+    int _playerId;
 
   public:
     Engine();
@@ -71,6 +72,7 @@ class Engine {
     void drawParticles2D();
     void drawSliders();
     void drawButtons();
+    static void drawText(const std::string &text, int fontSize, Vector2 position, Color color = WHITE, bool centered = false);
 
     void playMusic(const std::string &name, float delay = 0);
     void playMusic(int index, float delay = 0);
@@ -84,6 +86,7 @@ class Engine {
     void addParticle(Vector3 position, float scale = 1, Color color = WHITE);
 
     GameObject *getObject(const std::string &name);
+    GameObject *getPlayerShip();
     std::unordered_map<std::string, GameObject *> getObjects();
     Light *getLight(int index);
     Camera3D *getCamera();
@@ -96,6 +99,7 @@ class Engine {
     void setMusicVolume(float volume);
     void setSoundVolume(float volume);
     void setPause(bool pause);
+    void setUdpClient(UdpClient *udpClient);
 
     bool isInScreen(Vector3 position, float offset = 1000);
 

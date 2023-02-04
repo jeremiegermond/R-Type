@@ -8,12 +8,13 @@
 #include "rtype-client.hpp"
 
 int main(int ac, char *av[]) {
-    if (ac != 3)
+    std::string ip = "127.0.0.1";
+    int port = 12345;
+    if (ac == 3) {
+        ip = av[1];
+        port = std::stoi(av[2]);
+    } else
         std::cout << "Usage: ./client [ip] [port]" << std::endl;
-
-    // Initialization
-    std::string ip = av[1];
-    int port = std::stoi(av[2]);
 
     if (port < 0 || port > 65535) {
         std::cout << "Invalid port" << std::endl;
@@ -40,24 +41,25 @@ int main(int ac, char *av[]) {
 
     float bulletSpeed = .2;
 
-    // Loading screen
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    BeginDrawing();
-    ClearBackground(BLACK);
-    EndDrawing();
-
-    BeginDrawing();
-    ClearBackground(BLACK);
-    DrawText("Connecting to server...", screenWidth / 2, screenHeight / 2, 24, WHITE);
-    EndDrawing();
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
     // load engine
     Engine engine;
 
+    // Connect udp client
+    engine.setUdpClient(new UdpClient(ip, port));
+
+    Vector2 center = {float(screenWidth / 2), float(screenHeight / 2)};
+
     // check connection to server
-    if (engine.getUdpClient()->disconnected() && !engine.getUdpClient()->connect(ip, port))
-        return 84;
+    while (!engine.getUdpClient()->isConnected()) {
+        BeginDrawing();
+        ClearBackground(BLACK);
+        Engine::drawText("Connecting to server...", 24, center, WHITE, true);
+        EndDrawing();
+        if (WindowShouldClose())
+            return 0;
+    }
+
+    // check if user closed window
 
     // load assets
     engine.loadAssets("assets/assets.json");
@@ -197,13 +199,13 @@ int main(int ac, char *av[]) {
         }
 
         if (!pause)
-            moveSpaceship(engine.getObject("R9A"), engine.getUdpClient());
+            moveSpaceship(engine.getPlayerShip(), engine.getUdpClient());
 
         if (!pause && IsKeyPressed(KEY_SPACE)) {
             Vector3 bulletVelocity = Vector3Zero();
             bulletVelocity.x = bulletSpeed;
-            bulletVelocity.y = -engine.getObject("R9A")->GetRotation().x * bulletSpeed * .5f;
-            Vector3 bulletPos = engine.getObject("R9A")->GetPosition();
+            bulletVelocity.y = -engine.getPlayerShip()->GetRotation().x * bulletSpeed * .5f;
+            Vector3 bulletPos = engine.getPlayerShip()->GetPosition();
             engine.addBullet(bulletPos, bulletVelocity);
         }
 
@@ -222,7 +224,7 @@ int main(int ac, char *av[]) {
             engine.updateObjects();
         }
 
-        engine.getLight(0)->setPosition(Vector3Add(engine.getObject("R9A")->GetPosition(), {0, 2, 10}));
+        engine.getLight(0)->setPosition(Vector3Add(engine.getPlayerShip()->GetPosition(), {0, 2, 10}));
         engine.updateLights();
 
         // update the light shader with the camera view position
@@ -315,6 +317,11 @@ int main(int ac, char *av[]) {
         engine.drawSliders();
         // draw buttons
         engine.drawButtons();
+
+        // Draw connection status flashing
+        if (!engine.getUdpClient()->isConnected() && int(GetTime() * 2) % 2) {
+            Engine::drawText("Connection lost", 40, center, RED, true);
+        }
         EndDrawing();
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(300));

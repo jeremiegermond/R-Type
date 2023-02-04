@@ -7,7 +7,7 @@
 
 #include "engine.hpp"
 
-Engine::Engine() {
+Engine::Engine() : _playerId(1) {
     _camera.position = {0, 0, 30};           // Camera position
     _camera.target = Vector3Zero();          // Camera looking at point
     _camera.up = {0, 1, 0};                  // Camera up vector (rotation towards target)
@@ -30,13 +30,14 @@ Engine::~Engine() {
     TraceLog(LOG_INFO, "Unloading assets...");
     unloadAssets();
     TraceLog(LOG_INFO, "Assets unloaded");
+    delete _udpClient;
 }
 
 void Engine::loadAssets(const std::string &assetsPath) {
     // Show loading screen
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawText("Loading...", 1070 / 2, 600 / 2, 24, WHITE);
+    drawText("Loading...", 24, Vector2{float(GetScreenWidth() / 2), float(GetScreenHeight() / 2)}, WHITE, true);
     EndDrawing();
     // open json file
     std::ifstream f(assetsPath);
@@ -354,38 +355,45 @@ void Engine::updateBullets() {
 }
 
 void Engine::updateUdpClient() {
-    if (_udpClient.alive()) {
-        auto requests = _udpClient.get_requests();
-        for (auto it : requests) {
-            if (it.second->getState() == 1) {
-                std::cout << "Request " << it.first << " is done" << std::endl;
-                std::cout << "Response: " << it.second->getResponse() << std::endl;
-                auto response = split(it.second->getResponse(), ':');
-                if (response[1] == "KO") {
-                    auto ship = _objects["R9A"];
-                    auto newPos = ship->GetPosition();
-                    newPos.x = std::stof(response[2]);
-                    newPos.y = std::stof(response[3]);
-                    ship->SetPosition(newPos);
-                }
-                _udpClient.popRequest(it.first);
-            }
+    // std::cout << "Update UDP client" << std::endl;
+    while (_udpClient->hasMessage()) {
+        auto msg = _udpClient->receive();
+        std::cout << "Message received: " << msg << std::endl;
+        if (isMatch(msg, "id:[0-9]+")) {
+            _playerId = std::stoi(getMatch(msg, "id:([0-9]+)", 1));
+            std::cout << "ID: " << _playerId << std::endl;
+            auto ship = getPlayerShip();
+            ship->SetPosition({0, 0, 0});
+        } else if (isMatch(msg, "new:[0-9]+," NB_R "," NB_R)) {
+            auto match = getMatches(msg, "new:([0-9]+)," NB_R "," NB_R);
+            auto id = std::stoi(match[1]);
+            auto x = std::stof(match[2]);
+            auto y = std::stof(match[3]);
+            std::cout << "New ship: " << id << " at " << x << " " << y << std::endl;
+            auto ship = getObject("R9A" + match[1]);
+            ship->SetPosition({x, y, 0});
+        } else if (isMatch(msg, "move:[0-9]+," NB_R "," NB_R)) {
+            auto match = getMatches(msg, "move:([0-9]+)," NB_R "," NB_R);
+            auto id = std::stoi(match[1]);
+            auto x = std::stof(match[2]);
+            auto y = std::stof(match[3]);
+            std::cout << "Move ship: " << id << " at " << x << " " << y << std::endl;
+            auto ship = getObject("R9A" + match[1]);
+            ship->SetPosition({x, y, 0});
+        } else if (isMatch(msg, "del:[0-9]+")) {
+            auto match = getMatches(msg, "del:([0-9]+)");
+            auto id = std::stoi(match[1]);
+            std::cout << "Delete ship: " << id << std::endl;
+            auto ship = getObject("R9A" + match[1]);
+            ship->SetPosition({-100, -100, 0});
         }
-        auto otherShips = _udpClient.getPlayers();
-        for (int i = 0; i < otherShips.size() && i < 3; i++) {
-            auto player = otherShips[i];
-            if (player == nullptr)
-                continue;
-            auto pos = player->getPos();
-            auto ship = getObject("R9A" + std::to_string(i + 2));
-            if (ship == nullptr) {
-                ship = new GameObject(getObject("R9A"));
-                ship->SetPosition(Vector3{pos.x, pos.y, 0});
-                _objects["R9A" + std::to_string(i + 2)] = ship;
-            } else {
-                ship->SetPosition(Vector3{pos.x, pos.y, 0});
-            }
-        }
+        // else if (isMatch(msg, "fire:[0-9]+," NB_R "," NB_R)) {
+        //     auto match = getMatches(msg, "fire:([0-9]+)," NB_R "," NB_R);
+        //     auto id = std::stoi(match[1]);
+        //     auto x = std::stof(match[2]);
+        //     auto y = std::stof(match[3]);
+        // } else if (isMatch(msg, "hit:[0-9]+")) {
+        //     auto match = getMatches(msg, "hit:([0-9]+)");
     }
 }
 
@@ -436,6 +444,13 @@ void Engine::drawButtons() {
     for (auto &button : _buttons) {
         button.second->Draw();
     }
+}
+
+void Engine::drawText(const std::string &text, int fontSize, Vector2 position, Color color, bool centered) {
+    if (centered) {
+        position.x -= MeasureText(text.c_str(), fontSize) / 2;
+    }
+    DrawText(text.c_str(), position.x, position.y, fontSize, color);
 }
 
 void Engine::playMusic(const std::string &name, float delay) {
@@ -517,6 +532,11 @@ GameObject *Engine::getObject(const std::string &name) {
     return nullptr;
 }
 
+GameObject *Engine::getPlayerShip() {
+    auto name = "R9A" + std::to_string(_playerId);
+    return getObject(name);
+}
+
 std::unordered_map<std::string, GameObject *> Engine::getObjects() { return _objects; }
 
 Light *Engine::getLight(int index) {
@@ -543,7 +563,7 @@ Slider *Engine::getSlider(const std::string &name) {
     return nullptr;
 }
 
-UdpClient *Engine::getUdpClient() { return &_udpClient; }
+UdpClient *Engine::getUdpClient() { return _udpClient; }
 
 void Engine::setShaderMode(const std::string &name) {
     if (_shaders.find(name) != _shaders.end()) {
@@ -588,6 +608,8 @@ void Engine::setPause(bool pause) {
     }
     playSound("decision");
 }
+
+void Engine::setUdpClient(UdpClient *udpClient) { _udpClient = udpClient; }
 
 bool Engine::isInScreen(Vector3 position, float offset) {
     Vector2 screenPosition = GetWorldToScreen(position, _camera);

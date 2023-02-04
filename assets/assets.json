@@ -1,7 +1,7 @@
 {
   "models": [
     {
-      "name": "R9A",
+      "name": "R9A1",
       "path": "assets/models/ships/R9A.obj",
       "tags": ["player"],
       "scale": 1.5

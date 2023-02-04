@@ -7,95 +7,117 @@
 
 #include "network.hpp"
 
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
+void sigintHandler(int sig) {
+    std::cout << "Stopping server..." << std::endl;
+    exit(0);
+}
+
+void UdpServer::start() {
+    // make ctrl+c stop the server
+    signal(SIGINT, sigintHandler);
+    std::cout << "UDP server started on port 12345" << std::endl;
+    _timer = std::thread([this]() {
+        while (true) {
+            std::this_thread::sleep_for(seconds(3));
+            checkAlive();
+        }
+    });
+    _timer.detach();
+    receiveRequest();
+    _io_context.run();
+}
+
+UdpServer::~UdpServer() {
+    std::cout << "UDP server stopped" << std::endl;
+    _timer.join();
+}
+
+void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
+    if (!ec && bytes_recvd > 0) {
+        std::string msg(_buffer.begin(), _buffer.begin() + bytes_recvd);
+        std::cout << "From: " << _sender_endpoint << " ";
+        std::cout << "Received: " << msg << std::endl;
+        if (_clients.find(_sender_endpoint) == _clients.end()) {
+            if (_ids.empty()) {
+                sendResponse(_sender_endpoint, "full");
+                return;
+            }
+            auto id = *_ids.begin();
+            _ids.erase(id);
+            _clients[_sender_endpoint] = Player(id);
+            sendResponse(_sender_endpoint, "id:" + std::to_string(_clients[_sender_endpoint].getId()));
+            sendAll("new:" + std::to_string(_clients[_sender_endpoint].getId()) + "," + getPositionString(_clients[_sender_endpoint].getPosition()),
+                    false);
+            // send all players to new player
+            for (auto &client : _clients) {
+                if (client.first != _sender_endpoint) {
+                    sendResponse(_sender_endpoint,
+                                 "new:" + std::to_string(client.second.getId()) + "," + getPositionString(client.second.getPosition()));
+                }
+            }
+        }
+        auto &player = _clients[_sender_endpoint];
+        std::cout << "Player: " << player.getId() << std::endl;
+        if (msg == "ping") {
+            sendResponse(_sender_endpoint, "pong");
+            player.setAlive(true);
+        }
+        if (msg == "disconnect") {
+            removeClient(_sender_endpoint);
+        }
+        if (isMatch(msg, "^move:(left|right|up|down)," NB_R "," NB_R "$")) {
+            auto match = getMatches(msg, "^move:(left|right|up|down)," NB_R "," NB_R "$");
+            auto direction = match[1];
+            auto x = std::stof(match[2]);
+            auto y = std::stof(match[3]);
+            auto pos = Vector2{x, y};
+            auto valid = player.move(direction, pos);
+            sendAll("move:" + std::to_string(player.getId()) + "," + getPositionString(player.getPosition()), !valid);
+        }
     }
-    return elems;
 }
 
-std::string floatToString(float number, int precision) {
-    std::ostringstream out;
-    out.precision(precision);
-    out << std::fixed << number;
-    return out.str();
+void UdpServer::sendResponse(const udp::endpoint &endpoint, const std::string &msg) {
+    std::lock_guard<std::mutex> lock(_mutex);
+    _socket.send_to(asio::buffer(msg), endpoint);
 }
 
-void UdpServer::do_receive() {
-    recv_buf_.fill(0);
-    socket_.async_receive_from(asio::buffer(recv_buf_), sender_endpoint_, [this](std::error_code ec, std::size_t bytes_recvd) {
-        // std::cout << bytes_recvd << " " << std::endl;
-        if (!ec && bytes_recvd > 0)
-            do_send(bytes_recvd);
-        else
-            do_receive();
+void UdpServer::receiveRequest() {
+    _socket.async_receive_from(asio::buffer(_buffer), _sender_endpoint, [this](std::error_code ec, std::size_t bytes_recvd) {
+        handleRequest(ec, bytes_recvd);
+        receiveRequest();
     });
 }
 
-void UdpServer::do_send(std::size_t length) {
-    std::string recv = recv_buf_.data();
-    if (recv.empty()) {
-        std::cout << "Received empty message" << std::endl;
+void UdpServer::checkAlive() {
+    if (_clients.empty())
         return;
+    std::cout << "Checking clients..." << std::endl;
+    auto it = _clients.begin();
+    while (it != _clients.end()) {
+        if (!it->second.isAlive()) {
+            std::cout << "Client: " << it->first << " is dead" << std::endl;
+            removeClient(it->first, false);
+            it = _clients.erase(it);
+        } else {
+            it->second.setAlive(false);
+            ++it;
+        }
     }
-    std::cout << "Received message: " << recv << std::endl;
-    std::vector<std::string> resp = split(recv, ':');
-    auto client_it = clients.find(sender_endpoint_);
-    Client *client = client_it->second;
-    // std::cout << "Received message: " << resp[0] << (resp.size() >= 2 ? ":" + resp[1] : "") << std::endl;
-    if (resp.size() > 1 && (resp[1] == "right" || resp[1] == "left" || resp[1] == "up" || resp[1] == "down")) {
-        // resp[1] += ":" + client->getServerPos();
-        std::array<float, 2> clientPos = {std::stof(resp[2]), std::stof(resp[3])};
-        if (client->processMovement(resp[1], clientPos))
-            resp[0] += ":OK";
-        else
-            resp[0] += ":KO:" + floatToString(client->getServerPos()[0]) + ":" + floatToString(client->getServerPos()[1]);
-        auto serv_pos = client->getServerPos();
-        for (const auto &it : clients) { // make broadcast function to send to all other clients
-            if (it.first != sender_endpoint_) {
-                // std::cout << "sent: " << resp[0]  << " to :" << it.first << std::endl;
-                socket_.async_send_to(asio::buffer('[' + std::to_string(client->getId()) + "]_position:" + floatToString(serv_pos[0]) + "," +
-                                                   floatToString(serv_pos[1])),
-                                      it.first, [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) { do_receive(); });
-            }
-        }
-    } else if (resp[0] == "connect") {
-        std::cout << "New connexion :" << sender_endpoint_ << std::endl;
-        clients.insert(
-            std::pair<asio::ip::udp::endpoint, Client *>(sender_endpoint_, new Client(std::stoi(resp[1])))); // doesnt check if _id already exists
-        resp[0] += ":OK";
-        for (auto it : clients) {
-            if (it.first != sender_endpoint_) {
-                resp[0] += ':' + std::to_string(it.second->getId()) + ',' + floatToString(it.second->getServerPos()[0]) + ',' +
-                           floatToString(it.second->getServerPos()[1]) + ",100"; // _hp to be changed
-            }
-        }
-        std::cout << resp[0] << std::endl;
-        std::cout << "Client connected" << std::endl;
-        for (const auto &it : clients) { // make broadcast function to send to all other clients
-            if (it.first != sender_endpoint_) {
-                // std::cout << "sent: " << resp[0]  << " to :" << it.first << std::endl;
-                socket_.async_send_to(asio::buffer("connexion:" + resp[1]), it.first,
-                                      [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) { do_receive(); });
-            }
-        }
-    } else if (resp[0] == "disconnect") {
-        std::cout << "Client disconnected" << std::endl;
-        for (const auto &it : clients) { // make broadcast function to send to all other clients
-            if (it.first != sender_endpoint_) {
-                // std::cout << "sent: " << resp[0]  << " to :" << it.first << std::endl;
-                socket_.async_send_to(asio::buffer("deconnexion:" + std::to_string(client->getId())), it.first,
-                                      [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) { do_receive(); });
-            }
-        }
-        clients.erase(sender_endpoint_);
+}
+
+void UdpServer::sendAll(const std::string &msg, bool includeSender) {
+    for (auto &client : _clients) {
+        if (includeSender || client.first != _sender_endpoint)
+            sendResponse(client.first, msg);
     }
-    // auto start = std::chrono::high_resolution_clock::now();
-    // std::this_thread::sleep_for(3s);
-    // auto end = std::chrono::high_resolution_clock::now();
-    std::cout << "Sending message: " << resp[0] << std::endl;
-    socket_.async_send_to(asio::buffer(resp[0]), sender_endpoint_, [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) { do_receive(); });
+}
+
+void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
+    if (_clients.find(endpoint) != _clients.end()) {
+        _ids.insert(_clients[endpoint].getId());
+        sendAll("del:" + std::to_string(_clients[endpoint].getId()), true);
+        if (erase)
+            _clients.erase(endpoint);
+    }
 }
