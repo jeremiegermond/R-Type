@@ -65,8 +65,8 @@ int main(int ac, char *av[]) {
     // disable esc closing the window
     SetExitKey(0);
 
-    // Play menu music
-    engine.playMusic("02-Main_Menu");
+    // Play main music
+    engine.playMusic(1);
 
     // Pause menu buttons / slider
     bool pause = false;
@@ -84,13 +84,28 @@ int main(int ac, char *av[]) {
     });
     engine.addSlider("music_volume", Rectangle{float(screenWidth - 200), 100, 100, 20}, engine.getMusicVolume(), 0, 2, pause);
     engine.addSlider("sound_volume", Rectangle{float(screenWidth - 200), 150, 100, 20}, engine.getSoundVolume(), 0, 2, pause);
+
+    Rectangle bounds = {float(screenWidth - 200), 100, 100, 20};
+    engine.addSlider("posX", bounds, nullptr, -10, 10, false);
+    bounds.y += 30;
+    engine.addSlider("posY", bounds, nullptr, -10, 10, false);
+    bounds.y += 30;
+    engine.addSlider("posZ", bounds, nullptr, -10, 10, false);
+    bounds.y += 30;
+    engine.addSlider("rotX", bounds, nullptr, -3, 3, false);
+    bounds.y += 30;
+    engine.addSlider("rotY", bounds, nullptr, -3, 3, false);
+    bounds.y += 30;
+    engine.addSlider("rotZ", bounds, nullptr, -3, 3, false);
+    bounds.y += 30;
+    engine.addSlider("scale", bounds, nullptr, .1, 3, false);
+    bounds.y = 100;
     engine.getSlider("music_volume")->SetCallback([&engine](const float *value) { engine.setMusicVolume(*value); });
     engine.getSlider("sound_volume")->SetCallback([&engine](const float *value) { engine.setSoundVolume(*value); });
     engine.addLight(Vector3Zero());
 
     engine.getObject("corridor")->SetVelocity(Vector3{-speed, 0, 0});
-
-    engine.getObject("e1116")->PlayAnimation(0, false);
+    engine.getObject("E002")->PlayAnimation(0, true);
 
     // temp
     Ray ray;
@@ -103,7 +118,6 @@ int main(int ac, char *av[]) {
     Vector3 selectedMyObjectPos;
     Vector3 selectedMyObjectRot;
     float selectedMyObjectScale;
-    Rectangle bounds = {float(screenWidth - 200), 100, 100, 20};
     bool sliderSelected;
 
     while (!quit && !WindowShouldClose()) {
@@ -113,12 +127,13 @@ int main(int ac, char *av[]) {
             engine.getObject("corridor")->SetPosition(corridorPos);
         }
 
-        // update sliders _data
+        // update sliders _request
         if (selectedMyObject != nullptr) {
             selectedMyObjectPos = selectedMyObject->GetPosition();
             selectedMyObjectRot = selectedMyObject->GetRotationGoal();
             selectedMyObjectScale = selectedMyObject->GetScale();
         }
+
         // Update sliders
         sliderSelected = engine.updateSliders();
 
@@ -133,13 +148,6 @@ int main(int ac, char *av[]) {
 
         // Left click to raycast on the scene
         if (!sliderSelected && !pause && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            engine.clearSlider("posX");
-            engine.clearSlider("posY");
-            engine.clearSlider("posZ");
-            engine.clearSlider("rotX");
-            engine.clearSlider("rotY");
-            engine.clearSlider("rotZ");
-            engine.clearSlider("scale");
             mouse = GetMousePosition();
             ray = GetMouseRay(mouse, *engine.getCamera());
             // cycle through all objects of the scene
@@ -157,27 +165,27 @@ int main(int ac, char *av[]) {
                     selectedMyObjectPos = selectedMyObject->GetPosition();
                     selectedMyObjectRot = selectedMyObject->GetRotationGoal();
                     selectedMyObjectScale = selectedMyObject->GetScale();
-                    // create sliders
-                    engine.addSlider("posX", bounds, &selectedMyObjectPos.x, -10, 10);
-                    bounds.y += 30;
-                    engine.addSlider("posY", bounds, &selectedMyObjectPos.y, -10, 10);
-                    bounds.y += 30;
-                    engine.addSlider("posZ", bounds, &selectedMyObjectPos.z, -10, 10);
-                    bounds.y += 30;
-                    engine.addSlider("rotX", bounds, &selectedMyObjectRot.x, -3, 3);
-                    bounds.y += 30;
-                    engine.addSlider("rotY", bounds, &selectedMyObjectRot.y, -3, 3);
-                    bounds.y += 30;
-                    engine.addSlider("rotZ", bounds, &selectedMyObjectRot.z, -3, 3);
-                    bounds.y += 30;
-                    engine.addSlider("scale", bounds, &selectedMyObjectScale, .1, 3);
-                    bounds.y = 100;
+                    // update sliders
+                    engine.getSlider("posX")->SetValue(&selectedMyObjectPos.x);
+                    engine.getSlider("posY")->SetValue(&selectedMyObjectPos.y);
+                    engine.getSlider("posZ")->SetValue(&selectedMyObjectPos.z);
+                    engine.getSlider("rotX")->SetValue(&selectedMyObjectRot.x);
+                    engine.getSlider("rotY")->SetValue(&selectedMyObjectRot.y);
+                    engine.getSlider("rotZ")->SetValue(&selectedMyObjectRot.z);
+                    engine.getSlider("scale")->SetValue(&selectedMyObjectScale);
                     break;
                 }
             }
             if (!collision.hit) {
                 selectedMyObjectName = "";
                 selectedMyObject = nullptr;
+                engine.getSlider("posX")->SetEnabled(false);
+                engine.getSlider("posY")->SetEnabled(false);
+                engine.getSlider("posZ")->SetEnabled(false);
+                engine.getSlider("rotX")->SetEnabled(false);
+                engine.getSlider("rotY")->SetEnabled(false);
+                engine.getSlider("rotZ")->SetEnabled(false);
+                engine.getSlider("scale")->SetEnabled(false);
             }
         }
 
@@ -189,13 +197,13 @@ int main(int ac, char *av[]) {
         }
 
         if (!pause)
-            moveSpaceship(engine.getObject("spaceship1"), engine.getUdpClient());
+            moveSpaceship(engine.getObject("R9A"), engine.getUdpClient());
 
         if (!pause && IsKeyPressed(KEY_SPACE)) {
             Vector3 bulletVelocity = Vector3Zero();
             bulletVelocity.x = bulletSpeed;
-            bulletVelocity.y = -engine.getObject("spaceship1")->GetRotation().x * bulletSpeed * .5f;
-            Vector3 bulletPos = engine.getObject("spaceship1")->GetPosition();
+            bulletVelocity.y = -engine.getObject("R9A")->GetRotation().x * bulletSpeed * .5f;
+            Vector3 bulletPos = engine.getObject("R9A")->GetPosition();
             engine.addBullet(bulletPos, bulletVelocity);
         }
 
@@ -214,7 +222,7 @@ int main(int ac, char *av[]) {
             engine.updateObjects();
         }
 
-        engine.getLight(0)->setPosition(Vector3Add(engine.getObject("spaceship1")->GetPosition(), {0, 2, 10}));
+        engine.getLight(0)->setPosition(Vector3Add(engine.getObject("R9A")->GetPosition(), {0, 2, 10}));
         engine.updateLights();
 
         // update the light shader with the camera view position
@@ -232,15 +240,17 @@ int main(int ac, char *av[]) {
         BeginTextureMode(target);
         ClearBackground(WHITE);
         BeginMode3D(*engine.getCamera());
-        engine.setShaderObject("spaceship1", "normal");
-        engine.setShaderObject("e1116", "normal");
-        for (auto p : engine.getUdpClient()->get_players()) {
-            std::string id = std::to_string(p->getId());
-            engine.setShaderObject(id, "lighting");
-            engine.drawObject(id);
-        }
-        engine.drawObject("spaceship1");
-        engine.drawObject("e1116");
+        // engine.setShaderObject("R9A", "normal");
+        // auto players = engine.getUdpClient()->getPlayers();
+        // for (int i = 0; i < players.size() && i < 3; i++) {
+        //     auto player = players[i];
+        //     if (player == nullptr)
+        //         continue;
+        //     auto ship = "R9A" + std::to_string(i + 2);
+        //     engine.setShaderObject(ship, "normal");
+        //     engine.drawObject(ship);
+        // }
+        // engine.drawObject("R9A");
         EndMode3D();
         EndTextureMode();
 
@@ -248,11 +258,14 @@ int main(int ac, char *av[]) {
         ClearBackground(BLACK);
         BeginMode3D(*engine.getCamera());
         // set shaders
-        engine.setShaderObject("spaceship1", "lighting");
-        engine.setShaderObject("e1116", "lighting");
-        for (auto p : engine.getUdpClient()->get_players()) {
-            engine.setShaderObject(std::to_string(p->getId()), "lighting");
-        }
+        // engine.setShaderObject("R9A", "lighting");
+        // for (int i = 0;  i < players.size() && i < 3; i++) {
+        //    auto player = players[i];
+        //    if (player == nullptr)
+        //        continue;
+        //    auto ship = "R9A" + std::to_string(i + 2);
+        //    engine.setShaderObject(ship, "normal");
+        //}
 
         // draw GameObjects
         engine.drawObjects();

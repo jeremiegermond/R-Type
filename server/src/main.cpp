@@ -7,7 +7,7 @@
 
 #include "network.hpp"
 
-int main(int ac, char *av[]) {
+int main(int, char *[]) {
     try {
         asio::io_context io_context;
         UdpServer server(io_context, 12345);

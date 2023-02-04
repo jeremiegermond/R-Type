@@ -22,21 +22,21 @@ void moveSpaceship(GameObject *spaceship, UdpClient *client) {
     Vector3 rotationGoal = spaceship->GetRotationGoal();
     if (IsKeyDown(KEY_LEFT) && position.x > -8) {
         position.x -= speed;
-        client->request(std::string("left:" + getPositionString(position)));
+        client->sendRequest(std::string("left:" + getPositionString(position)));
     }
     if (IsKeyDown(KEY_RIGHT) && position.x < 8) {
         position.x += speed;
-        client->request(std::string("right:" + getPositionString(position)));
+        client->sendRequest(std::string("right:" + getPositionString(position)));
     }
-    if (IsKeyDown(KEY_UP) && position.y < 4.4) {
+    if (IsKeyDown(KEY_UP) && position.y < 4.2) {
         position.y += speed;
         rotationGoal.x = -.35;
-        client->request(std::string("up:" + getPositionString(position)));
+        client->sendRequest(std::string("up:" + getPositionString(position)));
     }
-    if (IsKeyDown(KEY_DOWN) && position.y > -4.4) {
+    if (IsKeyDown(KEY_DOWN) && position.y > -4.2) {
         position.y -= speed;
         rotationGoal.x = .35;
-        client->request(std::string("down:" + getPositionString(position)));
+        client->sendRequest(std::string("down:" + getPositionString(position)));
     }
     if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) {
         rotationGoal.x = 0;

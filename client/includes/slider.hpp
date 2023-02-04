@@ -28,21 +28,14 @@ class Slider {
     bool UpdateSlider();
     void Draw();
     void SetEnabled(bool enabled);
-    // template <typename T>
-    // void SetCallback(T &&callback) {
-    //     _callback = std::forward<T>(callback);
-    // }
+    void SetValues(float *value, float minValue, float maxValue);
+    void SetValue(float *value, bool enable = true);
 
     // callback should have access to _value
     template <typename T>
     void SetCallback(T &&callback) {
         _callback = [this, callback](float *value) { callback(_value); };
     }
-
-    // example use with lambda
-    // slider.SetCallback([](float *value) {
-    //     std::cout << "value: " << *value << std::endl;
-    // });
 };
 
 #endif // RTYPE_SLIDER_HPP

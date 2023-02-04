@@ -75,7 +75,6 @@ class Engine {
     void playMusic(const std::string &name, float delay = 0);
     void playMusic(int index, float delay = 0);
     void playSound(const std::string &name);
-    void setShaderMode(const std::string &name);
 
     void addSlider(const std::string &name, Rectangle bounds, float *value, float minValue, float maxValue, bool enabled = true);
     void addButton(const std::string &name, const std::string &text, Rectangle bounds, bool enabled = true);
@@ -92,6 +91,7 @@ class Engine {
     Slider *getSlider(const std::string &name);
     UdpClient *getUdpClient();
 
+    void setShaderMode(const std::string &name);
     void setShaderObject(const std::string &name, const std::string &shaderName);
     void setMusicVolume(float volume);
     void setSoundVolume(float volume);

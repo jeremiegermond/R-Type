@@ -355,34 +355,35 @@ void Engine::updateBullets() {
 
 void Engine::updateUdpClient() {
     if (_udpClient.alive()) {
-        std::vector<UdpRequest *> requests = _udpClient.get_requests();
+        auto requests = _udpClient.get_requests();
         for (auto it : requests) {
-            if (it->get_state() == 1) {
-                std::cout << "Request " << it->get_id() << " is done" << std::endl;
-                std::cout << "Response: " << it->get_response() << std::endl;
-                std::vector<std::string> response = split(it->get_response(), ':');
+            if (it.second->getState() == 1) {
+                std::cout << "Request " << it.first << " is done" << std::endl;
+                std::cout << "Response: " << it.second->getResponse() << std::endl;
+                auto response = split(it.second->getResponse(), ':');
                 if (response[1] == "KO") {
-                    GameObject *ship = _objects["spaceship1"];
-                    Vector3 newPos = ship->GetPosition();
+                    auto ship = _objects["R9A"];
+                    auto newPos = ship->GetPosition();
                     newPos.x = std::stof(response[2]);
                     newPos.y = std::stof(response[3]);
                     ship->SetPosition(newPos);
                 }
-                _udpClient.pop_request(it->get_id());
-                delete it;
+                _udpClient.popRequest(it.first);
             }
         }
-        auto otherShips = _udpClient.get_players();
-        for (auto player : otherShips) {
+        auto otherShips = _udpClient.getPlayers();
+        for (int i = 0; i < otherShips.size() && i < 3; i++) {
+            auto player = otherShips[i];
+            if (player == nullptr)
+                continue;
             auto pos = player->getPos();
-            auto id = player->getId();
-            auto ship = getObject(std::to_string(id));
+            auto ship = getObject("R9A" + std::to_string(i + 2));
             if (ship == nullptr) {
-                ship = new GameObject(getObject("spaceship1"));
-                ship->SetPosition(Vector3{pos[0], pos[1], 0});
-                _objects[std::to_string(id)] = ship;
+                ship = new GameObject(getObject("R9A"));
+                ship->SetPosition(Vector3{pos.x, pos.y, 0});
+                _objects["R9A" + std::to_string(i + 2)] = ship;
             } else {
-                ship->SetPosition(Vector3{pos[0], pos[1], 0});
+                ship->SetPosition(Vector3{pos.x, pos.y, 0});
             }
         }
     }
@@ -468,12 +469,6 @@ void Engine::playSound(const std::string &name) {
     }
 }
 
-void Engine::setShaderMode(const std::string &name) {
-    if (_shaders.find(name) != _shaders.end()) {
-        BeginShaderMode(_shaders[name]);
-    }
-}
-
 void Engine::addSlider(const std::string &name, Rectangle bounds, float *value, float minValue, float maxValue, bool enabled) {
     if (_sliders.find(name) != _sliders.end())
         return;
@@ -550,6 +545,12 @@ Slider *Engine::getSlider(const std::string &name) {
 
 UdpClient *Engine::getUdpClient() { return &_udpClient; }
 
+void Engine::setShaderMode(const std::string &name) {
+    if (_shaders.find(name) != _shaders.end()) {
+        BeginShaderMode(_shaders[name]);
+    }
+}
+
 void Engine::setShaderObject(const std::string &name, const std::string &shader) {
     if (_objects.find(name) != _objects.end() && _shaders.find(shader) != _shaders.end()) {
         _objects[name]->SetShader(_shaders[shader]);
@@ -571,11 +572,20 @@ void Engine::setSoundVolume(float volume) {
 
 void Engine::setPause(bool pause) {
     SetWindowTitle(pause ? "Paused" : "it rayworks !");
-    playMusic(pause ? 2 : 1, 2);
+    playMusic(pause ? 2 : 1, .5);
     getButton("resume_button")->SetEnabled(pause);
     getButton("quit_button")->SetEnabled(pause);
     getSlider("music_volume")->SetEnabled(pause);
     getSlider("sound_volume")->SetEnabled(pause);
+    if (pause) {
+        getSlider("posX")->SetEnabled(false);
+        getSlider("posY")->SetEnabled(false);
+        getSlider("posZ")->SetEnabled(false);
+        getSlider("rotX")->SetEnabled(false);
+        getSlider("rotY")->SetEnabled(false);
+        getSlider("rotZ")->SetEnabled(false);
+        getSlider("scale")->SetEnabled(false);
+    }
     playSound("decision");
 }
 

@@ -67,3 +67,15 @@ void Slider::Draw() {
 }
 
 void Slider::SetEnabled(bool enabled) { _enabled = enabled; }
+
+void Slider::SetValues(float *value, float minValue, float maxValue) {
+    _value = value;
+    _minValue = minValue;
+    _maxValue = maxValue;
+}
+
+void Slider::SetValue(float *value, bool enable) {
+    if (enable)
+        _enabled = true;
+    SetValues(value, _minValue, _maxValue);
+}

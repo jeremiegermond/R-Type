@@ -100,6 +100,7 @@ void GameObject::SetAnimations(const std::string &pathAnimations) {
 }
 
 void GameObject::SetShader(Shader shader) const {
+    //_model.meshMaterial[0]
     for (int i = 0; i < _model.materialCount; i++)
         _model.materials[i].shader = shader;
 }

@@ -32,7 +32,7 @@ class Player {
     int _hp;
 
   public:
-    Player(unsigned int id) : _id(id), _position({0, 0}), _hp(100) {}
+    explicit Player(unsigned int id) : _id(id), _position({0, 0}), _hp(100) {}
     Player(int id, std::array<float, 2> position, int hp) : Player(id) {
         _position = position;
         _hp = hp;
@@ -82,13 +82,13 @@ class Session {
     }
 };
 
-class id_generator {
+class idGenerator {
   private:
     std::vector<unsigned int> ids;
 
   public:
-    id_generator() = default;
-    unsigned int get_unique_id() {
+    idGenerator() = default;
+    unsigned int getUniqueId() {
         unsigned int tmp = rand();
         while (std::find(ids.begin(), ids.end(), tmp) != ids.end())
             tmp = rand();
@@ -98,23 +98,23 @@ class id_generator {
 
 class UdpRequest {
   private:
-    std::string _data;
+    std::string _request;
     std::string _response;
     unsigned int _id;
     int _state = 0; // -1: not processed,  0: pending, 1: _response received, 2: timeout
   public:
-    UdpRequest(std::string data, unsigned int id) : _data(std::move(data)), _id(id) {}
-    std::string get_data() { return _data; }
-    [[nodiscard]] unsigned int get_id() const { return _id; }
-    [[nodiscard]] int get_state() const { return _state; }
-    std::string get_response() { return _response; }
+    UdpRequest(std::string data, unsigned int id) : _request(std::move(data)), _id(id) {}
+    std::string getRequest() { return _request; }
+    [[nodiscard]] unsigned int getId() const { return _id; }
+    [[nodiscard]] int getState() const { return _state; }
+    std::string getResponse() { return _response; }
     bool operator==(int num) const {
         if (_id == num) {
             return true;
         }
         return false;
     }
-    void set_response(std::string data) {
+    void setResponse(std::string data) {
         _response = std::move(data);
         _state = 1;
     }
@@ -138,8 +138,8 @@ class Client {
             _serverPos[1] += .1;
         if (direction == "down")
             _serverPos[1] -= .1f;
-        std::cout << "_serverPos: " + floatToString(_serverPos[0]) + ":" + floatToString(_serverPos[1]) << std::endl;
-        std::cout << "clientPos: " + floatToString(clientPos[0]) + ":" + floatToString(clientPos[1]) << std::endl;
+        // std::cout << "_serverPos: " + floatToString(_serverPos[0]) + ":" + floatToString(_serverPos[1]) << std::endl;
+        // std::cout << "clientPos: " + floatToString(clientPos[0]) + ":" + floatToString(clientPos[1]) << std::endl;
         if (floatToString(_serverPos[0]) != floatToString(clientPos[0]) || floatToString(_serverPos[1]) != floatToString(clientPos[1]))
             return false;
         return true;

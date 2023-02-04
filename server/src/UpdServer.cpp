@@ -37,7 +37,11 @@ void UdpServer::do_receive() {
 
 void UdpServer::do_send(std::size_t length) {
     std::string recv = recv_buf_.data();
-    // std::cout << "Received message: " << recv << std::endl;
+    if (recv.empty()) {
+        std::cout << "Received empty message" << std::endl;
+        return;
+    }
+    std::cout << "Received message: " << recv << std::endl;
     std::vector<std::string> resp = split(recv, ':');
     auto client_it = clients.find(sender_endpoint_);
     Client *client = client_it->second;
@@ -92,6 +96,6 @@ void UdpServer::do_send(std::size_t length) {
     // auto start = std::chrono::high_resolution_clock::now();
     // std::this_thread::sleep_for(3s);
     // auto end = std::chrono::high_resolution_clock::now();
-    // std::cout << "sent: " << resp[0]  << " to :" << sender_endpoint_ << std::endl;
+    std::cout << "Sending message: " << resp[0] << std::endl;
     socket_.async_send_to(asio::buffer(resp[0]), sender_endpoint_, [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) { do_receive(); });
 }
