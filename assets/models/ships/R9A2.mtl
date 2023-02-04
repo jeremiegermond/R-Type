@@ -1,7 +1,7 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'ships.blend'
 # Material Count: 1
 
-newmtl ShipMat
+newmtl MI_P002_R9A2_01
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000
@@ -10,4 +10,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd textures/base_colors.png
+map_Bump textures/P002_R9A2_01_n.png
+map_Kd textures/P002_R9A2_01_c.png
+refl textures/P002_R9A2_01_m.png
