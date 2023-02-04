@@ -8,12 +8,14 @@
 #include "rtype-client.hpp"
 
 int main(int ac, char *av[]) {
-    if (ac != 3)
+    std::string ip = "127.0.0.1";
+    int port = 12345;
+    if (ac == 3) {
+        // Initialization
+        std::string ip = av[1];
+        int port = std::stoi(av[2]);
+    } else 
         std::cout << "Usage: ./client [ip] [port]" << std::endl;
-
-    // Initialization
-    std::string ip = av[1];
-    int port = std::stoi(av[2]);
 
     if (port < 0 || port > 65535) {
         std::cout << "Invalid port" << std::endl;

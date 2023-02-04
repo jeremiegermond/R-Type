@@ -112,9 +112,10 @@ void UdpClient::dispatcher(const std::string &data) {
         std::cout << data << std::endl;
         int player_id = std::stoi(data.substr(1, data.find_first_of(']') - 1));
         type = data.substr(data.find_first_of(']') + 1, data.find_first_of(':') - data.find_first_of(']') - 1);
-        if (type == "_position") { // HAS to be optimized
+        if (type == "pos") { // HAS to be optimized
             std::array<float, 2> pos = {std::stof(data.substr(data.find_first_of(':') + 1, data.find_first_of(',') - data.find_first_of(':') - 1)),
                                         std::stof(data.substr(data.find_first_of(',') + 1))};
+            std::cout << "Player " << player_id << " moved to " << pos[0] << " " << pos[1] << std::endl;
             auto player = session->getPlayer(player_id);
             if (player != nullptr)
                 player->setPos(pos);
