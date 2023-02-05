@@ -23,6 +23,13 @@ Button::Button(const std::string &text, Rectangle bounds, bool enabled) {
     _callback = nullptr;
 }
 
+/**
+ * If the mouse is over the button, and the left mouse button is pressed, then the button is pressed.
+ * If the left mouse button is released, and the button is pressed, then the button is released, and
+ * the callback function is called
+ * 
+ * @return A boolean value.
+ */
 bool Button::UpdateButton() {
     if (!_enabled)
         return false;
@@ -44,6 +51,11 @@ bool Button::UpdateButton() {
     return false;
 }
 
+/**
+ * If the button is enabled, draw it in the appropriate color, otherwise don't draw it
+ * 
+ * @return A pointer to the Button object.
+ */
 void Button::Draw() {
     if (!_enabled)
         return;
@@ -60,4 +72,9 @@ void Button::Draw() {
     DrawText(_text.c_str(), int(_textPosition.x), int(_textPosition.y), 20, BLACK);
 }
 
+/**
+ * Sets the enabled state of the button.
+ * 
+ * @param enabled Whether or not the button is enabled.
+ */
 void Button::SetEnabled(bool enabled) { _enabled = enabled; }

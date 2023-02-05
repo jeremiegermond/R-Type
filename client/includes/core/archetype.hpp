@@ -19,9 +19,9 @@ class Archetype {
     Archetype() : nextEntityId(0) {}
 
     /**
-     * @brief create an entity
+     * @brief Create an entity
      * @param values of the component
-     * @return id of this entity
+     * @return ID of this entity
      */
     template <typename... Component>
     entity_type create_entity(Component &&...values) {
@@ -30,7 +30,7 @@ class Archetype {
     }
 
     /**
-     * @brief delete an entity
+     * @brief Delete an entity
      * @param id of the entity
      */
     template <typename... Component>
@@ -42,7 +42,7 @@ class Archetype {
     }
 
     /**
-     * @brief query entities components
+     * @brief Query entities components
      * @param id
      * @return If you chose to query 1 Component, this function returns the reference to that component
      * otherwise it returns a tuple of references to specified components
@@ -57,9 +57,9 @@ class Archetype {
     }
 
     /**
-     * @brief get deleted entities
+     * @brief Get deleted entities
      * @param id
-     * @return deleted entites
+     * @return Deleted entites
      */
     std::set<entity_type> &getDeletedEntities() { return deletedEntities; }
 

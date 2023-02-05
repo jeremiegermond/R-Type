@@ -7,6 +7,15 @@
 
 #include "utils.hpp"
 
+/**
+ * It takes a string and a delimiter character, and returns a vector of strings, each of which is a
+ * substring of the original string, delimited by the delimiter character
+ * 
+ * @param s The string to split
+ * @param delim The delimiter character.
+ * 
+ * @return A vector of strings
+ */
 std::vector<std::string> split(const std::string &s, char delim) {
     std::vector<std::string> elems;
     std::stringstream ss(s);
@@ -16,12 +25,25 @@ std::vector<std::string> split(const std::string &s, char delim) {
     }
     return elems;
 }
-
+/**
+ * It returns true if the string str matches the regular expression pattern
+ * 
+ * @param str The string to match against the pattern.
+ * @param pattern The regular expression pattern to match against.
+ * 
+ * @return A boolean value.
+ */
 bool isMatch(const std::string &str, const std::string &pattern) {
     std::regex reg(pattern);
     return std::regex_match(str, reg);
 }
-
+/**
+ * If the string is a number, return true, otherwise return false.
+ * 
+ * @param str The string to check
+ * 
+ * @return a boolean value.
+ */
 bool isNumber(const std::string &str) { return isMatch(str, "^[0-9]+$"); }
 
 std::string getMatch(const std::string &str, const std::string &pattern, int index) {

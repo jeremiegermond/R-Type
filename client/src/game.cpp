@@ -14,8 +14,21 @@ std::string floatToString(float number, int precision = 1) {
     return out.str();
 }
 
+/**
+ * Converts a Vector3 to a string in the format of 'x,y'.
+ * 
+ * @param position The position of the object.
+ * 
+ * @return A string containing the x and y coordinates of the position vector.
+ */
 std::string getPositionString(Vector3 position) { return floatToString(position.x) + "," + floatToString(position.y); }
 
+/**
+ * It moves the spaceship based on the keyboard input and sends the new position to the server
+ * 
+ * @param spaceship The spaceship object
+ * @param client The client that will send the message to the server.
+ */
 void moveSpaceship(GameObject *spaceship, UdpClient *client) {
     float speed = 0.1;
     Vector3 position = spaceship->getPosition();

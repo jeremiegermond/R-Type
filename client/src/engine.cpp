@@ -7,6 +7,10 @@
 
 #include "engine.hpp"
 
+/**
+ * It initializes the camera, loads the companion cube model, and initializes the music and sound
+ * volumes
+ */
 Engine::Engine() : _playerId(1) {
     _camera.position = {0, 0, 30};           // Camera position
     _camera.target = Vector3Zero();          // Camera looking at point
@@ -23,8 +27,16 @@ Engine::Engine() : _playerId(1) {
     }
 }
 
+/**
+ * It calls the default constructor, then calls the loadAssets function
+ * 
+ * @param assetsPath The path to the assets folder.
+ */
 Engine::Engine(const std::string &assetsPath) : Engine() { loadAssets(assetsPath); }
 
+/**
+ * It unloads all the assets, deletes the UDP client, and then calls the destructor for the base class
+ */
 Engine::~Engine() {
     SetTraceLogLevel(LOG_INFO);
     TraceLog(LOG_INFO, "Unloading assets...");
@@ -33,6 +45,11 @@ Engine::~Engine() {
     delete _udpClient;
 }
 
+/**
+ * It loads all the assets from the json file
+ * 
+ * @param assetsPath The path to the json file containing the assets.
+ */
 void Engine::loadAssets(const std::string &assetsPath) {
     // Show loading screen
     BeginDrawing();
@@ -57,6 +74,11 @@ void Engine::loadAssets(const std::string &assetsPath) {
     SetShaderValue(_shaders["lighting"], ambientLoc, lightPos, SHADER_UNIFORM_VEC4);
 }
 
+/**
+ * It loads shaders from a json file
+ * 
+ * @param data The JSON data that we loaded from the file.
+ */
 void Engine::loadShaders(json data) {
     TraceLog(LOG_INFO, "Loading shaders...");
     for (auto &shader : data["shaders"]) {
@@ -85,6 +107,11 @@ void Engine::loadShaders(json data) {
     TraceLog(LOG_INFO, "Loaded %d shaders", _shaders.size());
 }
 
+/**
+ * It loads textures from the json file and stores them in a map
+ * 
+ * @param data The JSON data that was loaded from the file.
+ */
 void Engine::loadTextures(json data) {
     TraceLog(LOG_INFO, "Loading textures...");
     for (auto &sprite : data["sprites"]) {
@@ -105,6 +132,11 @@ void Engine::loadTextures(json data) {
     TraceLog(LOG_INFO, "Loaded %d textures", _textures.size());
 }
 
+/**
+ * It loads the musics from the json file and stores them in a map
+ * 
+ * @param data The JSON data that contains the music information.
+ */
 void Engine::loadMusics(json data) {
     TraceLog(LOG_INFO, "Loading musics...");
     for (auto &music : data["musics"]) {
@@ -122,6 +154,11 @@ void Engine::loadMusics(json data) {
     TraceLog(LOG_INFO, "Loaded %d musics", _musics.size());
 }
 
+/**
+ * It loads sounds from the JSON file and stores them in a map
+ * 
+ * @param data The JSON data that was loaded from the file.
+ */
 void Engine::loadSounds(json data) {
     TraceLog(LOG_INFO, "Loading sounds...");
     for (auto &sound : data["sounds"]) {
@@ -139,6 +176,11 @@ void Engine::loadSounds(json data) {
     TraceLog(LOG_INFO, "Loaded %d sounds", _sounds.size());
 }
 
+/**
+ * It loads objects from a json file
+ * 
+ * @param data the json object containing the data
+ */
 void Engine::loadObjects(json data) {
     TraceLog(LOG_INFO, "Loading objects...");
     for (auto &object : data["models"]) {
@@ -193,6 +235,9 @@ void Engine::loadObjects(json data) {
     TraceLog(LOG_INFO, "Loaded %d objects", _objects.size());
 }
 
+/**
+ * It unloads all the assets
+ */
 void Engine::unloadAssets() {
     UnloadModel(_companionCube);
     clearSliders();
@@ -224,6 +269,9 @@ void Engine::unloadAssets() {
     _shaders.clear();
 }
 
+/**
+ * It deletes all the sliders and clears the map
+ */
 void Engine::clearSliders() {
     for (auto &slider : _sliders) {
         delete slider.second;
@@ -231,6 +279,11 @@ void Engine::clearSliders() {
     _sliders.clear();
 }
 
+/**
+ * It deletes the slider with the given name from the map of sliders
+ * 
+ * @param name The name of the slider.
+ */
 void Engine::clearSlider(const std::string &name) {
     if (_sliders.find(name) != _sliders.end()) {
         delete _sliders[name];
@@ -238,6 +291,9 @@ void Engine::clearSlider(const std::string &name) {
     }
 }
 
+/**
+ * It deletes all the buttons in the map and then clears the map
+ */
 void Engine::clearButtons() {
     for (auto &button : _buttons) {
         delete button.second;
@@ -245,6 +301,9 @@ void Engine::clearButtons() {
     _buttons.clear();
 }
 
+/**
+ * It deletes all the enemies and clears the map
+ */
 void Engine::clearEnemies() {
     for (auto &enemy : _enemies) {
         delete enemy.second;
@@ -252,6 +311,11 @@ void Engine::clearEnemies() {
     _enemies.clear();
 }
 
+/**
+ * It loops through all the sliders in the map and calls the UpdateSlider() function for each one
+ * 
+ * @return A boolean value.
+ */
 bool Engine::updateSliders() {
     bool selected = false;
     for (auto &slider : _sliders) {
@@ -262,6 +326,13 @@ bool Engine::updateSliders() {
     return selected;
 }
 
+/**
+ * If the button exists, update it
+ * 
+ * @param name The name of the button.
+ * 
+ * @return A boolean value.
+ */
 bool Engine::updateButton(const std::string &name) {
     if (_buttons.find(name) != _buttons.end()) {
         return _buttons[name]->UpdateButton();
@@ -269,6 +340,9 @@ bool Engine::updateButton(const std::string &name) {
     return false;
 }
 
+/**
+ * It updates the music stream and checks if a new music is scheduled to be played
+ */
 void Engine::updateMusic() {
     if (IsMusicStreamPlaying(_musics[_musicPlaying].music)) {
         UpdateMusicStream(_musics[_musicPlaying].music);
@@ -281,6 +355,10 @@ void Engine::updateMusic() {
     }
 }
 
+/**
+ * If the particle's scale is less than or equal to zero, remove it from the vector. Otherwise,
+ * increment the iterator
+ */
 void Engine::updateParticles() {
     for (auto it = _particles.begin(); it != _particles.end();) {
         it->scale -= .01;
@@ -292,6 +370,9 @@ void Engine::updateParticles() {
     }
 }
 
+/**
+ * It updates the lights in the scene and removes any lights that are no longer active
+ */
 void Engine::updateLights() {
     for (auto &light : _lights) {
         light.UpdateLightValues(_shaders["lighting"]);
@@ -307,18 +388,32 @@ void Engine::updateLights() {
     }
 }
 
+/**
+ * It loops through all the objects in the game and calls their update() function
+ */
 void Engine::updateObjects() {
     for (auto &object : _objects) {
         object.second->update();
     }
 }
 
+/**
+ * It updates the camera.
+ */
 void Engine::updateCamera() { UpdateCamera(&_camera); }
 
+/**
+ * It updates the shader's view vector
+ * 
+ * @param shaderName The name of the shader to update.
+ */
 void Engine::updateShaderLocView(const std::string &shaderName) {
     SetShaderValue(_shaders[shaderName], _shaders[shaderName].locs[SHADER_LOC_VECTOR_VIEW], &_camera.position, SHADER_UNIFORM_VEC3);
 }
 
+/**
+ * If the particle is enabled, update it, otherwise remove it from the list
+ */
 void Engine::updateParticles2D() {
     for (auto it = _particles2D.begin(); it != _particles2D.end();) {
         it->Update();
@@ -330,6 +425,10 @@ void Engine::updateParticles2D() {
     }
 }
 
+/**
+ * It updates the bullets, checks if they are colliding with an enemy, if so, it adds an explosion
+ * particle and removes the bullet
+ */
 void Engine::updateBullets() {
     for (auto it = _bullets.begin(); it != _bullets.end();) {
         bool isColliding = false;
@@ -364,6 +463,11 @@ void Engine::updateBullets() {
     }
 }
 
+/**
+ * It parses the messages received from the server and updates the game state accordingly
+ * 
+ * @return A pointer to the object with the given name.
+ */
 void Engine::updateUdpClient() {
     // std::cout << "update UDP client" << std::endl;
     while (_udpClient->hasMessage()) {
@@ -426,18 +530,30 @@ void Engine::updateUdpClient() {
     }
 }
 
+/**
+ * It updates all the enemies in the game
+ */
 void Engine::updateEnemies() {
     for (auto &enemy : _enemies) {
         enemy.second->update();
     }
 }
 
+/**
+ * If the object exists and is in the screen, draw it
+ * 
+ * @param name The name of the object to draw.
+ * @param offset The offset of the object.
+ */
 void Engine::drawObject(const std::string &name, Vector3 offset) {
     if (_objects.find(name) != _objects.end() && isInScreen(_objects[name]->getPosition())) {
         _objects[name]->draw(offset);
     }
 }
 
+/**
+ * It draws all objects that are in the screen
+ */
 void Engine::drawObjects() {
     for (auto &object : _objects) {
         if (isInScreen(object.second->getPosition()))
@@ -445,48 +561,79 @@ void Engine::drawObjects() {
     }
 }
 
+/**
+ * For each particle in the vector of particles, draw the model at the particle's position, scale, and
+ * color.
+ */
 void Engine::drawParticles() {
     for (auto &particle : _particles) {
         DrawModel(_companionCube, particle.position, particle.scale, particle.color);
     }
 }
 
+/**
+ * For each bullet in the vector of bullets, draw the bullet.
+ */
 void Engine::drawBullets() {
     for (auto &bullet : _bullets) {
         bullet.Draw(_companionCube);
     }
 }
 
+/**
+ * It draws the spheres that represent the lights in the scene
+ */
 void Engine::drawLightsSpheres() {
     for (auto &light : _lights) {
         light.DrawSphere();
     }
 }
 
+/**
+ * For each particle in the vector of particles, draw the particle using the camera.
+ */
 void Engine::drawParticles2D() {
     for (auto &particle : _particles2D) {
         particle.Draw(_camera);
     }
 }
 
+/**
+ * It draws all the sliders in the game
+ */
 void Engine::drawSliders() {
     for (auto &slider : _sliders) {
         slider.second->Draw();
     }
 }
 
+/**
+ * It loops through all the buttons in the _buttons map and calls the Draw() function on each one
+ */
 void Engine::drawButtons() {
     for (auto &button : _buttons) {
         button.second->Draw();
     }
 }
 
+/**
+ * It loops through all the enemies in the game and draws them
+ */
 void Engine::drawEnemies() {
     for (auto &enemy : _enemies) {
         enemy.second->draw();
     }
 }
 
+/**
+ * Draws text on the screen
+ * 
+ * @param text The text to draw.
+ * @param fontSize The size of the font.
+ * @param position The position of the text.
+ * @param color The color of the text.
+ * @param centered If true, the text will be centered on the position.
+ */
 void Engine::drawText(const std::string &text, int fontSize, Vector2 position, Color color, bool centered) {
     if (centered) {
         position.x -= MeasureText(text.c_str(), fontSize) / 2;
@@ -494,6 +641,12 @@ void Engine::drawText(const std::string &text, int fontSize, Vector2 position, C
     DrawText(text.c_str(), position.x, position.y, fontSize, color);
 }
 
+/**
+ * It plays a music
+ * 
+ * @param name The name of the music to play.
+ * @param delay The delay in seconds before the music starts playing.
+ */
 void Engine::playMusic(const std::string &name, float delay) {
     if (_musics.find(name) != _musics.end()) {
         if (delay > 0) {
@@ -510,6 +663,12 @@ void Engine::playMusic(const std::string &name, float delay) {
     }
 }
 
+/**
+ * It plays a music file by its index
+ * 
+ * @param index The index of the music to play.
+ * @param delay The delay in seconds before the music starts playing.
+ */
 void Engine::playMusic(int index, float delay) {
     for (auto &music : _musics) {
         if (music.second.index == index) {
@@ -519,24 +678,60 @@ void Engine::playMusic(int index, float delay) {
     }
 }
 
+/**
+ * If the sound exists, play it
+ * 
+ * @param name The name of the sound to play.
+ */
 void Engine::playSound(const std::string &name) {
     if (_sounds.find(name) != _sounds.end()) {
         PlaySoundMulti(_sounds[name].sound);
     }
 }
 
+/**
+ * It adds a new slider to the engine
+ * 
+ * @param name The name of the slider. This is used to identify the slider.
+ * @param bounds The rectangle that the slider will occupy.
+ * @param value The value that the slider will modify.
+ * @param minValue The minimum value the slider can have.
+ * @param maxValue The maximum value the slider can have.
+ * @param enabled Whether the slider is enabled or not.
+ * 
+ * @return A pointer to the Slider object.
+ */
 void Engine::addSlider(const std::string &name, Rectangle bounds, float *value, float minValue, float maxValue, bool enabled) {
     if (_sliders.find(name) != _sliders.end())
         return;
     _sliders[name] = new Slider(name, bounds, value, minValue, maxValue, enabled);
 }
 
+/**
+ * It adds a button to the engine
+ * 
+ * @param name The name of the button. This is used to identify the button.
+ * @param text The text to display on the button.
+ * @param bounds The rectangle that the button will be drawn in.
+ * @param enabled Whether the button is enabled or not.
+ * 
+ * @return A pointer to the button with the given name.
+ */
 void Engine::addButton(const std::string &name, const std::string &text, Rectangle bounds, bool enabled) {
     if (_buttons.find(name) != _buttons.end())
         return;
     _buttons[name] = new Button(text, bounds, enabled);
 }
 
+/**
+ * It adds a light to the scene
+ * 
+ * @param position The position of the light in world space.
+ * @param intensity The intensity of the light.
+ * @param color The color of the light.
+ * 
+ * @return The index of the light in the _lights vector.
+ */
 int Engine::addLight(Vector3 position, float intensity, Color color) {
     int idx = *_availableLights.begin();
     if (idx == -1)
@@ -547,6 +742,12 @@ int Engine::addLight(Vector3 position, float intensity, Color color) {
     return idx;
 }
 
+/**
+ * It adds a bullet to the game
+ * 
+ * @param position The position of the bullet
+ * @param velocity The velocity of the bullet.
+ */
 void Engine::addBullet(Vector3 position, Vector3 velocity) {
     unsigned char r = GetRandomValue(0, 255);
     unsigned char g = GetRandomValue(0, 255);
@@ -557,6 +758,17 @@ void Engine::addBullet(Vector3 position, Vector3 velocity) {
     _bullets.emplace_back(position, velocity, .11, idx, color);
 }
 
+/**
+ * It adds a particle to the front of the vector
+ * 
+ * @param textureName The name of the texture to use for the particle.
+ * @param position The position of the particle in 3D space.
+ * @param rotation The rotation of the particle in degrees.
+ * @param scale The scale of the particle. If it's negative, the scale will be the same as the
+ * texture's scale.
+ * 
+ * @return A reference to the texture.
+ */
 void Engine::addParticle2D(const std::string &textureName, Vector3 position, float rotation, float scale) {
     if (_textures.find(textureName) == _textures.end())
         return;
@@ -566,8 +778,23 @@ void Engine::addParticle2D(const std::string &textureName, Vector3 position, flo
     _particles2D.insert(_particles2D.begin(), Particle2D(texture, position, scaleVector, rotation));
 }
 
+/**
+ * It adds a particle to the particle list
+ * 
+ * @param position The position of the particle.
+ * @param scale The size of the particle.
+ * @param color The color of the particle.
+ */
 void Engine::addParticle(Vector3 position, float scale, Color color) { _particles.emplace_back(Particle{position, scale, color}); }
 
+/**
+ * It adds an enemy to the game
+ * 
+ * @param id The id of the enemy.
+ * @param position The position of the enemy.
+ * @param velocity The velocity of the enemy.
+ * @param hp the enemy's health
+ */
 void Engine::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
     if (_enemies.find(id) != _enemies.end()) {
         _enemies[id]->setPosition(position);
@@ -578,6 +805,13 @@ void Engine::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
     }
 }
 
+/**
+ * If the object exists, return it, otherwise return nullptr
+ * 
+ * @param name The name of the object to get.
+ * 
+ * @return A pointer to a GameObject.
+ */
 GameObject *Engine::getObject(const std::string &name) {
     if (_objects.find(name) != _objects.end()) {
         return _objects[name];
@@ -585,13 +819,30 @@ GameObject *Engine::getObject(const std::string &name) {
     return nullptr;
 }
 
+/**
+ * It returns a pointer to the player's ship
+ * 
+ * @return The player's ship.
+ */
 GameObject *Engine::getPlayerShip() {
     auto name = "R9A" + std::to_string(_playerId);
     return getObject(name);
 }
 
+/**
+ * It returns a copy of the private member variable _objects
+ * 
+ * @return A reference to the unordered map of objects.
+ */
 std::unordered_map<std::string, GameObject *> Engine::getObjects() { return _objects; }
 
+/**
+ * It returns a pointer to the light with the given index
+ * 
+ * @param index The index of the light to get.
+ * 
+ * @return A pointer to the light object.
+ */
 Light *Engine::getLight(int index) {
     for (auto &light : _lights) {
         if (light.getIndex() == index)
@@ -600,8 +851,20 @@ Light *Engine::getLight(int index) {
     return nullptr;
 }
 
+/**
+ * Return a pointer to the camera object.
+ * 
+ * @return A pointer to the camera object.
+ */
 Camera3D *Engine::getCamera() { return &_camera; }
 
+/**
+ * If the button exists, return it, otherwise return nullptr
+ * 
+ * @param name The name of the button.
+ * 
+ * @return A pointer to a Button object.
+ */
 Button *Engine::getButton(const std::string &name) {
     if (_buttons.find(name) != _buttons.end()) {
         return _buttons[name];
@@ -609,6 +872,13 @@ Button *Engine::getButton(const std::string &name) {
     return nullptr;
 }
 
+/**
+ * If the slider exists, return it, otherwise return nullptr
+ * 
+ * @param name The name of the slider.
+ * 
+ * @return A pointer to the slider with the given name.
+ */
 Slider *Engine::getSlider(const std::string &name) {
     if (_sliders.find(name) != _sliders.end()) {
         return _sliders[name];
@@ -616,26 +886,52 @@ Slider *Engine::getSlider(const std::string &name) {
     return nullptr;
 }
 
+/**
+ * It returns the UdpClient object.
+ * 
+ * @return The UdpClient object.
+ */
 UdpClient *Engine::getUdpClient() { return _udpClient; }
 
+/**
+ * If the shader with the given name exists, then begin using it.
+ * 
+ * @param name The name of the shader to set.
+ */
 void Engine::setShaderMode(const std::string &name) {
     if (_shaders.find(name) != _shaders.end()) {
         BeginShaderMode(_shaders[name]);
     }
 }
 
+/**
+ * If the object and shader exist, set the shader for the object
+ * 
+ * @param name The name of the object to set the shader for.
+ * @param shader The name of the shader to set.
+ */
 void Engine::setShaderObject(const std::string &name, const std::string &shader) {
     if (_objects.find(name) != _objects.end() && _shaders.find(shader) != _shaders.end()) {
         _objects[name]->setShader(_shaders[shader]);
     }
 }
 
+/**
+ * It sets the music volume
+ * 
+ * @param volume The volume of the music, between 0 and 100.
+ */
 void Engine::setMusicVolume(float volume) {
     _musicVolume = volume;
     if (_musics.find(_musicPlaying) != _musics.end())
         SetMusicVolume(_musics[_musicPlaying].music, _musicVolume);
 }
 
+/**
+ * It sets the volume of all sounds to the given volume
+ * 
+ * @param volume The volume to set the sound to.
+ */
 void Engine::setSoundVolume(float volume) {
     _soundVolume = volume;
     for (auto &sound : _sounds) {
@@ -643,6 +939,11 @@ void Engine::setSoundVolume(float volume) {
     }
 }
 
+/**
+ * It sets the pause state of the game, and enables/disables the pause menu buttons accordingly
+ * 
+ * @param pause true if the game is paused, false if it's not
+ */
 void Engine::setPause(bool pause) {
     SetWindowTitle(pause ? "Paused" : "it rayworks !");
     playMusic(pause ? 2 : 1, .5);
@@ -662,14 +963,37 @@ void Engine::setPause(bool pause) {
     playSound("decision");
 }
 
+/**
+ * This function sets the _udpClient member variable to the value of the udpClient parameter.
+ * 
+ * @param udpClient The UdpClient object that will be used to send the data to the server.
+ */
 void Engine::setUdpClient(UdpClient *udpClient) { _udpClient = udpClient; }
 
+/**
+ * If the position is within the screen, return true
+ * 
+ * @param position The position of the object in world space.
+ * @param offset The offset from the screen border.
+ * 
+ * @return A boolean value.
+ */
 bool Engine::isInScreen(Vector3 position, float offset) {
     Vector2 screenPosition = GetWorldToScreen(position, _camera);
     return screenPosition.x > -offset && screenPosition.x < float(GetScreenWidth()) + offset && screenPosition.y > -offset &&
            screenPosition.y < float(GetScreenHeight()) + offset;
 }
 
+/**
+ * This function returns a pointer to the _musicVolume variable.
+ * 
+ * @return A pointer to the _musicVolume variable.
+ */
 float *Engine::getMusicVolume() { return &_musicVolume; }
 
+/**
+ * This function returns a pointer to the _soundVolume variable.
+ * 
+ * @return A pointer to the _soundVolume variable.
+ */
 float *Engine::getSoundVolume() { return &_soundVolume; }

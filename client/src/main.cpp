@@ -7,6 +7,14 @@
 
 #include "rtype-client.hpp"
 
+/**
+ * It's a game loop
+ * 
+ * @param ac The number of arguments passed to the program.
+ * @param av the command line arguments
+ * 
+ * @return The return value is the number of bytes sent.
+ */
 int main(int ac, char *av[]) {
     std::string ip = "127.0.0.1";
     int port = 12345;

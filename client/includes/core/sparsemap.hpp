@@ -33,7 +33,7 @@ class SparseMap {
     }
 
     /**
-     * @brief create a block containing his id and its value
+     * @brief Create a block containing his id and its value
      * @param id, value
      */
     void insert(entity_type id, const Component &value) {
@@ -56,7 +56,7 @@ class SparseMap {
     }
 
     /**
-     * @brief erase an entity corresponding to the given id
+     * @brief Erase an entity corresponding to the given id
      * @param id
      */
     void erase(entity_type id) {
@@ -87,9 +87,9 @@ class SparseMap {
     }
 
     /**
-     * @brief overriding opreator[]
+     * @brief Overriding opreator[]
      * @param id
-     * @return data of the block
+     * @return Data of the block
      */
     Component &operator[](entity_type id) {
         Block *block = this->blocks[blockIndex(id)];

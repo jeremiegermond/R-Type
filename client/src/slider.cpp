@@ -7,6 +7,16 @@
 
 #include "slider.hpp"
 
+/**
+ * It creates a new Slider object with the given name, bounds, value, minValue, maxValue, and enabled
+ * 
+ * @param name The name of the slider. This is used to label the slider.
+ * @param bounds The rectangle that defines the size and position of the slider.
+ * @param value The value that the slider will modify.
+ * @param minValue The minimum value the slider can be set to.
+ * @param maxValue The maximum value the slider can have.
+ * @param enabled Whether or not the slider is enabled.
+ */
 Slider::Slider(const std::string &name, Rectangle bounds, float *value, float minValue, float maxValue, bool enabled) {
     _name = name;
     _bounds = bounds;
@@ -19,6 +29,12 @@ Slider::Slider(const std::string &name, Rectangle bounds, float *value, float mi
     _selectedColor = Fade(LIGHTGRAY, .9);
 }
 
+/**
+ * If the mouse is over the slider, and the left mouse button is pressed, the slider is dragged, and
+ * the value is updated accordingly
+ * 
+ * @return A boolean value.
+ */
 bool Slider::UpdateSlider() {
     if (!_enabled)
         return false;
@@ -48,6 +64,11 @@ bool Slider::UpdateSlider() {
     return _dragging;
 }
 
+/**
+ * It draws a rectangle with a rectangle inside it
+ * 
+ * @return A pointer to the value of the slider.
+ */
 void Slider::Draw() {
     Color color = _baseColor;
     if (!_enabled)
@@ -65,15 +86,33 @@ void Slider::Draw() {
     // draw name on the right
     DrawText(_name.c_str(), _bounds.x + _bounds.width + 10, _bounds.y + 4, 10, WHITE);
 }
+/**
+ * Sets the enabled state of the slider.
+ * 
+ * @param enabled Whether or not the slider is enabled.
+ */
 
 void Slider::SetEnabled(bool enabled) { _enabled = enabled; }
 
+/**
+ * Set the value, minimum value, and maximum value of the slider.
+ * 
+ * @param value This is the value that the slider will be changing.
+ * @param minValue The minimum value of the slider.
+ * @param maxValue The maximum value of the slider.
+ */
 void Slider::SetValues(float *value, float minValue, float maxValue) {
     _value = value;
     _minValue = minValue;
     _maxValue = maxValue;
 }
 
+/**
+ * It sets the value of the slider to the value of the float pointer passed in
+ * 
+ * @param value The value to set the slider to.
+ * @param enable If true, the slider will be enabled.
+ */
 void Slider::SetValue(float *value, bool enable) {
     if (enable)
         _enabled = true;
