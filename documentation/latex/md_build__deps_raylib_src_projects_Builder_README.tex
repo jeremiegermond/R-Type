@@ -1,0 +1,21 @@
+This is a project template to be used with \href{https://raw.githubusercontent.com/jubalh/raymario/master/meson.build}{\texttt{ GNOME Builder}}. It uses the \href{https://raw.githubusercontent.com/jubalh/raymario/master/meson.build}{\texttt{ meson}} build system.
+
+Project can be compiled via the command line using\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{meson build}
+\DoxyCodeLine{cd build}
+\DoxyCodeLine{ninja}
+\DoxyCodeLine{ninja install}
+
+\end{DoxyCode}
+
+
+Or it can be opened with Building simply clicking on the {\ttfamily meson.\+build} file. Alternatively, open Builder first and click on the {\ttfamily open} button at the top-\/left.
+
+There are comments to the {\ttfamily meson.\+build} file to note the values that should be edited. For a full overview of options please check the \href{http://mesonbuild.com/Manual.html}{\texttt{ meson manual}}.
+
+In the provided file, it\textquotesingle{}s assumed that the build file is located at the root folder of the project, and that all the sources are in a {\ttfamily src} subfolder.
+
+Check out the {\ttfamily examples} directory for a simple example on how to use this template.
+
+You can also look at \href{https://github.com/jubalh/raymario}{\texttt{ raymario}} for a slightly more complex example which also installs resource files. 

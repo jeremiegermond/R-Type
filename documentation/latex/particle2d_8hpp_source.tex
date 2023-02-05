@@ -1,0 +1,44 @@
+\hypertarget{particle2d_8hpp_source}{}\doxysection{particle2d.\+hpp}
+\label{particle2d_8hpp_source}\index{client/includes/particle2d.hpp@{client/includes/particle2d.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{** EPITECH PROJECT, 2023}}
+\DoxyCodeLine{3 \textcolor{comment}{** rtype}}
+\DoxyCodeLine{4 \textcolor{comment}{** File description:}}
+\DoxyCodeLine{5 \textcolor{comment}{** particle2d.hpp by thibb1}}
+\DoxyCodeLine{6 \textcolor{comment}{*/}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef RTYPE\_PARTICLE2D\_HPP}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define RTYPE\_PARTICLE2D\_HPP}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include "{}deps.hpp"{}}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include "{}structs.hpp"{}}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{keyword}{class }\mbox{\hyperlink{classParticle2D}{Particle2D}} \{}
+\DoxyCodeLine{15   \textcolor{keyword}{private}:}
+\DoxyCodeLine{16     \mbox{\hyperlink{structMyTexture}{MyTexture}} *\_texture;}
+\DoxyCodeLine{17     Vector3 \_position;}
+\DoxyCodeLine{18     Vector3 \_up;}
+\DoxyCodeLine{19     Vector2 \_scale;}
+\DoxyCodeLine{20     Rectangle \_source\{\};}
+\DoxyCodeLine{21     \textcolor{keywordtype}{int} \_totalFrames;}
+\DoxyCodeLine{22     \textcolor{keywordtype}{int} \_currentFrame;}
+\DoxyCodeLine{23     \textcolor{keywordtype}{int} \_columns;}
+\DoxyCodeLine{24     \textcolor{keywordtype}{int} \_rows;}
+\DoxyCodeLine{25     \textcolor{keywordtype}{int} \_width;}
+\DoxyCodeLine{26     \textcolor{keywordtype}{int} \_height;}
+\DoxyCodeLine{27     \textcolor{keywordtype}{float} \_rotation;}
+\DoxyCodeLine{28     \textcolor{keywordtype}{bool} \_enabled;}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30   \textcolor{keyword}{public}:}
+\DoxyCodeLine{31     \mbox{\hyperlink{classParticle2D}{Particle2D}}(\mbox{\hyperlink{structMyTexture}{MyTexture}} *texture, Vector3 position, Vector2 scale = Vector2Zero(), \textcolor{keywordtype}{float} rotation = 0);}
+\DoxyCodeLine{32     \mbox{\hyperlink{classParticle2D}{\string~Particle2D}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{33     \textcolor{keywordtype}{void} \mbox{\hyperlink{classParticle2D_a62ab382efcd71340ccca53135da43aa1}{Update}}();}
+\DoxyCodeLine{34     \textcolor{keywordtype}{void} \mbox{\hyperlink{classParticle2D_a279813e777b04899aa2b87901ea3fa52}{Draw}}(Camera3D camera);}
+\DoxyCodeLine{35     [[nodiscard]] \textcolor{keywordtype}{bool} \mbox{\hyperlink{classParticle2D_a8340e9d92f4b0fa2d1b895c09d901253}{IsEnabled}}() \textcolor{keyword}{const};}
+\DoxyCodeLine{36 \};}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{38 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// RTYPE\_PARTICLE2D\_HPP}}
+
+\end{DoxyCode}

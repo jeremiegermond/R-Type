@@ -1,0 +1,97 @@
+\hypertarget{classecs_1_1Archetype}{}\doxysection{ecs\+::Archetype\texorpdfstring{$<$}{<} Components \texorpdfstring{$>$}{>} Class Template Reference}
+\label{classecs_1_1Archetype}\index{ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename... Component$>$ }\\entity\+\_\+type \mbox{\hyperlink{classecs_1_1Archetype_afcc6d99fb13f966b760149a3e132c7bb}{create\+\_\+entity}} (Component \&\&...values)
+\begin{DoxyCompactList}\small\item\em Create an entity. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... Component$>$ }\\void \mbox{\hyperlink{classecs_1_1Archetype_a78cecb9018295f241170768f759b4efe}{delete\+\_\+entity}} (entity\+\_\+type id)
+\begin{DoxyCompactList}\small\item\em Delete an entity. \end{DoxyCompactList}\item 
+{\footnotesize template$<$size\+\_\+t... Ids$>$ }\\decltype(auto) \mbox{\hyperlink{classecs_1_1Archetype_a72fa3626be0e5dbc438bfac8f1e5e3bf}{query}} (entity\+\_\+type id)
+\begin{DoxyCompactList}\small\item\em Query entities components. \end{DoxyCompactList}\item 
+std\+::set$<$ entity\+\_\+type $>$ \& \mbox{\hyperlink{classecs_1_1Archetype_a1e64e41e0ce0b3943195537f9bd18b7f}{get\+Deleted\+Entities}} ()
+\begin{DoxyCompactList}\small\item\em Get deleted entities. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classecs_1_1Archetype_afcc6d99fb13f966b760149a3e132c7bb}\label{classecs_1_1Archetype_afcc6d99fb13f966b760149a3e132c7bb}} 
+\index{ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}!create\_entity@{create\_entity}}
+\index{create\_entity@{create\_entity}!ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}}
+\doxysubsubsection{\texorpdfstring{create\_entity()}{create\_entity()}}
+{\footnotesize\ttfamily template$<$typename... Components$>$ \\
+template$<$typename... Component$>$ \\
+entity\+\_\+type \mbox{\hyperlink{classecs_1_1Archetype}{ecs\+::\+Archetype}}$<$ Components $>$\+::create\+\_\+entity (\begin{DoxyParamCaption}\item[{Component \&\&...}]{values }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Create an entity. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em values} & of the component \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+ID of this entity 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classecs_1_1Archetype_a78cecb9018295f241170768f759b4efe}\label{classecs_1_1Archetype_a78cecb9018295f241170768f759b4efe}} 
+\index{ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}!delete\_entity@{delete\_entity}}
+\index{delete\_entity@{delete\_entity}!ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}}
+\doxysubsubsection{\texorpdfstring{delete\_entity()}{delete\_entity()}}
+{\footnotesize\ttfamily template$<$typename... Components$>$ \\
+template$<$typename... Component$>$ \\
+void \mbox{\hyperlink{classecs_1_1Archetype}{ecs\+::\+Archetype}}$<$ Components $>$\+::delete\+\_\+entity (\begin{DoxyParamCaption}\item[{entity\+\_\+type}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Delete an entity. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & of the entity \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classecs_1_1Archetype_a1e64e41e0ce0b3943195537f9bd18b7f}\label{classecs_1_1Archetype_a1e64e41e0ce0b3943195537f9bd18b7f}} 
+\index{ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}!getDeletedEntities@{getDeletedEntities}}
+\index{getDeletedEntities@{getDeletedEntities}!ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}}
+\doxysubsubsection{\texorpdfstring{getDeletedEntities()}{getDeletedEntities()}}
+{\footnotesize\ttfamily template$<$typename... Components$>$ \\
+std\+::set$<$ entity\+\_\+type $>$ \& \mbox{\hyperlink{classecs_1_1Archetype}{ecs\+::\+Archetype}}$<$ Components $>$\+::get\+Deleted\+Entities (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get deleted entities. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Deleted entites 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classecs_1_1Archetype_a72fa3626be0e5dbc438bfac8f1e5e3bf}\label{classecs_1_1Archetype_a72fa3626be0e5dbc438bfac8f1e5e3bf}} 
+\index{ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}!query@{query}}
+\index{query@{query}!ecs::Archetype$<$ Components $>$@{ecs::Archetype$<$ Components $>$}}
+\doxysubsubsection{\texorpdfstring{query()}{query()}}
+{\footnotesize\ttfamily template$<$typename... Components$>$ \\
+template$<$size\+\_\+t... Ids$>$ \\
+decltype(auto) \mbox{\hyperlink{classecs_1_1Archetype}{ecs\+::\+Archetype}}$<$ Components $>$\+::query (\begin{DoxyParamCaption}\item[{entity\+\_\+type}]{id }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Query entities components. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+If you chose to query 1 Component, this function returns the reference to that component otherwise it returns a tuple of references to specified components 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+client/includes/core/archetype.\+hpp\end{DoxyCompactItemize}

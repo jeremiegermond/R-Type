@@ -1,0 +1,30 @@
+\hypertarget{client_2includes_2utils_8hpp_source}{}\doxysection{utils.\+hpp}
+\label{client_2includes_2utils_8hpp_source}\index{client/includes/utils.hpp@{client/includes/utils.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{** EPITECH PROJECT, 2023}}
+\DoxyCodeLine{3 \textcolor{comment}{** rtype}}
+\DoxyCodeLine{4 \textcolor{comment}{** File description:}}
+\DoxyCodeLine{5 \textcolor{comment}{** utils.hpp by thibb1}}
+\DoxyCodeLine{6 \textcolor{comment}{*/}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef RTYPE\_UTILS\_HPP}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define RTYPE\_UTILS\_HPP}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <regex>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <sstream>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#define NB\_R "{}(-\/?[0-\/9]+\(\backslash\)\(\backslash\).?[0-\/9]*)"{}}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 std::vector<std::string> split(\textcolor{keyword}{const} std::string \&s, \textcolor{keywordtype}{char} delim);}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 \textcolor{keywordtype}{bool} isMatch(\textcolor{keyword}{const} std::string \&str, \textcolor{keyword}{const} std::string \&pattern);}
+\DoxyCodeLine{21 \textcolor{keywordtype}{bool} isNumber(\textcolor{keyword}{const} std::string \&str);}
+\DoxyCodeLine{22 std::string getMatch(\textcolor{keyword}{const} std::string \&str, \textcolor{keyword}{const} std::string \&pattern, \textcolor{keywordtype}{int} index = 0);}
+\DoxyCodeLine{23 std::vector<std::string> getMatches(\textcolor{keyword}{const} std::string \&str, \textcolor{keyword}{const} std::string \&pattern);}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// RTYPE\_UTILS\_HPP}}
+
+\end{DoxyCode}

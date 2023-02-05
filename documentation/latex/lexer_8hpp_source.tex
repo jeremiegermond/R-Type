@@ -1,0 +1,1490 @@
+\hypertarget{lexer_8hpp_source}{}\doxysection{lexer.\+hpp}
+\label{lexer_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/input/lexer.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/input/lexer.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <array>} \textcolor{comment}{// array}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <clocale>} \textcolor{comment}{// localeconv}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <cstddef>} \textcolor{comment}{// size\_t}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <cstdio>} \textcolor{comment}{// snprintf}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <cstdlib>} \textcolor{comment}{// strtof, strtod, strtold, strtoll, strtoull}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <initializer\_list>} \textcolor{comment}{// initializer\_list}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <string>} \textcolor{comment}{// char\_traits, string}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <utility>} \textcolor{comment}{// move}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#include <vector>} \textcolor{comment}{// vector}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#include <nlohmann/detail/input/input\_adapters.hpp>}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#include <nlohmann/detail/input/position\_t.hpp>}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#include <nlohmann/detail/macro\_scope.hpp>}}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{26 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{27 \{}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{30 \textcolor{comment}{// lexer //}}
+\DoxyCodeLine{32 \textcolor{comment}{}}
+\DoxyCodeLine{33 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BasicJsonType>}
+\DoxyCodeLine{34 \textcolor{keyword}{class }\mbox{\hyperlink{classdetail_1_1lexer__base}{lexer\_base}}}
+\DoxyCodeLine{35 \{}
+\DoxyCodeLine{36   \textcolor{keyword}{public}:}
+\DoxyCodeLine{38     \textcolor{keyword}{enum class} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540}{token\_type}}}
+\DoxyCodeLine{39     \{}
+\DoxyCodeLine{40         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a42dd1a73d072bb6bf3f494f22b15db8e}{uninitialized}},    }
+\DoxyCodeLine{41         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a85cc1a37b0aaa52de40e72f0ed4e0c0d}{literal\_true}},     }
+\DoxyCodeLine{42         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540afab1694b1b3937a079f4625fe0b6108b}{literal\_false}},    }
+\DoxyCodeLine{43         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540ab7ae4c0e46d86f884677768160b26e9e}{literal\_null}},     }
+\DoxyCodeLine{44         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a2b490e8bf366b4cbe3ebd99b26ce15ce}{value\_string}},     }
+\DoxyCodeLine{45         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540aaf1f040fcd2f674d2e5893d7a731078f}{value\_unsigned}},   }
+\DoxyCodeLine{46         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a5064b6655d88a50ae16665cf7751c0ee}{value\_integer}},    }
+\DoxyCodeLine{47         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a0d2671a6f81efb91e77f6ac3bdb11443}{value\_float}},      }
+\DoxyCodeLine{48         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a16c226b4425b68560fea322b46dabe01}{begin\_array}},      }
+\DoxyCodeLine{49         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a9a9ffd53b6869d4eca271b1ed5b57fe8}{begin\_object}},     }
+\DoxyCodeLine{50         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a2f3e68e7f111a1e5c7728742b3ca2b7f}{end\_array}},        }
+\DoxyCodeLine{51         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a7d5b4427866814de4d8f132721d59c87}{end\_object}},       }
+\DoxyCodeLine{52         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540acc3c64f8ae08c00de1b33f19a4d2913a}{name\_separator}},   }
+\DoxyCodeLine{53         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a745373036100d7392ad62c617cab59af}{value\_separator}},  }
+\DoxyCodeLine{54         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a456e19aeafa334241c7ff3f589547f9d}{parse\_error}},      }
+\DoxyCodeLine{55         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540aca11f56dd477c09e06583dbdcda0985f}{end\_of\_input}},     }
+\DoxyCodeLine{56         \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540ad2a8e6f6721cccec0b466301dd9495a5}{literal\_or\_value}}  }
+\DoxyCodeLine{57     \};}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{60     JSON\_HEDLEY\_RETURNS\_NON\_NULL}
+\DoxyCodeLine{61     JSON\_HEDLEY\_CONST}
+\DoxyCodeLine{62     \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{char}* \mbox{\hyperlink{classdetail_1_1lexer__base_aadef66e89ad828e5f69479c85887fa6d}{token\_type\_name}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540}{token\_type}} t) \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{63     \{}
+\DoxyCodeLine{64         \textcolor{keywordflow}{switch} (t)}
+\DoxyCodeLine{65         \{}
+\DoxyCodeLine{66             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a42dd1a73d072bb6bf3f494f22b15db8e}{token\_type::uninitialized}}:}
+\DoxyCodeLine{67                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}<uninitialized>"{}};}
+\DoxyCodeLine{68             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a85cc1a37b0aaa52de40e72f0ed4e0c0d}{token\_type::literal\_true}}:}
+\DoxyCodeLine{69                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}true literal"{}};}
+\DoxyCodeLine{70             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540afab1694b1b3937a079f4625fe0b6108b}{token\_type::literal\_false}}:}
+\DoxyCodeLine{71                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}false literal"{}};}
+\DoxyCodeLine{72             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540ab7ae4c0e46d86f884677768160b26e9e}{token\_type::literal\_null}}:}
+\DoxyCodeLine{73                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}null literal"{}};}
+\DoxyCodeLine{74             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a2b490e8bf366b4cbe3ebd99b26ce15ce}{token\_type::value\_string}}:}
+\DoxyCodeLine{75                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}string literal"{}};}
+\DoxyCodeLine{76             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540aaf1f040fcd2f674d2e5893d7a731078f}{token\_type::value\_unsigned}}:}
+\DoxyCodeLine{77             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a5064b6655d88a50ae16665cf7751c0ee}{token\_type::value\_integer}}:}
+\DoxyCodeLine{78             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a0d2671a6f81efb91e77f6ac3bdb11443}{token\_type::value\_float}}:}
+\DoxyCodeLine{79                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}number literal"{}};}
+\DoxyCodeLine{80             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a16c226b4425b68560fea322b46dabe01}{token\_type::begin\_array}}:}
+\DoxyCodeLine{81                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}'['"{}};}
+\DoxyCodeLine{82             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a9a9ffd53b6869d4eca271b1ed5b57fe8}{token\_type::begin\_object}}:}
+\DoxyCodeLine{83                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}'\{'"{}};}
+\DoxyCodeLine{84             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a2f3e68e7f111a1e5c7728742b3ca2b7f}{token\_type::end\_array}}:}
+\DoxyCodeLine{85                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}']'"{}};}
+\DoxyCodeLine{86             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a7d5b4427866814de4d8f132721d59c87}{token\_type::end\_object}}:}
+\DoxyCodeLine{87                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}'\}'"{}};}
+\DoxyCodeLine{88             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540acc3c64f8ae08c00de1b33f19a4d2913a}{token\_type::name\_separator}}:}
+\DoxyCodeLine{89                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}':'"{}};}
+\DoxyCodeLine{90             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a745373036100d7392ad62c617cab59af}{token\_type::value\_separator}}:}
+\DoxyCodeLine{91                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}','"{}};}
+\DoxyCodeLine{92             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540a456e19aeafa334241c7ff3f589547f9d}{token\_type::parse\_error}}:}
+\DoxyCodeLine{93                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}<parse error>"{}};}
+\DoxyCodeLine{94             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540aca11f56dd477c09e06583dbdcda0985f}{token\_type::end\_of\_input}}:}
+\DoxyCodeLine{95                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}end of input"{}};}
+\DoxyCodeLine{96             \textcolor{keywordflow}{case} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540ad2a8e6f6721cccec0b466301dd9495a5}{token\_type::literal\_or\_value}}:}
+\DoxyCodeLine{97                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}'[', '\{', or a literal"{}};}
+\DoxyCodeLine{98             \textcolor{comment}{// LCOV\_EXCL\_START}}
+\DoxyCodeLine{99             \textcolor{keywordflow}{default}: \textcolor{comment}{// catch non-\/enum values}}
+\DoxyCodeLine{100                 \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}unknown token"{}};}
+\DoxyCodeLine{101                 \textcolor{comment}{// LCOV\_EXCL\_STOP}}
+\DoxyCodeLine{102         \}}
+\DoxyCodeLine{103     \}}
+\DoxyCodeLine{104 \};}
+\DoxyCodeLine{110 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BasicJsonType, \textcolor{keyword}{typename} InputAdapterType>}
+\DoxyCodeLine{111 \textcolor{keyword}{class }\mbox{\hyperlink{classdetail_1_1lexer}{lexer}} : \textcolor{keyword}{public} \mbox{\hyperlink{classdetail_1_1lexer__base}{lexer\_base}}<BasicJsonType>}
+\DoxyCodeLine{112 \{}
+\DoxyCodeLine{113     \textcolor{keyword}{using }number\_integer\_t = \textcolor{keyword}{typename} BasicJsonType::number\_integer\_t;}
+\DoxyCodeLine{114     \textcolor{keyword}{using }number\_unsigned\_t = \textcolor{keyword}{typename} BasicJsonType::number\_unsigned\_t;}
+\DoxyCodeLine{115     \textcolor{keyword}{using }number\_float\_t = \textcolor{keyword}{typename} BasicJsonType::number\_float\_t;}
+\DoxyCodeLine{116     \textcolor{keyword}{using }string\_t = \textcolor{keyword}{typename} BasicJsonType::string\_t;}
+\DoxyCodeLine{117     \textcolor{keyword}{using }char\_type = \textcolor{keyword}{typename} InputAdapterType::char\_type;}
+\DoxyCodeLine{118     \textcolor{keyword}{using }char\_int\_type = \textcolor{keyword}{typename} std::char\_traits<char\_type>::int\_type;}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{120   \textcolor{keyword}{public}:}
+\DoxyCodeLine{121     \textcolor{keyword}{using }token\_type = \textcolor{keyword}{typename} \mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540}{lexer\_base<BasicJsonType>::token\_type}};}
+\DoxyCodeLine{122 }
+\DoxyCodeLine{123     \textcolor{keyword}{explicit} \mbox{\hyperlink{classdetail_1_1lexer}{lexer}}(InputAdapterType\&\& adapter, \textcolor{keywordtype}{bool} ignore\_comments\_ = \textcolor{keyword}{false}) noexcept}
+\DoxyCodeLine{124         : ia(std::move(adapter))}
+\DoxyCodeLine{125         , ignore\_comments(ignore\_comments\_)}
+\DoxyCodeLine{126         , decimal\_point\_char(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(get\_decimal\_point()))}
+\DoxyCodeLine{127     \{\}}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129     \textcolor{comment}{// delete because of pointer members}}
+\DoxyCodeLine{130     \mbox{\hyperlink{classdetail_1_1lexer}{lexer}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1lexer}{lexer}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{131     \mbox{\hyperlink{classdetail_1_1lexer}{lexer}}(\mbox{\hyperlink{classdetail_1_1lexer}{lexer}}\&\&) = \textcolor{keywordflow}{default}; \textcolor{comment}{// NOLINT(hicpp-\/noexcept-\/move,performance-\/noexcept-\/move-\/constructor)}}
+\DoxyCodeLine{132     \mbox{\hyperlink{classdetail_1_1lexer}{lexer}}\& operator=(\mbox{\hyperlink{classdetail_1_1lexer}{lexer}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{133     \mbox{\hyperlink{classdetail_1_1lexer}{lexer}}\& operator=(\mbox{\hyperlink{classdetail_1_1lexer}{lexer}}\&\&) = \textcolor{keywordflow}{default}; \textcolor{comment}{// NOLINT(hicpp-\/noexcept-\/move,performance-\/noexcept-\/move-\/constructor)}}
+\DoxyCodeLine{134     \mbox{\hyperlink{classdetail_1_1lexer}{\string~lexer}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{135 }
+\DoxyCodeLine{136   \textcolor{keyword}{private}:}
+\DoxyCodeLine{138     \textcolor{comment}{// locales}}
+\DoxyCodeLine{140 \textcolor{comment}{}}
+\DoxyCodeLine{142     JSON\_HEDLEY\_PURE}
+\DoxyCodeLine{143     \textcolor{keyword}{static} \textcolor{keywordtype}{char} get\_decimal\_point() \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{144     \{}
+\DoxyCodeLine{145         \textcolor{keyword}{const} \textcolor{keyword}{auto}* loc = localeconv();}
+\DoxyCodeLine{146         JSON\_ASSERT(loc != \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{147         \textcolor{keywordflow}{return} (loc-\/>decimal\_point == \textcolor{keyword}{nullptr}) ? \textcolor{charliteral}{'.'} : *(loc-\/>decimal\_point);}
+\DoxyCodeLine{148     \}}
+\DoxyCodeLine{149 }
+\DoxyCodeLine{151     \textcolor{comment}{// scan functions}}
+\DoxyCodeLine{153 \textcolor{comment}{}}
+\DoxyCodeLine{169     \textcolor{keywordtype}{int} get\_codepoint()}
+\DoxyCodeLine{170     \{}
+\DoxyCodeLine{171         \textcolor{comment}{// this function only makes sense after reading `\(\backslash\)u`}}
+\DoxyCodeLine{172         JSON\_ASSERT(current == \textcolor{charliteral}{'u'});}
+\DoxyCodeLine{173         \textcolor{keywordtype}{int} codepoint = 0;}
+\DoxyCodeLine{174 }
+\DoxyCodeLine{175         \textcolor{keyword}{const} \textcolor{keyword}{auto} factors = \{ 12u, 8u, 4u, 0u \};}
+\DoxyCodeLine{176         \textcolor{keywordflow}{for} (\textcolor{keyword}{const} \textcolor{keyword}{auto} factor : factors)}
+\DoxyCodeLine{177         \{}
+\DoxyCodeLine{178             get();}
+\DoxyCodeLine{179 }
+\DoxyCodeLine{180             \textcolor{keywordflow}{if} (current >= \textcolor{charliteral}{'0'} \&\& current <= \textcolor{charliteral}{'9'})}
+\DoxyCodeLine{181             \{}
+\DoxyCodeLine{182                 codepoint += \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}((\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(current) -\/ 0x30u) << factor);}
+\DoxyCodeLine{183             \}}
+\DoxyCodeLine{184             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (current >= \textcolor{charliteral}{'A'} \&\& current <= \textcolor{charliteral}{'F'})}
+\DoxyCodeLine{185             \{}
+\DoxyCodeLine{186                 codepoint += \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}((\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(current) -\/ 0x37u) << factor);}
+\DoxyCodeLine{187             \}}
+\DoxyCodeLine{188             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (current >= \textcolor{charliteral}{'a'} \&\& current <= \textcolor{charliteral}{'f'})}
+\DoxyCodeLine{189             \{}
+\DoxyCodeLine{190                 codepoint += \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}((\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(current) -\/ 0x57u) << factor);}
+\DoxyCodeLine{191             \}}
+\DoxyCodeLine{192             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{193             \{}
+\DoxyCodeLine{194                 \textcolor{keywordflow}{return} -\/1;}
+\DoxyCodeLine{195             \}}
+\DoxyCodeLine{196         \}}
+\DoxyCodeLine{197 }
+\DoxyCodeLine{198         JSON\_ASSERT(0x0000 <= codepoint \&\& codepoint <= 0xFFFF);}
+\DoxyCodeLine{199         \textcolor{keywordflow}{return} codepoint;}
+\DoxyCodeLine{200     \}}
+\DoxyCodeLine{201 }
+\DoxyCodeLine{217     \textcolor{keywordtype}{bool} next\_byte\_in\_range(std::initializer\_list<char\_int\_type> ranges)}
+\DoxyCodeLine{218     \{}
+\DoxyCodeLine{219         JSON\_ASSERT(ranges.size() == 2 || ranges.size() == 4 || ranges.size() == 6);}
+\DoxyCodeLine{220         add(current);}
+\DoxyCodeLine{221 }
+\DoxyCodeLine{222         \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} range = ranges.begin(); range != ranges.end(); ++range)}
+\DoxyCodeLine{223         \{}
+\DoxyCodeLine{224             get();}
+\DoxyCodeLine{225             \textcolor{keywordflow}{if} (JSON\_HEDLEY\_LIKELY(*range <= current \&\& current <= *(++range)))}
+\DoxyCodeLine{226             \{}
+\DoxyCodeLine{227                 add(current);}
+\DoxyCodeLine{228             \}}
+\DoxyCodeLine{229             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{230             \{}
+\DoxyCodeLine{231                 error\_message = \textcolor{stringliteral}{"{}invalid string: ill-\/formed UTF-\/8 byte"{}};}
+\DoxyCodeLine{232                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{233             \}}
+\DoxyCodeLine{234         \}}
+\DoxyCodeLine{235 }
+\DoxyCodeLine{236         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{237     \}}
+\DoxyCodeLine{238 }
+\DoxyCodeLine{254     token\_type scan\_string()}
+\DoxyCodeLine{255     \{}
+\DoxyCodeLine{256         \textcolor{comment}{// reset token\_buffer (ignore opening quote)}}
+\DoxyCodeLine{257         reset();}
+\DoxyCodeLine{258 }
+\DoxyCodeLine{259         \textcolor{comment}{// we entered the function by reading an open quote}}
+\DoxyCodeLine{260         JSON\_ASSERT(current == \textcolor{charliteral}{'\(\backslash\)"{}'});}
+\DoxyCodeLine{261 }
+\DoxyCodeLine{262         \textcolor{keywordflow}{while} (\textcolor{keyword}{true})}
+\DoxyCodeLine{263         \{}
+\DoxyCodeLine{264             \textcolor{comment}{// get next character}}
+\DoxyCodeLine{265             \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{266             \{}
+\DoxyCodeLine{267                 \textcolor{comment}{// end of file while parsing string}}
+\DoxyCodeLine{268                 \textcolor{keywordflow}{case} std::char\_traits<char\_type>::eof():}
+\DoxyCodeLine{269                 \{}
+\DoxyCodeLine{270                     error\_message = \textcolor{stringliteral}{"{}invalid string: missing closing quote"{}};}
+\DoxyCodeLine{271                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{272                 \}}
+\DoxyCodeLine{273 }
+\DoxyCodeLine{274                 \textcolor{comment}{// closing quote}}
+\DoxyCodeLine{275                 \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)"{}'}:}
+\DoxyCodeLine{276                 \{}
+\DoxyCodeLine{277                     \textcolor{keywordflow}{return} token\_type::value\_string;}
+\DoxyCodeLine{278                 \}}
+\DoxyCodeLine{279 }
+\DoxyCodeLine{280                 \textcolor{comment}{// escapes}}
+\DoxyCodeLine{281                 \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)\(\backslash\)'}:}
+\DoxyCodeLine{282                 \{}
+\DoxyCodeLine{283                     \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{284                     \{}
+\DoxyCodeLine{285                         \textcolor{comment}{// quotation mark}}
+\DoxyCodeLine{286                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)"{}'}:}
+\DoxyCodeLine{287                             add(\textcolor{charliteral}{'\(\backslash\)"{}'});}
+\DoxyCodeLine{288                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{289                         \textcolor{comment}{// reverse solidus}}
+\DoxyCodeLine{290                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)\(\backslash\)'}:}
+\DoxyCodeLine{291                             add(\textcolor{charliteral}{'\(\backslash\)\(\backslash\)'});}
+\DoxyCodeLine{292                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{293                         \textcolor{comment}{// solidus}}
+\DoxyCodeLine{294                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'/'}:}
+\DoxyCodeLine{295                             add(\textcolor{charliteral}{'/'});}
+\DoxyCodeLine{296                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{297                         \textcolor{comment}{// backspace}}
+\DoxyCodeLine{298                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'b'}:}
+\DoxyCodeLine{299                             add(\textcolor{charliteral}{'\(\backslash\)b'});}
+\DoxyCodeLine{300                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{301                         \textcolor{comment}{// form feed}}
+\DoxyCodeLine{302                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'f'}:}
+\DoxyCodeLine{303                             add(\textcolor{charliteral}{'\(\backslash\)f'});}
+\DoxyCodeLine{304                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{305                         \textcolor{comment}{// line feed}}
+\DoxyCodeLine{306                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'n'}:}
+\DoxyCodeLine{307                             add(\textcolor{charliteral}{'\(\backslash\)n'});}
+\DoxyCodeLine{308                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{309                         \textcolor{comment}{// carriage return}}
+\DoxyCodeLine{310                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'r'}:}
+\DoxyCodeLine{311                             add(\textcolor{charliteral}{'\(\backslash\)r'});}
+\DoxyCodeLine{312                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{313                         \textcolor{comment}{// tab}}
+\DoxyCodeLine{314                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'t'}:}
+\DoxyCodeLine{315                             add(\textcolor{charliteral}{'\(\backslash\)t'});}
+\DoxyCodeLine{316                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{317 }
+\DoxyCodeLine{318                         \textcolor{comment}{// unicode escapes}}
+\DoxyCodeLine{319                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'u'}:}
+\DoxyCodeLine{320                         \{}
+\DoxyCodeLine{321                             \textcolor{keyword}{const} \textcolor{keywordtype}{int} codepoint1 = get\_codepoint();}
+\DoxyCodeLine{322                             \textcolor{keywordtype}{int} codepoint = codepoint1; \textcolor{comment}{// start with codepoint1}}
+\DoxyCodeLine{323 }
+\DoxyCodeLine{324                             \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(codepoint1 == -\/1))}
+\DoxyCodeLine{325                             \{}
+\DoxyCodeLine{326                                 error\_message = \textcolor{stringliteral}{"{}invalid string: '\(\backslash\)\(\backslash\)u' must be followed by 4 hex digits"{}};}
+\DoxyCodeLine{327                                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{328                             \}}
+\DoxyCodeLine{329 }
+\DoxyCodeLine{330                             \textcolor{comment}{// check if code point is a high surrogate}}
+\DoxyCodeLine{331                             \textcolor{keywordflow}{if} (0xD800 <= codepoint1 \&\& codepoint1 <= 0xDBFF)}
+\DoxyCodeLine{332                             \{}
+\DoxyCodeLine{333                                 \textcolor{comment}{// expect next \(\backslash\)uxxxx entry}}
+\DoxyCodeLine{334                                 \textcolor{keywordflow}{if} (JSON\_HEDLEY\_LIKELY(get() == \textcolor{charliteral}{'\(\backslash\)\(\backslash\)'} \&\& get() == \textcolor{charliteral}{'u'}))}
+\DoxyCodeLine{335                                 \{}
+\DoxyCodeLine{336                                     \textcolor{keyword}{const} \textcolor{keywordtype}{int} codepoint2 = get\_codepoint();}
+\DoxyCodeLine{337 }
+\DoxyCodeLine{338                                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(codepoint2 == -\/1))}
+\DoxyCodeLine{339                                     \{}
+\DoxyCodeLine{340                                         error\_message = \textcolor{stringliteral}{"{}invalid string: '\(\backslash\)\(\backslash\)u' must be followed by 4 hex digits"{}};}
+\DoxyCodeLine{341                                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{342                                     \}}
+\DoxyCodeLine{343 }
+\DoxyCodeLine{344                                     \textcolor{comment}{// check if codepoint2 is a low surrogate}}
+\DoxyCodeLine{345                                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_LIKELY(0xDC00 <= codepoint2 \&\& codepoint2 <= 0xDFFF))}
+\DoxyCodeLine{346                                     \{}
+\DoxyCodeLine{347                                         \textcolor{comment}{// overwrite codepoint}}
+\DoxyCodeLine{348                                         codepoint = \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(}
+\DoxyCodeLine{349                                                         \textcolor{comment}{// high surrogate occupies the most significant 22 bits}}
+\DoxyCodeLine{350                                                         (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint1) << 10u)}
+\DoxyCodeLine{351                                                         \textcolor{comment}{// low surrogate occupies the least significant 15 bits}}
+\DoxyCodeLine{352                                                         + \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint2)}
+\DoxyCodeLine{353                                                         \textcolor{comment}{// there is still the 0xD800, 0xDC00 and 0x10000 noise}}
+\DoxyCodeLine{354                                                         \textcolor{comment}{// in the result, so we have to subtract with:}}
+\DoxyCodeLine{355                                                         \textcolor{comment}{// (0xD800 << 10) + DC00 -\/ 0x10000 = 0x35FDC00}}
+\DoxyCodeLine{356                                                         -\/ 0x35FDC00u);}
+\DoxyCodeLine{357                                     \}}
+\DoxyCodeLine{358                                     \textcolor{keywordflow}{else}}
+\DoxyCodeLine{359                                     \{}
+\DoxyCodeLine{360                                         error\_message = \textcolor{stringliteral}{"{}invalid string: surrogate U+D800..U+DBFF must be followed by U+DC00..U+DFFF"{}};}
+\DoxyCodeLine{361                                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{362                                     \}}
+\DoxyCodeLine{363                                 \}}
+\DoxyCodeLine{364                                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{365                                 \{}
+\DoxyCodeLine{366                                     error\_message = \textcolor{stringliteral}{"{}invalid string: surrogate U+D800..U+DBFF must be followed by U+DC00..U+DFFF"{}};}
+\DoxyCodeLine{367                                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{368                                 \}}
+\DoxyCodeLine{369                             \}}
+\DoxyCodeLine{370                             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{371                             \{}
+\DoxyCodeLine{372                                 \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(0xDC00 <= codepoint1 \&\& codepoint1 <= 0xDFFF))}
+\DoxyCodeLine{373                                 \{}
+\DoxyCodeLine{374                                     error\_message = \textcolor{stringliteral}{"{}invalid string: surrogate U+DC00..U+DFFF must follow U+D800..U+DBFF"{}};}
+\DoxyCodeLine{375                                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{376                                 \}}
+\DoxyCodeLine{377                             \}}
+\DoxyCodeLine{378 }
+\DoxyCodeLine{379                             \textcolor{comment}{// result of the above calculation yields a proper codepoint}}
+\DoxyCodeLine{380                             JSON\_ASSERT(0x00 <= codepoint \&\& codepoint <= 0x10FFFF);}
+\DoxyCodeLine{381 }
+\DoxyCodeLine{382                             \textcolor{comment}{// translate codepoint into bytes}}
+\DoxyCodeLine{383                             \textcolor{keywordflow}{if} (codepoint < 0x80)}
+\DoxyCodeLine{384                             \{}
+\DoxyCodeLine{385                                 \textcolor{comment}{// 1-\/byte characters: 0xxxxxxx (ASCII)}}
+\DoxyCodeLine{386                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(codepoint));}
+\DoxyCodeLine{387                             \}}
+\DoxyCodeLine{388                             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (codepoint <= 0x7FF)}
+\DoxyCodeLine{389                             \{}
+\DoxyCodeLine{390                                 \textcolor{comment}{// 2-\/byte characters: 110xxxxx 10xxxxxx}}
+\DoxyCodeLine{391                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0xC0u | (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) >> 6u)));}
+\DoxyCodeLine{392                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0x80u | (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) \& 0x3Fu)));}
+\DoxyCodeLine{393                             \}}
+\DoxyCodeLine{394                             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (codepoint <= 0xFFFF)}
+\DoxyCodeLine{395                             \{}
+\DoxyCodeLine{396                                 \textcolor{comment}{// 3-\/byte characters: 1110xxxx 10xxxxxx 10xxxxxx}}
+\DoxyCodeLine{397                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0xE0u | (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) >> 12u)));}
+\DoxyCodeLine{398                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0x80u | ((\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) >> 6u) \& 0x3Fu)));}
+\DoxyCodeLine{399                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0x80u | (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) \& 0x3Fu)));}
+\DoxyCodeLine{400                             \}}
+\DoxyCodeLine{401                             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{402                             \{}
+\DoxyCodeLine{403                                 \textcolor{comment}{// 4-\/byte characters: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx}}
+\DoxyCodeLine{404                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0xF0u | (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) >> 18u)));}
+\DoxyCodeLine{405                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0x80u | ((\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) >> 12u) \& 0x3Fu)));}
+\DoxyCodeLine{406                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0x80u | ((\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) >> 6u) \& 0x3Fu)));}
+\DoxyCodeLine{407                                 add(\textcolor{keyword}{static\_cast<}char\_int\_type\textcolor{keyword}{>}(0x80u | (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int}\textcolor{keyword}{>}(codepoint) \& 0x3Fu)));}
+\DoxyCodeLine{408                             \}}
+\DoxyCodeLine{409 }
+\DoxyCodeLine{410                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{411                         \}}
+\DoxyCodeLine{412 }
+\DoxyCodeLine{413                         \textcolor{comment}{// other characters after escape}}
+\DoxyCodeLine{414                         \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{415                             error\_message = \textcolor{stringliteral}{"{}invalid string: forbidden character after backslash"{}};}
+\DoxyCodeLine{416                             \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{417                     \}}
+\DoxyCodeLine{418 }
+\DoxyCodeLine{419                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{420                 \}}
+\DoxyCodeLine{421 }
+\DoxyCodeLine{422                 \textcolor{comment}{// invalid control characters}}
+\DoxyCodeLine{423                 \textcolor{keywordflow}{case} 0x00:}
+\DoxyCodeLine{424                 \{}
+\DoxyCodeLine{425                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0000 (NUL) must be escaped to \(\backslash\)\(\backslash\)u0000"{}};}
+\DoxyCodeLine{426                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{427                 \}}
+\DoxyCodeLine{428 }
+\DoxyCodeLine{429                 \textcolor{keywordflow}{case} 0x01:}
+\DoxyCodeLine{430                 \{}
+\DoxyCodeLine{431                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0001 (SOH) must be escaped to \(\backslash\)\(\backslash\)u0001"{}};}
+\DoxyCodeLine{432                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{433                 \}}
+\DoxyCodeLine{434 }
+\DoxyCodeLine{435                 \textcolor{keywordflow}{case} 0x02:}
+\DoxyCodeLine{436                 \{}
+\DoxyCodeLine{437                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0002 (STX) must be escaped to \(\backslash\)\(\backslash\)u0002"{}};}
+\DoxyCodeLine{438                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{439                 \}}
+\DoxyCodeLine{440 }
+\DoxyCodeLine{441                 \textcolor{keywordflow}{case} 0x03:}
+\DoxyCodeLine{442                 \{}
+\DoxyCodeLine{443                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0003 (ETX) must be escaped to \(\backslash\)\(\backslash\)u0003"{}};}
+\DoxyCodeLine{444                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{445                 \}}
+\DoxyCodeLine{446 }
+\DoxyCodeLine{447                 \textcolor{keywordflow}{case} 0x04:}
+\DoxyCodeLine{448                 \{}
+\DoxyCodeLine{449                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0004 (EOT) must be escaped to \(\backslash\)\(\backslash\)u0004"{}};}
+\DoxyCodeLine{450                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{451                 \}}
+\DoxyCodeLine{452 }
+\DoxyCodeLine{453                 \textcolor{keywordflow}{case} 0x05:}
+\DoxyCodeLine{454                 \{}
+\DoxyCodeLine{455                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0005 (ENQ) must be escaped to \(\backslash\)\(\backslash\)u0005"{}};}
+\DoxyCodeLine{456                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{457                 \}}
+\DoxyCodeLine{458 }
+\DoxyCodeLine{459                 \textcolor{keywordflow}{case} 0x06:}
+\DoxyCodeLine{460                 \{}
+\DoxyCodeLine{461                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0006 (ACK) must be escaped to \(\backslash\)\(\backslash\)u0006"{}};}
+\DoxyCodeLine{462                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{463                 \}}
+\DoxyCodeLine{464 }
+\DoxyCodeLine{465                 \textcolor{keywordflow}{case} 0x07:}
+\DoxyCodeLine{466                 \{}
+\DoxyCodeLine{467                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0007 (BEL) must be escaped to \(\backslash\)\(\backslash\)u0007"{}};}
+\DoxyCodeLine{468                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{469                 \}}
+\DoxyCodeLine{470 }
+\DoxyCodeLine{471                 \textcolor{keywordflow}{case} 0x08:}
+\DoxyCodeLine{472                 \{}
+\DoxyCodeLine{473                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0008 (BS) must be escaped to \(\backslash\)\(\backslash\)u0008 or \(\backslash\)\(\backslash\)b"{}};}
+\DoxyCodeLine{474                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{475                 \}}
+\DoxyCodeLine{476 }
+\DoxyCodeLine{477                 \textcolor{keywordflow}{case} 0x09:}
+\DoxyCodeLine{478                 \{}
+\DoxyCodeLine{479                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0009 (HT) must be escaped to \(\backslash\)\(\backslash\)u0009 or \(\backslash\)\(\backslash\)t"{}};}
+\DoxyCodeLine{480                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{481                 \}}
+\DoxyCodeLine{482 }
+\DoxyCodeLine{483                 \textcolor{keywordflow}{case} 0x0A:}
+\DoxyCodeLine{484                 \{}
+\DoxyCodeLine{485                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+000A (LF) must be escaped to \(\backslash\)\(\backslash\)u000A or \(\backslash\)\(\backslash\)n"{}};}
+\DoxyCodeLine{486                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{487                 \}}
+\DoxyCodeLine{488 }
+\DoxyCodeLine{489                 \textcolor{keywordflow}{case} 0x0B:}
+\DoxyCodeLine{490                 \{}
+\DoxyCodeLine{491                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+000B (VT) must be escaped to \(\backslash\)\(\backslash\)u000B"{}};}
+\DoxyCodeLine{492                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{493                 \}}
+\DoxyCodeLine{494 }
+\DoxyCodeLine{495                 \textcolor{keywordflow}{case} 0x0C:}
+\DoxyCodeLine{496                 \{}
+\DoxyCodeLine{497                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+000C (FF) must be escaped to \(\backslash\)\(\backslash\)u000C or \(\backslash\)\(\backslash\)f"{}};}
+\DoxyCodeLine{498                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{499                 \}}
+\DoxyCodeLine{500 }
+\DoxyCodeLine{501                 \textcolor{keywordflow}{case} 0x0D:}
+\DoxyCodeLine{502                 \{}
+\DoxyCodeLine{503                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+000D (CR) must be escaped to \(\backslash\)\(\backslash\)u000D or \(\backslash\)\(\backslash\)r"{}};}
+\DoxyCodeLine{504                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{505                 \}}
+\DoxyCodeLine{506 }
+\DoxyCodeLine{507                 \textcolor{keywordflow}{case} 0x0E:}
+\DoxyCodeLine{508                 \{}
+\DoxyCodeLine{509                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+000E (SO) must be escaped to \(\backslash\)\(\backslash\)u000E"{}};}
+\DoxyCodeLine{510                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{511                 \}}
+\DoxyCodeLine{512 }
+\DoxyCodeLine{513                 \textcolor{keywordflow}{case} 0x0F:}
+\DoxyCodeLine{514                 \{}
+\DoxyCodeLine{515                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+000F (SI) must be escaped to \(\backslash\)\(\backslash\)u000F"{}};}
+\DoxyCodeLine{516                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{517                 \}}
+\DoxyCodeLine{518 }
+\DoxyCodeLine{519                 \textcolor{keywordflow}{case} 0x10:}
+\DoxyCodeLine{520                 \{}
+\DoxyCodeLine{521                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0010 (DLE) must be escaped to \(\backslash\)\(\backslash\)u0010"{}};}
+\DoxyCodeLine{522                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{523                 \}}
+\DoxyCodeLine{524 }
+\DoxyCodeLine{525                 \textcolor{keywordflow}{case} 0x11:}
+\DoxyCodeLine{526                 \{}
+\DoxyCodeLine{527                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0011 (DC1) must be escaped to \(\backslash\)\(\backslash\)u0011"{}};}
+\DoxyCodeLine{528                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{529                 \}}
+\DoxyCodeLine{530 }
+\DoxyCodeLine{531                 \textcolor{keywordflow}{case} 0x12:}
+\DoxyCodeLine{532                 \{}
+\DoxyCodeLine{533                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0012 (DC2) must be escaped to \(\backslash\)\(\backslash\)u0012"{}};}
+\DoxyCodeLine{534                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{535                 \}}
+\DoxyCodeLine{536 }
+\DoxyCodeLine{537                 \textcolor{keywordflow}{case} 0x13:}
+\DoxyCodeLine{538                 \{}
+\DoxyCodeLine{539                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0013 (DC3) must be escaped to \(\backslash\)\(\backslash\)u0013"{}};}
+\DoxyCodeLine{540                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{541                 \}}
+\DoxyCodeLine{542 }
+\DoxyCodeLine{543                 \textcolor{keywordflow}{case} 0x14:}
+\DoxyCodeLine{544                 \{}
+\DoxyCodeLine{545                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0014 (DC4) must be escaped to \(\backslash\)\(\backslash\)u0014"{}};}
+\DoxyCodeLine{546                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{547                 \}}
+\DoxyCodeLine{548 }
+\DoxyCodeLine{549                 \textcolor{keywordflow}{case} 0x15:}
+\DoxyCodeLine{550                 \{}
+\DoxyCodeLine{551                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0015 (NAK) must be escaped to \(\backslash\)\(\backslash\)u0015"{}};}
+\DoxyCodeLine{552                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{553                 \}}
+\DoxyCodeLine{554 }
+\DoxyCodeLine{555                 \textcolor{keywordflow}{case} 0x16:}
+\DoxyCodeLine{556                 \{}
+\DoxyCodeLine{557                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0016 (SYN) must be escaped to \(\backslash\)\(\backslash\)u0016"{}};}
+\DoxyCodeLine{558                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{559                 \}}
+\DoxyCodeLine{560 }
+\DoxyCodeLine{561                 \textcolor{keywordflow}{case} 0x17:}
+\DoxyCodeLine{562                 \{}
+\DoxyCodeLine{563                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0017 (ETB) must be escaped to \(\backslash\)\(\backslash\)u0017"{}};}
+\DoxyCodeLine{564                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{565                 \}}
+\DoxyCodeLine{566 }
+\DoxyCodeLine{567                 \textcolor{keywordflow}{case} 0x18:}
+\DoxyCodeLine{568                 \{}
+\DoxyCodeLine{569                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0018 (CAN) must be escaped to \(\backslash\)\(\backslash\)u0018"{}};}
+\DoxyCodeLine{570                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{571                 \}}
+\DoxyCodeLine{572 }
+\DoxyCodeLine{573                 \textcolor{keywordflow}{case} 0x19:}
+\DoxyCodeLine{574                 \{}
+\DoxyCodeLine{575                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+0019 (EM) must be escaped to \(\backslash\)\(\backslash\)u0019"{}};}
+\DoxyCodeLine{576                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{577                 \}}
+\DoxyCodeLine{578 }
+\DoxyCodeLine{579                 \textcolor{keywordflow}{case} 0x1A:}
+\DoxyCodeLine{580                 \{}
+\DoxyCodeLine{581                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+001A (SUB) must be escaped to \(\backslash\)\(\backslash\)u001A"{}};}
+\DoxyCodeLine{582                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{583                 \}}
+\DoxyCodeLine{584 }
+\DoxyCodeLine{585                 \textcolor{keywordflow}{case} 0x1B:}
+\DoxyCodeLine{586                 \{}
+\DoxyCodeLine{587                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+001B (ESC) must be escaped to \(\backslash\)\(\backslash\)u001B"{}};}
+\DoxyCodeLine{588                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{589                 \}}
+\DoxyCodeLine{590 }
+\DoxyCodeLine{591                 \textcolor{keywordflow}{case} 0x1C:}
+\DoxyCodeLine{592                 \{}
+\DoxyCodeLine{593                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+001C (FS) must be escaped to \(\backslash\)\(\backslash\)u001C"{}};}
+\DoxyCodeLine{594                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{595                 \}}
+\DoxyCodeLine{596 }
+\DoxyCodeLine{597                 \textcolor{keywordflow}{case} 0x1D:}
+\DoxyCodeLine{598                 \{}
+\DoxyCodeLine{599                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+001D (GS) must be escaped to \(\backslash\)\(\backslash\)u001D"{}};}
+\DoxyCodeLine{600                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{601                 \}}
+\DoxyCodeLine{602 }
+\DoxyCodeLine{603                 \textcolor{keywordflow}{case} 0x1E:}
+\DoxyCodeLine{604                 \{}
+\DoxyCodeLine{605                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+001E (RS) must be escaped to \(\backslash\)\(\backslash\)u001E"{}};}
+\DoxyCodeLine{606                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{607                 \}}
+\DoxyCodeLine{608 }
+\DoxyCodeLine{609                 \textcolor{keywordflow}{case} 0x1F:}
+\DoxyCodeLine{610                 \{}
+\DoxyCodeLine{611                     error\_message = \textcolor{stringliteral}{"{}invalid string: control character U+001F (US) must be escaped to \(\backslash\)\(\backslash\)u001F"{}};}
+\DoxyCodeLine{612                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{613                 \}}
+\DoxyCodeLine{614 }
+\DoxyCodeLine{615                 \textcolor{comment}{// U+0020..U+007F (except U+0022 (quote) and U+005C (backspace))}}
+\DoxyCodeLine{616                 \textcolor{keywordflow}{case} 0x20:}
+\DoxyCodeLine{617                 \textcolor{keywordflow}{case} 0x21:}
+\DoxyCodeLine{618                 \textcolor{keywordflow}{case} 0x23:}
+\DoxyCodeLine{619                 \textcolor{keywordflow}{case} 0x24:}
+\DoxyCodeLine{620                 \textcolor{keywordflow}{case} 0x25:}
+\DoxyCodeLine{621                 \textcolor{keywordflow}{case} 0x26:}
+\DoxyCodeLine{622                 \textcolor{keywordflow}{case} 0x27:}
+\DoxyCodeLine{623                 \textcolor{keywordflow}{case} 0x28:}
+\DoxyCodeLine{624                 \textcolor{keywordflow}{case} 0x29:}
+\DoxyCodeLine{625                 \textcolor{keywordflow}{case} 0x2A:}
+\DoxyCodeLine{626                 \textcolor{keywordflow}{case} 0x2B:}
+\DoxyCodeLine{627                 \textcolor{keywordflow}{case} 0x2C:}
+\DoxyCodeLine{628                 \textcolor{keywordflow}{case} 0x2D:}
+\DoxyCodeLine{629                 \textcolor{keywordflow}{case} 0x2E:}
+\DoxyCodeLine{630                 \textcolor{keywordflow}{case} 0x2F:}
+\DoxyCodeLine{631                 \textcolor{keywordflow}{case} 0x30:}
+\DoxyCodeLine{632                 \textcolor{keywordflow}{case} 0x31:}
+\DoxyCodeLine{633                 \textcolor{keywordflow}{case} 0x32:}
+\DoxyCodeLine{634                 \textcolor{keywordflow}{case} 0x33:}
+\DoxyCodeLine{635                 \textcolor{keywordflow}{case} 0x34:}
+\DoxyCodeLine{636                 \textcolor{keywordflow}{case} 0x35:}
+\DoxyCodeLine{637                 \textcolor{keywordflow}{case} 0x36:}
+\DoxyCodeLine{638                 \textcolor{keywordflow}{case} 0x37:}
+\DoxyCodeLine{639                 \textcolor{keywordflow}{case} 0x38:}
+\DoxyCodeLine{640                 \textcolor{keywordflow}{case} 0x39:}
+\DoxyCodeLine{641                 \textcolor{keywordflow}{case} 0x3A:}
+\DoxyCodeLine{642                 \textcolor{keywordflow}{case} 0x3B:}
+\DoxyCodeLine{643                 \textcolor{keywordflow}{case} 0x3C:}
+\DoxyCodeLine{644                 \textcolor{keywordflow}{case} 0x3D:}
+\DoxyCodeLine{645                 \textcolor{keywordflow}{case} 0x3E:}
+\DoxyCodeLine{646                 \textcolor{keywordflow}{case} 0x3F:}
+\DoxyCodeLine{647                 \textcolor{keywordflow}{case} 0x40:}
+\DoxyCodeLine{648                 \textcolor{keywordflow}{case} 0x41:}
+\DoxyCodeLine{649                 \textcolor{keywordflow}{case} 0x42:}
+\DoxyCodeLine{650                 \textcolor{keywordflow}{case} 0x43:}
+\DoxyCodeLine{651                 \textcolor{keywordflow}{case} 0x44:}
+\DoxyCodeLine{652                 \textcolor{keywordflow}{case} 0x45:}
+\DoxyCodeLine{653                 \textcolor{keywordflow}{case} 0x46:}
+\DoxyCodeLine{654                 \textcolor{keywordflow}{case} 0x47:}
+\DoxyCodeLine{655                 \textcolor{keywordflow}{case} 0x48:}
+\DoxyCodeLine{656                 \textcolor{keywordflow}{case} 0x49:}
+\DoxyCodeLine{657                 \textcolor{keywordflow}{case} 0x4A:}
+\DoxyCodeLine{658                 \textcolor{keywordflow}{case} 0x4B:}
+\DoxyCodeLine{659                 \textcolor{keywordflow}{case} 0x4C:}
+\DoxyCodeLine{660                 \textcolor{keywordflow}{case} 0x4D:}
+\DoxyCodeLine{661                 \textcolor{keywordflow}{case} 0x4E:}
+\DoxyCodeLine{662                 \textcolor{keywordflow}{case} 0x4F:}
+\DoxyCodeLine{663                 \textcolor{keywordflow}{case} 0x50:}
+\DoxyCodeLine{664                 \textcolor{keywordflow}{case} 0x51:}
+\DoxyCodeLine{665                 \textcolor{keywordflow}{case} 0x52:}
+\DoxyCodeLine{666                 \textcolor{keywordflow}{case} 0x53:}
+\DoxyCodeLine{667                 \textcolor{keywordflow}{case} 0x54:}
+\DoxyCodeLine{668                 \textcolor{keywordflow}{case} 0x55:}
+\DoxyCodeLine{669                 \textcolor{keywordflow}{case} 0x56:}
+\DoxyCodeLine{670                 \textcolor{keywordflow}{case} 0x57:}
+\DoxyCodeLine{671                 \textcolor{keywordflow}{case} 0x58:}
+\DoxyCodeLine{672                 \textcolor{keywordflow}{case} 0x59:}
+\DoxyCodeLine{673                 \textcolor{keywordflow}{case} 0x5A:}
+\DoxyCodeLine{674                 \textcolor{keywordflow}{case} 0x5B:}
+\DoxyCodeLine{675                 \textcolor{keywordflow}{case} 0x5D:}
+\DoxyCodeLine{676                 \textcolor{keywordflow}{case} 0x5E:}
+\DoxyCodeLine{677                 \textcolor{keywordflow}{case} 0x5F:}
+\DoxyCodeLine{678                 \textcolor{keywordflow}{case} 0x60:}
+\DoxyCodeLine{679                 \textcolor{keywordflow}{case} 0x61:}
+\DoxyCodeLine{680                 \textcolor{keywordflow}{case} 0x62:}
+\DoxyCodeLine{681                 \textcolor{keywordflow}{case} 0x63:}
+\DoxyCodeLine{682                 \textcolor{keywordflow}{case} 0x64:}
+\DoxyCodeLine{683                 \textcolor{keywordflow}{case} 0x65:}
+\DoxyCodeLine{684                 \textcolor{keywordflow}{case} 0x66:}
+\DoxyCodeLine{685                 \textcolor{keywordflow}{case} 0x67:}
+\DoxyCodeLine{686                 \textcolor{keywordflow}{case} 0x68:}
+\DoxyCodeLine{687                 \textcolor{keywordflow}{case} 0x69:}
+\DoxyCodeLine{688                 \textcolor{keywordflow}{case} 0x6A:}
+\DoxyCodeLine{689                 \textcolor{keywordflow}{case} 0x6B:}
+\DoxyCodeLine{690                 \textcolor{keywordflow}{case} 0x6C:}
+\DoxyCodeLine{691                 \textcolor{keywordflow}{case} 0x6D:}
+\DoxyCodeLine{692                 \textcolor{keywordflow}{case} 0x6E:}
+\DoxyCodeLine{693                 \textcolor{keywordflow}{case} 0x6F:}
+\DoxyCodeLine{694                 \textcolor{keywordflow}{case} 0x70:}
+\DoxyCodeLine{695                 \textcolor{keywordflow}{case} 0x71:}
+\DoxyCodeLine{696                 \textcolor{keywordflow}{case} 0x72:}
+\DoxyCodeLine{697                 \textcolor{keywordflow}{case} 0x73:}
+\DoxyCodeLine{698                 \textcolor{keywordflow}{case} 0x74:}
+\DoxyCodeLine{699                 \textcolor{keywordflow}{case} 0x75:}
+\DoxyCodeLine{700                 \textcolor{keywordflow}{case} 0x76:}
+\DoxyCodeLine{701                 \textcolor{keywordflow}{case} 0x77:}
+\DoxyCodeLine{702                 \textcolor{keywordflow}{case} 0x78:}
+\DoxyCodeLine{703                 \textcolor{keywordflow}{case} 0x79:}
+\DoxyCodeLine{704                 \textcolor{keywordflow}{case} 0x7A:}
+\DoxyCodeLine{705                 \textcolor{keywordflow}{case} 0x7B:}
+\DoxyCodeLine{706                 \textcolor{keywordflow}{case} 0x7C:}
+\DoxyCodeLine{707                 \textcolor{keywordflow}{case} 0x7D:}
+\DoxyCodeLine{708                 \textcolor{keywordflow}{case} 0x7E:}
+\DoxyCodeLine{709                 \textcolor{keywordflow}{case} 0x7F:}
+\DoxyCodeLine{710                 \{}
+\DoxyCodeLine{711                     add(current);}
+\DoxyCodeLine{712                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{713                 \}}
+\DoxyCodeLine{714 }
+\DoxyCodeLine{715                 \textcolor{comment}{// U+0080..U+07FF: bytes C2..DF 80..BF}}
+\DoxyCodeLine{716                 \textcolor{keywordflow}{case} 0xC2:}
+\DoxyCodeLine{717                 \textcolor{keywordflow}{case} 0xC3:}
+\DoxyCodeLine{718                 \textcolor{keywordflow}{case} 0xC4:}
+\DoxyCodeLine{719                 \textcolor{keywordflow}{case} 0xC5:}
+\DoxyCodeLine{720                 \textcolor{keywordflow}{case} 0xC6:}
+\DoxyCodeLine{721                 \textcolor{keywordflow}{case} 0xC7:}
+\DoxyCodeLine{722                 \textcolor{keywordflow}{case} 0xC8:}
+\DoxyCodeLine{723                 \textcolor{keywordflow}{case} 0xC9:}
+\DoxyCodeLine{724                 \textcolor{keywordflow}{case} 0xCA:}
+\DoxyCodeLine{725                 \textcolor{keywordflow}{case} 0xCB:}
+\DoxyCodeLine{726                 \textcolor{keywordflow}{case} 0xCC:}
+\DoxyCodeLine{727                 \textcolor{keywordflow}{case} 0xCD:}
+\DoxyCodeLine{728                 \textcolor{keywordflow}{case} 0xCE:}
+\DoxyCodeLine{729                 \textcolor{keywordflow}{case} 0xCF:}
+\DoxyCodeLine{730                 \textcolor{keywordflow}{case} 0xD0:}
+\DoxyCodeLine{731                 \textcolor{keywordflow}{case} 0xD1:}
+\DoxyCodeLine{732                 \textcolor{keywordflow}{case} 0xD2:}
+\DoxyCodeLine{733                 \textcolor{keywordflow}{case} 0xD3:}
+\DoxyCodeLine{734                 \textcolor{keywordflow}{case} 0xD4:}
+\DoxyCodeLine{735                 \textcolor{keywordflow}{case} 0xD5:}
+\DoxyCodeLine{736                 \textcolor{keywordflow}{case} 0xD6:}
+\DoxyCodeLine{737                 \textcolor{keywordflow}{case} 0xD7:}
+\DoxyCodeLine{738                 \textcolor{keywordflow}{case} 0xD8:}
+\DoxyCodeLine{739                 \textcolor{keywordflow}{case} 0xD9:}
+\DoxyCodeLine{740                 \textcolor{keywordflow}{case} 0xDA:}
+\DoxyCodeLine{741                 \textcolor{keywordflow}{case} 0xDB:}
+\DoxyCodeLine{742                 \textcolor{keywordflow}{case} 0xDC:}
+\DoxyCodeLine{743                 \textcolor{keywordflow}{case} 0xDD:}
+\DoxyCodeLine{744                 \textcolor{keywordflow}{case} 0xDE:}
+\DoxyCodeLine{745                 \textcolor{keywordflow}{case} 0xDF:}
+\DoxyCodeLine{746                 \{}
+\DoxyCodeLine{747                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(!next\_byte\_in\_range(\{0x80, 0xBF\})))}
+\DoxyCodeLine{748                     \{}
+\DoxyCodeLine{749                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{750                     \}}
+\DoxyCodeLine{751                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{752                 \}}
+\DoxyCodeLine{753 }
+\DoxyCodeLine{754                 \textcolor{comment}{// U+0800..U+0FFF: bytes E0 A0..BF 80..BF}}
+\DoxyCodeLine{755                 \textcolor{keywordflow}{case} 0xE0:}
+\DoxyCodeLine{756                 \{}
+\DoxyCodeLine{757                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(!(next\_byte\_in\_range(\{0xA0, 0xBF, 0x80, 0xBF\}))))}
+\DoxyCodeLine{758                     \{}
+\DoxyCodeLine{759                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{760                     \}}
+\DoxyCodeLine{761                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{762                 \}}
+\DoxyCodeLine{763 }
+\DoxyCodeLine{764                 \textcolor{comment}{// U+1000..U+CFFF: bytes E1..EC 80..BF 80..BF}}
+\DoxyCodeLine{765                 \textcolor{comment}{// U+E000..U+FFFF: bytes EE..EF 80..BF 80..BF}}
+\DoxyCodeLine{766                 \textcolor{keywordflow}{case} 0xE1:}
+\DoxyCodeLine{767                 \textcolor{keywordflow}{case} 0xE2:}
+\DoxyCodeLine{768                 \textcolor{keywordflow}{case} 0xE3:}
+\DoxyCodeLine{769                 \textcolor{keywordflow}{case} 0xE4:}
+\DoxyCodeLine{770                 \textcolor{keywordflow}{case} 0xE5:}
+\DoxyCodeLine{771                 \textcolor{keywordflow}{case} 0xE6:}
+\DoxyCodeLine{772                 \textcolor{keywordflow}{case} 0xE7:}
+\DoxyCodeLine{773                 \textcolor{keywordflow}{case} 0xE8:}
+\DoxyCodeLine{774                 \textcolor{keywordflow}{case} 0xE9:}
+\DoxyCodeLine{775                 \textcolor{keywordflow}{case} 0xEA:}
+\DoxyCodeLine{776                 \textcolor{keywordflow}{case} 0xEB:}
+\DoxyCodeLine{777                 \textcolor{keywordflow}{case} 0xEC:}
+\DoxyCodeLine{778                 \textcolor{keywordflow}{case} 0xEE:}
+\DoxyCodeLine{779                 \textcolor{keywordflow}{case} 0xEF:}
+\DoxyCodeLine{780                 \{}
+\DoxyCodeLine{781                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(!(next\_byte\_in\_range(\{0x80, 0xBF, 0x80, 0xBF\}))))}
+\DoxyCodeLine{782                     \{}
+\DoxyCodeLine{783                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{784                     \}}
+\DoxyCodeLine{785                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{786                 \}}
+\DoxyCodeLine{787 }
+\DoxyCodeLine{788                 \textcolor{comment}{// U+D000..U+D7FF: bytes ED 80..9F 80..BF}}
+\DoxyCodeLine{789                 \textcolor{keywordflow}{case} 0xED:}
+\DoxyCodeLine{790                 \{}
+\DoxyCodeLine{791                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(!(next\_byte\_in\_range(\{0x80, 0x9F, 0x80, 0xBF\}))))}
+\DoxyCodeLine{792                     \{}
+\DoxyCodeLine{793                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{794                     \}}
+\DoxyCodeLine{795                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{796                 \}}
+\DoxyCodeLine{797 }
+\DoxyCodeLine{798                 \textcolor{comment}{// U+10000..U+3FFFF F0 90..BF 80..BF 80..BF}}
+\DoxyCodeLine{799                 \textcolor{keywordflow}{case} 0xF0:}
+\DoxyCodeLine{800                 \{}
+\DoxyCodeLine{801                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(!(next\_byte\_in\_range(\{0x90, 0xBF, 0x80, 0xBF, 0x80, 0xBF\}))))}
+\DoxyCodeLine{802                     \{}
+\DoxyCodeLine{803                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{804                     \}}
+\DoxyCodeLine{805                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{806                 \}}
+\DoxyCodeLine{807 }
+\DoxyCodeLine{808                 \textcolor{comment}{// U+40000..U+FFFFF F1..F3 80..BF 80..BF 80..BF}}
+\DoxyCodeLine{809                 \textcolor{keywordflow}{case} 0xF1:}
+\DoxyCodeLine{810                 \textcolor{keywordflow}{case} 0xF2:}
+\DoxyCodeLine{811                 \textcolor{keywordflow}{case} 0xF3:}
+\DoxyCodeLine{812                 \{}
+\DoxyCodeLine{813                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(!(next\_byte\_in\_range(\{0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF\}))))}
+\DoxyCodeLine{814                     \{}
+\DoxyCodeLine{815                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{816                     \}}
+\DoxyCodeLine{817                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{818                 \}}
+\DoxyCodeLine{819 }
+\DoxyCodeLine{820                 \textcolor{comment}{// U+100000..U+10FFFF F4 80..8F 80..BF 80..BF}}
+\DoxyCodeLine{821                 \textcolor{keywordflow}{case} 0xF4:}
+\DoxyCodeLine{822                 \{}
+\DoxyCodeLine{823                     \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(!(next\_byte\_in\_range(\{0x80, 0x8F, 0x80, 0xBF, 0x80, 0xBF\}))))}
+\DoxyCodeLine{824                     \{}
+\DoxyCodeLine{825                         \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{826                     \}}
+\DoxyCodeLine{827                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{828                 \}}
+\DoxyCodeLine{829 }
+\DoxyCodeLine{830                 \textcolor{comment}{// remaining bytes (80..C1 and F5..FF) are ill-\/formed}}
+\DoxyCodeLine{831                 \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{832                 \{}
+\DoxyCodeLine{833                     error\_message = \textcolor{stringliteral}{"{}invalid string: ill-\/formed UTF-\/8 byte"{}};}
+\DoxyCodeLine{834                     \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{835                 \}}
+\DoxyCodeLine{836             \}}
+\DoxyCodeLine{837         \}}
+\DoxyCodeLine{838     \}}
+\DoxyCodeLine{839 }
+\DoxyCodeLine{844     \textcolor{keywordtype}{bool} scan\_comment()}
+\DoxyCodeLine{845     \{}
+\DoxyCodeLine{846         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{847         \{}
+\DoxyCodeLine{848             \textcolor{comment}{// single-\/line comments skip input until a newline or EOF is read}}
+\DoxyCodeLine{849             \textcolor{keywordflow}{case} \textcolor{charliteral}{'/'}:}
+\DoxyCodeLine{850             \{}
+\DoxyCodeLine{851                 \textcolor{keywordflow}{while} (\textcolor{keyword}{true})}
+\DoxyCodeLine{852                 \{}
+\DoxyCodeLine{853                     \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{854                     \{}
+\DoxyCodeLine{855                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)n'}:}
+\DoxyCodeLine{856                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)r'}:}
+\DoxyCodeLine{857                         \textcolor{keywordflow}{case} std::char\_traits<char\_type>::eof():}
+\DoxyCodeLine{858                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)0'}:}
+\DoxyCodeLine{859                             \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{860 }
+\DoxyCodeLine{861                         \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{862                             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{863                     \}}
+\DoxyCodeLine{864                 \}}
+\DoxyCodeLine{865             \}}
+\DoxyCodeLine{866 }
+\DoxyCodeLine{867             \textcolor{comment}{// multi-\/line comments skip input until */ is read}}
+\DoxyCodeLine{868             \textcolor{keywordflow}{case} \textcolor{charliteral}{'*'}:}
+\DoxyCodeLine{869             \{}
+\DoxyCodeLine{870                 \textcolor{keywordflow}{while} (\textcolor{keyword}{true})}
+\DoxyCodeLine{871                 \{}
+\DoxyCodeLine{872                     \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{873                     \{}
+\DoxyCodeLine{874                         \textcolor{keywordflow}{case} std::char\_traits<char\_type>::eof():}
+\DoxyCodeLine{875                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)0'}:}
+\DoxyCodeLine{876                         \{}
+\DoxyCodeLine{877                             error\_message = \textcolor{stringliteral}{"{}invalid comment; missing closing '*/'"{}};}
+\DoxyCodeLine{878                             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{879                         \}}
+\DoxyCodeLine{880 }
+\DoxyCodeLine{881                         \textcolor{keywordflow}{case} \textcolor{charliteral}{'*'}:}
+\DoxyCodeLine{882                         \{}
+\DoxyCodeLine{883                             \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{884                             \{}
+\DoxyCodeLine{885                                 \textcolor{keywordflow}{case} \textcolor{charliteral}{'/'}:}
+\DoxyCodeLine{886                                     \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{887 }
+\DoxyCodeLine{888                                 \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{889                                 \{}
+\DoxyCodeLine{890                                     unget();}
+\DoxyCodeLine{891                                     \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{892                                 \}}
+\DoxyCodeLine{893                             \}}
+\DoxyCodeLine{894                         \}}
+\DoxyCodeLine{895 }
+\DoxyCodeLine{896                         \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{897                             \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{898                     \}}
+\DoxyCodeLine{899                 \}}
+\DoxyCodeLine{900             \}}
+\DoxyCodeLine{901 }
+\DoxyCodeLine{902             \textcolor{comment}{// unexpected character after reading '/'}}
+\DoxyCodeLine{903             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{904             \{}
+\DoxyCodeLine{905                 error\_message = \textcolor{stringliteral}{"{}invalid comment; expecting '/' or '*' after '/'"{}};}
+\DoxyCodeLine{906                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{907             \}}
+\DoxyCodeLine{908         \}}
+\DoxyCodeLine{909     \}}
+\DoxyCodeLine{910 }
+\DoxyCodeLine{911     JSON\_HEDLEY\_NON\_NULL(2)}
+\DoxyCodeLine{912     \textcolor{keyword}{static} \textcolor{keywordtype}{void} strtof(\textcolor{keywordtype}{float}\& f, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* str, \textcolor{keywordtype}{char}** endptr) \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{913     \{}
+\DoxyCodeLine{914         f = std::strtof(str, endptr);}
+\DoxyCodeLine{915     \}}
+\DoxyCodeLine{916 }
+\DoxyCodeLine{917     JSON\_HEDLEY\_NON\_NULL(2)}
+\DoxyCodeLine{918     \textcolor{keyword}{static} \textcolor{keywordtype}{void} strtof(\textcolor{keywordtype}{double}\& f, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* str, \textcolor{keywordtype}{char}** endptr) \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{919     \{}
+\DoxyCodeLine{920         f = std::strtod(str, endptr);}
+\DoxyCodeLine{921     \}}
+\DoxyCodeLine{922 }
+\DoxyCodeLine{923     JSON\_HEDLEY\_NON\_NULL(2)}
+\DoxyCodeLine{924     \textcolor{keyword}{static} \textcolor{keywordtype}{void} strtof(\textcolor{keywordtype}{long} \textcolor{keywordtype}{double}\& f, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* str, \textcolor{keywordtype}{char}** endptr) \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{925     \{}
+\DoxyCodeLine{926         f = std::strtold(str, endptr);}
+\DoxyCodeLine{927     \}}
+\DoxyCodeLine{928 }
+\DoxyCodeLine{969     token\_type scan\_number()  \textcolor{comment}{// lgtm [cpp/use-\/of-\/goto]}}
+\DoxyCodeLine{970     \{}
+\DoxyCodeLine{971         \textcolor{comment}{// reset token\_buffer to store the number's bytes}}
+\DoxyCodeLine{972         reset();}
+\DoxyCodeLine{973 }
+\DoxyCodeLine{974         \textcolor{comment}{// the type of the parsed number; initially set to unsigned; will be}}
+\DoxyCodeLine{975         \textcolor{comment}{// changed if minus sign, decimal point or exponent is read}}
+\DoxyCodeLine{976         token\_type number\_type = token\_type::value\_unsigned;}
+\DoxyCodeLine{977 }
+\DoxyCodeLine{978         \textcolor{comment}{// state (init): we just found out we need to scan a number}}
+\DoxyCodeLine{979         \textcolor{keywordflow}{switch} (current)}
+\DoxyCodeLine{980         \{}
+\DoxyCodeLine{981             \textcolor{keywordflow}{case} \textcolor{charliteral}{'-\/'}:}
+\DoxyCodeLine{982             \{}
+\DoxyCodeLine{983                 add(current);}
+\DoxyCodeLine{984                 \textcolor{keywordflow}{goto} scan\_number\_minus;}
+\DoxyCodeLine{985             \}}
+\DoxyCodeLine{986 }
+\DoxyCodeLine{987             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{988             \{}
+\DoxyCodeLine{989                 add(current);}
+\DoxyCodeLine{990                 \textcolor{keywordflow}{goto} scan\_number\_zero;}
+\DoxyCodeLine{991             \}}
+\DoxyCodeLine{992 }
+\DoxyCodeLine{993             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{994             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{995             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{996             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{997             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{998             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{999             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1000             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1001             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1002             \{}
+\DoxyCodeLine{1003                 add(current);}
+\DoxyCodeLine{1004                 \textcolor{keywordflow}{goto} scan\_number\_any1;}
+\DoxyCodeLine{1005             \}}
+\DoxyCodeLine{1006 }
+\DoxyCodeLine{1007             \textcolor{comment}{// all other characters are rejected outside scan\_number()}}
+\DoxyCodeLine{1008             \textcolor{keywordflow}{default}:            \textcolor{comment}{// LCOV\_EXCL\_LINE}}
+\DoxyCodeLine{1009                 JSON\_ASSERT(\textcolor{keyword}{false}); \textcolor{comment}{// NOLINT(cert-\/dcl03-\/c,hicpp-\/static-\/assert,misc-\/static-\/assert) LCOV\_EXCL\_LINE}}
+\DoxyCodeLine{1010         \}}
+\DoxyCodeLine{1011 }
+\DoxyCodeLine{1012 scan\_number\_minus:}
+\DoxyCodeLine{1013         \textcolor{comment}{// state: we just parsed a leading minus sign}}
+\DoxyCodeLine{1014         number\_type = token\_type::value\_integer;}
+\DoxyCodeLine{1015         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1016         \{}
+\DoxyCodeLine{1017             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1018             \{}
+\DoxyCodeLine{1019                 add(current);}
+\DoxyCodeLine{1020                 \textcolor{keywordflow}{goto} scan\_number\_zero;}
+\DoxyCodeLine{1021             \}}
+\DoxyCodeLine{1022 }
+\DoxyCodeLine{1023             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1024             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1025             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1026             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1027             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1028             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1029             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1030             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1031             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1032             \{}
+\DoxyCodeLine{1033                 add(current);}
+\DoxyCodeLine{1034                 \textcolor{keywordflow}{goto} scan\_number\_any1;}
+\DoxyCodeLine{1035             \}}
+\DoxyCodeLine{1036 }
+\DoxyCodeLine{1037             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1038             \{}
+\DoxyCodeLine{1039                 error\_message = \textcolor{stringliteral}{"{}invalid number; expected digit after '-\/'"{}};}
+\DoxyCodeLine{1040                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1041             \}}
+\DoxyCodeLine{1042         \}}
+\DoxyCodeLine{1043 }
+\DoxyCodeLine{1044 scan\_number\_zero:}
+\DoxyCodeLine{1045         \textcolor{comment}{// state: we just parse a zero (maybe with a leading minus sign)}}
+\DoxyCodeLine{1046         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1047         \{}
+\DoxyCodeLine{1048             \textcolor{keywordflow}{case} \textcolor{charliteral}{'.'}:}
+\DoxyCodeLine{1049             \{}
+\DoxyCodeLine{1050                 add(decimal\_point\_char);}
+\DoxyCodeLine{1051                 \textcolor{keywordflow}{goto} scan\_number\_decimal1;}
+\DoxyCodeLine{1052             \}}
+\DoxyCodeLine{1053 }
+\DoxyCodeLine{1054             \textcolor{keywordflow}{case} \textcolor{charliteral}{'e'}:}
+\DoxyCodeLine{1055             \textcolor{keywordflow}{case} \textcolor{charliteral}{'E'}:}
+\DoxyCodeLine{1056             \{}
+\DoxyCodeLine{1057                 add(current);}
+\DoxyCodeLine{1058                 \textcolor{keywordflow}{goto} scan\_number\_exponent;}
+\DoxyCodeLine{1059             \}}
+\DoxyCodeLine{1060 }
+\DoxyCodeLine{1061             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1062                 \textcolor{keywordflow}{goto} scan\_number\_done;}
+\DoxyCodeLine{1063         \}}
+\DoxyCodeLine{1064 }
+\DoxyCodeLine{1065 scan\_number\_any1:}
+\DoxyCodeLine{1066         \textcolor{comment}{// state: we just parsed a number 0-\/9 (maybe with a leading minus sign)}}
+\DoxyCodeLine{1067         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1068         \{}
+\DoxyCodeLine{1069             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1070             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1071             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1072             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1073             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1074             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1075             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1076             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1077             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1078             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1079             \{}
+\DoxyCodeLine{1080                 add(current);}
+\DoxyCodeLine{1081                 \textcolor{keywordflow}{goto} scan\_number\_any1;}
+\DoxyCodeLine{1082             \}}
+\DoxyCodeLine{1083 }
+\DoxyCodeLine{1084             \textcolor{keywordflow}{case} \textcolor{charliteral}{'.'}:}
+\DoxyCodeLine{1085             \{}
+\DoxyCodeLine{1086                 add(decimal\_point\_char);}
+\DoxyCodeLine{1087                 \textcolor{keywordflow}{goto} scan\_number\_decimal1;}
+\DoxyCodeLine{1088             \}}
+\DoxyCodeLine{1089 }
+\DoxyCodeLine{1090             \textcolor{keywordflow}{case} \textcolor{charliteral}{'e'}:}
+\DoxyCodeLine{1091             \textcolor{keywordflow}{case} \textcolor{charliteral}{'E'}:}
+\DoxyCodeLine{1092             \{}
+\DoxyCodeLine{1093                 add(current);}
+\DoxyCodeLine{1094                 \textcolor{keywordflow}{goto} scan\_number\_exponent;}
+\DoxyCodeLine{1095             \}}
+\DoxyCodeLine{1096 }
+\DoxyCodeLine{1097             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1098                 \textcolor{keywordflow}{goto} scan\_number\_done;}
+\DoxyCodeLine{1099         \}}
+\DoxyCodeLine{1100 }
+\DoxyCodeLine{1101 scan\_number\_decimal1:}
+\DoxyCodeLine{1102         \textcolor{comment}{// state: we just parsed a decimal point}}
+\DoxyCodeLine{1103         number\_type = token\_type::value\_float;}
+\DoxyCodeLine{1104         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1105         \{}
+\DoxyCodeLine{1106             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1107             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1108             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1109             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1110             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1111             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1112             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1113             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1114             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1115             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1116             \{}
+\DoxyCodeLine{1117                 add(current);}
+\DoxyCodeLine{1118                 \textcolor{keywordflow}{goto} scan\_number\_decimal2;}
+\DoxyCodeLine{1119             \}}
+\DoxyCodeLine{1120 }
+\DoxyCodeLine{1121             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1122             \{}
+\DoxyCodeLine{1123                 error\_message = \textcolor{stringliteral}{"{}invalid number; expected digit after '.'"{}};}
+\DoxyCodeLine{1124                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1125             \}}
+\DoxyCodeLine{1126         \}}
+\DoxyCodeLine{1127 }
+\DoxyCodeLine{1128 scan\_number\_decimal2:}
+\DoxyCodeLine{1129         \textcolor{comment}{// we just parsed at least one number after a decimal point}}
+\DoxyCodeLine{1130         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1131         \{}
+\DoxyCodeLine{1132             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1133             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1134             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1135             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1136             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1137             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1138             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1139             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1140             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1141             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1142             \{}
+\DoxyCodeLine{1143                 add(current);}
+\DoxyCodeLine{1144                 \textcolor{keywordflow}{goto} scan\_number\_decimal2;}
+\DoxyCodeLine{1145             \}}
+\DoxyCodeLine{1146 }
+\DoxyCodeLine{1147             \textcolor{keywordflow}{case} \textcolor{charliteral}{'e'}:}
+\DoxyCodeLine{1148             \textcolor{keywordflow}{case} \textcolor{charliteral}{'E'}:}
+\DoxyCodeLine{1149             \{}
+\DoxyCodeLine{1150                 add(current);}
+\DoxyCodeLine{1151                 \textcolor{keywordflow}{goto} scan\_number\_exponent;}
+\DoxyCodeLine{1152             \}}
+\DoxyCodeLine{1153 }
+\DoxyCodeLine{1154             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1155                 \textcolor{keywordflow}{goto} scan\_number\_done;}
+\DoxyCodeLine{1156         \}}
+\DoxyCodeLine{1157 }
+\DoxyCodeLine{1158 scan\_number\_exponent:}
+\DoxyCodeLine{1159         \textcolor{comment}{// we just parsed an exponent}}
+\DoxyCodeLine{1160         number\_type = token\_type::value\_float;}
+\DoxyCodeLine{1161         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1162         \{}
+\DoxyCodeLine{1163             \textcolor{keywordflow}{case} \textcolor{charliteral}{'+'}:}
+\DoxyCodeLine{1164             \textcolor{keywordflow}{case} \textcolor{charliteral}{'-\/'}:}
+\DoxyCodeLine{1165             \{}
+\DoxyCodeLine{1166                 add(current);}
+\DoxyCodeLine{1167                 \textcolor{keywordflow}{goto} scan\_number\_sign;}
+\DoxyCodeLine{1168             \}}
+\DoxyCodeLine{1169 }
+\DoxyCodeLine{1170             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1171             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1172             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1173             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1174             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1175             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1176             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1177             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1178             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1179             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1180             \{}
+\DoxyCodeLine{1181                 add(current);}
+\DoxyCodeLine{1182                 \textcolor{keywordflow}{goto} scan\_number\_any2;}
+\DoxyCodeLine{1183             \}}
+\DoxyCodeLine{1184 }
+\DoxyCodeLine{1185             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1186             \{}
+\DoxyCodeLine{1187                 error\_message =}
+\DoxyCodeLine{1188                     \textcolor{stringliteral}{"{}invalid number; expected '+', '-\/', or digit after exponent"{}};}
+\DoxyCodeLine{1189                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1190             \}}
+\DoxyCodeLine{1191         \}}
+\DoxyCodeLine{1192 }
+\DoxyCodeLine{1193 scan\_number\_sign:}
+\DoxyCodeLine{1194         \textcolor{comment}{// we just parsed an exponent sign}}
+\DoxyCodeLine{1195         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1196         \{}
+\DoxyCodeLine{1197             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1198             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1199             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1200             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1201             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1202             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1203             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1204             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1205             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1206             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1207             \{}
+\DoxyCodeLine{1208                 add(current);}
+\DoxyCodeLine{1209                 \textcolor{keywordflow}{goto} scan\_number\_any2;}
+\DoxyCodeLine{1210             \}}
+\DoxyCodeLine{1211 }
+\DoxyCodeLine{1212             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1213             \{}
+\DoxyCodeLine{1214                 error\_message = \textcolor{stringliteral}{"{}invalid number; expected digit after exponent sign"{}};}
+\DoxyCodeLine{1215                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1216             \}}
+\DoxyCodeLine{1217         \}}
+\DoxyCodeLine{1218 }
+\DoxyCodeLine{1219 scan\_number\_any2:}
+\DoxyCodeLine{1220         \textcolor{comment}{// we just parsed a number after the exponent or exponent sign}}
+\DoxyCodeLine{1221         \textcolor{keywordflow}{switch} (get())}
+\DoxyCodeLine{1222         \{}
+\DoxyCodeLine{1223             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1224             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1225             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1226             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1227             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1228             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1229             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1230             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1231             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1232             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1233             \{}
+\DoxyCodeLine{1234                 add(current);}
+\DoxyCodeLine{1235                 \textcolor{keywordflow}{goto} scan\_number\_any2;}
+\DoxyCodeLine{1236             \}}
+\DoxyCodeLine{1237 }
+\DoxyCodeLine{1238             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1239                 \textcolor{keywordflow}{goto} scan\_number\_done;}
+\DoxyCodeLine{1240         \}}
+\DoxyCodeLine{1241 }
+\DoxyCodeLine{1242 scan\_number\_done:}
+\DoxyCodeLine{1243         \textcolor{comment}{// unget the character after the number (we only read it to know that}}
+\DoxyCodeLine{1244         \textcolor{comment}{// we are done scanning a number)}}
+\DoxyCodeLine{1245         unget();}
+\DoxyCodeLine{1246 }
+\DoxyCodeLine{1247         \textcolor{keywordtype}{char}* endptr = \textcolor{keyword}{nullptr}; \textcolor{comment}{// NOLINT(cppcoreguidelines-\/pro-\/type-\/vararg,hicpp-\/vararg)}}
+\DoxyCodeLine{1248         errno = 0;}
+\DoxyCodeLine{1249 }
+\DoxyCodeLine{1250         \textcolor{comment}{// try to parse integers first and fall back to floats}}
+\DoxyCodeLine{1251         \textcolor{keywordflow}{if} (number\_type == token\_type::value\_unsigned)}
+\DoxyCodeLine{1252         \{}
+\DoxyCodeLine{1253             \textcolor{keyword}{const} \textcolor{keyword}{auto} x = std::strtoull(token\_buffer.data(), \&endptr, 10);}
+\DoxyCodeLine{1254 }
+\DoxyCodeLine{1255             \textcolor{comment}{// we checked the number format before}}
+\DoxyCodeLine{1256             JSON\_ASSERT(endptr == token\_buffer.data() + token\_buffer.size());}
+\DoxyCodeLine{1257 }
+\DoxyCodeLine{1258             \textcolor{keywordflow}{if} (errno == 0)}
+\DoxyCodeLine{1259             \{}
+\DoxyCodeLine{1260                 value\_unsigned = \textcolor{keyword}{static\_cast<}number\_unsigned\_t\textcolor{keyword}{>}(x);}
+\DoxyCodeLine{1261                 \textcolor{keywordflow}{if} (value\_unsigned == x)}
+\DoxyCodeLine{1262                 \{}
+\DoxyCodeLine{1263                     \textcolor{keywordflow}{return} token\_type::value\_unsigned;}
+\DoxyCodeLine{1264                 \}}
+\DoxyCodeLine{1265             \}}
+\DoxyCodeLine{1266         \}}
+\DoxyCodeLine{1267         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (number\_type == token\_type::value\_integer)}
+\DoxyCodeLine{1268         \{}
+\DoxyCodeLine{1269             \textcolor{keyword}{const} \textcolor{keyword}{auto} x = std::strtoll(token\_buffer.data(), \&endptr, 10);}
+\DoxyCodeLine{1270 }
+\DoxyCodeLine{1271             \textcolor{comment}{// we checked the number format before}}
+\DoxyCodeLine{1272             JSON\_ASSERT(endptr == token\_buffer.data() + token\_buffer.size());}
+\DoxyCodeLine{1273 }
+\DoxyCodeLine{1274             \textcolor{keywordflow}{if} (errno == 0)}
+\DoxyCodeLine{1275             \{}
+\DoxyCodeLine{1276                 value\_integer = \textcolor{keyword}{static\_cast<}number\_integer\_t\textcolor{keyword}{>}(x);}
+\DoxyCodeLine{1277                 \textcolor{keywordflow}{if} (value\_integer == x)}
+\DoxyCodeLine{1278                 \{}
+\DoxyCodeLine{1279                     \textcolor{keywordflow}{return} token\_type::value\_integer;}
+\DoxyCodeLine{1280                 \}}
+\DoxyCodeLine{1281             \}}
+\DoxyCodeLine{1282         \}}
+\DoxyCodeLine{1283 }
+\DoxyCodeLine{1284         \textcolor{comment}{// this code is reached if we parse a floating-\/point number or if an}}
+\DoxyCodeLine{1285         \textcolor{comment}{// integer conversion above failed}}
+\DoxyCodeLine{1286         strtof(value\_float, token\_buffer.data(), \&endptr);}
+\DoxyCodeLine{1287 }
+\DoxyCodeLine{1288         \textcolor{comment}{// we checked the number format before}}
+\DoxyCodeLine{1289         JSON\_ASSERT(endptr == token\_buffer.data() + token\_buffer.size());}
+\DoxyCodeLine{1290 }
+\DoxyCodeLine{1291         \textcolor{keywordflow}{return} token\_type::value\_float;}
+\DoxyCodeLine{1292     \}}
+\DoxyCodeLine{1293 }
+\DoxyCodeLine{1299     JSON\_HEDLEY\_NON\_NULL(2)}
+\DoxyCodeLine{1300     token\_type scan\_literal(\textcolor{keyword}{const} char\_type* literal\_text, \textcolor{keyword}{const} std::size\_t length,}
+\DoxyCodeLine{1301                             token\_type return\_type)}
+\DoxyCodeLine{1302     \{}
+\DoxyCodeLine{1303         JSON\_ASSERT(std::char\_traits<char\_type>::to\_char\_type(current) == literal\_text[0]);}
+\DoxyCodeLine{1304         \textcolor{keywordflow}{for} (std::size\_t i = 1; i < length; ++i)}
+\DoxyCodeLine{1305         \{}
+\DoxyCodeLine{1306             \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(std::char\_traits<char\_type>::to\_char\_type(get()) != literal\_text[i]))}
+\DoxyCodeLine{1307             \{}
+\DoxyCodeLine{1308                 error\_message = \textcolor{stringliteral}{"{}invalid literal"{}};}
+\DoxyCodeLine{1309                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1310             \}}
+\DoxyCodeLine{1311         \}}
+\DoxyCodeLine{1312         \textcolor{keywordflow}{return} return\_type;}
+\DoxyCodeLine{1313     \}}
+\DoxyCodeLine{1314 }
+\DoxyCodeLine{1316     \textcolor{comment}{// input management}}
+\DoxyCodeLine{1318 \textcolor{comment}{}}
+\DoxyCodeLine{1320     \textcolor{keywordtype}{void} reset() \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{1321     \{}
+\DoxyCodeLine{1322         token\_buffer.clear();}
+\DoxyCodeLine{1323         token\_string.clear();}
+\DoxyCodeLine{1324         token\_string.push\_back(std::char\_traits<char\_type>::to\_char\_type(current));}
+\DoxyCodeLine{1325     \}}
+\DoxyCodeLine{1326 }
+\DoxyCodeLine{1327     \textcolor{comment}{/*}}
+\DoxyCodeLine{1328 \textcolor{comment}{    @brief get next character from the input}}
+\DoxyCodeLine{1329 \textcolor{comment}{}}
+\DoxyCodeLine{1330 \textcolor{comment}{    This function provides the interface to the used input adapter. It does}}
+\DoxyCodeLine{1331 \textcolor{comment}{    not throw in case the input reached EOF, but returns a}}
+\DoxyCodeLine{1332 \textcolor{comment}{    `std::char\_traits<char>::eof()` in that case.  Stores the scanned characters}}
+\DoxyCodeLine{1333 \textcolor{comment}{    for use in error messages.}}
+\DoxyCodeLine{1334 \textcolor{comment}{}}
+\DoxyCodeLine{1335 \textcolor{comment}{    @return character read from the input}}
+\DoxyCodeLine{1336 \textcolor{comment}{    */}}
+\DoxyCodeLine{1337     char\_int\_type get()}
+\DoxyCodeLine{1338     \{}
+\DoxyCodeLine{1339         ++position.\mbox{\hyperlink{structdetail_1_1position__t_ac4d220d61ce61eeffbea40985727a3b0}{chars\_read\_total}};}
+\DoxyCodeLine{1340         ++position.\mbox{\hyperlink{structdetail_1_1position__t_a6548d584bd03d1d47bfcd7cf8b1fb0c6}{chars\_read\_current\_line}};}
+\DoxyCodeLine{1341 }
+\DoxyCodeLine{1342         \textcolor{keywordflow}{if} (next\_unget)}
+\DoxyCodeLine{1343         \{}
+\DoxyCodeLine{1344             \textcolor{comment}{// just reset the next\_unget variable and work with current}}
+\DoxyCodeLine{1345             next\_unget = \textcolor{keyword}{false};}
+\DoxyCodeLine{1346         \}}
+\DoxyCodeLine{1347         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{1348         \{}
+\DoxyCodeLine{1349             current = ia.get\_character();}
+\DoxyCodeLine{1350         \}}
+\DoxyCodeLine{1351 }
+\DoxyCodeLine{1352         \textcolor{keywordflow}{if} (JSON\_HEDLEY\_LIKELY(current != std::char\_traits<char\_type>::eof()))}
+\DoxyCodeLine{1353         \{}
+\DoxyCodeLine{1354             token\_string.push\_back(std::char\_traits<char\_type>::to\_char\_type(current));}
+\DoxyCodeLine{1355         \}}
+\DoxyCodeLine{1356 }
+\DoxyCodeLine{1357         \textcolor{keywordflow}{if} (current == \textcolor{charliteral}{'\(\backslash\)n'})}
+\DoxyCodeLine{1358         \{}
+\DoxyCodeLine{1359             ++position.\mbox{\hyperlink{structdetail_1_1position__t_a9ec1ac6600d1364f4d1c9f67de6a670b}{lines\_read}};}
+\DoxyCodeLine{1360             position.\mbox{\hyperlink{structdetail_1_1position__t_a6548d584bd03d1d47bfcd7cf8b1fb0c6}{chars\_read\_current\_line}} = 0;}
+\DoxyCodeLine{1361         \}}
+\DoxyCodeLine{1362 }
+\DoxyCodeLine{1363         \textcolor{keywordflow}{return} current;}
+\DoxyCodeLine{1364     \}}
+\DoxyCodeLine{1365 }
+\DoxyCodeLine{1374     \textcolor{keywordtype}{void} unget()}
+\DoxyCodeLine{1375     \{}
+\DoxyCodeLine{1376         next\_unget = \textcolor{keyword}{true};}
+\DoxyCodeLine{1377 }
+\DoxyCodeLine{1378         -\/-\/position.\mbox{\hyperlink{structdetail_1_1position__t_ac4d220d61ce61eeffbea40985727a3b0}{chars\_read\_total}};}
+\DoxyCodeLine{1379 }
+\DoxyCodeLine{1380         \textcolor{comment}{// in case we "{}unget"{} a newline, we have to also decrement the lines\_read}}
+\DoxyCodeLine{1381         \textcolor{keywordflow}{if} (position.\mbox{\hyperlink{structdetail_1_1position__t_a6548d584bd03d1d47bfcd7cf8b1fb0c6}{chars\_read\_current\_line}} == 0)}
+\DoxyCodeLine{1382         \{}
+\DoxyCodeLine{1383             \textcolor{keywordflow}{if} (position.\mbox{\hyperlink{structdetail_1_1position__t_a9ec1ac6600d1364f4d1c9f67de6a670b}{lines\_read}} > 0)}
+\DoxyCodeLine{1384             \{}
+\DoxyCodeLine{1385                 -\/-\/position.\mbox{\hyperlink{structdetail_1_1position__t_a9ec1ac6600d1364f4d1c9f67de6a670b}{lines\_read}};}
+\DoxyCodeLine{1386             \}}
+\DoxyCodeLine{1387         \}}
+\DoxyCodeLine{1388         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{1389         \{}
+\DoxyCodeLine{1390             -\/-\/position.\mbox{\hyperlink{structdetail_1_1position__t_a6548d584bd03d1d47bfcd7cf8b1fb0c6}{chars\_read\_current\_line}};}
+\DoxyCodeLine{1391         \}}
+\DoxyCodeLine{1392 }
+\DoxyCodeLine{1393         \textcolor{keywordflow}{if} (JSON\_HEDLEY\_LIKELY(current != std::char\_traits<char\_type>::eof()))}
+\DoxyCodeLine{1394         \{}
+\DoxyCodeLine{1395             JSON\_ASSERT(!token\_string.empty());}
+\DoxyCodeLine{1396             token\_string.pop\_back();}
+\DoxyCodeLine{1397         \}}
+\DoxyCodeLine{1398     \}}
+\DoxyCodeLine{1399 }
+\DoxyCodeLine{1401     \textcolor{keywordtype}{void} add(char\_int\_type c)}
+\DoxyCodeLine{1402     \{}
+\DoxyCodeLine{1403         token\_buffer.push\_back(\textcolor{keyword}{static\_cast<}typename string\_t::value\_type\textcolor{keyword}{>}(c));}
+\DoxyCodeLine{1404     \}}
+\DoxyCodeLine{1405 }
+\DoxyCodeLine{1406   \textcolor{keyword}{public}:}
+\DoxyCodeLine{1408     \textcolor{comment}{// value getters}}
+\DoxyCodeLine{1410 \textcolor{comment}{}}
+\DoxyCodeLine{1412     \textcolor{keyword}{constexpr} number\_integer\_t \mbox{\hyperlink{classdetail_1_1lexer_a4227de7d0382fb4d3e18b119f0cc87d7}{get\_number\_integer}}() const noexcept}
+\DoxyCodeLine{1413     \{}
+\DoxyCodeLine{1414         \textcolor{keywordflow}{return} value\_integer;}
+\DoxyCodeLine{1415     \}}
+\DoxyCodeLine{1416 }
+\DoxyCodeLine{1418     \textcolor{keyword}{constexpr} number\_unsigned\_t \mbox{\hyperlink{classdetail_1_1lexer_a65495d5d60a279adb009efa728708441}{get\_number\_unsigned}}() const noexcept}
+\DoxyCodeLine{1419     \{}
+\DoxyCodeLine{1420         \textcolor{keywordflow}{return} value\_unsigned;}
+\DoxyCodeLine{1421     \}}
+\DoxyCodeLine{1422 }
+\DoxyCodeLine{1424     \textcolor{keyword}{constexpr} number\_float\_t \mbox{\hyperlink{classdetail_1_1lexer_af2e903d32a7e3705c66539ea1e30ce59}{get\_number\_float}}() const noexcept}
+\DoxyCodeLine{1425     \{}
+\DoxyCodeLine{1426         \textcolor{keywordflow}{return} value\_float;}
+\DoxyCodeLine{1427     \}}
+\DoxyCodeLine{1428 }
+\DoxyCodeLine{1430     string\_t\& \mbox{\hyperlink{classdetail_1_1lexer_aae63a63a83ae7e7bd5dc1a83669ba281}{get\_string}}()}
+\DoxyCodeLine{1431     \{}
+\DoxyCodeLine{1432         \textcolor{keywordflow}{return} token\_buffer;}
+\DoxyCodeLine{1433     \}}
+\DoxyCodeLine{1434 }
+\DoxyCodeLine{1436     \textcolor{comment}{// diagnostics}}
+\DoxyCodeLine{1438 \textcolor{comment}{}}
+\DoxyCodeLine{1440     \textcolor{keyword}{constexpr} \mbox{\hyperlink{structdetail_1_1position__t}{position\_t}} \mbox{\hyperlink{classdetail_1_1lexer_a569266654a88a2dc6f0e9a587067fc9d}{get\_position}}() const noexcept}
+\DoxyCodeLine{1441     \{}
+\DoxyCodeLine{1442         \textcolor{keywordflow}{return} position;}
+\DoxyCodeLine{1443     \}}
+\DoxyCodeLine{1444 }
+\DoxyCodeLine{1448     std::string \mbox{\hyperlink{classdetail_1_1lexer_a41481d87dc1bcaaf532f529fbc0e690b}{get\_token\_string}}()\textcolor{keyword}{ const}}
+\DoxyCodeLine{1449 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{1450         \textcolor{comment}{// escape control characters}}
+\DoxyCodeLine{1451         std::string result;}
+\DoxyCodeLine{1452         \textcolor{keywordflow}{for} (\textcolor{keyword}{const} \textcolor{keyword}{auto} c : token\_string)}
+\DoxyCodeLine{1453         \{}
+\DoxyCodeLine{1454             \textcolor{keywordflow}{if} (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}\textcolor{keyword}{>}(c) <= \textcolor{stringliteral}{'\(\backslash\)x1F'})}
+\DoxyCodeLine{1455             \{}
+\DoxyCodeLine{1456                 \textcolor{comment}{// escape control characters}}
+\DoxyCodeLine{1457                 std::array<char, 9> cs\{\{\}\};}
+\DoxyCodeLine{1458                 \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}\textcolor{keyword}{>}((std::snprintf)(cs.data(), cs.size(), \textcolor{stringliteral}{"{}<U+\%.4X>"{}}, \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}\textcolor{keyword}{>}(c))); \textcolor{comment}{// NOLINT(cppcoreguidelines-\/pro-\/type-\/vararg,hicpp-\/vararg)}}
+\DoxyCodeLine{1459                 result += cs.data();}
+\DoxyCodeLine{1460             \}}
+\DoxyCodeLine{1461             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{1462             \{}
+\DoxyCodeLine{1463                 \textcolor{comment}{// add character as is}}
+\DoxyCodeLine{1464                 result.push\_back(\textcolor{keyword}{static\_cast<}std::string::value\_type\textcolor{keyword}{>}(c));}
+\DoxyCodeLine{1465             \}}
+\DoxyCodeLine{1466         \}}
+\DoxyCodeLine{1467 }
+\DoxyCodeLine{1468         \textcolor{keywordflow}{return} result;}
+\DoxyCodeLine{1469     \}}
+\DoxyCodeLine{1470 }
+\DoxyCodeLine{1472     JSON\_HEDLEY\_RETURNS\_NON\_NULL}
+\DoxyCodeLine{1473     \textcolor{keyword}{constexpr} \textcolor{keyword}{const} \textcolor{keywordtype}{char}* \mbox{\hyperlink{classdetail_1_1lexer_a412c108d8b931630d54e42fbbf764fc4}{get\_error\_message}}() const noexcept}
+\DoxyCodeLine{1474     \{}
+\DoxyCodeLine{1475         \textcolor{keywordflow}{return} error\_message;}
+\DoxyCodeLine{1476     \}}
+\DoxyCodeLine{1477 }
+\DoxyCodeLine{1479     \textcolor{comment}{// actual scanner}}
+\DoxyCodeLine{1481 \textcolor{comment}{}}
+\DoxyCodeLine{1486     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdetail_1_1lexer_a04ae0c7807a761f4162ff42290be5490}{skip\_bom}}()}
+\DoxyCodeLine{1487     \{}
+\DoxyCodeLine{1488         \textcolor{keywordflow}{if} (get() == 0xEF)}
+\DoxyCodeLine{1489         \{}
+\DoxyCodeLine{1490             \textcolor{comment}{// check if we completely parse the BOM}}
+\DoxyCodeLine{1491             \textcolor{keywordflow}{return} get() == 0xBB \&\& get() == 0xBF;}
+\DoxyCodeLine{1492         \}}
+\DoxyCodeLine{1493 }
+\DoxyCodeLine{1494         \textcolor{comment}{// the first character is not the beginning of the BOM; unget it to}}
+\DoxyCodeLine{1495         \textcolor{comment}{// process is later}}
+\DoxyCodeLine{1496         unget();}
+\DoxyCodeLine{1497         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{1498     \}}
+\DoxyCodeLine{1499 }
+\DoxyCodeLine{1500     \textcolor{keywordtype}{void} skip\_whitespace()}
+\DoxyCodeLine{1501     \{}
+\DoxyCodeLine{1502         \textcolor{keywordflow}{do}}
+\DoxyCodeLine{1503         \{}
+\DoxyCodeLine{1504             get();}
+\DoxyCodeLine{1505         \}}
+\DoxyCodeLine{1506         \textcolor{keywordflow}{while} (current == \textcolor{charliteral}{' '} || current == \textcolor{charliteral}{'\(\backslash\)t'} || current == \textcolor{charliteral}{'\(\backslash\)n'} || current == \textcolor{charliteral}{'\(\backslash\)r'});}
+\DoxyCodeLine{1507     \}}
+\DoxyCodeLine{1508 }
+\DoxyCodeLine{1509     token\_type scan()}
+\DoxyCodeLine{1510     \{}
+\DoxyCodeLine{1511         \textcolor{comment}{// initially, skip the BOM}}
+\DoxyCodeLine{1512         \textcolor{keywordflow}{if} (position.\mbox{\hyperlink{structdetail_1_1position__t_ac4d220d61ce61eeffbea40985727a3b0}{chars\_read\_total}} == 0 \&\& !\mbox{\hyperlink{classdetail_1_1lexer_a04ae0c7807a761f4162ff42290be5490}{skip\_bom}}())}
+\DoxyCodeLine{1513         \{}
+\DoxyCodeLine{1514             error\_message = \textcolor{stringliteral}{"{}invalid BOM; must be 0xEF 0xBB 0xBF if given"{}};}
+\DoxyCodeLine{1515             \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1516         \}}
+\DoxyCodeLine{1517 }
+\DoxyCodeLine{1518         \textcolor{comment}{// read next character and ignore whitespace}}
+\DoxyCodeLine{1519         skip\_whitespace();}
+\DoxyCodeLine{1520 }
+\DoxyCodeLine{1521         \textcolor{comment}{// ignore comments}}
+\DoxyCodeLine{1522         \textcolor{keywordflow}{while} (ignore\_comments \&\& current == \textcolor{charliteral}{'/'})}
+\DoxyCodeLine{1523         \{}
+\DoxyCodeLine{1524             \textcolor{keywordflow}{if} (!scan\_comment())}
+\DoxyCodeLine{1525             \{}
+\DoxyCodeLine{1526                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1527             \}}
+\DoxyCodeLine{1528 }
+\DoxyCodeLine{1529             \textcolor{comment}{// skip following whitespace}}
+\DoxyCodeLine{1530             skip\_whitespace();}
+\DoxyCodeLine{1531         \}}
+\DoxyCodeLine{1532 }
+\DoxyCodeLine{1533         \textcolor{keywordflow}{switch} (current)}
+\DoxyCodeLine{1534         \{}
+\DoxyCodeLine{1535             \textcolor{comment}{// structural characters}}
+\DoxyCodeLine{1536             \textcolor{keywordflow}{case} \textcolor{charliteral}{'['}:}
+\DoxyCodeLine{1537                 \textcolor{keywordflow}{return} token\_type::begin\_array;}
+\DoxyCodeLine{1538             \textcolor{keywordflow}{case} \textcolor{charliteral}{']'}:}
+\DoxyCodeLine{1539                 \textcolor{keywordflow}{return} token\_type::end\_array;}
+\DoxyCodeLine{1540             \textcolor{keywordflow}{case} \textcolor{charliteral}{'\{'}:}
+\DoxyCodeLine{1541                 \textcolor{keywordflow}{return} token\_type::begin\_object;}
+\DoxyCodeLine{1542             \textcolor{keywordflow}{case} \textcolor{charliteral}{'\}'}:}
+\DoxyCodeLine{1543                 \textcolor{keywordflow}{return} token\_type::end\_object;}
+\DoxyCodeLine{1544             \textcolor{keywordflow}{case} \textcolor{charliteral}{':'}:}
+\DoxyCodeLine{1545                 \textcolor{keywordflow}{return} token\_type::name\_separator;}
+\DoxyCodeLine{1546             \textcolor{keywordflow}{case} \textcolor{charliteral}{','}:}
+\DoxyCodeLine{1547                 \textcolor{keywordflow}{return} token\_type::value\_separator;}
+\DoxyCodeLine{1548 }
+\DoxyCodeLine{1549             \textcolor{comment}{// literals}}
+\DoxyCodeLine{1550             \textcolor{keywordflow}{case} \textcolor{charliteral}{'t'}:}
+\DoxyCodeLine{1551             \{}
+\DoxyCodeLine{1552                 std::array<char\_type, 4> true\_literal = \{\{\textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'t'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'r'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'u'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'e'})\}\};}
+\DoxyCodeLine{1553                 \textcolor{keywordflow}{return} scan\_literal(true\_literal.data(), true\_literal.size(), token\_type::literal\_true);}
+\DoxyCodeLine{1554             \}}
+\DoxyCodeLine{1555             \textcolor{keywordflow}{case} \textcolor{charliteral}{'f'}:}
+\DoxyCodeLine{1556             \{}
+\DoxyCodeLine{1557                 std::array<char\_type, 5> false\_literal = \{\{\textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'f'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'a'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'l'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'s'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'e'})\}\};}
+\DoxyCodeLine{1558                 \textcolor{keywordflow}{return} scan\_literal(false\_literal.data(), false\_literal.size(), token\_type::literal\_false);}
+\DoxyCodeLine{1559             \}}
+\DoxyCodeLine{1560             \textcolor{keywordflow}{case} \textcolor{charliteral}{'n'}:}
+\DoxyCodeLine{1561             \{}
+\DoxyCodeLine{1562                 std::array<char\_type, 4> null\_literal = \{\{\textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'n'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'u'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'l'}), \textcolor{keyword}{static\_cast<}char\_type\textcolor{keyword}{>}(\textcolor{charliteral}{'l'})\}\};}
+\DoxyCodeLine{1563                 \textcolor{keywordflow}{return} scan\_literal(null\_literal.data(), null\_literal.size(), token\_type::literal\_null);}
+\DoxyCodeLine{1564             \}}
+\DoxyCodeLine{1565 }
+\DoxyCodeLine{1566             \textcolor{comment}{// string}}
+\DoxyCodeLine{1567             \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)"{}'}:}
+\DoxyCodeLine{1568                 \textcolor{keywordflow}{return} scan\_string();}
+\DoxyCodeLine{1569 }
+\DoxyCodeLine{1570             \textcolor{comment}{// number}}
+\DoxyCodeLine{1571             \textcolor{keywordflow}{case} \textcolor{charliteral}{'-\/'}:}
+\DoxyCodeLine{1572             \textcolor{keywordflow}{case} \textcolor{charliteral}{'0'}:}
+\DoxyCodeLine{1573             \textcolor{keywordflow}{case} \textcolor{charliteral}{'1'}:}
+\DoxyCodeLine{1574             \textcolor{keywordflow}{case} \textcolor{charliteral}{'2'}:}
+\DoxyCodeLine{1575             \textcolor{keywordflow}{case} \textcolor{charliteral}{'3'}:}
+\DoxyCodeLine{1576             \textcolor{keywordflow}{case} \textcolor{charliteral}{'4'}:}
+\DoxyCodeLine{1577             \textcolor{keywordflow}{case} \textcolor{charliteral}{'5'}:}
+\DoxyCodeLine{1578             \textcolor{keywordflow}{case} \textcolor{charliteral}{'6'}:}
+\DoxyCodeLine{1579             \textcolor{keywordflow}{case} \textcolor{charliteral}{'7'}:}
+\DoxyCodeLine{1580             \textcolor{keywordflow}{case} \textcolor{charliteral}{'8'}:}
+\DoxyCodeLine{1581             \textcolor{keywordflow}{case} \textcolor{charliteral}{'9'}:}
+\DoxyCodeLine{1582                 \textcolor{keywordflow}{return} scan\_number();}
+\DoxyCodeLine{1583 }
+\DoxyCodeLine{1584             \textcolor{comment}{// end of input (the null byte is needed when parsing from}}
+\DoxyCodeLine{1585             \textcolor{comment}{// string literals)}}
+\DoxyCodeLine{1586             \textcolor{keywordflow}{case} \textcolor{charliteral}{'\(\backslash\)0'}:}
+\DoxyCodeLine{1587             \textcolor{keywordflow}{case} std::char\_traits<char\_type>::eof():}
+\DoxyCodeLine{1588                 return token\_type::\mbox{\hyperlink{classdetail_1_1lexer__base_add65fa7a85aa15052963809fbcc04540aca11f56dd477c09e06583dbdcda0985f}{end\_of\_input}};}
+\DoxyCodeLine{1589 }
+\DoxyCodeLine{1590             \textcolor{comment}{// error}}
+\DoxyCodeLine{1591             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{1592                 error\_message = \textcolor{stringliteral}{"{}invalid literal"{}};}
+\DoxyCodeLine{1593                 \textcolor{keywordflow}{return} token\_type::parse\_error;}
+\DoxyCodeLine{1594         \}}
+\DoxyCodeLine{1595     \}}
+\DoxyCodeLine{1596 }
+\DoxyCodeLine{1597   \textcolor{keyword}{private}:}
+\DoxyCodeLine{1599     InputAdapterType ia;}
+\DoxyCodeLine{1600 }
+\DoxyCodeLine{1602     \textcolor{keyword}{const} \textcolor{keywordtype}{bool} ignore\_comments = \textcolor{keyword}{false};}
+\DoxyCodeLine{1603 }
+\DoxyCodeLine{1605     char\_int\_type current = std::char\_traits<char\_type>::eof();}
+\DoxyCodeLine{1606 }
+\DoxyCodeLine{1608     \textcolor{keywordtype}{bool} next\_unget = \textcolor{keyword}{false};}
+\DoxyCodeLine{1609 }
+\DoxyCodeLine{1611     position\_t position \{\};}
+\DoxyCodeLine{1612 }
+\DoxyCodeLine{1614     std::vector<char\_type> token\_string \{\};}
+\DoxyCodeLine{1615 }
+\DoxyCodeLine{1617     string\_t token\_buffer \{\};}
+\DoxyCodeLine{1618 }
+\DoxyCodeLine{1620     \textcolor{keyword}{const} \textcolor{keywordtype}{char}* error\_message = \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{1621 }
+\DoxyCodeLine{1622     \textcolor{comment}{// number values}}
+\DoxyCodeLine{1623     number\_integer\_t value\_integer = 0;}
+\DoxyCodeLine{1624     number\_unsigned\_t value\_unsigned = 0;}
+\DoxyCodeLine{1625     number\_float\_t value\_float = 0;}
+\DoxyCodeLine{1626 }
+\DoxyCodeLine{1628     \textcolor{keyword}{const} char\_int\_type decimal\_point\_char = \textcolor{charliteral}{'.'};}
+\DoxyCodeLine{1629 \};}
+\DoxyCodeLine{1630 }
+\DoxyCodeLine{1631 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{1632 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

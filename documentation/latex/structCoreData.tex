@@ -1,0 +1,100 @@
+\hypertarget{structCoreData}{}\doxysection{Core\+Data Struct Reference}
+\label{structCoreData}\index{CoreData@{CoreData}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structCoreData_af7a8bee822fa82ac88ca5ff71079f217}\label{structCoreData_af7a8bee822fa82ac88ca5ff71079f217}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>const char $\ast$ {\bfseries title}\\
+\>unsigned int {\bfseries flags}\\
+\>bool {\bfseries ready}\\
+\>bool {\bfseries fullscreen}\\
+\>bool {\bfseries shouldClose}\\
+\>bool {\bfseries resizedLastFrame}\\
+\>bool {\bfseries eventWaiting}\\
+\>\mbox{\hyperlink{structPoint}{Point}} {\bfseries position}\\
+\>\mbox{\hyperlink{structSize}{Size}} {\bfseries display}\\
+\>\mbox{\hyperlink{structSize}{Size}} {\bfseries screen}\\
+\>\mbox{\hyperlink{structSize}{Size}} {\bfseries currentFbo}\\
+\>\mbox{\hyperlink{structSize}{Size}} {\bfseries render}\\
+\>\mbox{\hyperlink{structPoint}{Point}} {\bfseries renderOffset}\\
+\>\mbox{\hyperlink{structMatrix}{Matrix}} {\bfseries screenScale}\\
+\>char $\ast$$\ast$ {\bfseries dropFilepaths}\\
+\>unsigned int {\bfseries dropFileCount}\\
+\} {\bfseries Window}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{structCoreData_a811e276ad15a752df026ad6ca3ca2382}\label{structCoreData_a811e276ad15a752df026ad6ca3ca2382}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>const char $\ast$ {\bfseries basePath}\\
+\} {\bfseries Storage}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{structCoreData_a212b9dc6aedd088fd807701c43e1267b}\label{structCoreData_a212b9dc6aedd088fd807701c43e1267b}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>struct \{\\
+\>\>int {\bfseries exitKey}\\
+\>\>char {\bfseries currentKeyState} \mbox{[}MAX\_KEYBOARD\_KEYS\mbox{]}\\
+\>\>char {\bfseries previousKeyState} \mbox{[}MAX\_KEYBOARD\_KEYS\mbox{]}\\
+\>\>int {\bfseries keyPressedQueue} \mbox{[}MAX\_KEY\_PRESSED\_QUEUE\mbox{]}\\
+\>\>int {\bfseries keyPressedQueueCount}\\
+\>\>int {\bfseries charPressedQueue} \mbox{[}MAX\_CHAR\_PRESSED\_QUEUE\mbox{]}\\
+\>\>int {\bfseries charPressedQueueCount}\\
+\>\} {\bfseries Keyboard}\\
+\>struct \{\\
+\>\>\mbox{\hyperlink{structVector2}{Vector2}} {\bfseries offset}\\
+\>\>\mbox{\hyperlink{structVector2}{Vector2}} {\bfseries scale}\\
+\>\>\mbox{\hyperlink{structVector2}{Vector2}} {\bfseries currentPosition}\\
+\>\>\mbox{\hyperlink{structVector2}{Vector2}} {\bfseries previousPosition}\\
+\>\>int {\bfseries cursor}\\
+\>\>bool {\bfseries cursorHidden}\\
+\>\>bool {\bfseries cursorOnScreen}\\
+\>\>char {\bfseries currentButtonState} \mbox{[}MAX\_MOUSE\_BUTTONS\mbox{]}\\
+\>\>char {\bfseries previousButtonState} \mbox{[}MAX\_MOUSE\_BUTTONS\mbox{]}\\
+\>\>\mbox{\hyperlink{structVector2}{Vector2}} {\bfseries currentWheelMove}\\
+\>\>\mbox{\hyperlink{structVector2}{Vector2}} {\bfseries previousWheelMove}\\
+\>\} {\bfseries Mouse}\\
+\>struct \{\\
+\>\>int {\bfseries pointCount}\\
+\>\>int {\bfseries pointId} \mbox{[}MAX\_TOUCH\_POINTS\mbox{]}\\
+\>\>\mbox{\hyperlink{structVector2}{Vector2}} {\bfseries position} \mbox{[}MAX\_TOUCH\_POINTS\mbox{]}\\
+\>\>char {\bfseries currentTouchState} \mbox{[}MAX\_TOUCH\_POINTS\mbox{]}\\
+\>\>char {\bfseries previousTouchState} \mbox{[}MAX\_TOUCH\_POINTS\mbox{]}\\
+\>\} {\bfseries Touch}\\
+\>struct \{\\
+\>\>int {\bfseries lastButtonPressed}\\
+\>\>int {\bfseries axisCount}\\
+\>\>bool {\bfseries ready} \mbox{[}MAX\_GAMEPADS\mbox{]}\\
+\>\>char {\bfseries name} \mbox{[}MAX\_GAMEPADS\mbox{]}\mbox{[}64\mbox{]}\\
+\>\>char {\bfseries currentButtonState} \mbox{[}MAX\_GAMEPADS\mbox{]}\mbox{[}MAX\_GAMEPAD\_BUTTONS\mbox{]}\\
+\>\>char {\bfseries previousButtonState} \mbox{[}MAX\_GAMEPADS\mbox{]}\mbox{[}MAX\_GAMEPAD\_BUTTONS\mbox{]}\\
+\>\>float {\bfseries axisState} \mbox{[}MAX\_GAMEPADS\mbox{]}\mbox{[}MAX\_GAMEPAD\_AXIS\mbox{]}\\
+\>\} {\bfseries Gamepad}\\
+\} {\bfseries Input}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{structCoreData_a270143b8a6c8ed48c58118a1a89aeaba}\label{structCoreData_a270143b8a6c8ed48c58118a1a89aeaba}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>double {\bfseries current}\\
+\>double {\bfseries previous}\\
+\>double {\bfseries update}\\
+\>double {\bfseries draw}\\
+\>double {\bfseries frame}\\
+\>double {\bfseries target}\\
+\>unsigned int {\bfseries frameCounter}\\
+\} {\bfseries Time}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+build/\+\_\+deps/raylib-\/src/src/rcore.\+c\end{DoxyCompactItemize}

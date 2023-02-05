@@ -1,0 +1,142 @@
+\hypertarget{classUdpServer}{}\doxysection{Udp\+Server Class Reference}
+\label{classUdpServer}\index{UdpServer@{UdpServer}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classUdpServer_aef1871384fbc46ef425242be4474af3a}{$\sim$\+Udp\+Server}} ()
+\item 
+void \mbox{\hyperlink{classUdpServer_aa7b6f2b19d137506a14562d5c2c397c1}{start}} ()
+\item 
+void \mbox{\hyperlink{classUdpServer_a35f568c4a13872deb36c835a74f30379}{handle\+Request}} (std\+::error\+\_\+code ec, std\+::size\+\_\+t bytes\+\_\+recvd)
+\item 
+void \mbox{\hyperlink{classUdpServer_a56444f6b9bc0339fd479ad5ca1742c3b}{send\+Response}} (const udp\+::endpoint \&endpoint, const std\+::string \&msg)
+\item 
+void \mbox{\hyperlink{classUdpServer_a7db14c4e019caf26cd82ea03e3bc50a4}{receive\+Request}} ()
+\item 
+void \mbox{\hyperlink{classUdpServer_aab2f1441f7e6b14aacebcd7c7695794f}{check\+Alive}} ()
+\item 
+void \mbox{\hyperlink{classUdpServer_a54a103d336e4c606f6e7a268ee155523}{send\+All}} (const std\+::string \&msg, bool include\+Sender=true)
+\item 
+void \mbox{\hyperlink{classUdpServer_a0b672214da5f2386483a646a8d989a0d}{remove\+Client}} (const udp\+::endpoint \&endpoint, bool erase=true)
+\item 
+void \mbox{\hyperlink{classUdpServer_a75f8d1e912ea72571e07106912d67184}{simulate}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classUdpServer_aef1871384fbc46ef425242be4474af3a}\label{classUdpServer_aef1871384fbc46ef425242be4474af3a}} 
+\index{UdpServer@{UdpServer}!````~UdpServer@{$\sim$UdpServer}}
+\index{````~UdpServer@{$\sim$UdpServer}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{$\sim$UdpServer()}{~UdpServer()}}
+{\footnotesize\ttfamily Udp\+Server\+::$\sim$\+Udp\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It closes the socket and cancels any pending asynchronous operations 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classUdpServer_aab2f1441f7e6b14aacebcd7c7695794f}\label{classUdpServer_aab2f1441f7e6b14aacebcd7c7695794f}} 
+\index{UdpServer@{UdpServer}!checkAlive@{checkAlive}}
+\index{checkAlive@{checkAlive}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{checkAlive()}{checkAlive()}}
+{\footnotesize\ttfamily void Udp\+Server\+::check\+Alive (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+If a client hasn\textquotesingle{}t sent a message in the last 5 seconds, remove it from the server
+
+\begin{DoxyReturn}{Returns}
+A pointer to the client 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classUdpServer_a35f568c4a13872deb36c835a74f30379}\label{classUdpServer_a35f568c4a13872deb36c835a74f30379}} 
+\index{UdpServer@{UdpServer}!handleRequest@{handleRequest}}
+\index{handleRequest@{handleRequest}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{handleRequest()}{handleRequest()}}
+{\footnotesize\ttfamily void Udp\+Server\+::handle\+Request (\begin{DoxyParamCaption}\item[{std\+::error\+\_\+code}]{ec,  }\item[{std\+::size\+\_\+t}]{bytes\+\_\+recvd }\end{DoxyParamCaption})}
+
+It handles a request from a client
+
+
+\begin{DoxyParams}{Parameters}
+{\em ec} & error code \\
+\hline
+{\em bytes\+\_\+recvd} & The number of bytes received.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The return type is void. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classUdpServer_a7db14c4e019caf26cd82ea03e3bc50a4}\label{classUdpServer_a7db14c4e019caf26cd82ea03e3bc50a4}} 
+\index{UdpServer@{UdpServer}!receiveRequest@{receiveRequest}}
+\index{receiveRequest@{receiveRequest}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{receiveRequest()}{receiveRequest()}}
+{\footnotesize\ttfamily void Udp\+Server\+::receive\+Request (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\char`\"{}\+When a request is received, handle it and then wait for the next request.\char`\"{}
+
+The first thing we do is check if the server has been stopped. If it has, we return immediately
+
+\begin{DoxyReturn}{Returns}
+a future that will receive the result of the asynchronous operation. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classUdpServer_a0b672214da5f2386483a646a8d989a0d}\label{classUdpServer_a0b672214da5f2386483a646a8d989a0d}} 
+\index{UdpServer@{UdpServer}!removeClient@{removeClient}}
+\index{removeClient@{removeClient}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{removeClient()}{removeClient()}}
+{\footnotesize\ttfamily void Udp\+Server\+::remove\+Client (\begin{DoxyParamCaption}\item[{const udp\+::endpoint \&}]{endpoint,  }\item[{bool}]{erase = {\ttfamily true} }\end{DoxyParamCaption})}
+
+It removes a client from the server
+
+
+\begin{DoxyParams}{Parameters}
+{\em endpoint} & The endpoint of the client to remove. \\
+\hline
+{\em erase} & if true, the client will be erased from the map. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classUdpServer_a54a103d336e4c606f6e7a268ee155523}\label{classUdpServer_a54a103d336e4c606f6e7a268ee155523}} 
+\index{UdpServer@{UdpServer}!sendAll@{sendAll}}
+\index{sendAll@{sendAll}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{sendAll()}{sendAll()}}
+{\footnotesize\ttfamily void Udp\+Server\+::send\+All (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{msg,  }\item[{bool}]{include\+Sender = {\ttfamily true} }\end{DoxyParamCaption})}
+
+It sends a message to all clients except the sender
+
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message to send to all clients. \\
+\hline
+{\em include\+Sender} & If true, the sender of the message will also receive the message. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classUdpServer_a56444f6b9bc0339fd479ad5ca1742c3b}\label{classUdpServer_a56444f6b9bc0339fd479ad5ca1742c3b}} 
+\index{UdpServer@{UdpServer}!sendResponse@{sendResponse}}
+\index{sendResponse@{sendResponse}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{sendResponse()}{sendResponse()}}
+{\footnotesize\ttfamily void Udp\+Server\+::send\+Response (\begin{DoxyParamCaption}\item[{const udp\+::endpoint \&}]{endpoint,  }\item[{const std\+::string \&}]{msg }\end{DoxyParamCaption})}
+
+\char`\"{}\+Send a message to the specified endpoint.\char`\"{}
+
+The first thing we do is lock the socket mutex. This is because we\textquotesingle{}re going to be using the socket, and we don\textquotesingle{}t want another thread to be using it at the same time
+
+
+\begin{DoxyParams}{Parameters}
+{\em endpoint} & The endpoint to send the message to. \\
+\hline
+{\em msg} & The message to send. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classUdpServer_a75f8d1e912ea72571e07106912d67184}\label{classUdpServer_a75f8d1e912ea72571e07106912d67184}} 
+\index{UdpServer@{UdpServer}!simulate@{simulate}}
+\index{simulate@{simulate}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{simulate()}{simulate()}}
+{\footnotesize\ttfamily void Udp\+Server\+::simulate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It updates the positions of the enemies and bullets, checks for collisions, and sends messages to the clients \mbox{\Hypertarget{classUdpServer_aa7b6f2b19d137506a14562d5c2c397c1}\label{classUdpServer_aa7b6f2b19d137506a14562d5c2c397c1}} 
+\index{UdpServer@{UdpServer}!start@{start}}
+\index{start@{start}!UdpServer@{UdpServer}}
+\doxysubsubsection{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily void Udp\+Server\+::start (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It starts the server 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+server/includes/network.\+hpp\item 
+server/src/Upd\+Server.\+cpp\end{DoxyCompactItemize}

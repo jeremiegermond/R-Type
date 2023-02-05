@@ -1,0 +1,70 @@
+\hypertarget{archetype_8hpp_source}{}\doxysection{archetype.\+hpp}
+\label{archetype_8hpp_source}\index{client/includes/core/archetype.hpp@{client/includes/core/archetype.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{** EPITECH PROJECT, 2023}}
+\DoxyCodeLine{3 \textcolor{comment}{** rtype}}
+\DoxyCodeLine{4 \textcolor{comment}{** File description:}}
+\DoxyCodeLine{5 \textcolor{comment}{**}}
+\DoxyCodeLine{6 \textcolor{comment}{*/}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include "{}sparsemap.hpp"{}}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include <functional>}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include <set>}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <tuple>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <utility>}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{keyword}{namespace }ecs \{}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{keyword}{template} <\textcolor{keyword}{typename}... Components>}
+\DoxyCodeLine{17 \textcolor{keyword}{class }\mbox{\hyperlink{classecs_1_1Archetype}{Archetype}} \{}
+\DoxyCodeLine{18   \textcolor{keyword}{public}:}
+\DoxyCodeLine{19     \mbox{\hyperlink{classecs_1_1Archetype}{Archetype}}() : nextEntityId(0) \{\}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{26     \textcolor{keyword}{template} <\textcolor{keyword}{typename}... Component>}
+\DoxyCodeLine{27     entity\_type \mbox{\hyperlink{classecs_1_1Archetype_afcc6d99fb13f966b760149a3e132c7bb}{create\_entity}}(Component \&\&...values) \{}
+\DoxyCodeLine{28         (insert(nextEntityId, std::forward<Component>(values)), ...);}
+\DoxyCodeLine{29         \textcolor{keywordflow}{return} nextEntityId++;}
+\DoxyCodeLine{30     \}}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{36     \textcolor{keyword}{template} <\textcolor{keyword}{typename}... Component>}
+\DoxyCodeLine{37     \textcolor{keywordtype}{void} \mbox{\hyperlink{classecs_1_1Archetype_a78cecb9018295f241170768f759b4efe}{delete\_entity}}(entity\_type \textcolor{keywordtype}{id}) \{}
+\DoxyCodeLine{38         \textcolor{keywordflow}{if} (deletedEntities.count(\textcolor{keywordtype}{id}) > 0)}
+\DoxyCodeLine{39             \textcolor{keywordflow}{return};}
+\DoxyCodeLine{40         deletedEntities.insert(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{41         (delete\_component<Component>(\textcolor{keywordtype}{id}), ...);}
+\DoxyCodeLine{42     \}}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{50     \textcolor{keyword}{template} <\textcolor{keywordtype}{size\_t}... Ids>}
+\DoxyCodeLine{51     \textcolor{keyword}{decltype}(\textcolor{keyword}{auto}) \mbox{\hyperlink{classecs_1_1Archetype_a72fa3626be0e5dbc438bfac8f1e5e3bf}{query}}(entity\_type \textcolor{keywordtype}{id}) \{}
+\DoxyCodeLine{52         \textcolor{keywordflow}{if} \textcolor{keyword}{constexpr} (\textcolor{keyword}{sizeof}...(Ids) == 1) \{}
+\DoxyCodeLine{53             \textcolor{keywordflow}{return} std::get<Ids...>(componentMaps)[\textcolor{keywordtype}{id}];}
+\DoxyCodeLine{54         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{55             \textcolor{keywordflow}{return} std::forward\_as\_tuple(std::get<Ids>(componentMaps)[\textcolor{keywordtype}{id}]...);}
+\DoxyCodeLine{56         \}}
+\DoxyCodeLine{57     \}}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{64     std::set<entity\_type> \&\mbox{\hyperlink{classecs_1_1Archetype_a1e64e41e0ce0b3943195537f9bd18b7f}{getDeletedEntities}}() \{ \textcolor{keywordflow}{return} deletedEntities; \}}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66   \textcolor{keyword}{private}:}
+\DoxyCodeLine{67     entity\_type nextEntityId;}
+\DoxyCodeLine{68     std::tuple<SparseMap<Components>...> componentMaps;}
+\DoxyCodeLine{69     std::set<entity\_type> deletedEntities;}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71     \textcolor{keyword}{template} <\textcolor{keyword}{typename} Component>}
+\DoxyCodeLine{72     \textcolor{keywordtype}{void} insert(entity\_type \textcolor{keywordtype}{id}, Component \&\&value) \{}
+\DoxyCodeLine{73         \mbox{\hyperlink{classecs_1_1SparseMap}{SparseMap<Component>}} \&map = std::get<SparseMap<Component>>(componentMaps);}
+\DoxyCodeLine{74         map.\mbox{\hyperlink{classecs_1_1SparseMap_a5f8adc5d3a5dae2afba3562a155c72b8}{insert}}(\textcolor{keywordtype}{id}, std::forward<Component>(value));}
+\DoxyCodeLine{75     \}}
+\DoxyCodeLine{76 }
+\DoxyCodeLine{77     \textcolor{keyword}{template} <\textcolor{keyword}{typename} Component>}
+\DoxyCodeLine{78     \textcolor{keywordtype}{void} delete\_component(entity\_type \textcolor{keywordtype}{id}) \{}
+\DoxyCodeLine{79         SparseMap<Component> \&map = std::get<SparseMap<Component>>(componentMaps);}
+\DoxyCodeLine{80         map.\mbox{\hyperlink{classecs_1_1SparseMap_a3c407fbcc3bfb22da175196257856e43}{erase}}(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{81     \}}
+\DoxyCodeLine{82 \};}
+\DoxyCodeLine{83 }
+\DoxyCodeLine{84 \} \textcolor{comment}{// namespace ecs}}
+
+\end{DoxyCode}

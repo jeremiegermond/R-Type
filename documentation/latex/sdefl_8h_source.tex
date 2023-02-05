@@ -1,0 +1,702 @@
+\hypertarget{sdefl_8h_source}{}\doxysection{sdefl.\+h}
+\label{sdefl_8h_source}\index{build/\_deps/raylib-\/src/src/external/sdefl.h@{build/\_deps/raylib-\/src/src/external/sdefl.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*\# Small Deflate}}
+\DoxyCodeLine{2 \textcolor{comment}{`sdefl` is a small bare bone lossless compression library in ANSI C (ISO C90)}}
+\DoxyCodeLine{3 \textcolor{comment}{which implements the Deflate (RFC 1951) compressed data format specification standard.}}
+\DoxyCodeLine{4 \textcolor{comment}{It is mainly tuned to get as much speed and compression ratio from as little code}}
+\DoxyCodeLine{5 \textcolor{comment}{as needed to keep the implementation as concise as possible.}}
+\DoxyCodeLine{6 \textcolor{comment}{}}
+\DoxyCodeLine{7 \textcolor{comment}{\#\# Features}}
+\DoxyCodeLine{8 \textcolor{comment}{-\/ Portable single header and source file duo written in ANSI C (ISO C90)}}
+\DoxyCodeLine{9 \textcolor{comment}{-\/ Dual license with either MIT or public domain}}
+\DoxyCodeLine{10 \textcolor{comment}{-\/ Small implementation}}
+\DoxyCodeLine{11 \textcolor{comment}{    -\/ Deflate: 525 LoC}}
+\DoxyCodeLine{12 \textcolor{comment}{    -\/ Inflate: 320 LoC}}
+\DoxyCodeLine{13 \textcolor{comment}{-\/ Webassembly:}}
+\DoxyCodeLine{14 \textcolor{comment}{    -\/ Deflate \string~3.7 KB (\string~2.2KB compressed)}}
+\DoxyCodeLine{15 \textcolor{comment}{    -\/ Inflate \string~3.6 KB (\string~2.2KB compressed)}}
+\DoxyCodeLine{16 \textcolor{comment}{}}
+\DoxyCodeLine{17 \textcolor{comment}{\#\# Usage:}}
+\DoxyCodeLine{18 \textcolor{comment}{This file behaves differently depending on what symbols you define}}
+\DoxyCodeLine{19 \textcolor{comment}{before including it.}}
+\DoxyCodeLine{20 \textcolor{comment}{}}
+\DoxyCodeLine{21 \textcolor{comment}{Header-\/File mode:}}
+\DoxyCodeLine{22 \textcolor{comment}{If you do not define `SDEFL\_IMPLEMENTATION` before including this file, it}}
+\DoxyCodeLine{23 \textcolor{comment}{will operate in header only mode. In this mode it declares all used structs}}
+\DoxyCodeLine{24 \textcolor{comment}{and the API of the library without including the implementation of the library.}}
+\DoxyCodeLine{25 \textcolor{comment}{}}
+\DoxyCodeLine{26 \textcolor{comment}{Implementation mode:}}
+\DoxyCodeLine{27 \textcolor{comment}{If you define `SDEFL\_IMPLEMENTATION` before including this file, it will}}
+\DoxyCodeLine{28 \textcolor{comment}{compile the implementation . Make sure that you only include}}
+\DoxyCodeLine{29 \textcolor{comment}{this file implementation in *one* C or C++ file to prevent collisions.}}
+\DoxyCodeLine{30 \textcolor{comment}{}}
+\DoxyCodeLine{31 \textcolor{comment}{\#\#\# Benchmark}}
+\DoxyCodeLine{32 \textcolor{comment}{}}
+\DoxyCodeLine{33 \textcolor{comment}{| Compressor name         | Compression| Decompress.| Compr. size | Ratio |}}
+\DoxyCodeLine{34 \textcolor{comment}{| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ | -\/-\/-\/-\/-\/ |}}
+\DoxyCodeLine{35 \textcolor{comment}{| miniz 1.0 -\/1            |   122 MB/s |   208 MB/s |    48510028 | 48.51 |}}
+\DoxyCodeLine{36 \textcolor{comment}{| miniz 1.0 -\/6            |    27 MB/s |   260 MB/s |    36513697 | 36.51 |}}
+\DoxyCodeLine{37 \textcolor{comment}{| miniz 1.0 -\/9            |    23 MB/s |   261 MB/s |    36460101 | 36.46 |}}
+\DoxyCodeLine{38 \textcolor{comment}{| zlib 1.2.11 -\/1          |    72 MB/s |   307 MB/s |    42298774 | 42.30 |}}
+\DoxyCodeLine{39 \textcolor{comment}{| zlib 1.2.11 -\/6          |    24 MB/s |   313 MB/s |    36548921 | 36.55 |}}
+\DoxyCodeLine{40 \textcolor{comment}{| zlib 1.2.11 -\/9          |    20 MB/s |   314 MB/s |    36475792 | 36.48 |}}
+\DoxyCodeLine{41 \textcolor{comment}{| sdefl 1.0 -\/0            |   127 MB/s |   371 MB/s |    40004116 | 39.88 |}}
+\DoxyCodeLine{42 \textcolor{comment}{| sdefl 1.0 -\/1            |   111 MB/s |   398 MB/s |    38940674 | 38.82 |}}
+\DoxyCodeLine{43 \textcolor{comment}{| sdefl 1.0 -\/5            |    45 MB/s |   420 MB/s |    36577183 | 36.46 |}}
+\DoxyCodeLine{44 \textcolor{comment}{| sdefl 1.0 -\/7            |    38 MB/s |   423 MB/s |    36523781 | 36.41 |}}
+\DoxyCodeLine{45 \textcolor{comment}{| libdeflate 1.3 -\/1       |   147 MB/s |   667 MB/s |    39597378 | 39.60 |}}
+\DoxyCodeLine{46 \textcolor{comment}{| libdeflate 1.3 -\/6       |    69 MB/s |   689 MB/s |    36648318 | 36.65 |}}
+\DoxyCodeLine{47 \textcolor{comment}{| libdeflate 1.3 -\/9       |    13 MB/s |   672 MB/s |    35197141 | 35.20 |}}
+\DoxyCodeLine{48 \textcolor{comment}{| libdeflate 1.3 -\/12      |  8.13 MB/s |   670 MB/s |    35100568 | 35.10 |}}
+\DoxyCodeLine{49 \textcolor{comment}{}}
+\DoxyCodeLine{50 \textcolor{comment}{\#\#\# Compression}}
+\DoxyCodeLine{51 \textcolor{comment}{Results on the [Silesia compression corpus](http://sun.aei.polsl.pl/\string~sdeor/index.php?page=silesia):}}
+\DoxyCodeLine{52 \textcolor{comment}{}}
+\DoxyCodeLine{53 \textcolor{comment}{| File    |   Original | `sdefl 0`      | `sdefl 5`     | `sdefl 7` |}}
+\DoxyCodeLine{54 \textcolor{comment}{| :-\/-\/-\/-\/-\/-\/ | -\/-\/-\/-\/-\/-\/-\/-\/-\/: | -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/: | -\/-\/-\/-\/-\/-\/-\/-\/-\/: | -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/: |}}
+\DoxyCodeLine{55 \textcolor{comment}{| dickens | 10.192.446 |  4,260,187|  3,845,261|   3,833,657 |}}
+\DoxyCodeLine{56 \textcolor{comment}{| mozilla | 51.220.480 | 20,774,706 | 19,607,009 |  19,565,867 |}}
+\DoxyCodeLine{57 \textcolor{comment}{| mr      |  9.970.564 | 3,860,531 |  3,673,460 |   3,665,627 |}}
+\DoxyCodeLine{58 \textcolor{comment}{| nci     | 33.553.445 | 4,030,283 |  3,094,526 |   3,006,075 |}}
+\DoxyCodeLine{59 \textcolor{comment}{| ooffice |  6.152.192 | 3,320,063 |  3,186,373 |   3,183,815 |}}
+\DoxyCodeLine{60 \textcolor{comment}{| osdb    | 10.085.684 | 3,919,646 |  3,649,510 |   3,649,477 |}}
+\DoxyCodeLine{61 \textcolor{comment}{| reymont |  6.627.202 | 2,263,378 |  1,857,588 |   1,827,237 |}}
+\DoxyCodeLine{62 \textcolor{comment}{| samba   | 21.606.400 | 6,121,797 |  5,462,670 |   5,450,762 |}}
+\DoxyCodeLine{63 \textcolor{comment}{| sao     |  7.251.944 | 5,612,421 |  5,485,380 |   5,481,765 |}}
+\DoxyCodeLine{64 \textcolor{comment}{| webster | 41.458.703 | 13,972,648 | 12,059,432 |  11,991,421 |}}
+\DoxyCodeLine{65 \textcolor{comment}{| xml     |  5.345.280 | 886,620|    674,009 |     662,141 |}}
+\DoxyCodeLine{66 \textcolor{comment}{| x-\/ray   |  8.474.240 | 6,304,655 |  6,244,779 |   6,244,779 |}}
+\DoxyCodeLine{67 \textcolor{comment}{}}
+\DoxyCodeLine{68 \textcolor{comment}{\#\# License}}
+\DoxyCodeLine{69 \textcolor{comment}{```}}
+\DoxyCodeLine{70 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{71 \textcolor{comment}{This software is available under 2 licenses -\/-\/ choose whichever you prefer.}}
+\DoxyCodeLine{72 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{73 \textcolor{comment}{ALTERNATIVE A -\/ MIT License}}
+\DoxyCodeLine{74 \textcolor{comment}{Copyright (c) 2020 Micha Mettke}}
+\DoxyCodeLine{75 \textcolor{comment}{Permission is hereby granted, free of charge, to any person obtaining a copy of}}
+\DoxyCodeLine{76 \textcolor{comment}{this software and associated documentation files (the "{}Software"{}), to deal in}}
+\DoxyCodeLine{77 \textcolor{comment}{the Software without restriction, including without limitation the rights to}}
+\DoxyCodeLine{78 \textcolor{comment}{use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies}}
+\DoxyCodeLine{79 \textcolor{comment}{of the Software, and to permit persons to whom the Software is furnished to do}}
+\DoxyCodeLine{80 \textcolor{comment}{so, subject to the following conditions:}}
+\DoxyCodeLine{81 \textcolor{comment}{The above copyright notice and this permission notice shall be included in all}}
+\DoxyCodeLine{82 \textcolor{comment}{copies or substantial portions of the Software.}}
+\DoxyCodeLine{83 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR}}
+\DoxyCodeLine{84 \textcolor{comment}{IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,}}
+\DoxyCodeLine{85 \textcolor{comment}{FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE}}
+\DoxyCodeLine{86 \textcolor{comment}{AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER}}
+\DoxyCodeLine{87 \textcolor{comment}{LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,}}
+\DoxyCodeLine{88 \textcolor{comment}{OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE}}
+\DoxyCodeLine{89 \textcolor{comment}{SOFTWARE.}}
+\DoxyCodeLine{90 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{91 \textcolor{comment}{ALTERNATIVE B -\/ Public Domain (www.unlicense.org)}}
+\DoxyCodeLine{92 \textcolor{comment}{This is free and unencumbered software released into the public domain.}}
+\DoxyCodeLine{93 \textcolor{comment}{Anyone is free to copy, modify, publish, use, compile, sell, or distribute this}}
+\DoxyCodeLine{94 \textcolor{comment}{software, either in source code form or as a compiled binary, for any purpose,}}
+\DoxyCodeLine{95 \textcolor{comment}{commercial or non-\/commercial, and by any means.}}
+\DoxyCodeLine{96 \textcolor{comment}{In jurisdictions that recognize copyright laws, the author or authors of this}}
+\DoxyCodeLine{97 \textcolor{comment}{software dedicate any and all copyright interest in the software to the public}}
+\DoxyCodeLine{98 \textcolor{comment}{domain. We make this dedication for the benefit of the public at large and to}}
+\DoxyCodeLine{99 \textcolor{comment}{the detriment of our heirs and successors. We intend this dedication to be an}}
+\DoxyCodeLine{100 \textcolor{comment}{overt act of relinquishment in perpetuity of all present and future rights to}}
+\DoxyCodeLine{101 \textcolor{comment}{this software under copyright law.}}
+\DoxyCodeLine{102 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR}}
+\DoxyCodeLine{103 \textcolor{comment}{IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,}}
+\DoxyCodeLine{104 \textcolor{comment}{FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE}}
+\DoxyCodeLine{105 \textcolor{comment}{AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN}}
+\DoxyCodeLine{106 \textcolor{comment}{ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION}}
+\DoxyCodeLine{107 \textcolor{comment}{WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.}}
+\DoxyCodeLine{108 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{109 \textcolor{comment}{```}}
+\DoxyCodeLine{110 \textcolor{comment}{*/}}
+\DoxyCodeLine{111 \textcolor{preprocessor}{\#ifndef SDEFL\_H\_INCLUDED}}
+\DoxyCodeLine{112 \textcolor{preprocessor}{\#define SDEFL\_H\_INCLUDED}}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{115 \textcolor{keyword}{extern} \textcolor{stringliteral}{"{}C"{}} \{}
+\DoxyCodeLine{116 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118 \textcolor{preprocessor}{\#define SDEFL\_MAX\_OFF   (1 << 15)}}
+\DoxyCodeLine{119 \textcolor{preprocessor}{\#define SDEFL\_WIN\_SIZ   SDEFL\_MAX\_OFF}}
+\DoxyCodeLine{120 \textcolor{preprocessor}{\#define SDEFL\_WIN\_MSK   (SDEFL\_WIN\_SIZ-\/1)}}
+\DoxyCodeLine{121 }
+\DoxyCodeLine{122 \textcolor{preprocessor}{\#define SDEFL\_HASH\_BITS 15}}
+\DoxyCodeLine{123 \textcolor{preprocessor}{\#define SDEFL\_HASH\_SIZ  (1 << SDEFL\_HASH\_BITS)}}
+\DoxyCodeLine{124 \textcolor{preprocessor}{\#define SDEFL\_HASH\_MSK  (SDEFL\_HASH\_SIZ-\/1)}}
+\DoxyCodeLine{125 }
+\DoxyCodeLine{126 \textcolor{preprocessor}{\#define SDEFL\_MIN\_MATCH 4}}
+\DoxyCodeLine{127 \textcolor{preprocessor}{\#define SDEFL\_BLK\_MAX   (256*1024)}}
+\DoxyCodeLine{128 \textcolor{preprocessor}{\#define SDEFL\_SEQ\_SIZ   ((SDEFL\_BLK\_MAX + SDEFL\_MIN\_MATCH)/SDEFL\_MIN\_MATCH)}}
+\DoxyCodeLine{129 }
+\DoxyCodeLine{130 \textcolor{preprocessor}{\#define SDEFL\_SYM\_MAX   (288)}}
+\DoxyCodeLine{131 \textcolor{preprocessor}{\#define SDEFL\_OFF\_MAX   (32)}}
+\DoxyCodeLine{132 \textcolor{preprocessor}{\#define SDEFL\_PRE\_MAX   (19)}}
+\DoxyCodeLine{133 }
+\DoxyCodeLine{134 \textcolor{preprocessor}{\#define SDEFL\_LVL\_MIN   0}}
+\DoxyCodeLine{135 \textcolor{preprocessor}{\#define SDEFL\_LVL\_DEF   5}}
+\DoxyCodeLine{136 \textcolor{preprocessor}{\#define SDEFL\_LVL\_MAX   8}}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138 \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__freq}{sdefl\_freq}} \{}
+\DoxyCodeLine{139   \textcolor{keywordtype}{unsigned} lit[SDEFL\_SYM\_MAX];}
+\DoxyCodeLine{140   \textcolor{keywordtype}{unsigned} off[SDEFL\_OFF\_MAX];}
+\DoxyCodeLine{141 \};}
+\DoxyCodeLine{142 \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__code__words}{sdefl\_code\_words}} \{}
+\DoxyCodeLine{143   \textcolor{keywordtype}{unsigned} lit[SDEFL\_SYM\_MAX];}
+\DoxyCodeLine{144   \textcolor{keywordtype}{unsigned} off[SDEFL\_OFF\_MAX];}
+\DoxyCodeLine{145 \};}
+\DoxyCodeLine{146 \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__lens}{sdefl\_lens}} \{}
+\DoxyCodeLine{147   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} lit[SDEFL\_SYM\_MAX];}
+\DoxyCodeLine{148   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} off[SDEFL\_OFF\_MAX];}
+\DoxyCodeLine{149 \};}
+\DoxyCodeLine{150 \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__codes}{sdefl\_codes}} \{}
+\DoxyCodeLine{151   \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__code__words}{sdefl\_code\_words}} word;}
+\DoxyCodeLine{152   \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__lens}{sdefl\_lens}} len;}
+\DoxyCodeLine{153 \};}
+\DoxyCodeLine{154 \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__seqt}{sdefl\_seqt}} \{}
+\DoxyCodeLine{155   \textcolor{keywordtype}{int} off, len;}
+\DoxyCodeLine{156 \};}
+\DoxyCodeLine{157 \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl}{sdefl}} \{}
+\DoxyCodeLine{158   \textcolor{keywordtype}{int} bits, bitcnt;}
+\DoxyCodeLine{159   \textcolor{keywordtype}{int} tbl[SDEFL\_HASH\_SIZ];}
+\DoxyCodeLine{160   \textcolor{keywordtype}{int} prv[SDEFL\_WIN\_SIZ];}
+\DoxyCodeLine{161 }
+\DoxyCodeLine{162   \textcolor{keywordtype}{int} seq\_cnt;}
+\DoxyCodeLine{163   \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__seqt}{sdefl\_seqt}} seq[SDEFL\_SEQ\_SIZ];}
+\DoxyCodeLine{164   \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__freq}{sdefl\_freq}} freq;}
+\DoxyCodeLine{165   \textcolor{keyword}{struct }\mbox{\hyperlink{structsdefl__codes}{sdefl\_codes}} cod;}
+\DoxyCodeLine{166 \};}
+\DoxyCodeLine{167 \textcolor{keyword}{extern} \textcolor{keywordtype}{int} sdefl\_bound(\textcolor{keywordtype}{int} in\_len);}
+\DoxyCodeLine{168 \textcolor{keyword}{extern} \textcolor{keywordtype}{int} sdeflate(\textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{void} *o, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *i, \textcolor{keywordtype}{int} n, \textcolor{keywordtype}{int} lvl);}
+\DoxyCodeLine{169 \textcolor{keyword}{extern} \textcolor{keywordtype}{int} zsdeflate(\textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{void} *o, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *i, \textcolor{keywordtype}{int} n, \textcolor{keywordtype}{int} lvl);}
+\DoxyCodeLine{170 }
+\DoxyCodeLine{171 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{172 \}}
+\DoxyCodeLine{173 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{174 }
+\DoxyCodeLine{175 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SDEFL\_H\_INCLUDED */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177 \textcolor{preprocessor}{\#ifdef SDEFL\_IMPLEMENTATION}}
+\DoxyCodeLine{178 }
+\DoxyCodeLine{179 \textcolor{preprocessor}{\#include <assert.h>} \textcolor{comment}{/* assert */}}
+\DoxyCodeLine{180 \textcolor{preprocessor}{\#include <string.h>} \textcolor{comment}{/* memcpy */}}
+\DoxyCodeLine{181 \textcolor{preprocessor}{\#include <limits.h>} \textcolor{comment}{/* CHAR\_BIT */}}
+\DoxyCodeLine{182 }
+\DoxyCodeLine{183 \textcolor{preprocessor}{\#define SDEFL\_NIL               (-\/1)}}
+\DoxyCodeLine{184 \textcolor{preprocessor}{\#define SDEFL\_MAX\_MATCH         258}}
+\DoxyCodeLine{185 \textcolor{preprocessor}{\#define SDEFL\_MAX\_CODE\_LEN      (15)}}
+\DoxyCodeLine{186 \textcolor{preprocessor}{\#define SDEFL\_SYM\_BITS          (10u)}}
+\DoxyCodeLine{187 \textcolor{preprocessor}{\#define SDEFL\_SYM\_MSK           ((1u << SDEFL\_SYM\_BITS)-\/1u)}}
+\DoxyCodeLine{188 \textcolor{preprocessor}{\#define SDEFL\_LIT\_LEN\_CODES     (14)}}
+\DoxyCodeLine{189 \textcolor{preprocessor}{\#define SDEFL\_OFF\_CODES         (15)}}
+\DoxyCodeLine{190 \textcolor{preprocessor}{\#define SDEFL\_PRE\_CODES         (7)}}
+\DoxyCodeLine{191 \textcolor{preprocessor}{\#define SDEFL\_CNT\_NUM(n)        ((((n)+3u/4u)+3u)\&\string~3u)}}
+\DoxyCodeLine{192 \textcolor{preprocessor}{\#define SDEFL\_EOB               (256)}}
+\DoxyCodeLine{193 }
+\DoxyCodeLine{194 \textcolor{preprocessor}{\#define sdefl\_npow2(n) (1 << (sdefl\_ilog2((n)-\/1) + 1))}}
+\DoxyCodeLine{195 }
+\DoxyCodeLine{196 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{197 sdefl\_ilog2(\textcolor{keywordtype}{int} n) \{}
+\DoxyCodeLine{198   \textcolor{keywordflow}{if} (!n) \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{199 \textcolor{preprocessor}{\#ifdef \_MSC\_VER}}
+\DoxyCodeLine{200   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} msbp = 0;}
+\DoxyCodeLine{201   \_BitScanReverse(\&msbp, (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long})n);}
+\DoxyCodeLine{202   \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})msbp;}
+\DoxyCodeLine{203 \textcolor{preprocessor}{\#elif defined(\_\_GNUC\_\_) || defined(\_\_clang\_\_)}}
+\DoxyCodeLine{204   \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})\textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned} long) * CHAR\_BIT -\/ 1 -\/ \_\_builtin\_clzl((\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long})n);}
+\DoxyCodeLine{205 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{206 \textcolor{preprocessor}{  \#define lt(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n}}
+\DoxyCodeLine{207   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{char} tbl[256] = \{}
+\DoxyCodeLine{208     0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,lt(4), lt(5), lt(5), lt(6), lt(6), lt(6), lt(6),}
+\DoxyCodeLine{209     lt(7), lt(7), lt(7), lt(7), lt(7), lt(7), lt(7), lt(7)\};}
+\DoxyCodeLine{210   \textcolor{keywordtype}{int} tt, t;}
+\DoxyCodeLine{211   \textcolor{keywordflow}{if} ((tt = (n >> 16))) \{}
+\DoxyCodeLine{212     \textcolor{keywordflow}{return} (t = (tt >> 8)) ? 24 + tbl[t] : 16 + tbl[tt];}
+\DoxyCodeLine{213   \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{214     \textcolor{keywordflow}{return} (t = (n >> 8)) ? 8 + tbl[t] : tbl[n];}
+\DoxyCodeLine{215   \}}
+\DoxyCodeLine{216 \textcolor{preprocessor}{  \#undef lt}}
+\DoxyCodeLine{217 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{218 \}}
+\DoxyCodeLine{219 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned}}
+\DoxyCodeLine{220 sdefl\_uload32(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *p) \{}
+\DoxyCodeLine{221   \textcolor{comment}{/* hopefully will be optimized to an unaligned read */}}
+\DoxyCodeLine{222   \textcolor{keywordtype}{unsigned} n = 0;}
+\DoxyCodeLine{223   memcpy(\&n, p, \textcolor{keyword}{sizeof}(n));}
+\DoxyCodeLine{224   \textcolor{keywordflow}{return} n;}
+\DoxyCodeLine{225 \}}
+\DoxyCodeLine{226 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned}}
+\DoxyCodeLine{227 sdefl\_hash32(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *p) \{}
+\DoxyCodeLine{228   \textcolor{keywordtype}{unsigned} n = sdefl\_uload32(p);}
+\DoxyCodeLine{229   \textcolor{keywordflow}{return} (n * 0x9E377989) >> (32 -\/ SDEFL\_HASH\_BITS);}
+\DoxyCodeLine{230 \}}
+\DoxyCodeLine{231 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{232 sdefl\_put(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} **dst, \textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{int} code, \textcolor{keywordtype}{int} bitcnt) \{}
+\DoxyCodeLine{233   s-\/>bits |= (code << s-\/>bitcnt);}
+\DoxyCodeLine{234   s-\/>bitcnt += bitcnt;}
+\DoxyCodeLine{235   \textcolor{keywordflow}{while} (s-\/>bitcnt >= 8) \{}
+\DoxyCodeLine{236     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *tar = *dst;}
+\DoxyCodeLine{237     *tar = (\textcolor{keywordtype}{unsigned} char)(s-\/>bits \& 0xFF);}
+\DoxyCodeLine{238     s-\/>bits >>= 8;}
+\DoxyCodeLine{239     s-\/>bitcnt -\/= 8;}
+\DoxyCodeLine{240     *dst = *dst + 1;}
+\DoxyCodeLine{241   \}}
+\DoxyCodeLine{242 \}}
+\DoxyCodeLine{243 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{244 sdefl\_heap\_sub(\textcolor{keywordtype}{unsigned} A[], \textcolor{keywordtype}{unsigned} len, \textcolor{keywordtype}{unsigned} sub) \{}
+\DoxyCodeLine{245   \textcolor{keywordtype}{unsigned} c, p = sub;}
+\DoxyCodeLine{246   \textcolor{keywordtype}{unsigned} v = A[sub];}
+\DoxyCodeLine{247   \textcolor{keywordflow}{while} ((c = p << 1) <= len) \{}
+\DoxyCodeLine{248     \textcolor{keywordflow}{if} (c < len \&\& A[c + 1] > A[c]) c++;}
+\DoxyCodeLine{249     \textcolor{keywordflow}{if} (v >= A[c]) \textcolor{keywordflow}{break};}
+\DoxyCodeLine{250     A[p] = A[c], p = c;}
+\DoxyCodeLine{251   \}}
+\DoxyCodeLine{252   A[p] = v;}
+\DoxyCodeLine{253 \}}
+\DoxyCodeLine{254 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{255 sdefl\_heap\_array(\textcolor{keywordtype}{unsigned} *A, \textcolor{keywordtype}{unsigned} len) \{}
+\DoxyCodeLine{256   \textcolor{keywordtype}{unsigned} sub;}
+\DoxyCodeLine{257   \textcolor{keywordflow}{for} (sub = len >> 1; sub >= 1; sub-\/-\/)}
+\DoxyCodeLine{258     sdefl\_heap\_sub(A, len, sub);}
+\DoxyCodeLine{259 \}}
+\DoxyCodeLine{260 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{261 sdefl\_heap\_sort(\textcolor{keywordtype}{unsigned} *A, \textcolor{keywordtype}{unsigned} n) \{}
+\DoxyCodeLine{262   A-\/-\/;}
+\DoxyCodeLine{263   sdefl\_heap\_array(A, n);}
+\DoxyCodeLine{264   \textcolor{keywordflow}{while} (n >= 2) \{}
+\DoxyCodeLine{265     \textcolor{keywordtype}{unsigned} tmp = A[n];}
+\DoxyCodeLine{266     A[n-\/-\/] = A[1];}
+\DoxyCodeLine{267     A[1] = tmp;}
+\DoxyCodeLine{268     sdefl\_heap\_sub(A, n, 1);}
+\DoxyCodeLine{269   \}}
+\DoxyCodeLine{270 \}}
+\DoxyCodeLine{271 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned}}
+\DoxyCodeLine{272 sdefl\_sort\_sym(\textcolor{keywordtype}{unsigned} sym\_cnt, \textcolor{keywordtype}{unsigned} *freqs,}
+\DoxyCodeLine{273                \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *lens, \textcolor{keywordtype}{unsigned} *sym\_out) \{}
+\DoxyCodeLine{274   \textcolor{keywordtype}{unsigned} cnts[SDEFL\_CNT\_NUM(SDEFL\_SYM\_MAX)] = \{0\};}
+\DoxyCodeLine{275   \textcolor{keywordtype}{unsigned} cnt\_num = SDEFL\_CNT\_NUM(sym\_cnt);}
+\DoxyCodeLine{276   \textcolor{keywordtype}{unsigned} used\_sym = 0;}
+\DoxyCodeLine{277   \textcolor{keywordtype}{unsigned} sym, i;}
+\DoxyCodeLine{278   \textcolor{keywordflow}{for} (sym = 0; sym < sym\_cnt; sym++)}
+\DoxyCodeLine{279     cnts[freqs[sym] < cnt\_num-\/1 ? freqs[sym]: cnt\_num-\/1]++;}
+\DoxyCodeLine{280   \textcolor{keywordflow}{for} (i = 1; i < cnt\_num; i++) \{}
+\DoxyCodeLine{281     \textcolor{keywordtype}{unsigned} cnt = cnts[i];}
+\DoxyCodeLine{282     cnts[i] = used\_sym;}
+\DoxyCodeLine{283     used\_sym += cnt;}
+\DoxyCodeLine{284   \}}
+\DoxyCodeLine{285   \textcolor{keywordflow}{for} (sym = 0; sym < sym\_cnt; sym++) \{}
+\DoxyCodeLine{286     \textcolor{keywordtype}{unsigned} freq = freqs[sym];}
+\DoxyCodeLine{287     \textcolor{keywordflow}{if} (freq) \{}
+\DoxyCodeLine{288         \textcolor{keywordtype}{unsigned} idx = freq < cnt\_num-\/1 ? freq : cnt\_num-\/1;}
+\DoxyCodeLine{289         sym\_out[cnts[idx]++] = sym | (freq << SDEFL\_SYM\_BITS);}
+\DoxyCodeLine{290     \} \textcolor{keywordflow}{else} lens[sym] = 0;}
+\DoxyCodeLine{291   \}}
+\DoxyCodeLine{292   sdefl\_heap\_sort(sym\_out + cnts[cnt\_num-\/2], cnts[cnt\_num-\/1] -\/ cnts[cnt\_num-\/2]);}
+\DoxyCodeLine{293   \textcolor{keywordflow}{return} used\_sym;}
+\DoxyCodeLine{294 \}}
+\DoxyCodeLine{295 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{296 sdefl\_build\_tree(\textcolor{keywordtype}{unsigned} *A, \textcolor{keywordtype}{unsigned} sym\_cnt) \{}
+\DoxyCodeLine{297   \textcolor{keywordtype}{unsigned} i = 0, b = 0, e = 0;}
+\DoxyCodeLine{298   \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{299     \textcolor{keywordtype}{unsigned} m, n, freq\_shift;}
+\DoxyCodeLine{300     \textcolor{keywordflow}{if} (i != sym\_cnt \&\& (b == e || (A[i] >> SDEFL\_SYM\_BITS) <= (A[b] >> SDEFL\_SYM\_BITS)))}
+\DoxyCodeLine{301       m = i++;}
+\DoxyCodeLine{302     \textcolor{keywordflow}{else} m = b++;}
+\DoxyCodeLine{303     \textcolor{keywordflow}{if} (i != sym\_cnt \&\& (b == e || (A[i] >> SDEFL\_SYM\_BITS) <= (A[b] >> SDEFL\_SYM\_BITS)))}
+\DoxyCodeLine{304       n = i++;}
+\DoxyCodeLine{305     \textcolor{keywordflow}{else} n = b++;}
+\DoxyCodeLine{306 }
+\DoxyCodeLine{307     freq\_shift = (A[m] \& \string~SDEFL\_SYM\_MSK) + (A[n] \& \string~SDEFL\_SYM\_MSK);}
+\DoxyCodeLine{308     A[m] = (A[m] \& SDEFL\_SYM\_MSK) | (e << SDEFL\_SYM\_BITS);}
+\DoxyCodeLine{309     A[n] = (A[n] \& SDEFL\_SYM\_MSK) | (e << SDEFL\_SYM\_BITS);}
+\DoxyCodeLine{310     A[e] = (A[e] \& SDEFL\_SYM\_MSK) | freq\_shift;}
+\DoxyCodeLine{311   \} \textcolor{keywordflow}{while} (sym\_cnt -\/ ++e > 1);}
+\DoxyCodeLine{312 \}}
+\DoxyCodeLine{313 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{314 sdefl\_gen\_len\_cnt(\textcolor{keywordtype}{unsigned} *A, \textcolor{keywordtype}{unsigned} root, \textcolor{keywordtype}{unsigned} *len\_cnt,}
+\DoxyCodeLine{315                   \textcolor{keywordtype}{unsigned} max\_code\_len) \{}
+\DoxyCodeLine{316   \textcolor{keywordtype}{int} n;}
+\DoxyCodeLine{317   \textcolor{keywordtype}{unsigned} i;}
+\DoxyCodeLine{318   \textcolor{keywordflow}{for} (i = 0; i <= max\_code\_len; i++)}
+\DoxyCodeLine{319     len\_cnt[i] = 0;}
+\DoxyCodeLine{320   len\_cnt[1] = 2;}
+\DoxyCodeLine{321 }
+\DoxyCodeLine{322   A[root] \&= SDEFL\_SYM\_MSK;}
+\DoxyCodeLine{323   \textcolor{keywordflow}{for} (n = (\textcolor{keywordtype}{int})root -\/ 1; n >= 0; n-\/-\/) \{}
+\DoxyCodeLine{324     \textcolor{keywordtype}{unsigned} p = A[n] >> SDEFL\_SYM\_BITS;}
+\DoxyCodeLine{325     \textcolor{keywordtype}{unsigned} pdepth = A[p] >> SDEFL\_SYM\_BITS;}
+\DoxyCodeLine{326     \textcolor{keywordtype}{unsigned} depth = pdepth + 1;}
+\DoxyCodeLine{327     \textcolor{keywordtype}{unsigned} len = depth;}
+\DoxyCodeLine{328 }
+\DoxyCodeLine{329     A[n] = (A[n] \& SDEFL\_SYM\_MSK) | (depth << SDEFL\_SYM\_BITS);}
+\DoxyCodeLine{330     \textcolor{keywordflow}{if} (len >= max\_code\_len) \{}
+\DoxyCodeLine{331       len = max\_code\_len;}
+\DoxyCodeLine{332       \textcolor{keywordflow}{do} len-\/-\/; \textcolor{keywordflow}{while} (!len\_cnt[len]);}
+\DoxyCodeLine{333     \}}
+\DoxyCodeLine{334     len\_cnt[len]-\/-\/;}
+\DoxyCodeLine{335     len\_cnt[len+1] += 2;}
+\DoxyCodeLine{336   \}}
+\DoxyCodeLine{337 \}}
+\DoxyCodeLine{338 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{339 sdefl\_gen\_codes(\textcolor{keywordtype}{unsigned} *A, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *lens, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} *len\_cnt,}
+\DoxyCodeLine{340                 \textcolor{keywordtype}{unsigned} max\_code\_word\_len, \textcolor{keywordtype}{unsigned} sym\_cnt) \{}
+\DoxyCodeLine{341   \textcolor{keywordtype}{unsigned} i, sym, len, nxt[SDEFL\_MAX\_CODE\_LEN + 1];}
+\DoxyCodeLine{342   \textcolor{keywordflow}{for} (i = 0, len = max\_code\_word\_len; len >= 1; len-\/-\/) \{}
+\DoxyCodeLine{343     \textcolor{keywordtype}{unsigned} cnt = len\_cnt[len];}
+\DoxyCodeLine{344     \textcolor{keywordflow}{while} (cnt-\/-\/) lens[A[i++] \& SDEFL\_SYM\_MSK] = (\textcolor{keywordtype}{unsigned} char)len;}
+\DoxyCodeLine{345   \}}
+\DoxyCodeLine{346   nxt[0] = nxt[1] = 0;}
+\DoxyCodeLine{347   \textcolor{keywordflow}{for} (len = 2; len <= max\_code\_word\_len; len++)}
+\DoxyCodeLine{348     nxt[len] = (nxt[len-\/1] + len\_cnt[len-\/1]) << 1;}
+\DoxyCodeLine{349   \textcolor{keywordflow}{for} (sym = 0; sym < sym\_cnt; sym++)}
+\DoxyCodeLine{350     A[sym] = nxt[lens[sym]]++;}
+\DoxyCodeLine{351 \}}
+\DoxyCodeLine{352 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned}}
+\DoxyCodeLine{353 sdefl\_rev(\textcolor{keywordtype}{unsigned} c, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} n) \{}
+\DoxyCodeLine{354   c = ((c \& 0x5555) << 1) | ((c \& 0xAAAA) >> 1);}
+\DoxyCodeLine{355   c = ((c \& 0x3333) << 2) | ((c \& 0xCCCC) >> 2);}
+\DoxyCodeLine{356   c = ((c \& 0x0F0F) << 4) | ((c \& 0xF0F0) >> 4);}
+\DoxyCodeLine{357   c = ((c \& 0x00FF) << 8) | ((c \& 0xFF00) >> 8);}
+\DoxyCodeLine{358   \textcolor{keywordflow}{return} c >> (16-\/n);}
+\DoxyCodeLine{359 \}}
+\DoxyCodeLine{360 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{361 sdefl\_huff(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *lens, \textcolor{keywordtype}{unsigned} *codes, \textcolor{keywordtype}{unsigned} *freqs,}
+\DoxyCodeLine{362            \textcolor{keywordtype}{unsigned} num\_syms, \textcolor{keywordtype}{unsigned} max\_code\_len) \{}
+\DoxyCodeLine{363   \textcolor{keywordtype}{unsigned} c, *A = codes;}
+\DoxyCodeLine{364   \textcolor{keywordtype}{unsigned} len\_cnt[SDEFL\_MAX\_CODE\_LEN + 1];}
+\DoxyCodeLine{365   \textcolor{keywordtype}{unsigned} used\_syms = sdefl\_sort\_sym(num\_syms, freqs, lens, A);}
+\DoxyCodeLine{366   \textcolor{keywordflow}{if} (!used\_syms) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{367   \textcolor{keywordflow}{if} (used\_syms == 1) \{}
+\DoxyCodeLine{368     \textcolor{keywordtype}{unsigned} s = A[0] \& SDEFL\_SYM\_MSK;}
+\DoxyCodeLine{369     \textcolor{keywordtype}{unsigned} i = s ? s : 1;}
+\DoxyCodeLine{370     codes[0] = 0, lens[0] = 1;}
+\DoxyCodeLine{371     codes[i] = 1, lens[i] = 1;}
+\DoxyCodeLine{372     \textcolor{keywordflow}{return};}
+\DoxyCodeLine{373   \}}
+\DoxyCodeLine{374   sdefl\_build\_tree(A, used\_syms);}
+\DoxyCodeLine{375   sdefl\_gen\_len\_cnt(A, used\_syms-\/2, len\_cnt, max\_code\_len);}
+\DoxyCodeLine{376   sdefl\_gen\_codes(A, lens, len\_cnt, max\_code\_len, num\_syms);}
+\DoxyCodeLine{377   \textcolor{keywordflow}{for} (c = 0; c < num\_syms; c++) \{}
+\DoxyCodeLine{378     codes[c] = sdefl\_rev(codes[c], lens[c]);}
+\DoxyCodeLine{379   \}}
+\DoxyCodeLine{380 \}}
+\DoxyCodeLine{381 \textcolor{keyword}{struct }sdefl\_symcnt \{}
+\DoxyCodeLine{382   \textcolor{keywordtype}{int} items;}
+\DoxyCodeLine{383   \textcolor{keywordtype}{int} lit;}
+\DoxyCodeLine{384   \textcolor{keywordtype}{int} off;}
+\DoxyCodeLine{385 \};}
+\DoxyCodeLine{386 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{387 sdefl\_precode(\textcolor{keyword}{struct} sdefl\_symcnt *cnt, \textcolor{keywordtype}{unsigned} *freqs, \textcolor{keywordtype}{unsigned} *items,}
+\DoxyCodeLine{388               \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *litlen, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *offlen) \{}
+\DoxyCodeLine{389   \textcolor{keywordtype}{unsigned} *at = items;}
+\DoxyCodeLine{390   \textcolor{keywordtype}{unsigned} run\_start = 0;}
+\DoxyCodeLine{391 }
+\DoxyCodeLine{392   \textcolor{keywordtype}{unsigned} total = 0;}
+\DoxyCodeLine{393   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} lens[SDEFL\_SYM\_MAX + SDEFL\_OFF\_MAX];}
+\DoxyCodeLine{394   \textcolor{keywordflow}{for} (cnt-\/>lit = SDEFL\_SYM\_MAX; cnt-\/>lit > 257; cnt-\/>lit-\/-\/)}
+\DoxyCodeLine{395     \textcolor{keywordflow}{if} (litlen[cnt-\/>lit -\/ 1]) \textcolor{keywordflow}{break};}
+\DoxyCodeLine{396   \textcolor{keywordflow}{for} (cnt-\/>off = SDEFL\_OFF\_MAX; cnt-\/>off > 1; cnt-\/>off-\/-\/)}
+\DoxyCodeLine{397     \textcolor{keywordflow}{if} (offlen[cnt-\/>off -\/ 1]) \textcolor{keywordflow}{break};}
+\DoxyCodeLine{398 }
+\DoxyCodeLine{399   total = (unsigned)(cnt-\/>lit + cnt-\/>off);}
+\DoxyCodeLine{400   memcpy(lens, litlen, \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}) * (\textcolor{keywordtype}{size\_t})cnt-\/>lit);}
+\DoxyCodeLine{401   memcpy(lens + cnt-\/>lit, offlen, \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}) * (\textcolor{keywordtype}{size\_t})cnt-\/>off);}
+\DoxyCodeLine{402   \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{403     \textcolor{keywordtype}{unsigned} len = lens[run\_start];}
+\DoxyCodeLine{404     \textcolor{keywordtype}{unsigned} run\_end = run\_start;}
+\DoxyCodeLine{405     \textcolor{keywordflow}{do} run\_end++; \textcolor{keywordflow}{while} (run\_end != total \&\& len == lens[run\_end]);}
+\DoxyCodeLine{406     \textcolor{keywordflow}{if} (!len) \{}
+\DoxyCodeLine{407       \textcolor{keywordflow}{while} ((run\_end -\/ run\_start) >= 11) \{}
+\DoxyCodeLine{408         \textcolor{keywordtype}{unsigned} n = (run\_end -\/ run\_start) -\/ 11;}
+\DoxyCodeLine{409         \textcolor{keywordtype}{unsigned} xbits =  n < 0x7f ? n : 0x7f;}
+\DoxyCodeLine{410         freqs[18]++;}
+\DoxyCodeLine{411         *at++ = 18u | (xbits << 5u);}
+\DoxyCodeLine{412         run\_start += 11 + xbits;}
+\DoxyCodeLine{413       \}}
+\DoxyCodeLine{414       \textcolor{keywordflow}{if} ((run\_end -\/ run\_start) >= 3) \{}
+\DoxyCodeLine{415         \textcolor{keywordtype}{unsigned} n = (run\_end -\/ run\_start) -\/ 3;}
+\DoxyCodeLine{416         \textcolor{keywordtype}{unsigned} xbits =  n < 0x7 ? n : 0x7;}
+\DoxyCodeLine{417         freqs[17]++;}
+\DoxyCodeLine{418         *at++ = 17u | (xbits << 5u);}
+\DoxyCodeLine{419         run\_start += 3 + xbits;}
+\DoxyCodeLine{420       \}}
+\DoxyCodeLine{421     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((run\_end -\/ run\_start) >= 4) \{}
+\DoxyCodeLine{422       freqs[len]++;}
+\DoxyCodeLine{423       *at++ = len;}
+\DoxyCodeLine{424       run\_start++;}
+\DoxyCodeLine{425       \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{426         \textcolor{keywordtype}{unsigned} xbits = (run\_end -\/ run\_start) -\/ 3;}
+\DoxyCodeLine{427         xbits = xbits < 0x03 ? xbits : 0x03;}
+\DoxyCodeLine{428         *at++ = 16 | (xbits << 5);}
+\DoxyCodeLine{429         run\_start += 3 + xbits;}
+\DoxyCodeLine{430         freqs[16]++;}
+\DoxyCodeLine{431       \} \textcolor{keywordflow}{while} ((run\_end -\/ run\_start) >= 3);}
+\DoxyCodeLine{432     \}}
+\DoxyCodeLine{433     \textcolor{keywordflow}{while} (run\_start != run\_end) \{}
+\DoxyCodeLine{434       freqs[len]++;}
+\DoxyCodeLine{435       *at++ = len;}
+\DoxyCodeLine{436       run\_start++;}
+\DoxyCodeLine{437     \}}
+\DoxyCodeLine{438   \} \textcolor{keywordflow}{while} (run\_start != total);}
+\DoxyCodeLine{439   cnt-\/>items = (int)(at -\/ items);}
+\DoxyCodeLine{440 \}}
+\DoxyCodeLine{441 \textcolor{keyword}{struct }sdefl\_match\_codes \{}
+\DoxyCodeLine{442   \textcolor{keywordtype}{int} ls, lc;}
+\DoxyCodeLine{443   \textcolor{keywordtype}{int} dc, dx;}
+\DoxyCodeLine{444 \};}
+\DoxyCodeLine{445 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{446 sdefl\_match\_codes(\textcolor{keyword}{struct} sdefl\_match\_codes *cod, \textcolor{keywordtype}{int} dist, \textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{447   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{short} dxmax[] = \{0,6,12,24,48,96,192,384,768,1536,3072,6144,12288,24576\};}
+\DoxyCodeLine{448   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} lslot[258+1] = \{}
+\DoxyCodeLine{449     0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 12,}
+\DoxyCodeLine{450     12, 13, 13, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16, 16, 16,}
+\DoxyCodeLine{451     16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18, 18, 18,}
+\DoxyCodeLine{452     18, 19, 19, 19, 19, 19, 19, 19, 19, 20, 20, 20, 20, 20, 20, 20, 20, 20,}
+\DoxyCodeLine{453     20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21,}
+\DoxyCodeLine{454     21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22,}
+\DoxyCodeLine{455     22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23, 23,}
+\DoxyCodeLine{456     23, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,}
+\DoxyCodeLine{457     24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25, 25, 25,}
+\DoxyCodeLine{458     25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25,}
+\DoxyCodeLine{459     25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 26, 26, 26, 26, 26, 26, 26,}
+\DoxyCodeLine{460     26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26,}
+\DoxyCodeLine{461     26, 26, 26, 26, 26, 26, 26, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27,}
+\DoxyCodeLine{462     27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27, 27,}
+\DoxyCodeLine{463     27, 27, 28}
+\DoxyCodeLine{464   \};}
+\DoxyCodeLine{465   cod-\/>ls = lslot[len];}
+\DoxyCodeLine{466   cod-\/>lc = 257 + cod-\/>ls;}
+\DoxyCodeLine{467   cod-\/>dx = sdefl\_ilog2(sdefl\_npow2(dist) >> 2);}
+\DoxyCodeLine{468   cod-\/>dc = cod-\/>dx ? ((cod-\/>dx + 1) << 1) + (dist > dxmax[cod-\/>dx]) : dist-\/1;}
+\DoxyCodeLine{469 \}}
+\DoxyCodeLine{470 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{471 sdefl\_match(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} **dst, \textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{int} dist, \textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{472   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{char} lxn[] = \{0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0\};}
+\DoxyCodeLine{473   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{short} lmin[] = \{3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,}
+\DoxyCodeLine{474       51,59,67,83,99,115,131,163,195,227,258\};}
+\DoxyCodeLine{475   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{short} dmin[] = \{1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,}
+\DoxyCodeLine{476       385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577\};}
+\DoxyCodeLine{477 }
+\DoxyCodeLine{478   \textcolor{keyword}{struct }sdefl\_match\_codes cod;}
+\DoxyCodeLine{479   sdefl\_match\_codes(\&cod, dist, len);}
+\DoxyCodeLine{480   sdefl\_put(dst, s, (\textcolor{keywordtype}{int})s-\/>cod.word.lit[cod.lc], s-\/>cod.len.lit[cod.lc]);}
+\DoxyCodeLine{481   sdefl\_put(dst, s, len -\/ lmin[cod.ls], lxn[cod.ls]);}
+\DoxyCodeLine{482   sdefl\_put(dst, s, (\textcolor{keywordtype}{int})s-\/>cod.word.off[cod.dc], s-\/>cod.len.off[cod.dc]);}
+\DoxyCodeLine{483   sdefl\_put(dst, s, dist -\/ dmin[cod.dc], cod.dx);}
+\DoxyCodeLine{484 \}}
+\DoxyCodeLine{485 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{486 sdefl\_flush(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} **dst, \textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{int} is\_last,}
+\DoxyCodeLine{487             \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *in) \{}
+\DoxyCodeLine{488   \textcolor{keywordtype}{int} j, i = 0, item\_cnt = 0;}
+\DoxyCodeLine{489   \textcolor{keyword}{struct }sdefl\_symcnt symcnt = \{0\};}
+\DoxyCodeLine{490   \textcolor{keywordtype}{unsigned} codes[SDEFL\_PRE\_MAX];}
+\DoxyCodeLine{491   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} lens[SDEFL\_PRE\_MAX];}
+\DoxyCodeLine{492   \textcolor{keywordtype}{unsigned} freqs[SDEFL\_PRE\_MAX] = \{0\};}
+\DoxyCodeLine{493   \textcolor{keywordtype}{unsigned} items[SDEFL\_SYM\_MAX + SDEFL\_OFF\_MAX];}
+\DoxyCodeLine{494   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} perm[SDEFL\_PRE\_MAX] = \{16,17,18,0,8,7,9,6,10,5,11,}
+\DoxyCodeLine{495       4,12,3,13,2,14,1,15\};}
+\DoxyCodeLine{496 }
+\DoxyCodeLine{497   \textcolor{comment}{/* huffman codes */}}
+\DoxyCodeLine{498   s-\/>freq.lit[SDEFL\_EOB]++;}
+\DoxyCodeLine{499   sdefl\_huff(s-\/>cod.len.lit, s-\/>cod.word.lit, s-\/>freq.lit, SDEFL\_SYM\_MAX, SDEFL\_LIT\_LEN\_CODES);}
+\DoxyCodeLine{500   sdefl\_huff(s-\/>cod.len.off, s-\/>cod.word.off, s-\/>freq.off, SDEFL\_OFF\_MAX, SDEFL\_OFF\_CODES);}
+\DoxyCodeLine{501   sdefl\_precode(\&symcnt, freqs, items, s-\/>cod.len.lit, s-\/>cod.len.off);}
+\DoxyCodeLine{502   sdefl\_huff(lens, codes, freqs, SDEFL\_PRE\_MAX, SDEFL\_PRE\_CODES);}
+\DoxyCodeLine{503   \textcolor{keywordflow}{for} (item\_cnt = SDEFL\_PRE\_MAX; item\_cnt > 4; item\_cnt-\/-\/) \{}
+\DoxyCodeLine{504     \textcolor{keywordflow}{if} (lens[perm[item\_cnt -\/ 1]]) \textcolor{keywordflow}{break};}
+\DoxyCodeLine{505   \}}
+\DoxyCodeLine{506   \textcolor{comment}{/* block header */}}
+\DoxyCodeLine{507   sdefl\_put(dst, s, is\_last ? 0x01 : 0x00, 1); \textcolor{comment}{/* block */}}
+\DoxyCodeLine{508   sdefl\_put(dst, s, 0x02, 2); \textcolor{comment}{/* dynamic huffman */}}
+\DoxyCodeLine{509   sdefl\_put(dst, s, symcnt.lit -\/ 257, 5);}
+\DoxyCodeLine{510   sdefl\_put(dst, s, symcnt.off -\/ 1, 5);}
+\DoxyCodeLine{511   sdefl\_put(dst, s, item\_cnt -\/ 4, 4);}
+\DoxyCodeLine{512   \textcolor{keywordflow}{for} (i = 0; i < item\_cnt; ++i)}
+\DoxyCodeLine{513     sdefl\_put(dst, s, lens[perm[i]], 3);}
+\DoxyCodeLine{514   \textcolor{keywordflow}{for} (i = 0; i < symcnt.items; ++i) \{}
+\DoxyCodeLine{515     \textcolor{keywordtype}{unsigned} sym = items[i] \& 0x1F;}
+\DoxyCodeLine{516     sdefl\_put(dst, s, (\textcolor{keywordtype}{int})codes[sym], lens[sym]);}
+\DoxyCodeLine{517     \textcolor{keywordflow}{if} (sym < 16) \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{518     \textcolor{keywordflow}{if} (sym == 16) sdefl\_put(dst, s, items[i] >> 5, 2);}
+\DoxyCodeLine{519     \textcolor{keywordflow}{else} \textcolor{keywordflow}{if}(sym == 17) sdefl\_put(dst, s, items[i] >> 5, 3);}
+\DoxyCodeLine{520     \textcolor{keywordflow}{else} sdefl\_put(dst, s, items[i] >> 5, 7);}
+\DoxyCodeLine{521   \}}
+\DoxyCodeLine{522   \textcolor{comment}{/* block sequences */}}
+\DoxyCodeLine{523   \textcolor{keywordflow}{for} (i = 0; i < s-\/>seq\_cnt; ++i) \{}
+\DoxyCodeLine{524     \textcolor{keywordflow}{if} (s-\/>seq[i].off >= 0)}
+\DoxyCodeLine{525       \textcolor{keywordflow}{for} (j = 0; j < s-\/>seq[i].len; ++j) \{}
+\DoxyCodeLine{526         \textcolor{keywordtype}{int} c = in[s-\/>seq[i].off + j];}
+\DoxyCodeLine{527         sdefl\_put(dst, s, (\textcolor{keywordtype}{int})s-\/>cod.word.lit[c], s-\/>cod.len.lit[c]);}
+\DoxyCodeLine{528       \}}
+\DoxyCodeLine{529     \textcolor{keywordflow}{else} sdefl\_match(dst, s, -\/s-\/>seq[i].off, s-\/>seq[i].len);}
+\DoxyCodeLine{530   \}}
+\DoxyCodeLine{531   sdefl\_put(dst, s, (\textcolor{keywordtype}{int})(s)-\/>cod.word.lit[SDEFL\_EOB], (s)-\/>cod.len.lit[SDEFL\_EOB]);}
+\DoxyCodeLine{532   memset(\&s-\/>freq, 0, \textcolor{keyword}{sizeof}(s-\/>freq));}
+\DoxyCodeLine{533   s-\/>seq\_cnt = 0;}
+\DoxyCodeLine{534 \}}
+\DoxyCodeLine{535 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{536 sdefl\_seq(\textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{int} off, \textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{537   assert(s-\/>seq\_cnt + 2 < SDEFL\_SEQ\_SIZ);}
+\DoxyCodeLine{538   s-\/>seq[s-\/>seq\_cnt].off = off;}
+\DoxyCodeLine{539   s-\/>seq[s-\/>seq\_cnt].len = len;}
+\DoxyCodeLine{540   s-\/>seq\_cnt++;}
+\DoxyCodeLine{541 \}}
+\DoxyCodeLine{542 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{543 sdefl\_reg\_match(\textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{int} off, \textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{544   \textcolor{keyword}{struct }sdefl\_match\_codes cod;}
+\DoxyCodeLine{545   sdefl\_match\_codes(\&cod, off, len);}
+\DoxyCodeLine{546   s-\/>freq.lit[cod.lc]++;}
+\DoxyCodeLine{547   s-\/>freq.off[cod.dc]++;}
+\DoxyCodeLine{548 \}}
+\DoxyCodeLine{549 \textcolor{keyword}{struct }sdefl\_match \{}
+\DoxyCodeLine{550   \textcolor{keywordtype}{int} off;}
+\DoxyCodeLine{551   \textcolor{keywordtype}{int} len;}
+\DoxyCodeLine{552 \};}
+\DoxyCodeLine{553 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{554 sdefl\_fnd(\textcolor{keyword}{struct} sdefl\_match *m, \textcolor{keyword}{const} \textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s,}
+\DoxyCodeLine{555           \textcolor{keywordtype}{int} chain\_len, \textcolor{keywordtype}{int} max\_match, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *in, \textcolor{keywordtype}{int} p) \{}
+\DoxyCodeLine{556   \textcolor{keywordtype}{int} i = s-\/>tbl[sdefl\_hash32(\&in[p])];}
+\DoxyCodeLine{557   \textcolor{keywordtype}{int} limit = ((p-\/SDEFL\_WIN\_SIZ)<SDEFL\_NIL)?SDEFL\_NIL:(p-\/SDEFL\_WIN\_SIZ);}
+\DoxyCodeLine{558   \textcolor{keywordflow}{while} (i > limit) \{}
+\DoxyCodeLine{559     \textcolor{keywordflow}{if} (in[i+m-\/>len] == in[p+m-\/>len] \&\&}
+\DoxyCodeLine{560         (sdefl\_uload32(\&in[i]) == sdefl\_uload32(\&in[p])))\{}
+\DoxyCodeLine{561       \textcolor{keywordtype}{int} n = SDEFL\_MIN\_MATCH;}
+\DoxyCodeLine{562       \textcolor{keywordflow}{while} (n < max\_match \&\& in[i+n] == in[p+n]) n++;}
+\DoxyCodeLine{563       \textcolor{keywordflow}{if} (n > m-\/>len) \{}
+\DoxyCodeLine{564         m-\/>len = n, m-\/>off = p -\/ i;}
+\DoxyCodeLine{565         \textcolor{keywordflow}{if} (n == max\_match) \textcolor{keywordflow}{break};}
+\DoxyCodeLine{566       \}}
+\DoxyCodeLine{567     \}}
+\DoxyCodeLine{568     \textcolor{keywordflow}{if} (!(-\/-\/chain\_len)) \textcolor{keywordflow}{break};}
+\DoxyCodeLine{569     i = s-\/>prv[i\&SDEFL\_WIN\_MSK];}
+\DoxyCodeLine{570   \}}
+\DoxyCodeLine{571 \}}
+\DoxyCodeLine{572 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{573 sdefl\_compr(\textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *out, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *in,}
+\DoxyCodeLine{574             \textcolor{keywordtype}{int} in\_len, \textcolor{keywordtype}{int} lvl) \{}
+\DoxyCodeLine{575   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *q = out;}
+\DoxyCodeLine{576   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} pref[] = \{8,10,14,24,30,48,65,96,130\};}
+\DoxyCodeLine{577   \textcolor{keywordtype}{int} max\_chain = (lvl < 8) ? (1 << (lvl + 1)): (1 << 13);}
+\DoxyCodeLine{578   \textcolor{keywordtype}{int} n, i = 0, litlen = 0;}
+\DoxyCodeLine{579   \textcolor{keywordflow}{for} (n = 0; n < SDEFL\_HASH\_SIZ; ++n) \{}
+\DoxyCodeLine{580     s-\/>tbl[n] = SDEFL\_NIL;}
+\DoxyCodeLine{581   \}}
+\DoxyCodeLine{582   \textcolor{keywordflow}{do} \{\textcolor{keywordtype}{int} blk\_end = i + SDEFL\_BLK\_MAX < in\_len ? i + SDEFL\_BLK\_MAX : in\_len;}
+\DoxyCodeLine{583     \textcolor{keywordflow}{while} (i < blk\_end) \{}
+\DoxyCodeLine{584       \textcolor{keyword}{struct }sdefl\_match m = \{0\};}
+\DoxyCodeLine{585       \textcolor{keywordtype}{int} max\_match = ((in\_len-\/i)>SDEFL\_MAX\_MATCH) ? SDEFL\_MAX\_MATCH:(in\_len-\/i);}
+\DoxyCodeLine{586       \textcolor{keywordtype}{int} nice\_match = pref[lvl] < max\_match ? pref[lvl] : max\_match;}
+\DoxyCodeLine{587       \textcolor{keywordtype}{int} run = 1, inc = 1, run\_inc;}
+\DoxyCodeLine{588       \textcolor{keywordflow}{if} (max\_match > SDEFL\_MIN\_MATCH) \{}
+\DoxyCodeLine{589         sdefl\_fnd(\&m, s, max\_chain, max\_match, in, i);}
+\DoxyCodeLine{590       \}}
+\DoxyCodeLine{591       \textcolor{keywordflow}{if} (lvl >= 5 \&\& m.len >= SDEFL\_MIN\_MATCH \&\& m.len < nice\_match)\{}
+\DoxyCodeLine{592         \textcolor{keyword}{struct }sdefl\_match m2 = \{0\};}
+\DoxyCodeLine{593         sdefl\_fnd(\&m2, s, max\_chain, m.len+1, in, i+1);}
+\DoxyCodeLine{594         m.len = (m2.len > m.len) ? 0 : m.len;}
+\DoxyCodeLine{595       \}}
+\DoxyCodeLine{596       \textcolor{keywordflow}{if} (m.len >= SDEFL\_MIN\_MATCH) \{}
+\DoxyCodeLine{597         \textcolor{keywordflow}{if} (litlen) \{}
+\DoxyCodeLine{598           sdefl\_seq(s, i -\/ litlen, litlen);}
+\DoxyCodeLine{599           litlen = 0;}
+\DoxyCodeLine{600         \}}
+\DoxyCodeLine{601         sdefl\_seq(s, -\/m.off, m.len);}
+\DoxyCodeLine{602         sdefl\_reg\_match(s, m.off, m.len);}
+\DoxyCodeLine{603         \textcolor{keywordflow}{if} (lvl < 2 \&\& m.len >= nice\_match) \{}
+\DoxyCodeLine{604           inc = m.len;}
+\DoxyCodeLine{605         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{606           run = m.len;}
+\DoxyCodeLine{607         \}}
+\DoxyCodeLine{608       \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{609         s-\/>freq.lit[in[i]]++;}
+\DoxyCodeLine{610         litlen++;}
+\DoxyCodeLine{611       \}}
+\DoxyCodeLine{612       run\_inc = run * inc;}
+\DoxyCodeLine{613       \textcolor{keywordflow}{if} (in\_len -\/ (i + run\_inc) > SDEFL\_MIN\_MATCH) \{}
+\DoxyCodeLine{614         \textcolor{keywordflow}{while} (run-\/-\/ > 0) \{}
+\DoxyCodeLine{615           \textcolor{keywordtype}{unsigned} h = sdefl\_hash32(\&in[i]);}
+\DoxyCodeLine{616           s-\/>prv[i\&SDEFL\_WIN\_MSK] = s-\/>tbl[h];}
+\DoxyCodeLine{617           s-\/>tbl[h] = i, i += inc;}
+\DoxyCodeLine{618         \}}
+\DoxyCodeLine{619       \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{620         i += run\_inc;}
+\DoxyCodeLine{621       \}}
+\DoxyCodeLine{622     \}}
+\DoxyCodeLine{623     \textcolor{keywordflow}{if} (litlen) \{}
+\DoxyCodeLine{624       sdefl\_seq(s, i -\/ litlen, litlen);}
+\DoxyCodeLine{625       litlen = 0;}
+\DoxyCodeLine{626     \}}
+\DoxyCodeLine{627     sdefl\_flush(\&q, s, blk\_end == in\_len, in);}
+\DoxyCodeLine{628   \} \textcolor{keywordflow}{while} (i < in\_len);}
+\DoxyCodeLine{629 }
+\DoxyCodeLine{630   \textcolor{keywordflow}{if} (s-\/>bitcnt)}
+\DoxyCodeLine{631     sdefl\_put(\&q, s, 0x00, 8 -\/ s-\/>bitcnt);}
+\DoxyCodeLine{632   \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})(q -\/ out);}
+\DoxyCodeLine{633 \}}
+\DoxyCodeLine{634 \textcolor{keyword}{extern} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{635 sdeflate(\textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{void} *out, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *in, \textcolor{keywordtype}{int} n, \textcolor{keywordtype}{int} lvl) \{}
+\DoxyCodeLine{636   s-\/>bits = s-\/>bitcnt = 0;}
+\DoxyCodeLine{637   \textcolor{keywordflow}{return} sdefl\_compr(s, (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)out, (\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)in, n, lvl);}
+\DoxyCodeLine{638 \}}
+\DoxyCodeLine{639 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned}}
+\DoxyCodeLine{640 sdefl\_adler32(\textcolor{keywordtype}{unsigned} adler32, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *in, \textcolor{keywordtype}{int} in\_len) \{}
+\DoxyCodeLine{641 \textcolor{preprocessor}{  \#define SDEFL\_ADLER\_INIT (1)}}
+\DoxyCodeLine{642   \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} ADLER\_MOD = 65521;}
+\DoxyCodeLine{643   \textcolor{keywordtype}{unsigned} s1 = adler32 \& 0xffff;}
+\DoxyCodeLine{644   \textcolor{keywordtype}{unsigned} s2 = adler32 >> 16;}
+\DoxyCodeLine{645   \textcolor{keywordtype}{unsigned} blk\_len, i;}
+\DoxyCodeLine{646 }
+\DoxyCodeLine{647   blk\_len = in\_len \% 5552;}
+\DoxyCodeLine{648   \textcolor{keywordflow}{while} (in\_len) \{}
+\DoxyCodeLine{649     \textcolor{keywordflow}{for} (i = 0; i + 7 < blk\_len; i += 8) \{}
+\DoxyCodeLine{650       s1 += in[0]; s2 += s1;}
+\DoxyCodeLine{651       s1 += in[1]; s2 += s1;}
+\DoxyCodeLine{652       s1 += in[2]; s2 += s1;}
+\DoxyCodeLine{653       s1 += in[3]; s2 += s1;}
+\DoxyCodeLine{654       s1 += in[4]; s2 += s1;}
+\DoxyCodeLine{655       s1 += in[5]; s2 += s1;}
+\DoxyCodeLine{656       s1 += in[6]; s2 += s1;}
+\DoxyCodeLine{657       s1 += in[7]; s2 += s1;}
+\DoxyCodeLine{658       in += 8;}
+\DoxyCodeLine{659     \}}
+\DoxyCodeLine{660     \textcolor{keywordflow}{for} (; i < blk\_len; ++i) \{}
+\DoxyCodeLine{661       s1 += *in++, s2 += s1;}
+\DoxyCodeLine{662     \}}
+\DoxyCodeLine{663     s1 \%= ADLER\_MOD;}
+\DoxyCodeLine{664     s2 \%= ADLER\_MOD;}
+\DoxyCodeLine{665     in\_len -\/= blk\_len;}
+\DoxyCodeLine{666     blk\_len = 5552;}
+\DoxyCodeLine{667   \}}
+\DoxyCodeLine{668   \textcolor{keywordflow}{return} (\textcolor{keywordtype}{unsigned})(s2 << 16) + (\textcolor{keywordtype}{unsigned})s1;}
+\DoxyCodeLine{669 \}}
+\DoxyCodeLine{670 \textcolor{keyword}{extern} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{671 zsdeflate(\textcolor{keyword}{struct} \mbox{\hyperlink{structsdefl}{sdefl}} *s, \textcolor{keywordtype}{void} *out, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *in, \textcolor{keywordtype}{int} n, \textcolor{keywordtype}{int} lvl) \{}
+\DoxyCodeLine{672   \textcolor{keywordtype}{int} p = 0;}
+\DoxyCodeLine{673   \textcolor{keywordtype}{unsigned} a = 0;}
+\DoxyCodeLine{674   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *q = (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)out;}
+\DoxyCodeLine{675 }
+\DoxyCodeLine{676   s-\/>bits = s-\/>bitcnt = 0;}
+\DoxyCodeLine{677   sdefl\_put(\&q, s, 0x78, 8); \textcolor{comment}{/* deflate, 32k window */}}
+\DoxyCodeLine{678   sdefl\_put(\&q, s, 0x01, 8); \textcolor{comment}{/* fast compression */}}
+\DoxyCodeLine{679   q += sdefl\_compr(s, q, (\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)in, n, lvl);}
+\DoxyCodeLine{680 }
+\DoxyCodeLine{681   \textcolor{comment}{/* append adler checksum */}}
+\DoxyCodeLine{682   a = sdefl\_adler32(SDEFL\_ADLER\_INIT, (\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)in, n);}
+\DoxyCodeLine{683   \textcolor{keywordflow}{for} (p = 0; p < 4; ++p) \{}
+\DoxyCodeLine{684     sdefl\_put(\&q, s, (a >> 24) \& 0xFF, 8);}
+\DoxyCodeLine{685     a <<= 8;}
+\DoxyCodeLine{686   \}}
+\DoxyCodeLine{687   \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})(q -\/ (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)out);}
+\DoxyCodeLine{688 \}}
+\DoxyCodeLine{689 \textcolor{keyword}{extern} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{690 sdefl\_bound(\textcolor{keywordtype}{int} len) \{}
+\DoxyCodeLine{691   \textcolor{keywordtype}{int} a = 128 + (len * 110) / 100;}
+\DoxyCodeLine{692   \textcolor{keywordtype}{int} b = 128 + len + ((len / (31 * 1024)) + 1) * 5;}
+\DoxyCodeLine{693   \textcolor{keywordflow}{return} (a > b) ? a : b;}
+\DoxyCodeLine{694 \}}
+\DoxyCodeLine{695 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SDEFL\_IMPLEMENTATION */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{696 }
+
+\end{DoxyCode}

@@ -1,0 +1,43 @@
+\hypertarget{structAudioData}{}\doxysection{Audio\+Data Struct Reference}
+\label{structAudioData}\index{AudioData@{AudioData}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structAudioData_a2aa005ba4d5662ffaa0fb42795977fb1}\label{structAudioData_a2aa005ba4d5662ffaa0fb42795977fb1}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>\mbox{\hyperlink{structma__context}{ma\_context}} {\bfseries context}\\
+\>\mbox{\hyperlink{structma__device}{ma\_device}} {\bfseries device}\\
+\>ma\_mutex {\bfseries lock}\\
+\>bool {\bfseries isReady}\\
+\>size\_t {\bfseries pcmBufferSize}\\
+\>void $\ast$ {\bfseries pcmBuffer}\\
+\} {\bfseries System}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{structAudioData_a91434cd0d485d41bbe27f08f9b988f86}\label{structAudioData_a91434cd0d485d41bbe27f08f9b988f86}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>AudioBuffer $\ast$ {\bfseries first}\\
+\>AudioBuffer $\ast$ {\bfseries last}\\
+\>int {\bfseries defaultSize}\\
+\} {\bfseries Buffer}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{structAudioData_a4e6918d292224a7ac83991074447f463}\label{structAudioData_a4e6918d292224a7ac83991074447f463}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>unsigned int {\bfseries poolCounter}\\
+\>AudioBuffer $\ast$ {\bfseries pool} \mbox{[}MAX\_AUDIO\_BUFFER\_POOL\_CHANNELS\mbox{]}\\
+\>unsigned int {\bfseries channels} \mbox{[}MAX\_AUDIO\_BUFFER\_POOL\_CHANNELS\mbox{]}\\
+\} {\bfseries MultiChannel}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+build/\+\_\+deps/raylib-\/src/src/raudio.\+c\end{DoxyCompactItemize}

@@ -1,0 +1,56 @@
+\hypertarget{include_2nlohmann_2json__fwd_8hpp_source}{}\doxysection{json\+\_\+fwd.\+hpp}
+\label{include_2nlohmann_2json__fwd_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/json\_fwd.hpp@{build/\_deps/json-\/src/include/nlohmann/json\_fwd.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#ifndef INCLUDE\_NLOHMANN\_JSON\_FWD\_HPP\_}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#define INCLUDE\_NLOHMANN\_JSON\_FWD\_HPP\_}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <cstdint>} \textcolor{comment}{// int64\_t, uint64\_t}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <map>} \textcolor{comment}{// map}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <memory>} \textcolor{comment}{// allocator}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <string>} \textcolor{comment}{// string}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <vector>} \textcolor{comment}{// vector}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <nlohmann/detail/abi\_macros.hpp>}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{25 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{34 \textcolor{keyword}{template}<\textcolor{keyword}{typename} T = \textcolor{keywordtype}{void}, \textcolor{keyword}{typename} SFINAE = \textcolor{keywordtype}{void}>}
+\DoxyCodeLine{35 \textcolor{keyword}{struct }\mbox{\hyperlink{structadl__serializer}{adl\_serializer}};}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{39 \textcolor{keyword}{template}<\textcolor{keyword}{template}<\textcolor{keyword}{typename} U, \textcolor{keyword}{typename} V, \textcolor{keyword}{typename}... Args> \textcolor{keyword}{class }ObjectType =}
+\DoxyCodeLine{40          std::map,}
+\DoxyCodeLine{41          \textcolor{keyword}{template}<\textcolor{keyword}{typename} U, \textcolor{keyword}{typename}... Args> \textcolor{keyword}{class }ArrayType = std::vector,}
+\DoxyCodeLine{42          \textcolor{keyword}{class }StringType = std::string, \textcolor{keyword}{class }BooleanType = bool,}
+\DoxyCodeLine{43          \textcolor{keyword}{class }NumberIntegerType = std::int64\_t,}
+\DoxyCodeLine{44          \textcolor{keyword}{class }NumberUnsignedType = std::uint64\_t,}
+\DoxyCodeLine{45          \textcolor{keyword}{class }NumberFloatType = double,}
+\DoxyCodeLine{46          \textcolor{keyword}{template}<\textcolor{keyword}{typename} U> \textcolor{keyword}{class }AllocatorType = std::allocator,}
+\DoxyCodeLine{47          \textcolor{keyword}{template}<\textcolor{keyword}{typename} T, \textcolor{keyword}{typename} SFINAE = \textcolor{keywordtype}{void}> \textcolor{keyword}{class }JSONSerializer =}
+\DoxyCodeLine{48          \mbox{\hyperlink{structadl__serializer}{adl\_serializer}},}
+\DoxyCodeLine{49          \textcolor{keyword}{class }BinaryType = std::vector<std::uint8\_t>>}
+\DoxyCodeLine{50 \textcolor{keyword}{class }\mbox{\hyperlink{classbasic__json}{basic\_json}};}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{54 \textcolor{keyword}{template}<\textcolor{keyword}{typename} RefStringType>}
+\DoxyCodeLine{55 \textcolor{keyword}{class }\mbox{\hyperlink{classjson__pointer}{json\_pointer}};}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{61 \textcolor{keyword}{using }json = \mbox{\hyperlink{classbasic__json}{basic\_json<>}};}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{65 \textcolor{keyword}{template}<\textcolor{keyword}{class} Key, \textcolor{keyword}{class} T, \textcolor{keyword}{class} IgnoredLess, \textcolor{keyword}{class} Allocator>}
+\DoxyCodeLine{66 \textcolor{keyword}{struct }\mbox{\hyperlink{structordered__map}{ordered\_map}};}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{70 \textcolor{keyword}{using }\mbox{\hyperlink{classbasic__json}{ordered\_json}} = \mbox{\hyperlink{classbasic__json}{basic\_json<nlohmann::ordered\_map>}};}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72 NLOHMANN\_JSON\_NAMESPACE\_END}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{74 \textcolor{preprocessor}{\#endif  }\textcolor{comment}{// INCLUDE\_NLOHMANN\_JSON\_FWD\_HPP\_}}
+
+\end{DoxyCode}

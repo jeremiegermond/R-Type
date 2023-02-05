@@ -1,0 +1,76 @@
+\hypertarget{detected_8hpp_source}{}\doxysection{detected.\+hpp}
+\label{detected_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/meta/detected.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/meta/detected.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <type\_traits>}}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <nlohmann/detail/meta/void\_t.hpp>}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{16 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{17 \{}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{comment}{// https://en.cppreference.com/w/cpp/experimental/is\_detected}}
+\DoxyCodeLine{20 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}}}
+\DoxyCodeLine{21 \{}
+\DoxyCodeLine{22     \mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}}() = \textcolor{keyword}{delete};}
+\DoxyCodeLine{23     \mbox{\hyperlink{structdetail_1_1nonesuch}{\string~nonesuch}}() = \textcolor{keyword}{delete};}
+\DoxyCodeLine{24     \mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}}(\mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}} \textcolor{keyword}{const}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{25     \mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}}(\mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}} \textcolor{keyword}{const}\&\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{26     \textcolor{keywordtype}{void} operator=(\mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}} \textcolor{keyword}{const}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{27     \textcolor{keywordtype}{void} operator=(\mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}}\&\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{28 \};}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{keyword}{template}<\textcolor{keyword}{class }Default,}
+\DoxyCodeLine{31          \textcolor{keyword}{class }AlwaysVoid,}
+\DoxyCodeLine{32          \textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op,}
+\DoxyCodeLine{33          \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{34 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1detector}{detector}}}
+\DoxyCodeLine{35 \{}
+\DoxyCodeLine{36     \textcolor{keyword}{using }value\_t = std::false\_type;}
+\DoxyCodeLine{37     \textcolor{keyword}{using }type = Default;}
+\DoxyCodeLine{38 \};}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{40 \textcolor{keyword}{template}<\textcolor{keyword}{class }Default, \textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{41 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1detector}{detector}}<Default, void\_t<Op<Args...>>, Op, Args...>}
+\DoxyCodeLine{42 \{}
+\DoxyCodeLine{43     \textcolor{keyword}{using }value\_t = std::true\_type;}
+\DoxyCodeLine{44     \textcolor{keyword}{using }type = Op<Args...>;}
+\DoxyCodeLine{45 \};}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47 \textcolor{keyword}{template}<\textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{48 \textcolor{keyword}{using }is\_detected = \textcolor{keyword}{typename} \mbox{\hyperlink{structdetail_1_1detector}{detector}}<\mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}}, void, Op, Args...>\mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632}{::value\_t}};}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{50 \textcolor{keyword}{template}<\textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{51 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1is__detected__lazy}{is\_detected\_lazy}} : is\_detected<Op, Args...> \{ \};}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53 \textcolor{keyword}{template}<\textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{54 \textcolor{keyword}{using }detected\_t = \textcolor{keyword}{typename} \mbox{\hyperlink{structdetail_1_1detector}{detector}}<\mbox{\hyperlink{structdetail_1_1nonesuch}{nonesuch}}, void, Op, Args...>::type;}
+\DoxyCodeLine{55 }
+\DoxyCodeLine{56 \textcolor{keyword}{template}<\textcolor{keyword}{class }Default, \textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{57 \textcolor{keyword}{using }\mbox{\hyperlink{structdetail_1_1detector}{detected\_or}} = \mbox{\hyperlink{structdetail_1_1detector}{detector}}<Default, void, Op, Args...>;}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59 \textcolor{keyword}{template}<\textcolor{keyword}{class }Default, \textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{60 \textcolor{keyword}{using }detected\_or\_t = \textcolor{keyword}{typename} \mbox{\hyperlink{structdetail_1_1detector}{detected\_or}}<Default, Op, Args...>::type;}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62 \textcolor{keyword}{template}<\textcolor{keyword}{class }Expected, \textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{63 \textcolor{keyword}{using }is\_detected\_exact = std::is\_same<Expected, detected\_t<Op, Args...>>;}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{65 \textcolor{keyword}{template}<\textcolor{keyword}{class }To, \textcolor{keyword}{template}<\textcolor{keyword}{class}...> \textcolor{keyword}{class }Op, \textcolor{keyword}{class}... Args>}
+\DoxyCodeLine{66 \textcolor{keyword}{using }is\_detected\_convertible =}
+\DoxyCodeLine{67     std::is\_convertible<detected\_t<Op, Args...>, To>;}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{70 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

@@ -1,0 +1,318 @@
+The examples assume you have already built the {\ttfamily raylib} library in {\ttfamily ../src}.\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md15}{}\doxysubsection{With GNU make}\label{md_build__deps_raylib_src_examples_README_autotoc_md15}
+
+\begin{DoxyItemize}
+\item {\ttfamily make} builds all examples
+\item {\ttfamily make \mbox{[}module\mbox{]}} builds all examples for a particular module (e.\+g {\ttfamily make core})
+\end{DoxyItemize}\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md16}{}\doxysubsection{With Zig}\label{md_build__deps_raylib_src_examples_README_autotoc_md16}
+The \href{https://ziglang.org/}{\texttt{ Zig}} toolchain can compile {\ttfamily C} and {\ttfamily C++} in addition to {\ttfamily Zig}. You may find it easier to use than other toolchains, especially when it comes to cross-\/compiling.
+
+
+\begin{DoxyItemize}
+\item {\ttfamily zig build} to compile all examples
+\item {\ttfamily zig build \mbox{[}module\mbox{]}} to compile all examples for a module (e.\+g. {\ttfamily zig build core})
+\item {\ttfamily zig build \mbox{[}example\mbox{]}} to compile {\itshape and run} a particular example (e.\+g. {\ttfamily zig build core\+\_\+basic\+\_\+window})
+\end{DoxyItemize}\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md17}{}\doxysection{EXAMPLES LIST}\label{md_build__deps_raylib_src_examples_README_autotoc_md17}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md18}{}\doxysubsection{category\+: core}\label{md_build__deps_raylib_src_examples_README_autotoc_md18}
+Examples using raylib core platform functionality like window creation, inputs, drawing modes and system functionality.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+01   &\href{core/core_basic_window.c}{\texttt{ core\+\_\+basic\+\_\+window}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering 1.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+02   &\href{core/core_input_keys.c}{\texttt{ core\+\_\+input\+\_\+keys}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering 1.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+03   &\href{core/core_input_mouse.c}{\texttt{ core\+\_\+input\+\_\+mouse}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+04   &\href{core/core_input_mouse_wheel.c}{\texttt{ core\+\_\+input\+\_\+mouse\+\_\+wheel}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+1   &\PBS\centering 1.\+3   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+05   &\href{core/core_input_gamepad.c}{\texttt{ core\+\_\+input\+\_\+gamepad}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+1   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+06   &\href{core/core_input_multitouch.c}{\texttt{ core\+\_\+input\+\_\+multitouch}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 2.\+1   &\PBS\centering 2.\+5   &\href{https://github.com/Berni8k}{\texttt{ Berni}}    \\\cline{1-7}
+07   &\href{core/core_input_gestures.c}{\texttt{ core\+\_\+input\+\_\+gestures}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+4   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+08   &\href{core/core_2d_camera.c}{\texttt{ core\+\_\+2d\+\_\+camera}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+5   &\PBS\centering 3.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+09   &\href{core/core_2d_camera_mouse_zoom.c}{\texttt{ core\+\_\+2d\+\_\+camera\+\_\+mouse\+\_\+zoom}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering {\bfseries{4.\+2}}   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/JeffM2501}{\texttt{ Jeffery Myers}}    \\\cline{1-7}
+10   &\href{core/core_2d_camera_platformer.c}{\texttt{ core\+\_\+2d\+\_\+camera\+\_\+platformer}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+0   &\href{https://github.com/avyy}{\texttt{ avyy}}    \\\cline{1-7}
+11   &\href{core/core_3d_camera_mode.c}{\texttt{ core\+\_\+3d\+\_\+camera\+\_\+mode}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering 1.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+12   &\href{core/core_3d_camera_free.c}{\texttt{ core\+\_\+3d\+\_\+camera\+\_\+free}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+3   &\PBS\centering 1.\+3   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+13   &\href{core/core_3d_camera_first_person.c}{\texttt{ core\+\_\+3d\+\_\+camera\+\_\+first\+\_\+person}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering 1.\+3   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+14   &\href{core/core_3d_picking.c}{\texttt{ core\+\_\+3d\+\_\+picking}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+15   &\href{core/core_world_screen.c}{\texttt{ core\+\_\+world\+\_\+screen}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering 1.\+4   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+16   &\href{core/core_custom_logging.c}{\texttt{ core\+\_\+custom\+\_\+logging}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/pamarcos}{\texttt{ Pablo Marcos Oltra}}    \\\cline{1-7}
+17   &\href{core/core_window_flags.c}{\texttt{ core\+\_\+window\+\_\+flags}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 3.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+18   &\href{core/core_window_letterbox.c}{\texttt{ core\+\_\+window\+\_\+letterbox}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/anatagawa}{\texttt{ Anata}}    \\\cline{1-7}
+19   &\href{core/core_window_should_close.c}{\texttt{ core\+\_\+window\+\_\+should\+\_\+close}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering {\bfseries{4.\+2}}   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+20   &\href{core/core_drop_files.c}{\texttt{ core\+\_\+drop\+\_\+files}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+21   &\href{core/core_random_values.c}{\texttt{ core\+\_\+random\+\_\+values}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+1   &\PBS\centering 1.\+1   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+22   &\href{core/core_storage_values.c}{\texttt{ core\+\_\+storage\+\_\+values}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+4   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+23   &\href{core/core_vr_simulator.c}{\texttt{ core\+\_\+vr\+\_\+simulator}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+24   &\href{core/core_loading_thread.c}{\texttt{ core\+\_\+loading\+\_\+thread}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+25   &\href{core/core_scissor_test.c}{\texttt{ core\+\_\+scissor\+\_\+test}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+0   &\href{https://github.com/MysteriousSpace}{\texttt{ Chris Dill}}    \\\cline{1-7}
+26   &\href{core/core_basic_screen_manager.c}{\texttt{ core\+\_\+basic\+\_\+screen\+\_\+manager}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering {\bfseries{4.\+0}}   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+27   &\href{core/core_custom_frame_control.c}{\texttt{ core\+\_\+custom\+\_\+frame\+\_\+control}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering {\bfseries{4.\+0}}   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+28   &\href{core/core_smooth_pixelperfect.c}{\texttt{ core\+\_\+smooth\+\_\+pixelperfect}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 3.\+7   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/NotManyIdeasDev}{\texttt{ Giancamillo Alessandroni}}    \\\cline{1-7}
+29   &\href{core/core_split_screen.c}{\texttt{ core\+\_\+split\+\_\+screen}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 3.\+7   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/JeffM2501}{\texttt{ Jeffery Myers}}    \\\cline{1-7}
+30   &\href{core/core_window_should_close.c}{\texttt{ core\+\_\+window\+\_\+should\+\_\+close}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering {\bfseries{4.\+2}}   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}   \\\cline{1-7}
+\end{longtabu}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md19}{}\doxysubsection{category\+: shapes}\label{md_build__deps_raylib_src_examples_README_autotoc_md19}
+Examples using raylib shapes drawing functionality, provided by raylib \href{../src/shapes.c}{\texttt{ shapes}} module.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+31   &\href{shapes/shapes_basic_shapes.c}{\texttt{ shapes\+\_\+basic\+\_\+shapes}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+32   &\href{shapes/shapes_bouncing_ball.c}{\texttt{ shapes\+\_\+bouncing\+\_\+ball}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+33   &\href{shapes/shapes_colors_palette.c}{\texttt{ shapes\+\_\+colors\+\_\+palette}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+0   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+34   &\href{shapes/shapes_logo_raylib.c}{\texttt{ shapes\+\_\+logo\+\_\+raylib}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering 1.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+35   &\href{shapes/shapes_logo_raylib_anim.c}{\texttt{ shapes\+\_\+logo\+\_\+raylib\+\_\+anim}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+36   &\href{shapes/shapes_rectangle_scaling.c}{\texttt{ shapes\+\_\+rectangle\+\_\+scaling}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+37   &\href{shapes/shapes_lines_bezier.c}{\texttt{ shapes\+\_\+lines\+\_\+bezier}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+7   &\PBS\centering 1.\+7   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+38   &\href{shapes/shapes_collision_area.c}{\texttt{ shapes\+\_\+collision\+\_\+area}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+39   &\href{shapes/shapes_following_eyes.c}{\texttt{ shapes\+\_\+following\+\_\+eyes}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+40   &\href{shapes/shapes_easings_ball_anim.c}{\texttt{ shapes\+\_\+easings\+\_\+ball\+\_\+anim}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+41   &\href{shapes/shapes_easings_box_anim.c}{\texttt{ shapes\+\_\+easings\+\_\+box\+\_\+anim}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+42   &\href{shapes/shapes_easings_rectangle_array.c}{\texttt{ shapes\+\_\+easings\+\_\+rectangle\+\_\+array}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+43   &\href{shapes/shapes_draw_ring.c}{\texttt{ shapes\+\_\+draw\+\_\+ring}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+44   &\href{shapes/shapes_draw_circle_sector.c}{\texttt{ shapes\+\_\+draw\+\_\+circle\+\_\+sector}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+45   &\href{shapes/shapes_draw_rectangle_rounded.c}{\texttt{ shapes\+\_\+draw\+\_\+rectangle\+\_\+rounded}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+46   &\href{shapes/shapes_top_down_lights.c}{\texttt{ shapes\+\_\+top\+\_\+down\+\_\+lights}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering {\bfseries{4.\+2}}   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/JeffM2501}{\texttt{ Jeffery Myers}}   \\\cline{1-7}
+\end{longtabu}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md20}{}\doxysubsection{category\+: textures}\label{md_build__deps_raylib_src_examples_README_autotoc_md20}
+Examples using raylib textures functionality, including image/textures loading/generation and drawing, provided by raylib \href{../src/textures.c}{\texttt{ textures}} module.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+47   &\href{textures/textures_logo_raylib.c}{\texttt{ textures\+\_\+logo\+\_\+raylib}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering 1.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+48   &\href{textures/textures_srcrec_dstrec.c}{\texttt{ textures\+\_\+srcrec\+\_\+dstrec}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+3   &\PBS\centering 1.\+3   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+49   &\href{textures/textures_image_drawing.c}{\texttt{ textures\+\_\+image\+\_\+drawing}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+4   &\PBS\centering 1.\+4   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+50   &\href{textures/textures_image_generation.c}{\texttt{ textures\+\_\+image\+\_\+generation}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+8   &\PBS\centering 1.\+8   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+51   &\href{textures/textures_image_loading.c}{\texttt{ textures\+\_\+image\+\_\+loading}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+3   &\PBS\centering 1.\+3   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+52   &\href{textures/textures_image_processing.c}{\texttt{ textures\+\_\+image\+\_\+processing}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+4   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+53   &\href{textures/textures_image_text.c}{\texttt{ textures\+\_\+image\+\_\+text}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+8   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+54   &\href{textures/textures_to_image.c}{\texttt{ textures\+\_\+to\+\_\+image}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+55   &\href{textures/textures_raw_data.c}{\texttt{ textures\+\_\+raw\+\_\+data}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+3   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+56   &\href{textures/textures_particles_blending.c}{\texttt{ textures\+\_\+particles\+\_\+blending}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+7   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+57   &\href{textures/textures_npatch_drawing.c}{\texttt{ textures\+\_\+npatch\+\_\+drawing}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+0   &\PBS\centering 2.\+5   &\href{https://github.com/overdev}{\texttt{ Jorge A. Gomes}}    \\\cline{1-7}
+58   &\href{textures/textures_background_scrolling.c}{\texttt{ textures\+\_\+background\+\_\+scrolling}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 2.\+0   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+59   &\href{textures/textures_sprite_anim.c}{\texttt{ textures\+\_\+sprite\+\_\+anim}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering 1.\+3   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+60   &\href{textures/textures_sprite_button.c}{\texttt{ textures\+\_\+sprite\+\_\+button}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+61   &\href{textures/textures_sprite_explosion.c}{\texttt{ textures\+\_\+sprite\+\_\+explosion}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+62   &\href{textures/textures_bunnymark.c}{\texttt{ textures\+\_\+bunnymark}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+6   &\PBS\centering 2.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+63   &\href{textures/textures_mouse_painting.c}{\texttt{ textures\+\_\+mouse\+\_\+painting}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 3.\+0   &\PBS\centering 3.\+0   &\href{https://github.com/MysteriousSpace}{\texttt{ Chris Dill}}    \\\cline{1-7}
+64   &\href{textures/textures_blend_modes.c}{\texttt{ textures\+\_\+blend\+\_\+modes}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 3.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/accidentalrebel}{\texttt{ Karlo Licudine}}    \\\cline{1-7}
+65   &\href{textures/textures_draw_tiled.c}{\texttt{ textures\+\_\+draw\+\_\+tiled}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 3.\+0   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+66   &\href{textures/textures_polygon.c}{\texttt{ textures\+\_\+polygon}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 3.\+7   &\PBS\centering 3.\+7   &\href{https://github.com/codifies}{\texttt{ Chris Camacho}}    \\\cline{1-7}
+67   &\href{textures/textures_fog_of_war.c}{\texttt{ textures\+\_\+fog\+\_\+of\+\_\+war}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering {\bfseries{4.\+2}}   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+68   &\href{textures/textures_gif_player.c}{\texttt{ textures\+\_\+gif\+\_\+player}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering {\bfseries{4.\+2}}   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}   \\\cline{1-7}
+\end{longtabu}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md21}{}\doxysubsection{category\+: text}\label{md_build__deps_raylib_src_examples_README_autotoc_md21}
+Examples using raylib text functionality, including sprite fonts loading/generation and text drawing, provided by raylib \href{../src/text.c}{\texttt{ text}} module.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+69   &\href{text/text_raylib_fonts.c}{\texttt{ text\+\_\+raylib\+\_\+fonts}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+7   &\PBS\centering 3.\+7   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+70   &\href{text/text_font_spritefont.c}{\texttt{ text\+\_\+font\+\_\+spritefont}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering 1.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+71   &\href{text/text_font_filters.c}{\texttt{ text\+\_\+font\+\_\+filters}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+72   &\href{text/text_font_loading.c}{\texttt{ text\+\_\+font\+\_\+loading}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+4   &\PBS\centering 3.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+73   &\href{text/text_font_sdf.c}{\texttt{ text\+\_\+font\+\_\+sdf}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+74   &\href{text/text_format_text.c}{\texttt{ text\+\_\+format\+\_\+text}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+1   &\PBS\centering 3.\+0   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+75   &\href{text/text_input_box.c}{\texttt{ text\+\_\+input\+\_\+box}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+7   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+76   &\href{text/text_writing_anim.c}{\texttt{ text\+\_\+writing\+\_\+anim}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+4   &\PBS\centering 1.\+4   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+77   &\href{text/text_rectangle_bounds.c}{\texttt{ text\+\_\+rectangle\+\_\+bounds}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+78   &\href{text/text_unicode.c}{\texttt{ text\+\_\+unicode}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+79   &\href{text/text_draw_3d.c}{\texttt{ text\+\_\+draw\+\_\+3d}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 3.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/demizdor}{\texttt{ Vlad Adrian}}    \\\cline{1-7}
+80   &\href{text/text_codepoints_loading.c}{\texttt{ text\+\_\+codepoints\+\_\+loading}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering {\bfseries{4.\+2}}   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}   \\\cline{1-7}
+\end{longtabu}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md22}{}\doxysubsection{category\+: models}\label{md_build__deps_raylib_src_examples_README_autotoc_md22}
+Examples using raylib models functionality, including models loading/generation and drawing, provided by raylib \href{../src/models.c}{\texttt{ models}} module.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+81   &\href{models/models_animation.c}{\texttt{ models\+\_\+animation}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/culacant}{\texttt{ culacant}}    \\\cline{1-7}
+82   &\href{models/models_billboard.c}{\texttt{ models\+\_\+billboard}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+3   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+83   &\href{models/models_box_collisions.c}{\texttt{ models\+\_\+box\+\_\+collisions}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+3   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+84   &\href{models/models_cubicmap.c}{\texttt{ models\+\_\+cubicmap}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+8   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+85   &\href{models/models_first_person_maze.c}{\texttt{ models\+\_\+first\+\_\+person\+\_\+maze}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+86   &\href{models/models_geometric_shapes.c}{\texttt{ models\+\_\+geometric\+\_\+shapes}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+0   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+87   &\href{models/models_mesh_generation.c}{\texttt{ models\+\_\+mesh\+\_\+generation}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+8   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+88   &\href{models/models_mesh_picking.c}{\texttt{ models\+\_\+mesh\+\_\+picking}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+7   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/joeld42}{\texttt{ Joel Davis}}    \\\cline{1-7}
+89   &\href{models/models_loading.c}{\texttt{ models\+\_\+loading}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+90   &\href{models/models_loading_gltf.c}{\texttt{ models\+\_\+loading\+\_\+gltf}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 3.\+7   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+91   &\href{models/models_loading_vox.c}{\texttt{ models\+\_\+loading\+\_\+vox}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering {\bfseries{4.\+0}}   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/procfxgen}{\texttt{ Johann Nadalutti}}    \\\cline{1-7}
+92   &\href{models/models_orthographic_projection.c}{\texttt{ models\+\_\+orthographic\+\_\+projection}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 2.\+0   &\PBS\centering 3.\+7   &\href{https://github.com/autious}{\texttt{ Max Danielsson}}    \\\cline{1-7}
+93   &\href{models/models_rlgl_solar_system.c}{\texttt{ models\+\_\+rlgl\+\_\+solar\+\_\+system}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+94   &\href{models/models_yaw_pitch_roll.c}{\texttt{ models\+\_\+yaw\+\_\+pitch\+\_\+roll}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+8   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/Berni8k}{\texttt{ Berni}}    \\\cline{1-7}
+95   &\href{models/models_waving_cubes.c}{\texttt{ models\+\_\+waving\+\_\+cubes}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+7   &\href{https://github.com/codecat}{\texttt{ codecat}}    \\\cline{1-7}
+96   &\href{models/models_heightmap.c}{\texttt{ models\+\_\+heightmap}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+8   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+97   &\href{models/models_skybox.c}{\texttt{ models\+\_\+skybox}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+8   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}   \\\cline{1-7}
+\end{longtabu}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md23}{}\doxysubsection{category\+: shaders}\label{md_build__deps_raylib_src_examples_README_autotoc_md23}
+Examples using raylib shaders functionality, including shaders loading, parameters configuration and drawing using them (model shaders and postprocessing shaders). This functionality is directly provided by raylib \href{../src/rlgl.c}{\texttt{ rlgl}} module.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+98   &\href{shaders/shaders_basic_lighting.c}{\texttt{ shaders\+\_\+basic\+\_\+lighting}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 3.\+0   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/codifies}{\texttt{ Chris Camacho}}    \\\cline{1-7}
+99   &\href{shaders/shaders_model_shader.c}{\texttt{ shaders\+\_\+model\+\_\+shader}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering 3.\+7   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+100   &\href{shaders/shaders_shapes_textures.c}{\texttt{ shaders\+\_\+shapes\+\_\+textures}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+7   &\PBS\centering 3.\+7   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+101   &\href{shaders/shaders_custom_uniform.c}{\texttt{ shaders\+\_\+custom\+\_\+uniform}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+102   &\href{shaders/shaders_postprocessing.c}{\texttt{ shaders\+\_\+postprocessing}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+103   &\href{shaders/shaders_palette_switch.c}{\texttt{ shaders\+\_\+palette\+\_\+switch}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+7   &\href{https://github.com/MarcoLizza}{\texttt{ Marco Lizza}}    \\\cline{1-7}
+104   &\href{shaders/shaders_raymarching.c}{\texttt{ shaders\+\_\+raymarching}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 2.\+0   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+105   &\href{shaders/shaders_texture_drawing.c}{\texttt{ shaders\+\_\+texture\+\_\+drawing}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+0   &\PBS\centering 3.\+7   &\href{https://github.com/}{\texttt{ Michał Ciesielski}}    \\\cline{1-7}
+106   &\href{shaders/shaders_texture_outline.c}{\texttt{ shaders\+\_\+texture\+\_\+outline}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering {\bfseries{4.\+0}}   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/GoldenThumbs}{\texttt{ Samuel Skiff}}    \\\cline{1-7}
+107   &\href{shaders/shaders_texture_waves.c}{\texttt{ shaders\+\_\+texture\+\_\+waves}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+7   &\href{https://github.com/anatagawa}{\texttt{ Anata}}    \\\cline{1-7}
+108   &\href{shaders/shaders_julia_set.c}{\texttt{ shaders\+\_\+julia\+\_\+set}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/eggmund}{\texttt{ eggmund}}    \\\cline{1-7}
+109   &\href{shaders/shaders_eratosthenes.c}{\texttt{ shaders\+\_\+eratosthenes}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/ProfJski}{\texttt{ Prof\+Jski}}    \\\cline{1-7}
+110   &\href{shaders/shaders_fog.c}{\texttt{ shaders\+\_\+fog}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+7   &\href{https://github.com/codifies}{\texttt{ Chris Camacho}}    \\\cline{1-7}
+111   &\href{shaders/shaders_simple_mask.c}{\texttt{ shaders\+\_\+simple\+\_\+mask}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+7   &\href{https://github.com/codifies}{\texttt{ Chris Camacho}}    \\\cline{1-7}
+112   &\href{shaders/shaders_hot_reloading.c}{\texttt{ shaders\+\_\+hot\+\_\+reloading}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 3.\+0   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+113   &\href{shaders/shaders_mesh_instancing.c}{\texttt{ shaders\+\_\+mesh\+\_\+instancing}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 3.\+7   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/seanpringle}{\texttt{ seanpringle}}    \\\cline{1-7}
+114   &\href{shaders/shaders_multi_sample2d.c}{\texttt{ shaders\+\_\+multi\+\_\+sample2d}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 3.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+115   &\href{shaders/shaders_spotlight.c}{\texttt{ shaders\+\_\+spotlight}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 2.\+5   &\PBS\centering 3.\+7   &\href{https://github.com/codifies}{\texttt{ Chris Camacho}}   \\\cline{1-7}
+\end{longtabu}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md24}{}\doxysubsection{category\+: audio}\label{md_build__deps_raylib_src_examples_README_autotoc_md24}
+Examples using raylib audio functionality, including sound/music loading and playing. This functionality is provided by raylib \href{../src/raudio.c}{\texttt{ raudio}} module. Note this module can be used standalone independently of raylib, check \href{others/raudio_standalone.c}{\texttt{ raudio\+\_\+standalone}} example.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+116   &\href{audio/audio_module_playing.c}{\texttt{ audio\+\_\+module\+\_\+playing}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+117   &\href{audio/audio_music_stream.c}{\texttt{ audio\+\_\+music\+\_\+stream}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+3   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+118   &\href{audio/audio_raw_stream.c}{\texttt{ audio\+\_\+raw\+\_\+stream}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 1.\+6   &\PBS\centering {\bfseries{4.\+2}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+119   &\href{audio/audio_sound_loading.c}{\texttt{ audio\+\_\+sound\+\_\+loading}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 1.\+1   &\PBS\centering 3.\+5   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+120   &\href{audio/audio_multichannel_sound.c}{\texttt{ audio\+\_\+multichannel\+\_\+sound}}   &   &\PBS\centering ⭐️☆☆☆   &\PBS\centering 3.\+0   &\PBS\centering 3.\+5   &\href{https://github.com/codifies}{\texttt{ Chris Camacho}}   \\\cline{1-7}
+\end{longtabu}
+\hypertarget{md_build__deps_raylib_src_examples_README_autotoc_md25}{}\doxysubsection{category\+: others}\label{md_build__deps_raylib_src_examples_README_autotoc_md25}
+Examples showing raylib misc functionality that does not fit in other categories, like standalone modules usage or examples integrating external libraries.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{7}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ \#\#   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ example   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ image   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ difficulty~\newline
+level   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ version~\newline
+created   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ last version~\newline
+updated   }&\cellcolor{\tableheadbgcolor}\textbf{ original~\newline
+developer    }\\\cline{1-7}
+\endhead
+121   &\href{others/rlgl_standalone.c}{\texttt{ rlgl\+\_\+standalone}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering 1.\+6   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/raysan5}{\texttt{ Ray}}    \\\cline{1-7}
+122   &\href{others/rlgl_compute_shader.c}{\texttt{ rlgl\+\_\+compute\+\_\+shader}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering {\bfseries{4.\+0}}   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/tsnake41}{\texttt{ Teddy Astie}}    \\\cline{1-7}
+123   &\href{others/easings_testbed.c}{\texttt{ easings\+\_\+testbed}}   &   &\PBS\centering ⭐️⭐️⭐️☆   &\PBS\centering 3.\+0   &\PBS\centering 3.\+0   &\href{https://github.com/flashback-fx}{\texttt{ Juan Miguel López}}    \\\cline{1-7}
+124   &\href{others/raylib_opengl_interop.c}{\texttt{ raylib\+\_\+opengl\+\_\+interop}}   &   &\PBS\centering ⭐️⭐️⭐️⭐️   &\PBS\centering {\bfseries{4.\+0}}   &\PBS\centering {\bfseries{4.\+0}}   &\href{https://github.com/arkanis}{\texttt{ Stephan Soller}}    \\\cline{1-7}
+125   &\href{others/embedded_files_loading.c}{\texttt{ embedded\+\_\+files\+\_\+loading}}   &   &\PBS\centering ⭐️⭐️☆☆   &\PBS\centering 3.\+5   &\PBS\centering 3.\+5   &\href{https://github.com/defutura}{\texttt{ Kristian Holmgren}}   \\\cline{1-7}
+\end{longtabu}
+
+
+As always contributions are welcome, feel free to send new examples! Here it is an \href{examples_template.c}{\texttt{ examples template}} to start with! 

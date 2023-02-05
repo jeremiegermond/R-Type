@@ -1,0 +1,677 @@
+\hypertarget{qoi_8h_source}{}\doxysection{qoi.\+h}
+\label{qoi_8h_source}\index{build/\_deps/raylib-\/src/src/external/qoi.h@{build/\_deps/raylib-\/src/src/external/qoi.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{}}
+\DoxyCodeLine{3 \textcolor{comment}{QOI -\/ The "{}Quite OK Image"{} format for fast, lossless image compression}}
+\DoxyCodeLine{4 \textcolor{comment}{}}
+\DoxyCodeLine{5 \textcolor{comment}{Dominic Szablewski -\/ https://phoboslab.org}}
+\DoxyCodeLine{6 \textcolor{comment}{}}
+\DoxyCodeLine{7 \textcolor{comment}{}}
+\DoxyCodeLine{8 \textcolor{comment}{-\/-\/ LICENSE: The MIT License(MIT)}}
+\DoxyCodeLine{9 \textcolor{comment}{}}
+\DoxyCodeLine{10 \textcolor{comment}{Copyright(c) 2021 Dominic Szablewski}}
+\DoxyCodeLine{11 \textcolor{comment}{}}
+\DoxyCodeLine{12 \textcolor{comment}{Permission is hereby granted, free of charge, to any person obtaining a copy of}}
+\DoxyCodeLine{13 \textcolor{comment}{this software and associated documentation files(the "{}Software"{}), to deal in}}
+\DoxyCodeLine{14 \textcolor{comment}{the Software without restriction, including without limitation the rights to}}
+\DoxyCodeLine{15 \textcolor{comment}{use, copy, modify, merge, publish, distribute, sublicense, and / or sell copies}}
+\DoxyCodeLine{16 \textcolor{comment}{of the Software, and to permit persons to whom the Software is furnished to do}}
+\DoxyCodeLine{17 \textcolor{comment}{so, subject to the following conditions :}}
+\DoxyCodeLine{18 \textcolor{comment}{The above copyright notice and this permission notice shall be included in all}}
+\DoxyCodeLine{19 \textcolor{comment}{copies or substantial portions of the Software.}}
+\DoxyCodeLine{20 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR}}
+\DoxyCodeLine{21 \textcolor{comment}{IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,}}
+\DoxyCodeLine{22 \textcolor{comment}{FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE}}
+\DoxyCodeLine{23 \textcolor{comment}{AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER}}
+\DoxyCodeLine{24 \textcolor{comment}{LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,}}
+\DoxyCodeLine{25 \textcolor{comment}{OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE}}
+\DoxyCodeLine{26 \textcolor{comment}{SOFTWARE.}}
+\DoxyCodeLine{27 \textcolor{comment}{}}
+\DoxyCodeLine{28 \textcolor{comment}{}}
+\DoxyCodeLine{29 \textcolor{comment}{-\/-\/ About}}
+\DoxyCodeLine{30 \textcolor{comment}{}}
+\DoxyCodeLine{31 \textcolor{comment}{QOI encodes and decodes images in a lossless format. Compared to stb\_image and}}
+\DoxyCodeLine{32 \textcolor{comment}{stb\_image\_write QOI offers 20x-\/50x faster encoding, 3x-\/4x faster decoding and}}
+\DoxyCodeLine{33 \textcolor{comment}{20\% better compression.}}
+\DoxyCodeLine{34 \textcolor{comment}{}}
+\DoxyCodeLine{35 \textcolor{comment}{}}
+\DoxyCodeLine{36 \textcolor{comment}{-\/-\/ Synopsis}}
+\DoxyCodeLine{37 \textcolor{comment}{}}
+\DoxyCodeLine{38 \textcolor{comment}{// Define `QOI\_IMPLEMENTATION` in *one* C/C++ file before including this}}
+\DoxyCodeLine{39 \textcolor{comment}{// library to create the implementation.}}
+\DoxyCodeLine{40 \textcolor{comment}{}}
+\DoxyCodeLine{41 \textcolor{comment}{\#define QOI\_IMPLEMENTATION}}
+\DoxyCodeLine{42 \textcolor{comment}{\#include "{}qoi.h"{}}}
+\DoxyCodeLine{43 \textcolor{comment}{}}
+\DoxyCodeLine{44 \textcolor{comment}{// Encode and store an RGBA buffer to the file system. The qoi\_desc describes}}
+\DoxyCodeLine{45 \textcolor{comment}{// the input pixel data.}}
+\DoxyCodeLine{46 \textcolor{comment}{qoi\_write("{}image\_new.qoi"{}, rgba\_pixels, \&(qoi\_desc)\{}}
+\DoxyCodeLine{47 \textcolor{comment}{    .width = 1920,}}
+\DoxyCodeLine{48 \textcolor{comment}{    .height = 1080,}}
+\DoxyCodeLine{49 \textcolor{comment}{    .channels = 4,}}
+\DoxyCodeLine{50 \textcolor{comment}{    .colorspace = QOI\_SRGB}}
+\DoxyCodeLine{51 \textcolor{comment}{\});}}
+\DoxyCodeLine{52 \textcolor{comment}{}}
+\DoxyCodeLine{53 \textcolor{comment}{// Load and decode a QOI image from the file system into a 32bbp RGBA buffer.}}
+\DoxyCodeLine{54 \textcolor{comment}{// The qoi\_desc struct will be filled with the width, height, number of channels}}
+\DoxyCodeLine{55 \textcolor{comment}{// and colorspace read from the file header.}}
+\DoxyCodeLine{56 \textcolor{comment}{qoi\_desc desc;}}
+\DoxyCodeLine{57 \textcolor{comment}{void *rgba\_pixels = qoi\_read("{}image.qoi"{}, \&desc, 4);}}
+\DoxyCodeLine{58 \textcolor{comment}{}}
+\DoxyCodeLine{59 \textcolor{comment}{}}
+\DoxyCodeLine{60 \textcolor{comment}{}}
+\DoxyCodeLine{61 \textcolor{comment}{-\/-\/ Documentation}}
+\DoxyCodeLine{62 \textcolor{comment}{}}
+\DoxyCodeLine{63 \textcolor{comment}{This library provides the following functions;}}
+\DoxyCodeLine{64 \textcolor{comment}{-\/ qoi\_read    -\/-\/ read and decode a QOI file}}
+\DoxyCodeLine{65 \textcolor{comment}{-\/ qoi\_decode  -\/-\/ decode the raw bytes of a QOI image from memory}}
+\DoxyCodeLine{66 \textcolor{comment}{-\/ qoi\_write   -\/-\/ encode and write a QOI file}}
+\DoxyCodeLine{67 \textcolor{comment}{-\/ qoi\_encode  -\/-\/ encode an rgba buffer into a QOI image in memory}}
+\DoxyCodeLine{68 \textcolor{comment}{}}
+\DoxyCodeLine{69 \textcolor{comment}{See the function declaration below for the signature and more information.}}
+\DoxyCodeLine{70 \textcolor{comment}{}}
+\DoxyCodeLine{71 \textcolor{comment}{If you don't want/need the qoi\_read and qoi\_write functions, you can define}}
+\DoxyCodeLine{72 \textcolor{comment}{QOI\_NO\_STDIO before including this library.}}
+\DoxyCodeLine{73 \textcolor{comment}{}}
+\DoxyCodeLine{74 \textcolor{comment}{This library uses malloc() and free(). To supply your own malloc implementation}}
+\DoxyCodeLine{75 \textcolor{comment}{you can define QOI\_MALLOC and QOI\_FREE before including this library.}}
+\DoxyCodeLine{76 \textcolor{comment}{}}
+\DoxyCodeLine{77 \textcolor{comment}{This library uses memset() to zero-\/initialize the index. To supply your own}}
+\DoxyCodeLine{78 \textcolor{comment}{implementation you can define QOI\_ZEROARR before including this library.}}
+\DoxyCodeLine{79 \textcolor{comment}{}}
+\DoxyCodeLine{80 \textcolor{comment}{}}
+\DoxyCodeLine{81 \textcolor{comment}{-\/-\/ Data Format}}
+\DoxyCodeLine{82 \textcolor{comment}{}}
+\DoxyCodeLine{83 \textcolor{comment}{A QOI file has a 14 byte header, followed by any number of data "{}chunks"{} and an}}
+\DoxyCodeLine{84 \textcolor{comment}{8-\/byte end marker.}}
+\DoxyCodeLine{85 \textcolor{comment}{}}
+\DoxyCodeLine{86 \textcolor{comment}{struct qoi\_header\_t \{}}
+\DoxyCodeLine{87 \textcolor{comment}{    char     magic[4];   // magic bytes "{}qoif"{}}}
+\DoxyCodeLine{88 \textcolor{comment}{    uint32\_t width;      // image width in pixels (BE)}}
+\DoxyCodeLine{89 \textcolor{comment}{    uint32\_t height;     // image height in pixels (BE)}}
+\DoxyCodeLine{90 \textcolor{comment}{    uint8\_t  channels;   // 3 = RGB, 4 = RGBA}}
+\DoxyCodeLine{91 \textcolor{comment}{    uint8\_t  colorspace; // 0 = sRGB with linear alpha, 1 = all channels linear}}
+\DoxyCodeLine{92 \textcolor{comment}{\};}}
+\DoxyCodeLine{93 \textcolor{comment}{}}
+\DoxyCodeLine{94 \textcolor{comment}{Images are encoded row by row, left to right, top to bottom. The decoder and}}
+\DoxyCodeLine{95 \textcolor{comment}{encoder start with \{r: 0, g: 0, b: 0, a: 255\} as the previous pixel value. An}}
+\DoxyCodeLine{96 \textcolor{comment}{image is complete when all pixels specified by width * height have been covered.}}
+\DoxyCodeLine{97 \textcolor{comment}{}}
+\DoxyCodeLine{98 \textcolor{comment}{Pixels are encoded as}}
+\DoxyCodeLine{99 \textcolor{comment}{ -\/ a run of the previous pixel}}
+\DoxyCodeLine{100 \textcolor{comment}{ -\/ an index into an array of previously seen pixels}}
+\DoxyCodeLine{101 \textcolor{comment}{ -\/ a difference to the previous pixel value in r,g,b}}
+\DoxyCodeLine{102 \textcolor{comment}{ -\/ full r,g,b or r,g,b,a values}}
+\DoxyCodeLine{103 \textcolor{comment}{}}
+\DoxyCodeLine{104 \textcolor{comment}{The color channels are assumed to not be premultiplied with the alpha channel}}
+\DoxyCodeLine{105 \textcolor{comment}{("{}un-\/premultiplied alpha"{}).}}
+\DoxyCodeLine{106 \textcolor{comment}{}}
+\DoxyCodeLine{107 \textcolor{comment}{A running array[64] (zero-\/initialized) of previously seen pixel values is}}
+\DoxyCodeLine{108 \textcolor{comment}{maintained by the encoder and decoder. Each pixel that is seen by the encoder}}
+\DoxyCodeLine{109 \textcolor{comment}{and decoder is put into this array at the position formed by a hash function of}}
+\DoxyCodeLine{110 \textcolor{comment}{the color value. In the encoder, if the pixel value at the index matches the}}
+\DoxyCodeLine{111 \textcolor{comment}{current pixel, this index position is written to the stream as QOI\_OP\_INDEX.}}
+\DoxyCodeLine{112 \textcolor{comment}{The hash function for the index is:}}
+\DoxyCodeLine{113 \textcolor{comment}{}}
+\DoxyCodeLine{114 \textcolor{comment}{    index\_position = (r * 3 + g * 5 + b * 7 + a * 11) \% 64}}
+\DoxyCodeLine{115 \textcolor{comment}{}}
+\DoxyCodeLine{116 \textcolor{comment}{Each chunk starts with a 2-\/ or 8-\/bit tag, followed by a number of data bits. The}}
+\DoxyCodeLine{117 \textcolor{comment}{bit length of chunks is divisible by 8 -\/ i.e. all chunks are byte aligned. All}}
+\DoxyCodeLine{118 \textcolor{comment}{values encoded in these data bits have the most significant bit on the left.}}
+\DoxyCodeLine{119 \textcolor{comment}{}}
+\DoxyCodeLine{120 \textcolor{comment}{The 8-\/bit tags have precedence over the 2-\/bit tags. A decoder must check for the}}
+\DoxyCodeLine{121 \textcolor{comment}{presence of an 8-\/bit tag first.}}
+\DoxyCodeLine{122 \textcolor{comment}{}}
+\DoxyCodeLine{123 \textcolor{comment}{The byte stream's end is marked with 7 0x00 bytes followed a single 0x01 byte.}}
+\DoxyCodeLine{124 \textcolor{comment}{}}
+\DoxyCodeLine{125 \textcolor{comment}{}}
+\DoxyCodeLine{126 \textcolor{comment}{The possible chunks are:}}
+\DoxyCodeLine{127 \textcolor{comment}{}}
+\DoxyCodeLine{128 \textcolor{comment}{}}
+\DoxyCodeLine{129 \textcolor{comment}{.-\/ QOI\_OP\_INDEX -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/.}}
+\DoxyCodeLine{130 \textcolor{comment}{|         Byte[0]         |}}
+\DoxyCodeLine{131 \textcolor{comment}{|  7  6  5  4  3  2  1  0 |}}
+\DoxyCodeLine{132 \textcolor{comment}{|-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/|}}
+\DoxyCodeLine{133 \textcolor{comment}{|  0  0 |     index       |}}
+\DoxyCodeLine{134 \textcolor{comment}{`-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/`}}
+\DoxyCodeLine{135 \textcolor{comment}{2-\/bit tag b00}}
+\DoxyCodeLine{136 \textcolor{comment}{6-\/bit index into the color index array: 0..63}}
+\DoxyCodeLine{137 \textcolor{comment}{}}
+\DoxyCodeLine{138 \textcolor{comment}{A valid encoder must not issue 2 or more consecutive QOI\_OP\_INDEX chunks to the}}
+\DoxyCodeLine{139 \textcolor{comment}{same index. QOI\_OP\_RUN should be used instead.}}
+\DoxyCodeLine{140 \textcolor{comment}{}}
+\DoxyCodeLine{141 \textcolor{comment}{}}
+\DoxyCodeLine{142 \textcolor{comment}{.-\/ QOI\_OP\_DIFF -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/.}}
+\DoxyCodeLine{143 \textcolor{comment}{|         Byte[0]         |}}
+\DoxyCodeLine{144 \textcolor{comment}{|  7  6  5  4  3  2  1  0 |}}
+\DoxyCodeLine{145 \textcolor{comment}{|-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/|}}
+\DoxyCodeLine{146 \textcolor{comment}{|  0  1 |  dr |  dg |  db |}}
+\DoxyCodeLine{147 \textcolor{comment}{`-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/`}}
+\DoxyCodeLine{148 \textcolor{comment}{2-\/bit tag b01}}
+\DoxyCodeLine{149 \textcolor{comment}{2-\/bit   red channel difference from the previous pixel between -\/2..1}}
+\DoxyCodeLine{150 \textcolor{comment}{2-\/bit green channel difference from the previous pixel between -\/2..1}}
+\DoxyCodeLine{151 \textcolor{comment}{2-\/bit  blue channel difference from the previous pixel between -\/2..1}}
+\DoxyCodeLine{152 \textcolor{comment}{}}
+\DoxyCodeLine{153 \textcolor{comment}{The difference to the current channel values are using a wraparound operation,}}
+\DoxyCodeLine{154 \textcolor{comment}{so "{}1 -\/ 2"{} will result in 255, while "{}255 + 1"{} will result in 0.}}
+\DoxyCodeLine{155 \textcolor{comment}{}}
+\DoxyCodeLine{156 \textcolor{comment}{Values are stored as unsigned integers with a bias of 2. E.g. -\/2 is stored as}}
+\DoxyCodeLine{157 \textcolor{comment}{0 (b00). 1 is stored as 3 (b11).}}
+\DoxyCodeLine{158 \textcolor{comment}{}}
+\DoxyCodeLine{159 \textcolor{comment}{The alpha value remains unchanged from the previous pixel.}}
+\DoxyCodeLine{160 \textcolor{comment}{}}
+\DoxyCodeLine{161 \textcolor{comment}{}}
+\DoxyCodeLine{162 \textcolor{comment}{.-\/ QOI\_OP\_LUMA -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/.}}
+\DoxyCodeLine{163 \textcolor{comment}{|         Byte[0]         |         Byte[1]         |}}
+\DoxyCodeLine{164 \textcolor{comment}{|  7  6  5  4  3  2  1  0 |  7  6  5  4  3  2  1  0 |}}
+\DoxyCodeLine{165 \textcolor{comment}{|-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/|}}
+\DoxyCodeLine{166 \textcolor{comment}{|  1  0 |  green diff     |   dr -\/ dg   |  db -\/ dg  |}}
+\DoxyCodeLine{167 \textcolor{comment}{`-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/`}}
+\DoxyCodeLine{168 \textcolor{comment}{2-\/bit tag b10}}
+\DoxyCodeLine{169 \textcolor{comment}{6-\/bit green channel difference from the previous pixel -\/32..31}}
+\DoxyCodeLine{170 \textcolor{comment}{4-\/bit   red channel difference minus green channel difference -\/8..7}}
+\DoxyCodeLine{171 \textcolor{comment}{4-\/bit  blue channel difference minus green channel difference -\/8..7}}
+\DoxyCodeLine{172 \textcolor{comment}{}}
+\DoxyCodeLine{173 \textcolor{comment}{The green channel is used to indicate the general direction of change and is}}
+\DoxyCodeLine{174 \textcolor{comment}{encoded in 6 bits. The red and blue channels (dr and db) base their diffs off}}
+\DoxyCodeLine{175 \textcolor{comment}{of the green channel difference and are encoded in 4 bits. I.e.:}}
+\DoxyCodeLine{176 \textcolor{comment}{    dr\_dg = (cur\_px.r -\/ prev\_px.r) -\/ (cur\_px.g -\/ prev\_px.g)}}
+\DoxyCodeLine{177 \textcolor{comment}{    db\_dg = (cur\_px.b -\/ prev\_px.b) -\/ (cur\_px.g -\/ prev\_px.g)}}
+\DoxyCodeLine{178 \textcolor{comment}{}}
+\DoxyCodeLine{179 \textcolor{comment}{The difference to the current channel values are using a wraparound operation,}}
+\DoxyCodeLine{180 \textcolor{comment}{so "{}10 -\/ 13"{} will result in 253, while "{}250 + 7"{} will result in 1.}}
+\DoxyCodeLine{181 \textcolor{comment}{}}
+\DoxyCodeLine{182 \textcolor{comment}{Values are stored as unsigned integers with a bias of 32 for the green channel}}
+\DoxyCodeLine{183 \textcolor{comment}{and a bias of 8 for the red and blue channel.}}
+\DoxyCodeLine{184 \textcolor{comment}{}}
+\DoxyCodeLine{185 \textcolor{comment}{The alpha value remains unchanged from the previous pixel.}}
+\DoxyCodeLine{186 \textcolor{comment}{}}
+\DoxyCodeLine{187 \textcolor{comment}{}}
+\DoxyCodeLine{188 \textcolor{comment}{.-\/ QOI\_OP\_RUN -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/.}}
+\DoxyCodeLine{189 \textcolor{comment}{|         Byte[0]         |}}
+\DoxyCodeLine{190 \textcolor{comment}{|  7  6  5  4  3  2  1  0 |}}
+\DoxyCodeLine{191 \textcolor{comment}{|-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/|}}
+\DoxyCodeLine{192 \textcolor{comment}{|  1  1 |       run       |}}
+\DoxyCodeLine{193 \textcolor{comment}{`-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/`}}
+\DoxyCodeLine{194 \textcolor{comment}{2-\/bit tag b11}}
+\DoxyCodeLine{195 \textcolor{comment}{6-\/bit run-\/length repeating the previous pixel: 1..62}}
+\DoxyCodeLine{196 \textcolor{comment}{}}
+\DoxyCodeLine{197 \textcolor{comment}{The run-\/length is stored with a bias of -\/1. Note that the run-\/lengths 63 and 64}}
+\DoxyCodeLine{198 \textcolor{comment}{(b111110 and b111111) are illegal as they are occupied by the QOI\_OP\_RGB and}}
+\DoxyCodeLine{199 \textcolor{comment}{QOI\_OP\_RGBA tags.}}
+\DoxyCodeLine{200 \textcolor{comment}{}}
+\DoxyCodeLine{201 \textcolor{comment}{}}
+\DoxyCodeLine{202 \textcolor{comment}{.-\/ QOI\_OP\_RGB -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/.}}
+\DoxyCodeLine{203 \textcolor{comment}{|         Byte[0]         | Byte[1] | Byte[2] | Byte[3] |}}
+\DoxyCodeLine{204 \textcolor{comment}{|  7  6  5  4  3  2  1  0 | 7 .. 0  | 7 .. 0  | 7 .. 0  |}}
+\DoxyCodeLine{205 \textcolor{comment}{|-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/|}}
+\DoxyCodeLine{206 \textcolor{comment}{|  1  1  1  1  1  1  1  0 |   red   |  green  |  blue   |}}
+\DoxyCodeLine{207 \textcolor{comment}{`-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/`}}
+\DoxyCodeLine{208 \textcolor{comment}{8-\/bit tag b11111110}}
+\DoxyCodeLine{209 \textcolor{comment}{8-\/bit   red channel value}}
+\DoxyCodeLine{210 \textcolor{comment}{8-\/bit green channel value}}
+\DoxyCodeLine{211 \textcolor{comment}{8-\/bit  blue channel value}}
+\DoxyCodeLine{212 \textcolor{comment}{}}
+\DoxyCodeLine{213 \textcolor{comment}{The alpha value remains unchanged from the previous pixel.}}
+\DoxyCodeLine{214 \textcolor{comment}{}}
+\DoxyCodeLine{215 \textcolor{comment}{}}
+\DoxyCodeLine{216 \textcolor{comment}{.-\/ QOI\_OP\_RGBA -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/.}}
+\DoxyCodeLine{217 \textcolor{comment}{|         Byte[0]         | Byte[1] | Byte[2] | Byte[3] | Byte[4] |}}
+\DoxyCodeLine{218 \textcolor{comment}{|  7  6  5  4  3  2  1  0 | 7 .. 0  | 7 .. 0  | 7 .. 0  | 7 .. 0  |}}
+\DoxyCodeLine{219 \textcolor{comment}{|-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/+-\/-\/-\/-\/-\/-\/-\/-\/-\/|}}
+\DoxyCodeLine{220 \textcolor{comment}{|  1  1  1  1  1  1  1  1 |   red   |  green  |  blue   |  alpha  |}}
+\DoxyCodeLine{221 \textcolor{comment}{`-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/`}}
+\DoxyCodeLine{222 \textcolor{comment}{8-\/bit tag b11111111}}
+\DoxyCodeLine{223 \textcolor{comment}{8-\/bit   red channel value}}
+\DoxyCodeLine{224 \textcolor{comment}{8-\/bit green channel value}}
+\DoxyCodeLine{225 \textcolor{comment}{8-\/bit  blue channel value}}
+\DoxyCodeLine{226 \textcolor{comment}{8-\/bit alpha channel value}}
+\DoxyCodeLine{227 \textcolor{comment}{}}
+\DoxyCodeLine{228 \textcolor{comment}{*/}}
+\DoxyCodeLine{229 }
+\DoxyCodeLine{230 }
+\DoxyCodeLine{231 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{232 \textcolor{comment}{Header -\/ Public functions */}}
+\DoxyCodeLine{233 }
+\DoxyCodeLine{234 \textcolor{preprocessor}{\#ifndef QOI\_H}}
+\DoxyCodeLine{235 \textcolor{preprocessor}{\#define QOI\_H}}
+\DoxyCodeLine{236 }
+\DoxyCodeLine{237 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{238 \textcolor{keyword}{extern} \textcolor{stringliteral}{"{}C"{}} \{}
+\DoxyCodeLine{239 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{240 }
+\DoxyCodeLine{241 \textcolor{comment}{/* A pointer to a qoi\_desc struct has to be supplied to all of qoi's functions.}}
+\DoxyCodeLine{242 \textcolor{comment}{It describes either the input format (for qoi\_write and qoi\_encode), or is}}
+\DoxyCodeLine{243 \textcolor{comment}{filled with the description read from the file header (for qoi\_read and}}
+\DoxyCodeLine{244 \textcolor{comment}{qoi\_decode).}}
+\DoxyCodeLine{245 \textcolor{comment}{}}
+\DoxyCodeLine{246 \textcolor{comment}{The colorspace in this qoi\_desc is an enum where}}
+\DoxyCodeLine{247 \textcolor{comment}{    0 = sRGB, i.e. gamma scaled RGB channels and a linear alpha channel}}
+\DoxyCodeLine{248 \textcolor{comment}{    1 = all channels are linear}}
+\DoxyCodeLine{249 \textcolor{comment}{You may use the constants QOI\_SRGB or QOI\_LINEAR. The colorspace is purely}}
+\DoxyCodeLine{250 \textcolor{comment}{informative. It will be saved to the file header, but does not affect}}
+\DoxyCodeLine{251 \textcolor{comment}{how chunks are en-\//decoded. */}}
+\DoxyCodeLine{252 }
+\DoxyCodeLine{253 \textcolor{preprocessor}{\#define QOI\_SRGB   0}}
+\DoxyCodeLine{254 \textcolor{preprocessor}{\#define QOI\_LINEAR 1}}
+\DoxyCodeLine{255 }
+\DoxyCodeLine{256 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{257     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} width;}
+\DoxyCodeLine{258     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} height;}
+\DoxyCodeLine{259     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} channels;}
+\DoxyCodeLine{260     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} colorspace;}
+\DoxyCodeLine{261 \} \mbox{\hyperlink{structqoi__desc}{qoi\_desc}};}
+\DoxyCodeLine{262 }
+\DoxyCodeLine{263 \textcolor{preprocessor}{\#ifndef QOI\_NO\_STDIO}}
+\DoxyCodeLine{264 }
+\DoxyCodeLine{265 \textcolor{comment}{/* Encode raw RGB or RGBA pixels into a QOI image and write it to the file}}
+\DoxyCodeLine{266 \textcolor{comment}{system. The qoi\_desc struct must be filled with the image width, height,}}
+\DoxyCodeLine{267 \textcolor{comment}{number of channels (3 = RGB, 4 = RGBA) and the colorspace.}}
+\DoxyCodeLine{268 \textcolor{comment}{}}
+\DoxyCodeLine{269 \textcolor{comment}{The function returns 0 on failure (invalid parameters, or fopen or malloc}}
+\DoxyCodeLine{270 \textcolor{comment}{failed) or the number of bytes written on success. */}}
+\DoxyCodeLine{271 }
+\DoxyCodeLine{272 \textcolor{keywordtype}{int} qoi\_write(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *filename, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *data, \textcolor{keyword}{const} \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc);}
+\DoxyCodeLine{273 }
+\DoxyCodeLine{274 }
+\DoxyCodeLine{275 \textcolor{comment}{/* Read and decode a QOI image from the file system. If channels is 0, the}}
+\DoxyCodeLine{276 \textcolor{comment}{number of channels from the file header is used. If channels is 3 or 4 the}}
+\DoxyCodeLine{277 \textcolor{comment}{output format will be forced into this number of channels.}}
+\DoxyCodeLine{278 \textcolor{comment}{}}
+\DoxyCodeLine{279 \textcolor{comment}{The function either returns NULL on failure (invalid data, or malloc or fopen}}
+\DoxyCodeLine{280 \textcolor{comment}{failed) or a pointer to the decoded pixels. On success, the qoi\_desc struct}}
+\DoxyCodeLine{281 \textcolor{comment}{will be filled with the description from the file header.}}
+\DoxyCodeLine{282 \textcolor{comment}{}}
+\DoxyCodeLine{283 \textcolor{comment}{The returned pixel data should be free()d after use. */}}
+\DoxyCodeLine{284 }
+\DoxyCodeLine{285 \textcolor{keywordtype}{void} *qoi\_read(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *filename, \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc, \textcolor{keywordtype}{int} channels);}
+\DoxyCodeLine{286 }
+\DoxyCodeLine{287 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* QOI\_NO\_STDIO */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{288 }
+\DoxyCodeLine{289 }
+\DoxyCodeLine{290 \textcolor{comment}{/* Encode raw RGB or RGBA pixels into a QOI image in memory.}}
+\DoxyCodeLine{291 \textcolor{comment}{}}
+\DoxyCodeLine{292 \textcolor{comment}{The function either returns NULL on failure (invalid parameters or malloc}}
+\DoxyCodeLine{293 \textcolor{comment}{failed) or a pointer to the encoded data on success. On success the out\_len}}
+\DoxyCodeLine{294 \textcolor{comment}{is set to the size in bytes of the encoded data.}}
+\DoxyCodeLine{295 \textcolor{comment}{}}
+\DoxyCodeLine{296 \textcolor{comment}{The returned qoi data should be free()d after use. */}}
+\DoxyCodeLine{297 }
+\DoxyCodeLine{298 \textcolor{keywordtype}{void} *qoi\_encode(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *data, \textcolor{keyword}{const} \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc, \textcolor{keywordtype}{int} *out\_len);}
+\DoxyCodeLine{299 }
+\DoxyCodeLine{300 }
+\DoxyCodeLine{301 \textcolor{comment}{/* Decode a QOI image from memory.}}
+\DoxyCodeLine{302 \textcolor{comment}{}}
+\DoxyCodeLine{303 \textcolor{comment}{The function either returns NULL on failure (invalid parameters or malloc}}
+\DoxyCodeLine{304 \textcolor{comment}{failed) or a pointer to the decoded pixels. On success, the qoi\_desc struct}}
+\DoxyCodeLine{305 \textcolor{comment}{is filled with the description from the file header.}}
+\DoxyCodeLine{306 \textcolor{comment}{}}
+\DoxyCodeLine{307 \textcolor{comment}{The returned pixel data should be free()d after use. */}}
+\DoxyCodeLine{308 }
+\DoxyCodeLine{309 \textcolor{keywordtype}{void} *qoi\_decode(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *data, \textcolor{keywordtype}{int} size, \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc, \textcolor{keywordtype}{int} channels);}
+\DoxyCodeLine{310 }
+\DoxyCodeLine{311 }
+\DoxyCodeLine{312 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{313 \}}
+\DoxyCodeLine{314 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{315 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* QOI\_H */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{316 }
+\DoxyCodeLine{317 }
+\DoxyCodeLine{318 \textcolor{comment}{/* -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{319 \textcolor{comment}{Implementation */}}
+\DoxyCodeLine{320 }
+\DoxyCodeLine{321 \textcolor{preprocessor}{\#ifdef QOI\_IMPLEMENTATION}}
+\DoxyCodeLine{322 \textcolor{preprocessor}{\#include <stdlib.h>}}
+\DoxyCodeLine{323 \textcolor{preprocessor}{\#include <string.h>}}
+\DoxyCodeLine{324 }
+\DoxyCodeLine{325 \textcolor{preprocessor}{\#ifndef QOI\_MALLOC}}
+\DoxyCodeLine{326 \textcolor{preprocessor}{    \#define QOI\_MALLOC(sz) malloc(sz)}}
+\DoxyCodeLine{327 \textcolor{preprocessor}{    \#define QOI\_FREE(p)    free(p)}}
+\DoxyCodeLine{328 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{329 \textcolor{preprocessor}{\#ifndef QOI\_ZEROARR}}
+\DoxyCodeLine{330 \textcolor{preprocessor}{    \#define QOI\_ZEROARR(a) memset((a),0,sizeof(a))}}
+\DoxyCodeLine{331 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{332 }
+\DoxyCodeLine{333 \textcolor{preprocessor}{\#define QOI\_OP\_INDEX  0x00 }\textcolor{comment}{/* 00xxxxxx */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{334 \textcolor{preprocessor}{\#define QOI\_OP\_DIFF   0x40 }\textcolor{comment}{/* 01xxxxxx */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{335 \textcolor{preprocessor}{\#define QOI\_OP\_LUMA   0x80 }\textcolor{comment}{/* 10xxxxxx */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{336 \textcolor{preprocessor}{\#define QOI\_OP\_RUN    0xc0 }\textcolor{comment}{/* 11xxxxxx */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{337 \textcolor{preprocessor}{\#define QOI\_OP\_RGB    0xfe }\textcolor{comment}{/* 11111110 */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{338 \textcolor{preprocessor}{\#define QOI\_OP\_RGBA   0xff }\textcolor{comment}{/* 11111111 */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{339 }
+\DoxyCodeLine{340 \textcolor{preprocessor}{\#define QOI\_MASK\_2    0xc0 }\textcolor{comment}{/* 11000000 */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{341 }
+\DoxyCodeLine{342 \textcolor{preprocessor}{\#define QOI\_COLOR\_HASH(C) (C.rgba.r*3 + C.rgba.g*5 + C.rgba.b*7 + C.rgba.a*11)}}
+\DoxyCodeLine{343 \textcolor{preprocessor}{\#define QOI\_MAGIC \(\backslash\)}}
+\DoxyCodeLine{344 \textcolor{preprocessor}{    (((unsigned int)'q') << 24 | ((unsigned int)'o') << 16 | \(\backslash\)}}
+\DoxyCodeLine{345 \textcolor{preprocessor}{     ((unsigned int)'i') <<  8 | ((unsigned int)'f'))}}
+\DoxyCodeLine{346 \textcolor{preprocessor}{\#define QOI\_HEADER\_SIZE 14}}
+\DoxyCodeLine{347 }
+\DoxyCodeLine{348 \textcolor{comment}{/* 2GB is the max file size that this implementation can safely handle. We guard}}
+\DoxyCodeLine{349 \textcolor{comment}{against anything larger than that, assuming the worst case with 5 bytes per}}
+\DoxyCodeLine{350 \textcolor{comment}{pixel, rounded down to a nice clean value. 400 million pixels ought to be}}
+\DoxyCodeLine{351 \textcolor{comment}{enough for anybody. */}}
+\DoxyCodeLine{352 \textcolor{preprocessor}{\#define QOI\_PIXELS\_MAX ((unsigned int)400000000)}}
+\DoxyCodeLine{353 }
+\DoxyCodeLine{354 \textcolor{keyword}{typedef} \textcolor{keyword}{union }\{}
+\DoxyCodeLine{355     \textcolor{keyword}{struct }\{ \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} r, g, b, a; \} rgba;}
+\DoxyCodeLine{356     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} v;}
+\DoxyCodeLine{357 \} qoi\_rgba\_t;}
+\DoxyCodeLine{358 }
+\DoxyCodeLine{359 \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} qoi\_padding[8] = \{0,0,0,0,0,0,0,1\};}
+\DoxyCodeLine{360 }
+\DoxyCodeLine{361 \textcolor{keyword}{static} \textcolor{keywordtype}{void} qoi\_write\_32(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *bytes, \textcolor{keywordtype}{int} *p, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} v) \{}
+\DoxyCodeLine{362     bytes[(*p)++] = (0xff000000 \& v) >> 24;}
+\DoxyCodeLine{363     bytes[(*p)++] = (0x00ff0000 \& v) >> 16;}
+\DoxyCodeLine{364     bytes[(*p)++] = (0x0000ff00 \& v) >> 8;}
+\DoxyCodeLine{365     bytes[(*p)++] = (0x000000ff \& v);}
+\DoxyCodeLine{366 \}}
+\DoxyCodeLine{367 }
+\DoxyCodeLine{368 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} qoi\_read\_32(\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *bytes, \textcolor{keywordtype}{int} *p) \{}
+\DoxyCodeLine{369     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} a = bytes[(*p)++];}
+\DoxyCodeLine{370     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} b = bytes[(*p)++];}
+\DoxyCodeLine{371     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} c = bytes[(*p)++];}
+\DoxyCodeLine{372     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} d = bytes[(*p)++];}
+\DoxyCodeLine{373     \textcolor{keywordflow}{return} a << 24 | b << 16 | c << 8 | d;}
+\DoxyCodeLine{374 \}}
+\DoxyCodeLine{375 }
+\DoxyCodeLine{376 \textcolor{keywordtype}{void} *qoi\_encode(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *data, \textcolor{keyword}{const} \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc, \textcolor{keywordtype}{int} *out\_len) \{}
+\DoxyCodeLine{377     \textcolor{keywordtype}{int} i, max\_size, p, run;}
+\DoxyCodeLine{378     \textcolor{keywordtype}{int} px\_len, px\_end, px\_pos, channels;}
+\DoxyCodeLine{379     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *bytes;}
+\DoxyCodeLine{380     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *pixels;}
+\DoxyCodeLine{381     qoi\_rgba\_t index[64];}
+\DoxyCodeLine{382     qoi\_rgba\_t px, px\_prev;}
+\DoxyCodeLine{383 }
+\DoxyCodeLine{384     \textcolor{keywordflow}{if} (}
+\DoxyCodeLine{385         data == NULL || out\_len == NULL || desc == NULL ||}
+\DoxyCodeLine{386         desc-\/>width == 0 || desc-\/>height == 0 ||}
+\DoxyCodeLine{387         desc-\/>channels < 3 || desc-\/>channels > 4 ||}
+\DoxyCodeLine{388         desc-\/>colorspace > 1 ||}
+\DoxyCodeLine{389         desc-\/>height >= QOI\_PIXELS\_MAX / desc-\/>width}
+\DoxyCodeLine{390     ) \{}
+\DoxyCodeLine{391         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{392     \}}
+\DoxyCodeLine{393 }
+\DoxyCodeLine{394     max\_size =}
+\DoxyCodeLine{395         desc-\/>width * desc-\/>height * (desc-\/>channels + 1) +}
+\DoxyCodeLine{396         QOI\_HEADER\_SIZE + \textcolor{keyword}{sizeof}(qoi\_padding);}
+\DoxyCodeLine{397 }
+\DoxyCodeLine{398     p = 0;}
+\DoxyCodeLine{399     bytes = (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *) QOI\_MALLOC(max\_size);}
+\DoxyCodeLine{400     \textcolor{keywordflow}{if} (!bytes) \{}
+\DoxyCodeLine{401         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{402     \}}
+\DoxyCodeLine{403 }
+\DoxyCodeLine{404     qoi\_write\_32(bytes, \&p, QOI\_MAGIC);}
+\DoxyCodeLine{405     qoi\_write\_32(bytes, \&p, desc-\/>width);}
+\DoxyCodeLine{406     qoi\_write\_32(bytes, \&p, desc-\/>height);}
+\DoxyCodeLine{407     bytes[p++] = desc-\/>channels;}
+\DoxyCodeLine{408     bytes[p++] = desc-\/>colorspace;}
+\DoxyCodeLine{409 }
+\DoxyCodeLine{410 }
+\DoxyCodeLine{411     pixels = (\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *)data;}
+\DoxyCodeLine{412 }
+\DoxyCodeLine{413     QOI\_ZEROARR(index);}
+\DoxyCodeLine{414 }
+\DoxyCodeLine{415     run = 0;}
+\DoxyCodeLine{416     px\_prev.rgba.r = 0;}
+\DoxyCodeLine{417     px\_prev.rgba.g = 0;}
+\DoxyCodeLine{418     px\_prev.rgba.b = 0;}
+\DoxyCodeLine{419     px\_prev.rgba.a = 255;}
+\DoxyCodeLine{420     px = px\_prev;}
+\DoxyCodeLine{421 }
+\DoxyCodeLine{422     px\_len = desc-\/>width * desc-\/>height * desc-\/>channels;}
+\DoxyCodeLine{423     px\_end = px\_len -\/ desc-\/>channels;}
+\DoxyCodeLine{424     channels = desc-\/>channels;}
+\DoxyCodeLine{425 }
+\DoxyCodeLine{426     \textcolor{keywordflow}{for} (px\_pos = 0; px\_pos < px\_len; px\_pos += channels) \{}
+\DoxyCodeLine{427         \textcolor{keywordflow}{if} (channels == 4) \{}
+\DoxyCodeLine{428             px = *(qoi\_rgba\_t *)(pixels + px\_pos);}
+\DoxyCodeLine{429         \}}
+\DoxyCodeLine{430         \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{431             px.rgba.r = pixels[px\_pos + 0];}
+\DoxyCodeLine{432             px.rgba.g = pixels[px\_pos + 1];}
+\DoxyCodeLine{433             px.rgba.b = pixels[px\_pos + 2];}
+\DoxyCodeLine{434         \}}
+\DoxyCodeLine{435 }
+\DoxyCodeLine{436         \textcolor{keywordflow}{if} (px.v == px\_prev.v) \{}
+\DoxyCodeLine{437             run++;}
+\DoxyCodeLine{438             \textcolor{keywordflow}{if} (run == 62 || px\_pos == px\_end) \{}
+\DoxyCodeLine{439                 bytes[p++] = QOI\_OP\_RUN | (run -\/ 1);}
+\DoxyCodeLine{440                 run = 0;}
+\DoxyCodeLine{441             \}}
+\DoxyCodeLine{442         \}}
+\DoxyCodeLine{443         \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{444             \textcolor{keywordtype}{int} index\_pos;}
+\DoxyCodeLine{445 }
+\DoxyCodeLine{446             \textcolor{keywordflow}{if} (run > 0) \{}
+\DoxyCodeLine{447                 bytes[p++] = QOI\_OP\_RUN | (run -\/ 1);}
+\DoxyCodeLine{448                 run = 0;}
+\DoxyCodeLine{449             \}}
+\DoxyCodeLine{450 }
+\DoxyCodeLine{451             index\_pos = QOI\_COLOR\_HASH(px) \% 64;}
+\DoxyCodeLine{452 }
+\DoxyCodeLine{453             \textcolor{keywordflow}{if} (index[index\_pos].v == px.v) \{}
+\DoxyCodeLine{454                 bytes[p++] = QOI\_OP\_INDEX | index\_pos;}
+\DoxyCodeLine{455             \}}
+\DoxyCodeLine{456             \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{457                 index[index\_pos] = px;}
+\DoxyCodeLine{458 }
+\DoxyCodeLine{459                 \textcolor{keywordflow}{if} (px.rgba.a == px\_prev.rgba.a) \{}
+\DoxyCodeLine{460                     \textcolor{keywordtype}{signed} \textcolor{keywordtype}{char} vr = px.rgba.r -\/ px\_prev.rgba.r;}
+\DoxyCodeLine{461                     \textcolor{keywordtype}{signed} \textcolor{keywordtype}{char} vg = px.rgba.g -\/ px\_prev.rgba.g;}
+\DoxyCodeLine{462                     \textcolor{keywordtype}{signed} \textcolor{keywordtype}{char} vb = px.rgba.b -\/ px\_prev.rgba.b;}
+\DoxyCodeLine{463 }
+\DoxyCodeLine{464                     \textcolor{keywordtype}{signed} \textcolor{keywordtype}{char} vg\_r = vr -\/ vg;}
+\DoxyCodeLine{465                     \textcolor{keywordtype}{signed} \textcolor{keywordtype}{char} vg\_b = vb -\/ vg;}
+\DoxyCodeLine{466 }
+\DoxyCodeLine{467                     \textcolor{keywordflow}{if} (}
+\DoxyCodeLine{468                         vr > -\/3 \&\& vr < 2 \&\&}
+\DoxyCodeLine{469                         vg > -\/3 \&\& vg < 2 \&\&}
+\DoxyCodeLine{470                         vb > -\/3 \&\& vb < 2}
+\DoxyCodeLine{471                     ) \{}
+\DoxyCodeLine{472                         bytes[p++] = QOI\_OP\_DIFF | (vr + 2) << 4 | (vg + 2) << 2 | (vb + 2);}
+\DoxyCodeLine{473                     \}}
+\DoxyCodeLine{474                     \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (}
+\DoxyCodeLine{475                         vg\_r >  -\/9 \&\& vg\_r <  8 \&\&}
+\DoxyCodeLine{476                         vg   > -\/33 \&\& vg   < 32 \&\&}
+\DoxyCodeLine{477                         vg\_b >  -\/9 \&\& vg\_b <  8}
+\DoxyCodeLine{478                     ) \{}
+\DoxyCodeLine{479                         bytes[p++] = QOI\_OP\_LUMA     | (vg   + 32);}
+\DoxyCodeLine{480                         bytes[p++] = (vg\_r + 8) << 4 | (vg\_b +  8);}
+\DoxyCodeLine{481                     \}}
+\DoxyCodeLine{482                     \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{483                         bytes[p++] = QOI\_OP\_RGB;}
+\DoxyCodeLine{484                         bytes[p++] = px.rgba.r;}
+\DoxyCodeLine{485                         bytes[p++] = px.rgba.g;}
+\DoxyCodeLine{486                         bytes[p++] = px.rgba.b;}
+\DoxyCodeLine{487                     \}}
+\DoxyCodeLine{488                 \}}
+\DoxyCodeLine{489                 \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{490                     bytes[p++] = QOI\_OP\_RGBA;}
+\DoxyCodeLine{491                     bytes[p++] = px.rgba.r;}
+\DoxyCodeLine{492                     bytes[p++] = px.rgba.g;}
+\DoxyCodeLine{493                     bytes[p++] = px.rgba.b;}
+\DoxyCodeLine{494                     bytes[p++] = px.rgba.a;}
+\DoxyCodeLine{495                 \}}
+\DoxyCodeLine{496             \}}
+\DoxyCodeLine{497         \}}
+\DoxyCodeLine{498         px\_prev = px;}
+\DoxyCodeLine{499     \}}
+\DoxyCodeLine{500 }
+\DoxyCodeLine{501     \textcolor{keywordflow}{for} (i = 0; i < (int)\textcolor{keyword}{sizeof}(qoi\_padding); i++) \{}
+\DoxyCodeLine{502         bytes[p++] = qoi\_padding[i];}
+\DoxyCodeLine{503     \}}
+\DoxyCodeLine{504 }
+\DoxyCodeLine{505     *out\_len = p;}
+\DoxyCodeLine{506     \textcolor{keywordflow}{return} bytes;}
+\DoxyCodeLine{507 \}}
+\DoxyCodeLine{508 }
+\DoxyCodeLine{509 \textcolor{keywordtype}{void} *qoi\_decode(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *data, \textcolor{keywordtype}{int} size, \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc, \textcolor{keywordtype}{int} channels) \{}
+\DoxyCodeLine{510     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *bytes;}
+\DoxyCodeLine{511     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} header\_magic;}
+\DoxyCodeLine{512     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *pixels;}
+\DoxyCodeLine{513     qoi\_rgba\_t index[64];}
+\DoxyCodeLine{514     qoi\_rgba\_t px;}
+\DoxyCodeLine{515     \textcolor{keywordtype}{int} px\_len, chunks\_len, px\_pos;}
+\DoxyCodeLine{516     \textcolor{keywordtype}{int} p = 0, run = 0;}
+\DoxyCodeLine{517 }
+\DoxyCodeLine{518     \textcolor{keywordflow}{if} (}
+\DoxyCodeLine{519         data == NULL || desc == NULL ||}
+\DoxyCodeLine{520         (channels != 0 \&\& channels != 3 \&\& channels != 4) ||}
+\DoxyCodeLine{521         size < QOI\_HEADER\_SIZE + (\textcolor{keywordtype}{int})\textcolor{keyword}{sizeof}(qoi\_padding)}
+\DoxyCodeLine{522     ) \{}
+\DoxyCodeLine{523         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{524     \}}
+\DoxyCodeLine{525 }
+\DoxyCodeLine{526     bytes = (\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *)data;}
+\DoxyCodeLine{527 }
+\DoxyCodeLine{528     header\_magic = qoi\_read\_32(bytes, \&p);}
+\DoxyCodeLine{529     desc-\/>width = qoi\_read\_32(bytes, \&p);}
+\DoxyCodeLine{530     desc-\/>height = qoi\_read\_32(bytes, \&p);}
+\DoxyCodeLine{531     desc-\/>channels = bytes[p++];}
+\DoxyCodeLine{532     desc-\/>colorspace = bytes[p++];}
+\DoxyCodeLine{533 }
+\DoxyCodeLine{534     \textcolor{keywordflow}{if} (}
+\DoxyCodeLine{535         desc-\/>width == 0 || desc-\/>height == 0 ||}
+\DoxyCodeLine{536         desc-\/>channels < 3 || desc-\/>channels > 4 ||}
+\DoxyCodeLine{537         desc-\/>colorspace > 1 ||}
+\DoxyCodeLine{538         header\_magic != QOI\_MAGIC ||}
+\DoxyCodeLine{539         desc-\/>height >= QOI\_PIXELS\_MAX / desc-\/>width}
+\DoxyCodeLine{540     ) \{}
+\DoxyCodeLine{541         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{542     \}}
+\DoxyCodeLine{543 }
+\DoxyCodeLine{544     \textcolor{keywordflow}{if} (channels == 0) \{}
+\DoxyCodeLine{545         channels = desc-\/>channels;}
+\DoxyCodeLine{546     \}}
+\DoxyCodeLine{547 }
+\DoxyCodeLine{548     px\_len = desc-\/>width * desc-\/>height * channels;}
+\DoxyCodeLine{549     pixels = (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *) QOI\_MALLOC(px\_len);}
+\DoxyCodeLine{550     \textcolor{keywordflow}{if} (!pixels) \{}
+\DoxyCodeLine{551         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{552     \}}
+\DoxyCodeLine{553 }
+\DoxyCodeLine{554     QOI\_ZEROARR(index);}
+\DoxyCodeLine{555     px.rgba.r = 0;}
+\DoxyCodeLine{556     px.rgba.g = 0;}
+\DoxyCodeLine{557     px.rgba.b = 0;}
+\DoxyCodeLine{558     px.rgba.a = 255;}
+\DoxyCodeLine{559 }
+\DoxyCodeLine{560     chunks\_len = size -\/ (int)\textcolor{keyword}{sizeof}(qoi\_padding);}
+\DoxyCodeLine{561     \textcolor{keywordflow}{for} (px\_pos = 0; px\_pos < px\_len; px\_pos += channels) \{}
+\DoxyCodeLine{562         \textcolor{keywordflow}{if} (run > 0) \{}
+\DoxyCodeLine{563             run-\/-\/;}
+\DoxyCodeLine{564         \}}
+\DoxyCodeLine{565         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (p < chunks\_len) \{}
+\DoxyCodeLine{566             \textcolor{keywordtype}{int} b1 = bytes[p++];}
+\DoxyCodeLine{567 }
+\DoxyCodeLine{568             \textcolor{keywordflow}{if} (b1 == QOI\_OP\_RGB) \{}
+\DoxyCodeLine{569                 px.rgba.r = bytes[p++];}
+\DoxyCodeLine{570                 px.rgba.g = bytes[p++];}
+\DoxyCodeLine{571                 px.rgba.b = bytes[p++];}
+\DoxyCodeLine{572             \}}
+\DoxyCodeLine{573             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (b1 == QOI\_OP\_RGBA) \{}
+\DoxyCodeLine{574                 px.rgba.r = bytes[p++];}
+\DoxyCodeLine{575                 px.rgba.g = bytes[p++];}
+\DoxyCodeLine{576                 px.rgba.b = bytes[p++];}
+\DoxyCodeLine{577                 px.rgba.a = bytes[p++];}
+\DoxyCodeLine{578             \}}
+\DoxyCodeLine{579             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((b1 \& QOI\_MASK\_2) == QOI\_OP\_INDEX) \{}
+\DoxyCodeLine{580                 px = index[b1];}
+\DoxyCodeLine{581             \}}
+\DoxyCodeLine{582             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((b1 \& QOI\_MASK\_2) == QOI\_OP\_DIFF) \{}
+\DoxyCodeLine{583                 px.rgba.r += ((b1 >> 4) \& 0x03) -\/ 2;}
+\DoxyCodeLine{584                 px.rgba.g += ((b1 >> 2) \& 0x03) -\/ 2;}
+\DoxyCodeLine{585                 px.rgba.b += ( b1       \& 0x03) -\/ 2;}
+\DoxyCodeLine{586             \}}
+\DoxyCodeLine{587             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((b1 \& QOI\_MASK\_2) == QOI\_OP\_LUMA) \{}
+\DoxyCodeLine{588                 \textcolor{keywordtype}{int} b2 = bytes[p++];}
+\DoxyCodeLine{589                 \textcolor{keywordtype}{int} vg = (b1 \& 0x3f) -\/ 32;}
+\DoxyCodeLine{590                 px.rgba.r += vg -\/ 8 + ((b2 >> 4) \& 0x0f);}
+\DoxyCodeLine{591                 px.rgba.g += vg;}
+\DoxyCodeLine{592                 px.rgba.b += vg -\/ 8 +  (b2       \& 0x0f);}
+\DoxyCodeLine{593             \}}
+\DoxyCodeLine{594             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((b1 \& QOI\_MASK\_2) == QOI\_OP\_RUN) \{}
+\DoxyCodeLine{595                 run = (b1 \& 0x3f);}
+\DoxyCodeLine{596             \}}
+\DoxyCodeLine{597 }
+\DoxyCodeLine{598             index[QOI\_COLOR\_HASH(px) \% 64] = px;}
+\DoxyCodeLine{599         \}}
+\DoxyCodeLine{600 }
+\DoxyCodeLine{601         \textcolor{keywordflow}{if} (channels == 4) \{}
+\DoxyCodeLine{602             *(qoi\_rgba\_t*)(pixels + px\_pos) = px;}
+\DoxyCodeLine{603         \}}
+\DoxyCodeLine{604         \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{605             pixels[px\_pos + 0] = px.rgba.r;}
+\DoxyCodeLine{606             pixels[px\_pos + 1] = px.rgba.g;}
+\DoxyCodeLine{607             pixels[px\_pos + 2] = px.rgba.b;}
+\DoxyCodeLine{608         \}}
+\DoxyCodeLine{609     \}}
+\DoxyCodeLine{610 }
+\DoxyCodeLine{611     \textcolor{keywordflow}{return} pixels;}
+\DoxyCodeLine{612 \}}
+\DoxyCodeLine{613 }
+\DoxyCodeLine{614 \textcolor{preprocessor}{\#ifndef QOI\_NO\_STDIO}}
+\DoxyCodeLine{615 \textcolor{preprocessor}{\#include <stdio.h>}}
+\DoxyCodeLine{616 }
+\DoxyCodeLine{617 \textcolor{keywordtype}{int} qoi\_write(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *filename, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *data, \textcolor{keyword}{const} \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc) \{}
+\DoxyCodeLine{618     FILE *f = fopen(filename, \textcolor{stringliteral}{"{}wb"{}});}
+\DoxyCodeLine{619     \textcolor{keywordtype}{int} size;}
+\DoxyCodeLine{620     \textcolor{keywordtype}{void} *encoded;}
+\DoxyCodeLine{621 }
+\DoxyCodeLine{622     \textcolor{keywordflow}{if} (!f) \{}
+\DoxyCodeLine{623         \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{624     \}}
+\DoxyCodeLine{625 }
+\DoxyCodeLine{626     encoded = qoi\_encode(data, desc, \&size);}
+\DoxyCodeLine{627     \textcolor{keywordflow}{if} (!encoded) \{}
+\DoxyCodeLine{628         fclose(f);}
+\DoxyCodeLine{629         \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{630     \}}
+\DoxyCodeLine{631 }
+\DoxyCodeLine{632     fwrite(encoded, 1, size, f);}
+\DoxyCodeLine{633     fclose(f);}
+\DoxyCodeLine{634 }
+\DoxyCodeLine{635     QOI\_FREE(encoded);}
+\DoxyCodeLine{636     \textcolor{keywordflow}{return} size;}
+\DoxyCodeLine{637 \}}
+\DoxyCodeLine{638 }
+\DoxyCodeLine{639 \textcolor{keywordtype}{void} *qoi\_read(\textcolor{keyword}{const} \textcolor{keywordtype}{char} *filename, \mbox{\hyperlink{structqoi__desc}{qoi\_desc}} *desc, \textcolor{keywordtype}{int} channels) \{}
+\DoxyCodeLine{640     FILE *f = fopen(filename, \textcolor{stringliteral}{"{}rb"{}});}
+\DoxyCodeLine{641     \textcolor{keywordtype}{int} size, bytes\_read;}
+\DoxyCodeLine{642     \textcolor{keywordtype}{void} *pixels, *data;}
+\DoxyCodeLine{643 }
+\DoxyCodeLine{644     \textcolor{keywordflow}{if} (!f) \{}
+\DoxyCodeLine{645         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{646     \}}
+\DoxyCodeLine{647 }
+\DoxyCodeLine{648     fseek(f, 0, SEEK\_END);}
+\DoxyCodeLine{649     size = ftell(f);}
+\DoxyCodeLine{650     \textcolor{keywordflow}{if} (size <= 0) \{}
+\DoxyCodeLine{651         fclose(f);}
+\DoxyCodeLine{652         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{653     \}}
+\DoxyCodeLine{654     fseek(f, 0, SEEK\_SET);}
+\DoxyCodeLine{655 }
+\DoxyCodeLine{656     data = QOI\_MALLOC(size);}
+\DoxyCodeLine{657     \textcolor{keywordflow}{if} (!data) \{}
+\DoxyCodeLine{658         fclose(f);}
+\DoxyCodeLine{659         \textcolor{keywordflow}{return} NULL;}
+\DoxyCodeLine{660     \}}
+\DoxyCodeLine{661 }
+\DoxyCodeLine{662     bytes\_read = fread(data, 1, size, f);}
+\DoxyCodeLine{663     fclose(f);}
+\DoxyCodeLine{664 }
+\DoxyCodeLine{665     pixels = qoi\_decode(data, bytes\_read, desc, channels);}
+\DoxyCodeLine{666     QOI\_FREE(data);}
+\DoxyCodeLine{667     \textcolor{keywordflow}{return} pixels;}
+\DoxyCodeLine{668 \}}
+\DoxyCodeLine{669 }
+\DoxyCodeLine{670 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* QOI\_NO\_STDIO */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{671 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* QOI\_IMPLEMENTATION */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

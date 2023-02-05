@@ -1,0 +1,79 @@
+\hypertarget{light_8hpp_source}{}\doxysection{light.\+hpp}
+\label{light_8hpp_source}\index{client/includes/light.hpp@{client/includes/light.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{** EPITECH PROJECT, 2023}}
+\DoxyCodeLine{3 \textcolor{comment}{** rtype}}
+\DoxyCodeLine{4 \textcolor{comment}{** File description:}}
+\DoxyCodeLine{5 \textcolor{comment}{** light.hpp by thibb1}}
+\DoxyCodeLine{6 \textcolor{comment}{*/}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef RTYPE\_LIGHT\_HPP}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define RTYPE\_LIGHT\_HPP}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include "{}deps.hpp"{}}}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{keyword}{enum} LightType \{ LIGHT\_DIRECTIONAL, LIGHT\_POINT \};}
+\DoxyCodeLine{14 \textcolor{keyword}{class }\mbox{\hyperlink{classLight}{Light}} \{}
+\DoxyCodeLine{15   \textcolor{keyword}{private}:}
+\DoxyCodeLine{16     \textcolor{keywordtype}{int} \_index;}
+\DoxyCodeLine{17     \textcolor{keywordtype}{int} \_type;}
+\DoxyCodeLine{18     Vector3 \_position;}
+\DoxyCodeLine{19     Vector3 \_target;}
+\DoxyCodeLine{20     Color \_color;}
+\DoxyCodeLine{21     \textcolor{keywordtype}{float} \_intensity;}
+\DoxyCodeLine{22     \textcolor{keywordtype}{int} \_enabled;}
+\DoxyCodeLine{23     \textcolor{keywordtype}{int} \_enabledLoc;}
+\DoxyCodeLine{24     \textcolor{keywordtype}{int} \_typeLoc;}
+\DoxyCodeLine{25     \textcolor{keywordtype}{int} \_posLoc;}
+\DoxyCodeLine{26     \textcolor{keywordtype}{int} \_targetLoc;}
+\DoxyCodeLine{27     \textcolor{keywordtype}{int} \_colorLoc;}
+\DoxyCodeLine{28     \textcolor{keywordtype}{int} \_intensityLoc;}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30   \textcolor{keyword}{public}:}
+\DoxyCodeLine{31     \textcolor{comment}{// Constructor}}
+\DoxyCodeLine{32     \mbox{\hyperlink{classLight}{Light}}(\textcolor{keywordtype}{int} index, LightType type, Vector3 position, Vector3 target, Color color, Shader shader, \textcolor{keywordtype}{float} intensity)}
+\DoxyCodeLine{33         : \_index(index), \_type(type), \_position(position), \_target(target), \_color(color), \_intensity(intensity), \_enabled(\textcolor{keyword}{true}) \{}
+\DoxyCodeLine{34         \_enabledLoc = GetShaderLocation(shader, TextFormat(\textcolor{stringliteral}{"{}lights[\%i].enabled"{}}, \_index));}
+\DoxyCodeLine{35         \_typeLoc = GetShaderLocation(shader, TextFormat(\textcolor{stringliteral}{"{}lights[\%i].type"{}}, \_index));}
+\DoxyCodeLine{36         \_posLoc = GetShaderLocation(shader, TextFormat(\textcolor{stringliteral}{"{}lights[\%i].position"{}}, \_index));}
+\DoxyCodeLine{37         \_targetLoc = GetShaderLocation(shader, TextFormat(\textcolor{stringliteral}{"{}lights[\%i].target"{}}, \_index));}
+\DoxyCodeLine{38         \_colorLoc = GetShaderLocation(shader, TextFormat(\textcolor{stringliteral}{"{}lights[\%i].color"{}}, \_index));}
+\DoxyCodeLine{39         \_intensityLoc = GetShaderLocation(shader, TextFormat(\textcolor{stringliteral}{"{}lights[\%i].intensity"{}}, \_index));}
+\DoxyCodeLine{40         UpdateLightValues(shader);}
+\DoxyCodeLine{41     \}}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43     \textcolor{comment}{// Destructor}}
+\DoxyCodeLine{44     \mbox{\hyperlink{classLight}{\string~Light}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46     \textcolor{comment}{// Getters}}
+\DoxyCodeLine{47     [[nodiscard]] Color getColor()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} \_color; \}}
+\DoxyCodeLine{48     [[nodiscard]] Vector3 getPosition()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} \_position; \}}
+\DoxyCodeLine{49     [[nodiscard]] \textcolor{keywordtype}{bool} isEnabled()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} \_enabled; \}}
+\DoxyCodeLine{50     [[nodiscard]] \textcolor{keywordtype}{float} getIntensity()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} \_intensity; \}}
+\DoxyCodeLine{51     [[nodiscard]] \textcolor{keywordtype}{int} getIndex()\textcolor{keyword}{ const }\{ \textcolor{keywordflow}{return} \_index; \}}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53     \textcolor{comment}{// Setters}}
+\DoxyCodeLine{54     \textcolor{keywordtype}{void} setPosition(Vector3 position) \{ \_position = position; \}}
+\DoxyCodeLine{55     \textcolor{keywordtype}{void} setTarget(Vector3 target) \{ \_target = target; \}}
+\DoxyCodeLine{56     \textcolor{keywordtype}{void} setEnabled(\textcolor{keywordtype}{bool} enabled) \{ \_enabled = enabled; \}}
+\DoxyCodeLine{57     \textcolor{keywordtype}{void} setColor(Color color) \{ \_color = color; \}}
+\DoxyCodeLine{58     \textcolor{keywordtype}{void} setIntensity(\textcolor{keywordtype}{float} intensity) \{ \_intensity = intensity; \}}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{60     \textcolor{comment}{// Methods}}
+\DoxyCodeLine{61     \textcolor{keywordtype}{void} UpdateLightValues(Shader shader) \{}
+\DoxyCodeLine{62         SetShaderValue(shader, \_enabledLoc, \&\_enabled, SHADER\_UNIFORM\_INT);}
+\DoxyCodeLine{63         SetShaderValue(shader, \_typeLoc, \&\_type, SHADER\_UNIFORM\_INT);}
+\DoxyCodeLine{64         SetShaderValue(shader, \_posLoc, \&\_position, SHADER\_UNIFORM\_VEC3);}
+\DoxyCodeLine{65         SetShaderValue(shader, \_targetLoc, \&\_target, SHADER\_UNIFORM\_VEC3);}
+\DoxyCodeLine{66         \textcolor{keywordtype}{float} color[4] = \{(float)\_color.r / 255, (\textcolor{keywordtype}{float})\_color.g / 255, (float)\_color.b / 255, (\textcolor{keywordtype}{float})\_color.a / 255\};}
+\DoxyCodeLine{67         SetShaderValue(shader, \_colorLoc, color, SHADER\_UNIFORM\_VEC4);}
+\DoxyCodeLine{68         SetShaderValue(shader, \_intensityLoc, \&\_intensity, SHADER\_UNIFORM\_FLOAT);}
+\DoxyCodeLine{69     \}}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71     \textcolor{keywordtype}{void} DrawSphere() \{ DrawSphereWires(\_position, .2, 4, 4, \_color); \}}
+\DoxyCodeLine{72 \};}
+\DoxyCodeLine{73 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// RTYPE\_LIGHT\_HPP}}
+
+\end{DoxyCode}

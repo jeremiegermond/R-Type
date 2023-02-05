@@ -1,0 +1,590 @@
+\hypertarget{sinfl_8h_source}{}\doxysection{sinfl.\+h}
+\label{sinfl_8h_source}\index{build/\_deps/raylib-\/src/src/external/sinfl.h@{build/\_deps/raylib-\/src/src/external/sinfl.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{\# Small Deflate}}
+\DoxyCodeLine{3 \textcolor{comment}{`sdefl` is a small bare bone lossless compression library in ANSI C (ISO C90)}}
+\DoxyCodeLine{4 \textcolor{comment}{which implements the Deflate (RFC 1951) compressed data format specification standard.}}
+\DoxyCodeLine{5 \textcolor{comment}{It is mainly tuned to get as much speed and compression ratio from as little code}}
+\DoxyCodeLine{6 \textcolor{comment}{as needed to keep the implementation as concise as possible.}}
+\DoxyCodeLine{7 \textcolor{comment}{}}
+\DoxyCodeLine{8 \textcolor{comment}{\#\# Features}}
+\DoxyCodeLine{9 \textcolor{comment}{-\/ Portable single header and source file duo written in ANSI C (ISO C90)}}
+\DoxyCodeLine{10 \textcolor{comment}{-\/ Dual license with either MIT or public domain}}
+\DoxyCodeLine{11 \textcolor{comment}{-\/ Small implementation}}
+\DoxyCodeLine{12 \textcolor{comment}{    -\/ Deflate: 525 LoC}}
+\DoxyCodeLine{13 \textcolor{comment}{    -\/ Inflate: 320 LoC}}
+\DoxyCodeLine{14 \textcolor{comment}{-\/ Webassembly:}}
+\DoxyCodeLine{15 \textcolor{comment}{    -\/ Deflate \string~3.7 KB (\string~2.2KB compressed)}}
+\DoxyCodeLine{16 \textcolor{comment}{    -\/ Inflate \string~3.6 KB (\string~2.2KB compressed)}}
+\DoxyCodeLine{17 \textcolor{comment}{}}
+\DoxyCodeLine{18 \textcolor{comment}{\#\# Usage:}}
+\DoxyCodeLine{19 \textcolor{comment}{This file behaves differently depending on what symbols you define}}
+\DoxyCodeLine{20 \textcolor{comment}{before including it.}}
+\DoxyCodeLine{21 \textcolor{comment}{}}
+\DoxyCodeLine{22 \textcolor{comment}{Header-\/File mode:}}
+\DoxyCodeLine{23 \textcolor{comment}{If you do not define `SINFL\_IMPLEMENTATION` before including this file, it}}
+\DoxyCodeLine{24 \textcolor{comment}{will operate in header only mode. In this mode it declares all used structs}}
+\DoxyCodeLine{25 \textcolor{comment}{and the API of the library without including the implementation of the library.}}
+\DoxyCodeLine{26 \textcolor{comment}{}}
+\DoxyCodeLine{27 \textcolor{comment}{Implementation mode:}}
+\DoxyCodeLine{28 \textcolor{comment}{If you define `SINFL\_IMPLEMENTATION` before including this file, it will}}
+\DoxyCodeLine{29 \textcolor{comment}{compile the implementation. Make sure that you only include}}
+\DoxyCodeLine{30 \textcolor{comment}{this file implementation in *one* C or C++ file to prevent collisions.}}
+\DoxyCodeLine{31 \textcolor{comment}{}}
+\DoxyCodeLine{32 \textcolor{comment}{\#\#\# Benchmark}}
+\DoxyCodeLine{33 \textcolor{comment}{}}
+\DoxyCodeLine{34 \textcolor{comment}{| Compressor name         | Compression| Decompress.| Compr. size | Ratio |}}
+\DoxyCodeLine{35 \textcolor{comment}{| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/| -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ | -\/-\/-\/-\/-\/ |}}
+\DoxyCodeLine{36 \textcolor{comment}{| miniz 1.0 -\/1            |   122 MB/s |   208 MB/s |    48510028 | 48.51 |}}
+\DoxyCodeLine{37 \textcolor{comment}{| miniz 1.0 -\/6            |    27 MB/s |   260 MB/s |    36513697 | 36.51 |}}
+\DoxyCodeLine{38 \textcolor{comment}{| miniz 1.0 -\/9            |    23 MB/s |   261 MB/s |    36460101 | 36.46 |}}
+\DoxyCodeLine{39 \textcolor{comment}{| zlib 1.2.11 -\/1          |    72 MB/s |   307 MB/s |    42298774 | 42.30 |}}
+\DoxyCodeLine{40 \textcolor{comment}{| zlib 1.2.11 -\/6          |    24 MB/s |   313 MB/s |    36548921 | 36.55 |}}
+\DoxyCodeLine{41 \textcolor{comment}{| zlib 1.2.11 -\/9          |    20 MB/s |   314 MB/s |    36475792 | 36.48 |}}
+\DoxyCodeLine{42 \textcolor{comment}{| sdefl 1.0 -\/0            |   127 MB/s |   371 MB/s |    40004116 | 39.88 |}}
+\DoxyCodeLine{43 \textcolor{comment}{| sdefl 1.0 -\/1            |   111 MB/s |   398 MB/s |    38940674 | 38.82 |}}
+\DoxyCodeLine{44 \textcolor{comment}{| sdefl 1.0 -\/5            |    45 MB/s |   420 MB/s |    36577183 | 36.46 |}}
+\DoxyCodeLine{45 \textcolor{comment}{| sdefl 1.0 -\/7            |    38 MB/s |   423 MB/s |    36523781 | 36.41 |}}
+\DoxyCodeLine{46 \textcolor{comment}{| libdeflate 1.3 -\/1       |   147 MB/s |   667 MB/s |    39597378 | 39.60 |}}
+\DoxyCodeLine{47 \textcolor{comment}{| libdeflate 1.3 -\/6       |    69 MB/s |   689 MB/s |    36648318 | 36.65 |}}
+\DoxyCodeLine{48 \textcolor{comment}{| libdeflate 1.3 -\/9       |    13 MB/s |   672 MB/s |    35197141 | 35.20 |}}
+\DoxyCodeLine{49 \textcolor{comment}{| libdeflate 1.3 -\/12      |  8.13 MB/s |   670 MB/s |    35100568 | 35.10 |}}
+\DoxyCodeLine{50 \textcolor{comment}{}}
+\DoxyCodeLine{51 \textcolor{comment}{\#\#\# Compression}}
+\DoxyCodeLine{52 \textcolor{comment}{Results on the [Silesia compression corpus](http://sun.aei.polsl.pl/\string~sdeor/index.php?page=silesia):}}
+\DoxyCodeLine{53 \textcolor{comment}{}}
+\DoxyCodeLine{54 \textcolor{comment}{| File    |   Original | `sdefl 0`    | `sdefl 5`   | `sdefl 7` |}}
+\DoxyCodeLine{55 \textcolor{comment}{| :-\/-\/-\/-\/-\/-\/ | -\/-\/-\/-\/-\/-\/-\/-\/-\/: | -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/: | -\/-\/-\/-\/-\/-\/-\/-\/-\/: | -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/: |}}
+\DoxyCodeLine{56 \textcolor{comment}{| dickens | 10.192.446 |  4,260,187|  3,845,261|   3,833,657 |}}
+\DoxyCodeLine{57 \textcolor{comment}{| mozilla | 51.220.480 | 20,774,706 | 19,607,009 |  19,565,867 |}}
+\DoxyCodeLine{58 \textcolor{comment}{| mr      |  9.970.564 | 3,860,531 |  3,673,460 |   3,665,627 |}}
+\DoxyCodeLine{59 \textcolor{comment}{| nci     | 33.553.445 | 4,030,283 |  3,094,526 |   3,006,075 |}}
+\DoxyCodeLine{60 \textcolor{comment}{| ooffice |  6.152.192 | 3,320,063 |  3,186,373 |   3,183,815 |}}
+\DoxyCodeLine{61 \textcolor{comment}{| osdb    | 10.085.684 | 3,919,646 |  3,649,510 |   3,649,477 |}}
+\DoxyCodeLine{62 \textcolor{comment}{| reymont |  6.627.202 | 2,263,378 |  1,857,588 |   1,827,237 |}}
+\DoxyCodeLine{63 \textcolor{comment}{| samba   | 21.606.400 | 6,121,797 |  5,462,670 |   5,450,762 |}}
+\DoxyCodeLine{64 \textcolor{comment}{| sao     |  7.251.944 | 5,612,421 |  5,485,380 |   5,481,765 |}}
+\DoxyCodeLine{65 \textcolor{comment}{| webster | 41.458.703 | 13,972,648 | 12,059,432 |  11,991,421 |}}
+\DoxyCodeLine{66 \textcolor{comment}{| xml     |  5.345.280 | 886,620|    674,009 |     662,141 |}}
+\DoxyCodeLine{67 \textcolor{comment}{| x-\/ray   |  8.474.240 | 6,304,655 |  6,244,779 |   6,244,779 |}}
+\DoxyCodeLine{68 \textcolor{comment}{}}
+\DoxyCodeLine{69 \textcolor{comment}{\#\# License}}
+\DoxyCodeLine{70 \textcolor{comment}{```}}
+\DoxyCodeLine{71 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{72 \textcolor{comment}{This software is available under 2 licenses -\/-\/ choose whichever you prefer.}}
+\DoxyCodeLine{73 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{74 \textcolor{comment}{ALTERNATIVE A -\/ MIT License}}
+\DoxyCodeLine{75 \textcolor{comment}{Copyright (c) 2020 Micha Mettke}}
+\DoxyCodeLine{76 \textcolor{comment}{Permission is hereby granted, free of charge, to any person obtaining a copy of}}
+\DoxyCodeLine{77 \textcolor{comment}{this software and associated documentation files (the "{}Software"{}), to deal in}}
+\DoxyCodeLine{78 \textcolor{comment}{the Software without restriction, including without limitation the rights to}}
+\DoxyCodeLine{79 \textcolor{comment}{use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies}}
+\DoxyCodeLine{80 \textcolor{comment}{of the Software, and to permit persons to whom the Software is furnished to do}}
+\DoxyCodeLine{81 \textcolor{comment}{so, subject to the following conditions:}}
+\DoxyCodeLine{82 \textcolor{comment}{The above copyright notice and this permission notice shall be included in all}}
+\DoxyCodeLine{83 \textcolor{comment}{copies or substantial portions of the Software.}}
+\DoxyCodeLine{84 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR}}
+\DoxyCodeLine{85 \textcolor{comment}{IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,}}
+\DoxyCodeLine{86 \textcolor{comment}{FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE}}
+\DoxyCodeLine{87 \textcolor{comment}{AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER}}
+\DoxyCodeLine{88 \textcolor{comment}{LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,}}
+\DoxyCodeLine{89 \textcolor{comment}{OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE}}
+\DoxyCodeLine{90 \textcolor{comment}{SOFTWARE.}}
+\DoxyCodeLine{91 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{92 \textcolor{comment}{ALTERNATIVE B -\/ Public Domain (www.unlicense.org)}}
+\DoxyCodeLine{93 \textcolor{comment}{This is free and unencumbered software released into the public domain.}}
+\DoxyCodeLine{94 \textcolor{comment}{Anyone is free to copy, modify, publish, use, compile, sell, or distribute this}}
+\DoxyCodeLine{95 \textcolor{comment}{software, either in source code form or as a compiled binary, for any purpose,}}
+\DoxyCodeLine{96 \textcolor{comment}{commercial or non-\/commercial, and by any means.}}
+\DoxyCodeLine{97 \textcolor{comment}{In jurisdictions that recognize copyright laws, the author or authors of this}}
+\DoxyCodeLine{98 \textcolor{comment}{software dedicate any and all copyright interest in the software to the public}}
+\DoxyCodeLine{99 \textcolor{comment}{domain. We make this dedication for the benefit of the public at large and to}}
+\DoxyCodeLine{100 \textcolor{comment}{the detriment of our heirs and successors. We intend this dedication to be an}}
+\DoxyCodeLine{101 \textcolor{comment}{overt act of relinquishment in perpetuity of all present and future rights to}}
+\DoxyCodeLine{102 \textcolor{comment}{this software under copyright law.}}
+\DoxyCodeLine{103 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR}}
+\DoxyCodeLine{104 \textcolor{comment}{IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,}}
+\DoxyCodeLine{105 \textcolor{comment}{FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE}}
+\DoxyCodeLine{106 \textcolor{comment}{AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN}}
+\DoxyCodeLine{107 \textcolor{comment}{ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION}}
+\DoxyCodeLine{108 \textcolor{comment}{WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.}}
+\DoxyCodeLine{109 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{110 \textcolor{comment}{```}}
+\DoxyCodeLine{111 \textcolor{comment}{*/}}
+\DoxyCodeLine{112 \textcolor{preprocessor}{\#ifndef SINFL\_H\_INCLUDED}}
+\DoxyCodeLine{113 \textcolor{preprocessor}{\#define SINFL\_H\_INCLUDED}}
+\DoxyCodeLine{114 }
+\DoxyCodeLine{115 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{116 \textcolor{keyword}{extern} \textcolor{stringliteral}{"{}C"{}} \{}
+\DoxyCodeLine{117 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{118 }
+\DoxyCodeLine{119 \textcolor{preprocessor}{\#define SINFL\_PRE\_TBL\_SIZE 128}}
+\DoxyCodeLine{120 \textcolor{preprocessor}{\#define SINFL\_LIT\_TBL\_SIZE 1334}}
+\DoxyCodeLine{121 \textcolor{preprocessor}{\#define SINFL\_OFF\_TBL\_SIZE 402}}
+\DoxyCodeLine{122 }
+\DoxyCodeLine{123 \textcolor{keyword}{struct }\mbox{\hyperlink{structsinfl}{sinfl}} \{}
+\DoxyCodeLine{124   \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *bitptr;}
+\DoxyCodeLine{125   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} bitbuf;}
+\DoxyCodeLine{126   \textcolor{keywordtype}{int} bitcnt;}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{128   \textcolor{keywordtype}{unsigned} lits[SINFL\_LIT\_TBL\_SIZE];}
+\DoxyCodeLine{129   \textcolor{keywordtype}{unsigned} dsts[SINFL\_OFF\_TBL\_SIZE];}
+\DoxyCodeLine{130 \};}
+\DoxyCodeLine{131 \textcolor{keyword}{extern} \textcolor{keywordtype}{int} sinflate(\textcolor{keywordtype}{void} *out, \textcolor{keywordtype}{int} cap, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *in, \textcolor{keywordtype}{int} size);}
+\DoxyCodeLine{132 \textcolor{keyword}{extern} \textcolor{keywordtype}{int} zsinflate(\textcolor{keywordtype}{void} *out, \textcolor{keywordtype}{int} cap, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *in, \textcolor{keywordtype}{int} size);}
+\DoxyCodeLine{133 }
+\DoxyCodeLine{134 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{135 \}}
+\DoxyCodeLine{136 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{137 }
+\DoxyCodeLine{138 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* SINFL\_H\_INCLUDED */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{139 }
+\DoxyCodeLine{140 \textcolor{preprocessor}{\#ifdef SINFL\_IMPLEMENTATION}}
+\DoxyCodeLine{141 }
+\DoxyCodeLine{142 \textcolor{preprocessor}{\#include <string.h>} \textcolor{comment}{/* memcpy, memset */}}
+\DoxyCodeLine{143 \textcolor{preprocessor}{\#include <assert.h>} \textcolor{comment}{/* assert */}}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{145 \textcolor{preprocessor}{\#if defined(\_\_GNUC\_\_) || defined(\_\_clang\_\_)}}
+\DoxyCodeLine{146 \textcolor{preprocessor}{\#define sinfl\_likely(x)       \_\_builtin\_expect((x),1)}}
+\DoxyCodeLine{147 \textcolor{preprocessor}{\#define sinfl\_unlikely(x)     \_\_builtin\_expect((x),0)}}
+\DoxyCodeLine{148 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{149 \textcolor{preprocessor}{\#define sinfl\_likely(x)       (x)}}
+\DoxyCodeLine{150 \textcolor{preprocessor}{\#define sinfl\_unlikely(x)     (x)}}
+\DoxyCodeLine{151 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{152 }
+\DoxyCodeLine{153 \textcolor{preprocessor}{\#ifndef SINFL\_NO\_SIMD}}
+\DoxyCodeLine{154 \textcolor{preprocessor}{\#if \_\_x86\_64\_\_ || defined(\_WIN32) || defined(\_WIN64)}}
+\DoxyCodeLine{155 \textcolor{preprocessor}{  \#include <emmintrin.h>}}
+\DoxyCodeLine{156 \textcolor{preprocessor}{  \#define sinfl\_char16 \_\_m128i}}
+\DoxyCodeLine{157 \textcolor{preprocessor}{  \#define sinfl\_char16\_ld(p) \_mm\_loadu\_si128((const \_\_m128i *)(void*)(p))}}
+\DoxyCodeLine{158 \textcolor{preprocessor}{  \#define sinfl\_char16\_str(d,v)  \_mm\_storeu\_si128((\_\_m128i*)(void*)(d), v)}}
+\DoxyCodeLine{159 \textcolor{preprocessor}{  \#define sinfl\_char16\_char(c) \_mm\_set1\_epi8(c)}}
+\DoxyCodeLine{160 \textcolor{preprocessor}{\#elif defined(\_\_arm\_\_) || defined(\_\_aarch64\_\_)}}
+\DoxyCodeLine{161 \textcolor{preprocessor}{  \#include <arm\_neon.h>}}
+\DoxyCodeLine{162 \textcolor{preprocessor}{  \#define sinfl\_char16 uint8x16\_t}}
+\DoxyCodeLine{163 \textcolor{preprocessor}{  \#define sinfl\_char16\_ld(p) vld1q\_u8((const unsigned char*)(p))}}
+\DoxyCodeLine{164 \textcolor{preprocessor}{  \#define sinfl\_char16\_str(d,v) vst1q\_u8((unsigned char*)(d), v)}}
+\DoxyCodeLine{165 \textcolor{preprocessor}{  \#define sinfl\_char16\_char(c) vdupq\_n\_u8(c)}}
+\DoxyCodeLine{166 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{167 \textcolor{preprocessor}{  \#define SINFL\_NO\_SIMD}}
+\DoxyCodeLine{168 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{169 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{170 }
+\DoxyCodeLine{171 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{172 sinfl\_bsr(\textcolor{keywordtype}{unsigned} n) \{}
+\DoxyCodeLine{173 \textcolor{preprocessor}{\#ifdef \_MSC\_VER}}
+\DoxyCodeLine{174   \_BitScanReverse(\&n, n);}
+\DoxyCodeLine{175   \textcolor{keywordflow}{return} n;}
+\DoxyCodeLine{176 \textcolor{preprocessor}{\#elif defined(\_\_GNUC\_\_) || defined(\_\_clang\_\_)}}
+\DoxyCodeLine{177   \textcolor{keywordflow}{return} 31 -\/ \_\_builtin\_clz(n);}
+\DoxyCodeLine{178 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{179 \}}
+\DoxyCodeLine{180 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long}}
+\DoxyCodeLine{181 sinfl\_read64(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *p) \{}
+\DoxyCodeLine{182   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} n;}
+\DoxyCodeLine{183   memcpy(\&n, p, 8);}
+\DoxyCodeLine{184   \textcolor{keywordflow}{return} n;}
+\DoxyCodeLine{185 \}}
+\DoxyCodeLine{186 \textcolor{preprocessor}{\#ifndef SINFL\_NO\_SIMD}}
+\DoxyCodeLine{187 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*}
+\DoxyCodeLine{188 sinfl\_write128(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *dst, sinfl\_char16 w) \{}
+\DoxyCodeLine{189   sinfl\_char16\_str(dst, w);}
+\DoxyCodeLine{190   \textcolor{keywordflow}{return} dst + 8;}
+\DoxyCodeLine{191 \}}
+\DoxyCodeLine{192 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{193 sinfl\_copy128(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} **dst, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} **src) \{}
+\DoxyCodeLine{194   sinfl\_char16 n = sinfl\_char16\_ld(*src);}
+\DoxyCodeLine{195   sinfl\_char16\_str(*dst, n);}
+\DoxyCodeLine{196   *dst += 16, *src += 16;}
+\DoxyCodeLine{197 \}}
+\DoxyCodeLine{198 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{199 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*}
+\DoxyCodeLine{200 sinfl\_write64(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *dst, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} w) \{}
+\DoxyCodeLine{201   memcpy(dst, \&w, 8);}
+\DoxyCodeLine{202   \textcolor{keywordflow}{return} dst + 8;}
+\DoxyCodeLine{203 \}}
+\DoxyCodeLine{204 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{205 sinfl\_copy64(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} **dst, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} **src) \{}
+\DoxyCodeLine{206   \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} n;}
+\DoxyCodeLine{207   memcpy(\&n, *src, 8);}
+\DoxyCodeLine{208   memcpy(*dst, \&n, 8);}
+\DoxyCodeLine{209   *dst += 8, *src += 8;}
+\DoxyCodeLine{210 \}}
+\DoxyCodeLine{211 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{212 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{213 sinfl\_refill(\textcolor{keyword}{struct} \mbox{\hyperlink{structsinfl}{sinfl}} *s) \{}
+\DoxyCodeLine{214   s-\/>bitbuf |= sinfl\_read64(s-\/>bitptr) << s-\/>bitcnt;}
+\DoxyCodeLine{215   s-\/>bitptr += (63 -\/ s-\/>bitcnt) >> 3;}
+\DoxyCodeLine{216   s-\/>bitcnt |= 56; \textcolor{comment}{/* bitcount is in range [56,63] */}}
+\DoxyCodeLine{217 \}}
+\DoxyCodeLine{218 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{219 sinfl\_peek(\textcolor{keyword}{struct} \mbox{\hyperlink{structsinfl}{sinfl}} *s, \textcolor{keywordtype}{int} cnt) \{}
+\DoxyCodeLine{220   assert(cnt >= 0 \&\& cnt <= 56);}
+\DoxyCodeLine{221   assert(cnt <= s-\/>bitcnt);}
+\DoxyCodeLine{222   \textcolor{keywordflow}{return} s-\/>bitbuf \& ((1ull << cnt) -\/ 1);}
+\DoxyCodeLine{223 \}}
+\DoxyCodeLine{224 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{225 sinfl\_consume(\textcolor{keyword}{struct} \mbox{\hyperlink{structsinfl}{sinfl}} *s, \textcolor{keywordtype}{int} cnt) \{}
+\DoxyCodeLine{226   assert(cnt <= s-\/>bitcnt);}
+\DoxyCodeLine{227   s-\/>bitbuf >>= cnt;}
+\DoxyCodeLine{228   s-\/>bitcnt -\/= cnt;}
+\DoxyCodeLine{229 \}}
+\DoxyCodeLine{230 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{231 sinfl\_\_get(\textcolor{keyword}{struct} \mbox{\hyperlink{structsinfl}{sinfl}} *s, \textcolor{keywordtype}{int} cnt) \{}
+\DoxyCodeLine{232   \textcolor{keywordtype}{int} res = sinfl\_peek(s, cnt);}
+\DoxyCodeLine{233   sinfl\_consume(s, cnt);}
+\DoxyCodeLine{234   \textcolor{keywordflow}{return} res;}
+\DoxyCodeLine{235 \}}
+\DoxyCodeLine{236 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{237 sinfl\_get(\textcolor{keyword}{struct} \mbox{\hyperlink{structsinfl}{sinfl}} *s, \textcolor{keywordtype}{int} cnt) \{}
+\DoxyCodeLine{238   sinfl\_refill(s);}
+\DoxyCodeLine{239   \textcolor{keywordflow}{return} sinfl\_\_get(s, cnt);}
+\DoxyCodeLine{240 \}}
+\DoxyCodeLine{241 \textcolor{keyword}{struct }sinfl\_gen \{}
+\DoxyCodeLine{242   \textcolor{keywordtype}{int} len;}
+\DoxyCodeLine{243   \textcolor{keywordtype}{int} cnt;}
+\DoxyCodeLine{244   \textcolor{keywordtype}{int} word;}
+\DoxyCodeLine{245   \textcolor{keywordtype}{short}* sorted;}
+\DoxyCodeLine{246 \};}
+\DoxyCodeLine{247 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{248 sinfl\_build\_tbl(\textcolor{keyword}{struct} sinfl\_gen *gen, \textcolor{keywordtype}{unsigned} *tbl, \textcolor{keywordtype}{int} tbl\_bits,}
+\DoxyCodeLine{249                 \textcolor{keyword}{const} \textcolor{keywordtype}{int} *cnt) \{}
+\DoxyCodeLine{250   \textcolor{keywordtype}{int} tbl\_end = 0;}
+\DoxyCodeLine{251   \textcolor{keywordflow}{while} (!(gen-\/>cnt = cnt[gen-\/>len])) \{}
+\DoxyCodeLine{252     ++gen-\/>len;}
+\DoxyCodeLine{253   \}}
+\DoxyCodeLine{254   tbl\_end = 1 << gen-\/>len;}
+\DoxyCodeLine{255   \textcolor{keywordflow}{while} (gen-\/>len <= tbl\_bits) \{}
+\DoxyCodeLine{256     \textcolor{keywordflow}{do} \{\textcolor{keywordtype}{unsigned} bit = 0;}
+\DoxyCodeLine{257       tbl[gen-\/>word] = (*gen-\/>sorted++ << 16) | gen-\/>len;}
+\DoxyCodeLine{258       if (gen-\/>word == tbl\_end -\/ 1) \{}
+\DoxyCodeLine{259         \textcolor{keywordflow}{for} (; gen-\/>len < tbl\_bits; gen-\/>len++) \{}
+\DoxyCodeLine{260           memcpy(\&tbl[tbl\_end], tbl, (\textcolor{keywordtype}{size\_t})tbl\_end * \textcolor{keyword}{sizeof}(tbl[0]));}
+\DoxyCodeLine{261           tbl\_end <<= 1;}
+\DoxyCodeLine{262         \}}
+\DoxyCodeLine{263         \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{264       \}}
+\DoxyCodeLine{265       bit = 1 << sinfl\_bsr((\textcolor{keywordtype}{unsigned})(gen-\/>word \string^ (tbl\_end -\/ 1)));}
+\DoxyCodeLine{266       gen-\/>word \&= bit -\/ 1;}
+\DoxyCodeLine{267       gen-\/>word |= bit;}
+\DoxyCodeLine{268     \} \textcolor{keywordflow}{while} (-\/-\/gen-\/>cnt);}
+\DoxyCodeLine{269     \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{270       \textcolor{keywordflow}{if} (++gen-\/>len <= tbl\_bits) \{}
+\DoxyCodeLine{271         memcpy(\&tbl[tbl\_end], tbl, (\textcolor{keywordtype}{size\_t})tbl\_end * \textcolor{keyword}{sizeof}(tbl[0]));}
+\DoxyCodeLine{272         tbl\_end <<= 1;}
+\DoxyCodeLine{273       \}}
+\DoxyCodeLine{274     \} \textcolor{keywordflow}{while} (!(gen-\/>cnt = cnt[gen-\/>len]));}
+\DoxyCodeLine{275   \}}
+\DoxyCodeLine{276   \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{277 \}}
+\DoxyCodeLine{278 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{279 sinfl\_build\_subtbl(\textcolor{keyword}{struct} sinfl\_gen *gen, \textcolor{keywordtype}{unsigned} *tbl, \textcolor{keywordtype}{int} tbl\_bits,}
+\DoxyCodeLine{280                    \textcolor{keyword}{const} \textcolor{keywordtype}{int} *cnt) \{}
+\DoxyCodeLine{281   \textcolor{keywordtype}{int} sub\_bits = 0;}
+\DoxyCodeLine{282   \textcolor{keywordtype}{int} sub\_start = 0;}
+\DoxyCodeLine{283   \textcolor{keywordtype}{int} sub\_prefix = -\/1;}
+\DoxyCodeLine{284   \textcolor{keywordtype}{int} tbl\_end = 1 << tbl\_bits;}
+\DoxyCodeLine{285   \textcolor{keywordflow}{while} (1) \{}
+\DoxyCodeLine{286     \textcolor{keywordtype}{unsigned} entry;}
+\DoxyCodeLine{287     \textcolor{keywordtype}{int} bit, stride, i;}
+\DoxyCodeLine{288     \textcolor{comment}{/* start new subtable */}}
+\DoxyCodeLine{289     \textcolor{keywordflow}{if} ((gen-\/>word \& ((1 << tbl\_bits)-\/1)) != sub\_prefix) \{}
+\DoxyCodeLine{290       \textcolor{keywordtype}{int} used = 0;}
+\DoxyCodeLine{291       sub\_prefix = gen-\/>word \& ((1 << tbl\_bits)-\/1);}
+\DoxyCodeLine{292       sub\_start = tbl\_end;}
+\DoxyCodeLine{293       sub\_bits = gen-\/>len -\/ tbl\_bits;}
+\DoxyCodeLine{294       used = gen-\/>cnt;}
+\DoxyCodeLine{295       \textcolor{keywordflow}{while} (used < (1 << sub\_bits)) \{}
+\DoxyCodeLine{296         sub\_bits++;}
+\DoxyCodeLine{297         used = (used << 1) + cnt[tbl\_bits + sub\_bits];}
+\DoxyCodeLine{298       \}}
+\DoxyCodeLine{299       tbl\_end = sub\_start + (1 << sub\_bits);}
+\DoxyCodeLine{300       tbl[sub\_prefix] = (sub\_start << 16) | 0x10 | (sub\_bits \& 0xf);}
+\DoxyCodeLine{301     \}}
+\DoxyCodeLine{302     \textcolor{comment}{/* fill subtable */}}
+\DoxyCodeLine{303     entry = (*gen-\/>sorted << 16) | ((gen-\/>len -\/ tbl\_bits) \& 0xf);}
+\DoxyCodeLine{304     gen-\/>sorted++;}
+\DoxyCodeLine{305     i = sub\_start + (gen-\/>word >> tbl\_bits);}
+\DoxyCodeLine{306     stride = 1 << (gen-\/>len -\/ tbl\_bits);}
+\DoxyCodeLine{307     \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{308       tbl[i] = entry;}
+\DoxyCodeLine{309       i += stride;}
+\DoxyCodeLine{310     \} \textcolor{keywordflow}{while} (i < tbl\_end);}
+\DoxyCodeLine{311     \textcolor{keywordflow}{if} (gen-\/>word == (1 << gen-\/>len)-\/1) \{}
+\DoxyCodeLine{312       \textcolor{keywordflow}{return};}
+\DoxyCodeLine{313     \}}
+\DoxyCodeLine{314     bit = 1 << sinfl\_bsr(gen-\/>word \string^ ((1 << gen-\/>len) -\/ 1));}
+\DoxyCodeLine{315     gen-\/>word \&= bit -\/ 1;}
+\DoxyCodeLine{316     gen-\/>word |= bit;}
+\DoxyCodeLine{317     gen-\/>cnt-\/-\/;}
+\DoxyCodeLine{318     \textcolor{keywordflow}{while} (!gen-\/>cnt) \{}
+\DoxyCodeLine{319       gen-\/>cnt = cnt[++gen-\/>len];}
+\DoxyCodeLine{320     \}}
+\DoxyCodeLine{321   \}}
+\DoxyCodeLine{322 \}}
+\DoxyCodeLine{323 \textcolor{keyword}{static} \textcolor{keywordtype}{void}}
+\DoxyCodeLine{324 sinfl\_build(\textcolor{keywordtype}{unsigned} *tbl, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *lens, \textcolor{keywordtype}{int} tbl\_bits, \textcolor{keywordtype}{int} maxlen,}
+\DoxyCodeLine{325             \textcolor{keywordtype}{int} symcnt) \{}
+\DoxyCodeLine{326   \textcolor{keywordtype}{int} i, used = 0;}
+\DoxyCodeLine{327   \textcolor{keywordtype}{short} sort[288];}
+\DoxyCodeLine{328   \textcolor{keywordtype}{int} cnt[16] = \{0\}, off[16]= \{0\};}
+\DoxyCodeLine{329   \textcolor{keyword}{struct }sinfl\_gen gen = \{0\};}
+\DoxyCodeLine{330   gen.sorted = sort;}
+\DoxyCodeLine{331   gen.len = 1;}
+\DoxyCodeLine{332 }
+\DoxyCodeLine{333   \textcolor{keywordflow}{for} (i = 0; i < symcnt; ++i)}
+\DoxyCodeLine{334     cnt[lens[i]]++;}
+\DoxyCodeLine{335   off[1] = cnt[0];}
+\DoxyCodeLine{336   \textcolor{keywordflow}{for} (i = 1; i < maxlen; ++i) \{}
+\DoxyCodeLine{337     off[i + 1] = off[i] + cnt[i];}
+\DoxyCodeLine{338     used = (used << 1) + cnt[i];}
+\DoxyCodeLine{339   \}}
+\DoxyCodeLine{340   used = (used << 1) + cnt[i];}
+\DoxyCodeLine{341   \textcolor{keywordflow}{for} (i = 0; i < symcnt; ++i)}
+\DoxyCodeLine{342     gen.sorted[off[lens[i]]++] = (\textcolor{keywordtype}{short})i;}
+\DoxyCodeLine{343   gen.sorted += off[0];}
+\DoxyCodeLine{344 }
+\DoxyCodeLine{345   \textcolor{keywordflow}{if} (used < (1 << maxlen))\{}
+\DoxyCodeLine{346     \textcolor{keywordflow}{for} (i = 0; i < 1 << tbl\_bits; ++i)}
+\DoxyCodeLine{347       tbl[i] = (0 << 16u) | 1;}
+\DoxyCodeLine{348     \textcolor{keywordflow}{return};}
+\DoxyCodeLine{349   \}}
+\DoxyCodeLine{350   \textcolor{keywordflow}{if} (!sinfl\_build\_tbl(\&gen, tbl, tbl\_bits, cnt))\{}
+\DoxyCodeLine{351     sinfl\_build\_subtbl(\&gen, tbl, tbl\_bits, cnt);}
+\DoxyCodeLine{352   \}}
+\DoxyCodeLine{353 \}}
+\DoxyCodeLine{354 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{355 sinfl\_decode(\textcolor{keyword}{struct} \mbox{\hyperlink{structsinfl}{sinfl}} *s, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} *tbl, \textcolor{keywordtype}{int} bit\_len) \{}
+\DoxyCodeLine{356   sinfl\_refill(s);}
+\DoxyCodeLine{357   \{\textcolor{keywordtype}{int} idx = sinfl\_peek(s, bit\_len);}
+\DoxyCodeLine{358   \textcolor{keywordtype}{unsigned} \mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa3c6e0b8a9c15224a8228b9a98ca1531d}{key}} = tbl[idx];}
+\DoxyCodeLine{359   \textcolor{keywordflow}{if} (key \& 0x10) \{}
+\DoxyCodeLine{360     \textcolor{comment}{/* sub-\/table lookup */}}
+\DoxyCodeLine{361     \textcolor{keywordtype}{int} len = \mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa3c6e0b8a9c15224a8228b9a98ca1531d}{key}} \& 0x0f;}
+\DoxyCodeLine{362     sinfl\_consume(s, bit\_len);}
+\DoxyCodeLine{363     idx = sinfl\_peek(s, len);}
+\DoxyCodeLine{364     \mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa3c6e0b8a9c15224a8228b9a98ca1531d}{key}} = tbl[((\mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa3c6e0b8a9c15224a8228b9a98ca1531d}{key}} >> 16) \& 0xffff) + (unsigned)idx];}
+\DoxyCodeLine{365   \}}
+\DoxyCodeLine{366   sinfl\_consume(s, key \& 0x0f);}
+\DoxyCodeLine{367   \textcolor{keywordflow}{return} (key >> 16) \& 0x0fff;\}}
+\DoxyCodeLine{368 \}}
+\DoxyCodeLine{369 \textcolor{keyword}{static} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{370 sinfl\_decompress(\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *out, \textcolor{keywordtype}{int} cap, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *in, \textcolor{keywordtype}{int} size) \{}
+\DoxyCodeLine{371   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} order[] = \{16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15\};}
+\DoxyCodeLine{372   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{short} dbase[30+2] = \{1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,}
+\DoxyCodeLine{373       257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577\};}
+\DoxyCodeLine{374   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} dbits[30+2] = \{0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,}
+\DoxyCodeLine{375       10,10,11,11,12,12,13,13,0,0\};}
+\DoxyCodeLine{376   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{short} lbase[29+2] = \{3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,}
+\DoxyCodeLine{377       43,51,59,67,83,99,115,131,163,195,227,258,0,0\};}
+\DoxyCodeLine{378   \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} lbits[29+2] = \{0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,}
+\DoxyCodeLine{379       4,4,4,5,5,5,5,0,0,0\};}
+\DoxyCodeLine{380 }
+\DoxyCodeLine{381   \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *oe = out + cap;}
+\DoxyCodeLine{382   \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *e = in + size, *o = out;}
+\DoxyCodeLine{383   \textcolor{keyword}{enum} sinfl\_states \{hdr,stored,fixed,dyn,blk\};}
+\DoxyCodeLine{384   \textcolor{keyword}{enum} sinfl\_states state = hdr;}
+\DoxyCodeLine{385   \textcolor{keyword}{struct }\mbox{\hyperlink{structsinfl}{sinfl}} s = \{0\};}
+\DoxyCodeLine{386   \textcolor{keywordtype}{int} last = 0;}
+\DoxyCodeLine{387 }
+\DoxyCodeLine{388   s.bitptr = in;}
+\DoxyCodeLine{389   \textcolor{keywordflow}{while} (1) \{}
+\DoxyCodeLine{390     \textcolor{keywordflow}{switch} (state) \{}
+\DoxyCodeLine{391     \textcolor{keywordflow}{case} hdr: \{}
+\DoxyCodeLine{392       \textcolor{comment}{/* block header */}}
+\DoxyCodeLine{393       \textcolor{keywordtype}{int} type = 0;}
+\DoxyCodeLine{394       sinfl\_refill(\&s);}
+\DoxyCodeLine{395       last = sinfl\_\_get(\&s,1);}
+\DoxyCodeLine{396       type = sinfl\_\_get(\&s,2);}
+\DoxyCodeLine{397 }
+\DoxyCodeLine{398       \textcolor{keywordflow}{switch} (type) \{\textcolor{keywordflow}{default}: \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})(out-\/o);}
+\DoxyCodeLine{399       \textcolor{keywordflow}{case} 0x00: state = stored; \textcolor{keywordflow}{break};}
+\DoxyCodeLine{400       \textcolor{keywordflow}{case} 0x01: state = fixed; \textcolor{keywordflow}{break};}
+\DoxyCodeLine{401       \textcolor{keywordflow}{case} 0x02: state = dyn; \textcolor{keywordflow}{break};\}}
+\DoxyCodeLine{402     \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{403     \textcolor{keywordflow}{case} stored: \{}
+\DoxyCodeLine{404       \textcolor{comment}{/* uncompressed block */}}
+\DoxyCodeLine{405       \textcolor{keywordtype}{int} len;}
+\DoxyCodeLine{406       sinfl\_refill(\&s);}
+\DoxyCodeLine{407       sinfl\_\_get(\&s,s.bitcnt \& 7);}
+\DoxyCodeLine{408       len = sinfl\_\_get(\&s,16);}
+\DoxyCodeLine{409       \textcolor{comment}{//int nlen = sinfl\_\_get(\&s,16);   // @raysan5: Unused variable?}}
+\DoxyCodeLine{410       in -\/= 2; s.bitcnt = 0;}
+\DoxyCodeLine{411 }
+\DoxyCodeLine{412       \textcolor{keywordflow}{if} (len > (e-\/in) || !len)}
+\DoxyCodeLine{413         \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})(out-\/o);}
+\DoxyCodeLine{414       memcpy(out, in, (\textcolor{keywordtype}{size\_t})len);}
+\DoxyCodeLine{415       in += len, out += len;}
+\DoxyCodeLine{416       state = hdr;}
+\DoxyCodeLine{417     \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{418     \textcolor{keywordflow}{case} fixed: \{}
+\DoxyCodeLine{419       \textcolor{comment}{/* fixed huffman codes */}}
+\DoxyCodeLine{420       \textcolor{keywordtype}{int} n; \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} lens[288+32];}
+\DoxyCodeLine{421       \textcolor{keywordflow}{for} (n = 0; n <= 143; n++) lens[n] = 8;}
+\DoxyCodeLine{422       \textcolor{keywordflow}{for} (n = 144; n <= 255; n++) lens[n] = 9;}
+\DoxyCodeLine{423       \textcolor{keywordflow}{for} (n = 256; n <= 279; n++) lens[n] = 7;}
+\DoxyCodeLine{424       \textcolor{keywordflow}{for} (n = 280; n <= 287; n++) lens[n] = 8;}
+\DoxyCodeLine{425       \textcolor{keywordflow}{for} (n = 0; n < 32; n++) lens[288+n] = 5;}
+\DoxyCodeLine{426 }
+\DoxyCodeLine{427       \textcolor{comment}{/* build lit/dist tables */}}
+\DoxyCodeLine{428       sinfl\_build(s.lits, lens, 10, 15, 288);}
+\DoxyCodeLine{429       sinfl\_build(s.dsts, lens + 288, 8, 15, 32);}
+\DoxyCodeLine{430       state = blk;}
+\DoxyCodeLine{431     \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{432     \textcolor{keywordflow}{case} dyn: \{}
+\DoxyCodeLine{433         \textcolor{comment}{/* dynamic huffman codes */}}
+\DoxyCodeLine{434         \textcolor{keywordtype}{int} n, i;}
+\DoxyCodeLine{435         \textcolor{keywordtype}{unsigned} hlens[SINFL\_PRE\_TBL\_SIZE];}
+\DoxyCodeLine{436         \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} nlens[19] = \{0\}, lens[288+32];}
+\DoxyCodeLine{437 }
+\DoxyCodeLine{438         sinfl\_refill(\&s);}
+\DoxyCodeLine{439         \{\textcolor{keywordtype}{int} nlit = 257 + sinfl\_\_get(\&s,5);}
+\DoxyCodeLine{440         \textcolor{keywordtype}{int} ndist = 1 + sinfl\_\_get(\&s,5);}
+\DoxyCodeLine{441         \textcolor{keywordtype}{int} nlen = 4 + sinfl\_\_get(\&s,4);}
+\DoxyCodeLine{442         \textcolor{keywordflow}{for} (n = 0; n < nlen; n++)}
+\DoxyCodeLine{443           nlens[order[n]] = (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char})sinfl\_get(\&s,3);}
+\DoxyCodeLine{444         sinfl\_build(hlens, nlens, 7, 7, 19);}
+\DoxyCodeLine{445 }
+\DoxyCodeLine{446         \textcolor{comment}{/* decode code lengths */}}
+\DoxyCodeLine{447         \textcolor{keywordflow}{for} (n = 0; n < nlit + ndist;) \{}
+\DoxyCodeLine{448           \textcolor{keywordtype}{int} sym = sinfl\_decode(\&s, hlens, 7);}
+\DoxyCodeLine{449           \textcolor{keywordflow}{switch} (sym) \{\textcolor{keywordflow}{default}: lens[n++] = (\textcolor{keywordtype}{unsigned} char)sym; \textcolor{keywordflow}{break};}
+\DoxyCodeLine{450           \textcolor{keywordflow}{case} 16: \textcolor{keywordflow}{for} (i=3+sinfl\_get(\&s,2);i;i-\/-\/,n++) lens[n]=lens[n-\/1]; \textcolor{keywordflow}{break};}
+\DoxyCodeLine{451           \textcolor{keywordflow}{case} 17: \textcolor{keywordflow}{for} (i=3+sinfl\_get(\&s,3);i;i-\/-\/,n++) lens[n]=0; \textcolor{keywordflow}{break};}
+\DoxyCodeLine{452           \textcolor{keywordflow}{case} 18: \textcolor{keywordflow}{for} (i=11+sinfl\_get(\&s,7);i;i-\/-\/,n++) lens[n]=0; \textcolor{keywordflow}{break};\}}
+\DoxyCodeLine{453         \}}
+\DoxyCodeLine{454         \textcolor{comment}{/* build lit/dist tables */}}
+\DoxyCodeLine{455         sinfl\_build(s.lits, lens, 10, 15, nlit);}
+\DoxyCodeLine{456         sinfl\_build(s.dsts, lens + nlit, 8, 15, ndist);}
+\DoxyCodeLine{457         state = blk;\}}
+\DoxyCodeLine{458     \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{459     \textcolor{keywordflow}{case} blk: \{}
+\DoxyCodeLine{460       \textcolor{comment}{/* decompress block */}}
+\DoxyCodeLine{461       \textcolor{keywordtype}{int} sym = sinfl\_decode(\&s, s.lits, 10);}
+\DoxyCodeLine{462       \textcolor{keywordflow}{if} (sym < 256) \{}
+\DoxyCodeLine{463         \textcolor{comment}{/* literal */}}
+\DoxyCodeLine{464         *out++ = (\textcolor{keywordtype}{unsigned} char)sym;}
+\DoxyCodeLine{465       \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (sym > 256) \{sym -\/= 257; \textcolor{comment}{/* match symbol */}}
+\DoxyCodeLine{466         sinfl\_refill(\&s);}
+\DoxyCodeLine{467         \{\textcolor{keywordtype}{int} len = sinfl\_\_get(\&s, lbits[sym]) + lbase[sym];}
+\DoxyCodeLine{468         \textcolor{keywordtype}{int} dsym = sinfl\_decode(\&s, s.dsts, 8);}
+\DoxyCodeLine{469         \textcolor{keywordtype}{int} offs = sinfl\_\_get(\&s, dbits[dsym]) + dbase[dsym];}
+\DoxyCodeLine{470         \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *dst = out, *src = out -\/ offs;}
+\DoxyCodeLine{471         \textcolor{keywordflow}{if} (sinfl\_unlikely(offs > (\textcolor{keywordtype}{int})(out-\/o))) \{}
+\DoxyCodeLine{472           \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})(out-\/o);}
+\DoxyCodeLine{473         \}}
+\DoxyCodeLine{474         out = out + len;}
+\DoxyCodeLine{475 }
+\DoxyCodeLine{476 \textcolor{preprocessor}{\#ifndef SINFL\_NO\_SIMD}}
+\DoxyCodeLine{477         \textcolor{keywordflow}{if} (sinfl\_likely(oe -\/ out >= 16 * 3)) \{}
+\DoxyCodeLine{478           \textcolor{keywordflow}{if} (offs >= 16) \{}
+\DoxyCodeLine{479             \textcolor{comment}{/* copy match */}}
+\DoxyCodeLine{480             sinfl\_copy128(\&dst, \&src);}
+\DoxyCodeLine{481             sinfl\_copy128(\&dst, \&src);}
+\DoxyCodeLine{482             \textcolor{keywordflow}{do} sinfl\_copy128(\&dst, \&src);}
+\DoxyCodeLine{483             \textcolor{keywordflow}{while} (dst < out);}
+\DoxyCodeLine{484           \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (offs == 1) \{}
+\DoxyCodeLine{485             \textcolor{comment}{/* rle match copying */}}
+\DoxyCodeLine{486             sinfl\_char16 w = sinfl\_char16\_char(src[0]);}
+\DoxyCodeLine{487             dst = sinfl\_write128(dst, w);}
+\DoxyCodeLine{488             dst = sinfl\_write128(dst, w);}
+\DoxyCodeLine{489             \textcolor{keywordflow}{do} dst = sinfl\_write128(dst, w);}
+\DoxyCodeLine{490             \textcolor{keywordflow}{while} (dst < out);}
+\DoxyCodeLine{491           \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{492             *dst++ = *src++;}
+\DoxyCodeLine{493             *dst++ = *src++;}
+\DoxyCodeLine{494             \textcolor{keywordflow}{do} *dst++ = *src++;}
+\DoxyCodeLine{495             \textcolor{keywordflow}{while} (dst < out);}
+\DoxyCodeLine{496           \}}
+\DoxyCodeLine{497         \}}
+\DoxyCodeLine{498 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{499         \textcolor{keywordflow}{if} (sinfl\_likely(oe -\/ out >= 3 * 8 -\/ 3)) \{}
+\DoxyCodeLine{500           \textcolor{keywordflow}{if} (offs >= 8) \{}
+\DoxyCodeLine{501             \textcolor{comment}{/* copy match */}}
+\DoxyCodeLine{502             sinfl\_copy64(\&dst, \&src);}
+\DoxyCodeLine{503             sinfl\_copy64(\&dst, \&src);}
+\DoxyCodeLine{504             \textcolor{keywordflow}{do} sinfl\_copy64(\&dst, \&src);}
+\DoxyCodeLine{505             \textcolor{keywordflow}{while} (dst < out);}
+\DoxyCodeLine{506           \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (offs == 1) \{}
+\DoxyCodeLine{507             \textcolor{comment}{/* rle match copying */}}
+\DoxyCodeLine{508             \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} c = src[0];}
+\DoxyCodeLine{509             \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} hw = (c << 24u) | (c << 16u) | (c << 8u) | (\textcolor{keywordtype}{unsigned})c;}
+\DoxyCodeLine{510             \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} w = (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} long)hw << 32llu | hw;}
+\DoxyCodeLine{511             dst = sinfl\_write64(dst, w);}
+\DoxyCodeLine{512             dst = sinfl\_write64(dst, w);}
+\DoxyCodeLine{513             \textcolor{keywordflow}{do} dst = sinfl\_write64(dst, w);}
+\DoxyCodeLine{514             \textcolor{keywordflow}{while} (dst < out);}
+\DoxyCodeLine{515           \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{516             *dst++ = *src++;}
+\DoxyCodeLine{517             *dst++ = *src++;}
+\DoxyCodeLine{518             \textcolor{keywordflow}{do} *dst++ = *src++;}
+\DoxyCodeLine{519             \textcolor{keywordflow}{while} (dst < out);}
+\DoxyCodeLine{520           \}}
+\DoxyCodeLine{521         \}}
+\DoxyCodeLine{522 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{523         \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{524           *dst++ = *src++;}
+\DoxyCodeLine{525           *dst++ = *src++;}
+\DoxyCodeLine{526           \textcolor{keywordflow}{do} *dst++ = *src++;}
+\DoxyCodeLine{527           \textcolor{keywordflow}{while} (dst < out);\}}
+\DoxyCodeLine{528         \}}
+\DoxyCodeLine{529       \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{530         \textcolor{comment}{/* end of block */}}
+\DoxyCodeLine{531         \textcolor{keywordflow}{if} (last) \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})(out-\/o);}
+\DoxyCodeLine{532         state = hdr;}
+\DoxyCodeLine{533         \textcolor{keywordflow}{break};}
+\DoxyCodeLine{534       \}}
+\DoxyCodeLine{535     \} \textcolor{keywordflow}{break};\}}
+\DoxyCodeLine{536   \}}
+\DoxyCodeLine{537   \textcolor{keywordflow}{return} (\textcolor{keywordtype}{int})(out-\/o);}
+\DoxyCodeLine{538 \}}
+\DoxyCodeLine{539 \textcolor{keyword}{extern} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{540 sinflate(\textcolor{keywordtype}{void} *out, \textcolor{keywordtype}{int} cap, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *in, \textcolor{keywordtype}{int} size) \{}
+\DoxyCodeLine{541   \textcolor{keywordflow}{return} sinfl\_decompress((\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)out, cap, (\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)in, size);}
+\DoxyCodeLine{542 \}}
+\DoxyCodeLine{543 \textcolor{keyword}{static} \textcolor{keywordtype}{unsigned}}
+\DoxyCodeLine{544 sinfl\_adler32(\textcolor{keywordtype}{unsigned} adler32, \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *in, \textcolor{keywordtype}{int} in\_len) \{}
+\DoxyCodeLine{545   \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} ADLER\_MOD = 65521;}
+\DoxyCodeLine{546   \textcolor{keywordtype}{unsigned} s1 = adler32 \& 0xffff;}
+\DoxyCodeLine{547   \textcolor{keywordtype}{unsigned} s2 = adler32 >> 16;}
+\DoxyCodeLine{548   \textcolor{keywordtype}{unsigned} blk\_len, i;}
+\DoxyCodeLine{549 }
+\DoxyCodeLine{550   blk\_len = in\_len \% 5552;}
+\DoxyCodeLine{551   \textcolor{keywordflow}{while} (in\_len) \{}
+\DoxyCodeLine{552     \textcolor{keywordflow}{for} (i=0; i + 7 < blk\_len; i += 8) \{}
+\DoxyCodeLine{553       s1 += in[0]; s2 += s1;}
+\DoxyCodeLine{554       s1 += in[1]; s2 += s1;}
+\DoxyCodeLine{555       s1 += in[2]; s2 += s1;}
+\DoxyCodeLine{556       s1 += in[3]; s2 += s1;}
+\DoxyCodeLine{557       s1 += in[4]; s2 += s1;}
+\DoxyCodeLine{558       s1 += in[5]; s2 += s1;}
+\DoxyCodeLine{559       s1 += in[6]; s2 += s1;}
+\DoxyCodeLine{560       s1 += in[7]; s2 += s1;}
+\DoxyCodeLine{561       in += 8;}
+\DoxyCodeLine{562     \}}
+\DoxyCodeLine{563     \textcolor{keywordflow}{for} (; i < blk\_len; ++i)}
+\DoxyCodeLine{564       s1 += *in++, s2 += s1;}
+\DoxyCodeLine{565     s1 \%= ADLER\_MOD; s2 \%= ADLER\_MOD;}
+\DoxyCodeLine{566     in\_len -\/= blk\_len;}
+\DoxyCodeLine{567     blk\_len = 5552;}
+\DoxyCodeLine{568   \} \textcolor{keywordflow}{return} (\textcolor{keywordtype}{unsigned})(s2 << 16) + (\textcolor{keywordtype}{unsigned})s1;}
+\DoxyCodeLine{569 \}}
+\DoxyCodeLine{570 \textcolor{keyword}{extern} \textcolor{keywordtype}{int}}
+\DoxyCodeLine{571 zsinflate(\textcolor{keywordtype}{void} *out, \textcolor{keywordtype}{int} cap, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *mem, \textcolor{keywordtype}{int} size) \{}
+\DoxyCodeLine{572   \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *in = (\textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)mem;}
+\DoxyCodeLine{573   \textcolor{keywordflow}{if} (size >= 6) \{}
+\DoxyCodeLine{574     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} *eob = in + size -\/ 4;}
+\DoxyCodeLine{575     \textcolor{keywordtype}{int} n = sinfl\_decompress((\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)out, cap, in + 2u, size);}
+\DoxyCodeLine{576     \textcolor{keywordtype}{unsigned} a = sinfl\_adler32(1u, (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*)out, n);}
+\DoxyCodeLine{577     \textcolor{keywordtype}{unsigned} h = eob[0] << 24 | eob[1] << 16 | eob[2] << 8 | eob[3] << 0;}
+\DoxyCodeLine{578     \textcolor{keywordflow}{return} a == h ? n : -\/1;}
+\DoxyCodeLine{579   \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{580     \textcolor{keywordflow}{return} -\/1;}
+\DoxyCodeLine{581   \}}
+\DoxyCodeLine{582 \}}
+\DoxyCodeLine{583 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{584 }
+
+\end{DoxyCode}

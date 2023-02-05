@@ -1,0 +1,468 @@
+\hypertarget{win32__platform_8h_source}{}\doxysection{win32\+\_\+platform.\+h}
+\label{win32__platform_8h_source}\index{build/\_deps/raylib-\/src/src/external/glfw/src/win32\_platform.h@{build/\_deps/raylib-\/src/src/external/glfw/src/win32\_platform.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//========================================================================}}
+\DoxyCodeLine{2 \textcolor{comment}{// GLFW 3.4 Win32 -\/ www.glfw.org}}
+\DoxyCodeLine{3 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{4 \textcolor{comment}{// Copyright (c) 2002-\/2006 Marcus Geelnard}}
+\DoxyCodeLine{5 \textcolor{comment}{// Copyright (c) 2006-\/2019 Camilla Löwy <elmindreda@glfw.org>}}
+\DoxyCodeLine{6 \textcolor{comment}{//}}
+\DoxyCodeLine{7 \textcolor{comment}{// This software is provided 'as-\/is', without any express or implied}}
+\DoxyCodeLine{8 \textcolor{comment}{// warranty. In no event will the authors be held liable for any damages}}
+\DoxyCodeLine{9 \textcolor{comment}{// arising from the use of this software.}}
+\DoxyCodeLine{10 \textcolor{comment}{//}}
+\DoxyCodeLine{11 \textcolor{comment}{// Permission is granted to anyone to use this software for any purpose,}}
+\DoxyCodeLine{12 \textcolor{comment}{// including commercial applications, and to alter it and redistribute it}}
+\DoxyCodeLine{13 \textcolor{comment}{// freely, subject to the following restrictions:}}
+\DoxyCodeLine{14 \textcolor{comment}{//}}
+\DoxyCodeLine{15 \textcolor{comment}{// 1. The origin of this software must not be misrepresented; you must not}}
+\DoxyCodeLine{16 \textcolor{comment}{//    claim that you wrote the original software. If you use this software}}
+\DoxyCodeLine{17 \textcolor{comment}{//    in a product, an acknowledgment in the product documentation would}}
+\DoxyCodeLine{18 \textcolor{comment}{//    be appreciated but is not required.}}
+\DoxyCodeLine{19 \textcolor{comment}{//}}
+\DoxyCodeLine{20 \textcolor{comment}{// 2. Altered source versions must be plainly marked as such, and must not}}
+\DoxyCodeLine{21 \textcolor{comment}{//    be misrepresented as being the original software.}}
+\DoxyCodeLine{22 \textcolor{comment}{//}}
+\DoxyCodeLine{23 \textcolor{comment}{// 3. This notice may not be removed or altered from any source}}
+\DoxyCodeLine{24 \textcolor{comment}{//    distribution.}}
+\DoxyCodeLine{25 \textcolor{comment}{//}}
+\DoxyCodeLine{26 \textcolor{comment}{//========================================================================}}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28 \textcolor{comment}{// We don't need all the fancy stuff}}
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#ifndef NOMINMAX}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{ \#define NOMINMAX}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{33 \textcolor{preprocessor}{\#ifndef VC\_EXTRALEAN}}
+\DoxyCodeLine{34 \textcolor{preprocessor}{ \#define VC\_EXTRALEAN}}
+\DoxyCodeLine{35 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#ifndef WIN32\_LEAN\_AND\_MEAN}}
+\DoxyCodeLine{38 \textcolor{preprocessor}{ \#define WIN32\_LEAN\_AND\_MEAN}}
+\DoxyCodeLine{39 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{41 \textcolor{comment}{// This is a workaround for the fact that glfw3.h needs to export APIENTRY (for}}
+\DoxyCodeLine{42 \textcolor{comment}{// example to allow applications to correctly declare a GL\_KHR\_debug callback)}}
+\DoxyCodeLine{43 \textcolor{comment}{// but windows.h assumes no one will define APIENTRY before it does}}
+\DoxyCodeLine{44 \textcolor{preprocessor}{\#undef APIENTRY}}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46 \textcolor{comment}{// GLFW on Windows is Unicode only and does not work in MBCS mode}}
+\DoxyCodeLine{47 \textcolor{preprocessor}{\#ifndef UNICODE}}
+\DoxyCodeLine{48 \textcolor{preprocessor}{ \#define UNICODE}}
+\DoxyCodeLine{49 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51 \textcolor{comment}{// GLFW requires Windows XP or later}}
+\DoxyCodeLine{52 \textcolor{preprocessor}{\#if WINVER < 0x0501}}
+\DoxyCodeLine{53 \textcolor{preprocessor}{ \#undef WINVER}}
+\DoxyCodeLine{54 \textcolor{preprocessor}{ \#define WINVER 0x0501}}
+\DoxyCodeLine{55 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{56 \textcolor{preprocessor}{\#if \_WIN32\_WINNT < 0x0501}}
+\DoxyCodeLine{57 \textcolor{preprocessor}{ \#undef \_WIN32\_WINNT}}
+\DoxyCodeLine{58 \textcolor{preprocessor}{ \#define \_WIN32\_WINNT 0x0501}}
+\DoxyCodeLine{59 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61 \textcolor{comment}{// GLFW uses DirectInput8 interfaces}}
+\DoxyCodeLine{62 \textcolor{preprocessor}{\#define DIRECTINPUT\_VERSION 0x0800}}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64 \textcolor{comment}{// GLFW uses OEM cursor resources}}
+\DoxyCodeLine{65 \textcolor{preprocessor}{\#define OEMRESOURCE}}
+\DoxyCodeLine{66 }
+\DoxyCodeLine{67 \textcolor{preprocessor}{\#include <wctype.h>}}
+\DoxyCodeLine{68 \textcolor{preprocessor}{\#include <windows.h>}}
+\DoxyCodeLine{69 \textcolor{preprocessor}{\#include <dinput.h>}}
+\DoxyCodeLine{70 \textcolor{preprocessor}{\#include <xinput.h>}}
+\DoxyCodeLine{71 \textcolor{preprocessor}{\#include <dbt.h>}}
+\DoxyCodeLine{72 }
+\DoxyCodeLine{73 \textcolor{comment}{// HACK: Define macros that some windows.h variants don't}}
+\DoxyCodeLine{74 \textcolor{preprocessor}{\#ifndef WM\_MOUSEHWHEEL}}
+\DoxyCodeLine{75 \textcolor{preprocessor}{ \#define WM\_MOUSEHWHEEL 0x020E}}
+\DoxyCodeLine{76 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{77 \textcolor{preprocessor}{\#ifndef WM\_DWMCOMPOSITIONCHANGED}}
+\DoxyCodeLine{78 \textcolor{preprocessor}{ \#define WM\_DWMCOMPOSITIONCHANGED 0x031E}}
+\DoxyCodeLine{79 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{80 \textcolor{preprocessor}{\#ifndef WM\_DWMCOLORIZATIONCOLORCHANGED}}
+\DoxyCodeLine{81 \textcolor{preprocessor}{ \#define WM\_DWMCOLORIZATIONCOLORCHANGED 0x0320}}
+\DoxyCodeLine{82 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{83 \textcolor{preprocessor}{\#ifndef WM\_COPYGLOBALDATA}}
+\DoxyCodeLine{84 \textcolor{preprocessor}{ \#define WM\_COPYGLOBALDATA 0x0049}}
+\DoxyCodeLine{85 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{86 \textcolor{preprocessor}{\#ifndef WM\_UNICHAR}}
+\DoxyCodeLine{87 \textcolor{preprocessor}{ \#define WM\_UNICHAR 0x0109}}
+\DoxyCodeLine{88 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{89 \textcolor{preprocessor}{\#ifndef UNICODE\_NOCHAR}}
+\DoxyCodeLine{90 \textcolor{preprocessor}{ \#define UNICODE\_NOCHAR 0xFFFF}}
+\DoxyCodeLine{91 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{92 \textcolor{preprocessor}{\#ifndef WM\_DPICHANGED}}
+\DoxyCodeLine{93 \textcolor{preprocessor}{ \#define WM\_DPICHANGED 0x02E0}}
+\DoxyCodeLine{94 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{95 \textcolor{preprocessor}{\#ifndef GET\_XBUTTON\_WPARAM}}
+\DoxyCodeLine{96 \textcolor{preprocessor}{ \#define GET\_XBUTTON\_WPARAM(w) (HIWORD(w))}}
+\DoxyCodeLine{97 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{98 \textcolor{preprocessor}{\#ifndef EDS\_ROTATEDMODE}}
+\DoxyCodeLine{99 \textcolor{preprocessor}{ \#define EDS\_ROTATEDMODE 0x00000004}}
+\DoxyCodeLine{100 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{101 \textcolor{preprocessor}{\#ifndef DISPLAY\_DEVICE\_ACTIVE}}
+\DoxyCodeLine{102 \textcolor{preprocessor}{ \#define DISPLAY\_DEVICE\_ACTIVE 0x00000001}}
+\DoxyCodeLine{103 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{104 \textcolor{preprocessor}{\#ifndef \_WIN32\_WINNT\_WINBLUE}}
+\DoxyCodeLine{105 \textcolor{preprocessor}{ \#define \_WIN32\_WINNT\_WINBLUE 0x0603}}
+\DoxyCodeLine{106 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{107 \textcolor{preprocessor}{\#ifndef \_WIN32\_WINNT\_WIN8}}
+\DoxyCodeLine{108 \textcolor{preprocessor}{ \#define \_WIN32\_WINNT\_WIN8 0x0602}}
+\DoxyCodeLine{109 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{110 \textcolor{preprocessor}{\#ifndef WM\_GETDPISCALEDSIZE}}
+\DoxyCodeLine{111 \textcolor{preprocessor}{ \#define WM\_GETDPISCALEDSIZE 0x02e4}}
+\DoxyCodeLine{112 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{113 \textcolor{preprocessor}{\#ifndef USER\_DEFAULT\_SCREEN\_DPI}}
+\DoxyCodeLine{114 \textcolor{preprocessor}{ \#define USER\_DEFAULT\_SCREEN\_DPI 96}}
+\DoxyCodeLine{115 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{116 \textcolor{preprocessor}{\#ifndef OCR\_HAND}}
+\DoxyCodeLine{117 \textcolor{preprocessor}{ \#define OCR\_HAND 32649}}
+\DoxyCodeLine{118 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{120 \textcolor{preprocessor}{\#if WINVER < 0x0601}}
+\DoxyCodeLine{121 \textcolor{keyword}{typedef} \textcolor{keyword}{struct}}
+\DoxyCodeLine{122 \{}
+\DoxyCodeLine{123     DWORD cbSize;}
+\DoxyCodeLine{124     DWORD ExtStatus;}
+\DoxyCodeLine{125 \} \mbox{\hyperlink{structCHANGEFILTERSTRUCT}{CHANGEFILTERSTRUCT}};}
+\DoxyCodeLine{126 \textcolor{preprocessor}{\#ifndef MSGFLT\_ALLOW}}
+\DoxyCodeLine{127 \textcolor{preprocessor}{ \#define MSGFLT\_ALLOW 1}}
+\DoxyCodeLine{128 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{129 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/*Windows 7*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{130 }
+\DoxyCodeLine{131 \textcolor{preprocessor}{\#if WINVER < 0x0600}}
+\DoxyCodeLine{132 \textcolor{preprocessor}{\#define DWM\_BB\_ENABLE 0x00000001}}
+\DoxyCodeLine{133 \textcolor{preprocessor}{\#define DWM\_BB\_BLURREGION 0x00000002}}
+\DoxyCodeLine{134 \textcolor{keyword}{typedef} \textcolor{keyword}{struct}}
+\DoxyCodeLine{135 \{}
+\DoxyCodeLine{136     DWORD dwFlags;}
+\DoxyCodeLine{137     BOOL fEnable;}
+\DoxyCodeLine{138     HRGN hRgnBlur;}
+\DoxyCodeLine{139     BOOL fTransitionOnMaximized;}
+\DoxyCodeLine{140 \} \mbox{\hyperlink{structDWM__BLURBEHIND}{DWM\_BLURBEHIND}};}
+\DoxyCodeLine{141 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{142 \textcolor{preprocessor}{ \#include <dwmapi.h>}}
+\DoxyCodeLine{143 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/*Windows Vista*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{145 \textcolor{preprocessor}{\#ifndef DPI\_ENUMS\_DECLARED}}
+\DoxyCodeLine{146 \textcolor{keyword}{typedef} \textcolor{keyword}{enum}}
+\DoxyCodeLine{147 \{}
+\DoxyCodeLine{148     PROCESS\_DPI\_UNAWARE = 0,}
+\DoxyCodeLine{149     PROCESS\_SYSTEM\_DPI\_AWARE = 1,}
+\DoxyCodeLine{150     PROCESS\_PER\_MONITOR\_DPI\_AWARE = 2}
+\DoxyCodeLine{151 \} PROCESS\_DPI\_AWARENESS;}
+\DoxyCodeLine{152 \textcolor{keyword}{typedef} \textcolor{keyword}{enum}}
+\DoxyCodeLine{153 \{}
+\DoxyCodeLine{154     MDT\_EFFECTIVE\_DPI = 0,}
+\DoxyCodeLine{155     MDT\_ANGULAR\_DPI = 1,}
+\DoxyCodeLine{156     MDT\_RAW\_DPI = 2,}
+\DoxyCodeLine{157     MDT\_DEFAULT = MDT\_EFFECTIVE\_DPI}
+\DoxyCodeLine{158 \} MONITOR\_DPI\_TYPE;}
+\DoxyCodeLine{159 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/*DPI\_ENUMS\_DECLARED*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{160 }
+\DoxyCodeLine{161 \textcolor{preprocessor}{\#ifndef DPI\_AWARENESS\_CONTEXT\_PER\_MONITOR\_AWARE\_V2}}
+\DoxyCodeLine{162 \textcolor{preprocessor}{\#define DPI\_AWARENESS\_CONTEXT\_PER\_MONITOR\_AWARE\_V2 ((HANDLE) -\/4)}}
+\DoxyCodeLine{163 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/*DPI\_AWARENESS\_CONTEXT\_PER\_MONITOR\_AWARE\_V2*/}\textcolor{preprocessor}{}}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165 \textcolor{comment}{// HACK: Define versionhelpers.h functions manually as MinGW lacks the header}}
+\DoxyCodeLine{166 \textcolor{preprocessor}{\#define IsWindowsVistaOrGreater()                                     \(\backslash\)}}
+\DoxyCodeLine{167 \textcolor{preprocessor}{    \_glfwIsWindowsVersionOrGreaterWin32(HIBYTE(\_WIN32\_WINNT\_VISTA),   \(\backslash\)}}
+\DoxyCodeLine{168 \textcolor{preprocessor}{                                        LOBYTE(\_WIN32\_WINNT\_VISTA), 0)}}
+\DoxyCodeLine{169 \textcolor{preprocessor}{\#define IsWindows7OrGreater()                                         \(\backslash\)}}
+\DoxyCodeLine{170 \textcolor{preprocessor}{    \_glfwIsWindowsVersionOrGreaterWin32(HIBYTE(\_WIN32\_WINNT\_WIN7),    \(\backslash\)}}
+\DoxyCodeLine{171 \textcolor{preprocessor}{                                        LOBYTE(\_WIN32\_WINNT\_WIN7), 0)}}
+\DoxyCodeLine{172 \textcolor{preprocessor}{\#define IsWindows8OrGreater()                                         \(\backslash\)}}
+\DoxyCodeLine{173 \textcolor{preprocessor}{    \_glfwIsWindowsVersionOrGreaterWin32(HIBYTE(\_WIN32\_WINNT\_WIN8),    \(\backslash\)}}
+\DoxyCodeLine{174 \textcolor{preprocessor}{                                        LOBYTE(\_WIN32\_WINNT\_WIN8), 0)}}
+\DoxyCodeLine{175 \textcolor{preprocessor}{\#define IsWindows8Point1OrGreater()                                   \(\backslash\)}}
+\DoxyCodeLine{176 \textcolor{preprocessor}{    \_glfwIsWindowsVersionOrGreaterWin32(HIBYTE(\_WIN32\_WINNT\_WINBLUE), \(\backslash\)}}
+\DoxyCodeLine{177 \textcolor{preprocessor}{                                        LOBYTE(\_WIN32\_WINNT\_WINBLUE), 0)}}
+\DoxyCodeLine{178 }
+\DoxyCodeLine{179 \textcolor{preprocessor}{\#define \_glfwIsWindows10AnniversaryUpdateOrGreaterWin32() \(\backslash\)}}
+\DoxyCodeLine{180 \textcolor{preprocessor}{    \_glfwIsWindows10BuildOrGreaterWin32(14393)}}
+\DoxyCodeLine{181 \textcolor{preprocessor}{\#define \_glfwIsWindows10CreatorsUpdateOrGreaterWin32() \(\backslash\)}}
+\DoxyCodeLine{182 \textcolor{preprocessor}{    \_glfwIsWindows10BuildOrGreaterWin32(15063)}}
+\DoxyCodeLine{183 }
+\DoxyCodeLine{184 \textcolor{comment}{// HACK: Define macros that some xinput.h variants don't}}
+\DoxyCodeLine{185 \textcolor{preprocessor}{\#ifndef XINPUT\_CAPS\_WIRELESS}}
+\DoxyCodeLine{186 \textcolor{preprocessor}{ \#define XINPUT\_CAPS\_WIRELESS 0x0002}}
+\DoxyCodeLine{187 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{188 \textcolor{preprocessor}{\#ifndef XINPUT\_DEVSUBTYPE\_WHEEL}}
+\DoxyCodeLine{189 \textcolor{preprocessor}{ \#define XINPUT\_DEVSUBTYPE\_WHEEL 0x02}}
+\DoxyCodeLine{190 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{191 \textcolor{preprocessor}{\#ifndef XINPUT\_DEVSUBTYPE\_ARCADE\_STICK}}
+\DoxyCodeLine{192 \textcolor{preprocessor}{ \#define XINPUT\_DEVSUBTYPE\_ARCADE\_STICK 0x03}}
+\DoxyCodeLine{193 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{194 \textcolor{preprocessor}{\#ifndef XINPUT\_DEVSUBTYPE\_FLIGHT\_STICK}}
+\DoxyCodeLine{195 \textcolor{preprocessor}{ \#define XINPUT\_DEVSUBTYPE\_FLIGHT\_STICK 0x04}}
+\DoxyCodeLine{196 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{197 \textcolor{preprocessor}{\#ifndef XINPUT\_DEVSUBTYPE\_DANCE\_PAD}}
+\DoxyCodeLine{198 \textcolor{preprocessor}{ \#define XINPUT\_DEVSUBTYPE\_DANCE\_PAD 0x05}}
+\DoxyCodeLine{199 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{200 \textcolor{preprocessor}{\#ifndef XINPUT\_DEVSUBTYPE\_GUITAR}}
+\DoxyCodeLine{201 \textcolor{preprocessor}{ \#define XINPUT\_DEVSUBTYPE\_GUITAR 0x06}}
+\DoxyCodeLine{202 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{203 \textcolor{preprocessor}{\#ifndef XINPUT\_DEVSUBTYPE\_DRUM\_KIT}}
+\DoxyCodeLine{204 \textcolor{preprocessor}{ \#define XINPUT\_DEVSUBTYPE\_DRUM\_KIT 0x08}}
+\DoxyCodeLine{205 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{206 \textcolor{preprocessor}{\#ifndef XINPUT\_DEVSUBTYPE\_ARCADE\_PAD}}
+\DoxyCodeLine{207 \textcolor{preprocessor}{ \#define XINPUT\_DEVSUBTYPE\_ARCADE\_PAD 0x13}}
+\DoxyCodeLine{208 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{209 \textcolor{preprocessor}{\#ifndef XUSER\_MAX\_COUNT}}
+\DoxyCodeLine{210 \textcolor{preprocessor}{ \#define XUSER\_MAX\_COUNT 4}}
+\DoxyCodeLine{211 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{212 }
+\DoxyCodeLine{213 \textcolor{comment}{// HACK: Define macros that some dinput.h variants don't}}
+\DoxyCodeLine{214 \textcolor{preprocessor}{\#ifndef DIDFT\_OPTIONAL}}
+\DoxyCodeLine{215 \textcolor{preprocessor}{ \#define DIDFT\_OPTIONAL 0x80000000}}
+\DoxyCodeLine{216 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{217 }
+\DoxyCodeLine{218 \textcolor{comment}{// winmm.dll function pointer typedefs}}
+\DoxyCodeLine{219 \textcolor{keyword}{typedef} DWORD (WINAPI * PFN\_timeGetTime)(void);}
+\DoxyCodeLine{220 \textcolor{preprocessor}{\#define timeGetTime \_glfw.win32.winmm.GetTime}}
+\DoxyCodeLine{221 }
+\DoxyCodeLine{222 \textcolor{comment}{// xinput.dll function pointer typedefs}}
+\DoxyCodeLine{223 \textcolor{keyword}{typedef} DWORD (WINAPI * PFN\_XInputGetCapabilities)(DWORD,DWORD,\mbox{\hyperlink{struct__XINPUT__CAPABILITIES}{XINPUT\_CAPABILITIES}}*);}
+\DoxyCodeLine{224 \textcolor{keyword}{typedef} DWORD (WINAPI * PFN\_XInputGetState)(DWORD,\mbox{\hyperlink{struct__XINPUT__STATE}{XINPUT\_STATE}}*);}
+\DoxyCodeLine{225 \textcolor{preprocessor}{\#define XInputGetCapabilities \_glfw.win32.xinput.GetCapabilities}}
+\DoxyCodeLine{226 \textcolor{preprocessor}{\#define XInputGetState \_glfw.win32.xinput.GetState}}
+\DoxyCodeLine{227 }
+\DoxyCodeLine{228 \textcolor{comment}{// dinput8.dll function pointer typedefs}}
+\DoxyCodeLine{229 \textcolor{keyword}{typedef} HRESULT (WINAPI * PFN\_DirectInput8Create)(HINSTANCE,DWORD,REFIID,LPVOID*,LPUNKNOWN);}
+\DoxyCodeLine{230 \textcolor{preprocessor}{\#define DirectInput8Create \_glfw.win32.dinput8.Create}}
+\DoxyCodeLine{231 }
+\DoxyCodeLine{232 \textcolor{comment}{// user32.dll function pointer typedefs}}
+\DoxyCodeLine{233 \textcolor{keyword}{typedef} BOOL (WINAPI * PFN\_SetProcessDPIAware)(void);}
+\DoxyCodeLine{234 \textcolor{keyword}{typedef} BOOL (WINAPI * PFN\_ChangeWindowMessageFilterEx)(HWND,UINT,DWORD,\mbox{\hyperlink{structCHANGEFILTERSTRUCT}{CHANGEFILTERSTRUCT}}*);}
+\DoxyCodeLine{235 \textcolor{keyword}{typedef} BOOL (WINAPI * PFN\_EnableNonClientDpiScaling)(HWND);}
+\DoxyCodeLine{236 \textcolor{keyword}{typedef} BOOL (WINAPI * PFN\_SetProcessDpiAwarenessContext)(HANDLE);}
+\DoxyCodeLine{237 \textcolor{keyword}{typedef} UINT (WINAPI * PFN\_GetDpiForWindow)(HWND);}
+\DoxyCodeLine{238 \textcolor{keyword}{typedef} BOOL (WINAPI * PFN\_AdjustWindowRectExForDpi)(LPRECT,DWORD,BOOL,DWORD,UINT);}
+\DoxyCodeLine{239 \textcolor{preprocessor}{\#define SetProcessDPIAware \_glfw.win32.user32.SetProcessDPIAware\_}}
+\DoxyCodeLine{240 \textcolor{preprocessor}{\#define ChangeWindowMessageFilterEx \_glfw.win32.user32.ChangeWindowMessageFilterEx\_}}
+\DoxyCodeLine{241 \textcolor{preprocessor}{\#define EnableNonClientDpiScaling \_glfw.win32.user32.EnableNonClientDpiScaling\_}}
+\DoxyCodeLine{242 \textcolor{preprocessor}{\#define SetProcessDpiAwarenessContext \_glfw.win32.user32.SetProcessDpiAwarenessContext\_}}
+\DoxyCodeLine{243 \textcolor{preprocessor}{\#define GetDpiForWindow \_glfw.win32.user32.GetDpiForWindow\_}}
+\DoxyCodeLine{244 \textcolor{preprocessor}{\#define AdjustWindowRectExForDpi \_glfw.win32.user32.AdjustWindowRectExForDpi\_}}
+\DoxyCodeLine{245 }
+\DoxyCodeLine{246 \textcolor{comment}{// dwmapi.dll function pointer typedefs}}
+\DoxyCodeLine{247 \textcolor{keyword}{typedef} HRESULT (WINAPI * PFN\_DwmIsCompositionEnabled)(BOOL*);}
+\DoxyCodeLine{248 \textcolor{keyword}{typedef} HRESULT (WINAPI * PFN\_DwmFlush)(VOID);}
+\DoxyCodeLine{249 \textcolor{keyword}{typedef} HRESULT(WINAPI * PFN\_DwmEnableBlurBehindWindow)(HWND,\textcolor{keyword}{const} \mbox{\hyperlink{structDWM__BLURBEHIND}{DWM\_BLURBEHIND}}*);}
+\DoxyCodeLine{250 \textcolor{keyword}{typedef} HRESULT (WINAPI * PFN\_DwmGetColorizationColor)(DWORD*,BOOL*);}
+\DoxyCodeLine{251 \textcolor{preprocessor}{\#define DwmIsCompositionEnabled \_glfw.win32.dwmapi.IsCompositionEnabled}}
+\DoxyCodeLine{252 \textcolor{preprocessor}{\#define DwmFlush \_glfw.win32.dwmapi.Flush}}
+\DoxyCodeLine{253 \textcolor{preprocessor}{\#define DwmEnableBlurBehindWindow \_glfw.win32.dwmapi.EnableBlurBehindWindow}}
+\DoxyCodeLine{254 \textcolor{preprocessor}{\#define DwmGetColorizationColor \_glfw.win32.dwmapi.GetColorizationColor}}
+\DoxyCodeLine{255 }
+\DoxyCodeLine{256 \textcolor{comment}{// shcore.dll function pointer typedefs}}
+\DoxyCodeLine{257 \textcolor{keyword}{typedef} HRESULT (WINAPI * PFN\_SetProcessDpiAwareness)(PROCESS\_DPI\_AWARENESS);}
+\DoxyCodeLine{258 \textcolor{keyword}{typedef} HRESULT (WINAPI * PFN\_GetDpiForMonitor)(HMONITOR,MONITOR\_DPI\_TYPE,UINT*,UINT*);}
+\DoxyCodeLine{259 \textcolor{preprocessor}{\#define SetProcessDpiAwareness \_glfw.win32.shcore.SetProcessDpiAwareness\_}}
+\DoxyCodeLine{260 \textcolor{preprocessor}{\#define GetDpiForMonitor \_glfw.win32.shcore.GetDpiForMonitor\_}}
+\DoxyCodeLine{261 }
+\DoxyCodeLine{262 \textcolor{comment}{// ntdll.dll function pointer typedefs}}
+\DoxyCodeLine{263 \textcolor{keyword}{typedef} LONG (WINAPI * PFN\_RtlVerifyVersionInfo)(OSVERSIONINFOEXW*,ULONG,ULONGLONG);}
+\DoxyCodeLine{264 \textcolor{preprocessor}{\#define RtlVerifyVersionInfo \_glfw.win32.ntdll.RtlVerifyVersionInfo\_}}
+\DoxyCodeLine{265 }
+\DoxyCodeLine{266 \textcolor{keyword}{typedef} VkFlags VkWin32SurfaceCreateFlagsKHR;}
+\DoxyCodeLine{267 }
+\DoxyCodeLine{268 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structVkWin32SurfaceCreateInfoKHR}{VkWin32SurfaceCreateInfoKHR}}}
+\DoxyCodeLine{269 \{}
+\DoxyCodeLine{270     VkStructureType                 sType;}
+\DoxyCodeLine{271     \textcolor{keyword}{const} \textcolor{keywordtype}{void}*                     pNext;}
+\DoxyCodeLine{272     VkWin32SurfaceCreateFlagsKHR    flags;}
+\DoxyCodeLine{273     HINSTANCE                       hinstance;}
+\DoxyCodeLine{274     HWND                            hwnd;}
+\DoxyCodeLine{275 \} \mbox{\hyperlink{structVkWin32SurfaceCreateInfoKHR}{VkWin32SurfaceCreateInfoKHR}};}
+\DoxyCodeLine{276 }
+\DoxyCodeLine{277 \textcolor{keyword}{typedef} VkResult (APIENTRY *PFN\_vkCreateWin32SurfaceKHR)(VkInstance,\textcolor{keyword}{const} \mbox{\hyperlink{structVkWin32SurfaceCreateInfoKHR}{VkWin32SurfaceCreateInfoKHR}}*,\textcolor{keyword}{const} \mbox{\hyperlink{structVkAllocationCallbacks}{VkAllocationCallbacks}}*,VkSurfaceKHR*);}
+\DoxyCodeLine{278 \textcolor{keyword}{typedef} VkBool32 (APIENTRY *PFN\_vkGetPhysicalDeviceWin32PresentationSupportKHR)(VkPhysicalDevice,uint32\_t);}
+\DoxyCodeLine{279 }
+\DoxyCodeLine{280 \textcolor{preprocessor}{\#include "{}win32\_joystick.h"{}}}
+\DoxyCodeLine{281 \textcolor{preprocessor}{\#include "{}wgl\_context.h"{}}}
+\DoxyCodeLine{282 }
+\DoxyCodeLine{283 \textcolor{preprocessor}{\#if !defined(\_GLFW\_WNDCLASSNAME)}}
+\DoxyCodeLine{284 \textcolor{preprocessor}{ \#define \_GLFW\_WNDCLASSNAME L"{}GLFW30"{}}}
+\DoxyCodeLine{285 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{286 }
+\DoxyCodeLine{287 \textcolor{preprocessor}{\#define \_glfw\_dlopen(name) LoadLibraryA(name)}}
+\DoxyCodeLine{288 \textcolor{preprocessor}{\#define \_glfw\_dlclose(handle) FreeLibrary((HMODULE) handle)}}
+\DoxyCodeLine{289 \textcolor{preprocessor}{\#define \_glfw\_dlsym(handle, name) GetProcAddress((HMODULE) handle, name)}}
+\DoxyCodeLine{290 }
+\DoxyCodeLine{291 \textcolor{preprocessor}{\#define \_GLFW\_PLATFORM\_WINDOW\_STATE         \_GLFWwindowWin32  win32}}
+\DoxyCodeLine{292 \textcolor{preprocessor}{\#define \_GLFW\_PLATFORM\_LIBRARY\_WINDOW\_STATE \_GLFWlibraryWin32 win32}}
+\DoxyCodeLine{293 \textcolor{preprocessor}{\#define \_GLFW\_PLATFORM\_LIBRARY\_TIMER\_STATE  \_GLFWtimerWin32   win32}}
+\DoxyCodeLine{294 \textcolor{preprocessor}{\#define \_GLFW\_PLATFORM\_MONITOR\_STATE        \_GLFWmonitorWin32 win32}}
+\DoxyCodeLine{295 \textcolor{preprocessor}{\#define \_GLFW\_PLATFORM\_CURSOR\_STATE         \_GLFWcursorWin32  win32}}
+\DoxyCodeLine{296 \textcolor{preprocessor}{\#define \_GLFW\_PLATFORM\_TLS\_STATE            \_GLFWtlsWin32     win32}}
+\DoxyCodeLine{297 \textcolor{preprocessor}{\#define \_GLFW\_PLATFORM\_MUTEX\_STATE          \_GLFWmutexWin32   win32}}
+\DoxyCodeLine{298 }
+\DoxyCodeLine{299 }
+\DoxyCodeLine{300 \textcolor{comment}{// Win32-\/specific per-\/window data}}
+\DoxyCodeLine{301 \textcolor{comment}{//}}
+\DoxyCodeLine{302 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWwindowWin32}{\_GLFWwindowWin32}}}
+\DoxyCodeLine{303 \{}
+\DoxyCodeLine{304     HWND                handle;}
+\DoxyCodeLine{305     HICON               bigIcon;}
+\DoxyCodeLine{306     HICON               smallIcon;}
+\DoxyCodeLine{307 }
+\DoxyCodeLine{308     GLFWbool            cursorTracked;}
+\DoxyCodeLine{309     GLFWbool            frameAction;}
+\DoxyCodeLine{310     GLFWbool            iconified;}
+\DoxyCodeLine{311     GLFWbool            maximized;}
+\DoxyCodeLine{312     \textcolor{comment}{// Whether to enable framebuffer transparency on DWM}}
+\DoxyCodeLine{313     GLFWbool            transparent;}
+\DoxyCodeLine{314     GLFWbool            scaleToMonitor;}
+\DoxyCodeLine{315     GLFWbool            keymenu;}
+\DoxyCodeLine{316 }
+\DoxyCodeLine{317     \textcolor{comment}{// Cached size used to filter out duplicate events}}
+\DoxyCodeLine{318     \textcolor{keywordtype}{int}                 width, height;}
+\DoxyCodeLine{319 }
+\DoxyCodeLine{320     \textcolor{comment}{// The last received cursor position, regardless of source}}
+\DoxyCodeLine{321     \textcolor{keywordtype}{int}                 lastCursorPosX, lastCursorPosY;}
+\DoxyCodeLine{322     \textcolor{comment}{// The last recevied high surrogate when decoding pairs of UTF-\/16 messages}}
+\DoxyCodeLine{323     WCHAR               highSurrogate;}
+\DoxyCodeLine{324 }
+\DoxyCodeLine{325 \} \mbox{\hyperlink{struct__GLFWwindowWin32}{\_GLFWwindowWin32}};}
+\DoxyCodeLine{326 }
+\DoxyCodeLine{327 \textcolor{comment}{// Win32-\/specific global data}}
+\DoxyCodeLine{328 \textcolor{comment}{//}}
+\DoxyCodeLine{329 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWlibraryWin32}{\_GLFWlibraryWin32}}}
+\DoxyCodeLine{330 \{}
+\DoxyCodeLine{331     HWND                helperWindowHandle;}
+\DoxyCodeLine{332     HDEVNOTIFY          deviceNotificationHandle;}
+\DoxyCodeLine{333     DWORD               foregroundLockTimeout;}
+\DoxyCodeLine{334     \textcolor{keywordtype}{int}                 acquiredMonitorCount;}
+\DoxyCodeLine{335     \textcolor{keywordtype}{char}*               clipboardString;}
+\DoxyCodeLine{336     \textcolor{keywordtype}{short} \textcolor{keywordtype}{int}           keycodes[512];}
+\DoxyCodeLine{337     \textcolor{keywordtype}{short} \textcolor{keywordtype}{int}           scancodes[GLFW\_KEY\_LAST + 1];}
+\DoxyCodeLine{338     \textcolor{keywordtype}{char}                keynames[GLFW\_KEY\_LAST + 1][5];}
+\DoxyCodeLine{339     \textcolor{comment}{// Where to place the cursor when re-\/enabled}}
+\DoxyCodeLine{340     \textcolor{keywordtype}{double}              restoreCursorPosX, restoreCursorPosY;}
+\DoxyCodeLine{341     \textcolor{comment}{// The window whose disabled cursor mode is active}}
+\DoxyCodeLine{342     \mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}*        disabledCursorWindow;}
+\DoxyCodeLine{343     RAWINPUT*           rawInput;}
+\DoxyCodeLine{344     \textcolor{keywordtype}{int}                 rawInputSize;}
+\DoxyCodeLine{345     UINT                mouseTrailSize;}
+\DoxyCodeLine{346 }
+\DoxyCodeLine{347     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{348         HINSTANCE                       instance;}
+\DoxyCodeLine{349         PFN\_timeGetTime                 GetTime;}
+\DoxyCodeLine{350     \} winmm;}
+\DoxyCodeLine{351 }
+\DoxyCodeLine{352     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{353         HINSTANCE                       instance;}
+\DoxyCodeLine{354         PFN\_DirectInput8Create          Create;}
+\DoxyCodeLine{355         IDirectInput8W*                 api;}
+\DoxyCodeLine{356     \} dinput8;}
+\DoxyCodeLine{357 }
+\DoxyCodeLine{358     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{359         HINSTANCE                       instance;}
+\DoxyCodeLine{360         PFN\_XInputGetCapabilities       GetCapabilities;}
+\DoxyCodeLine{361         PFN\_XInputGetState              GetState;}
+\DoxyCodeLine{362     \} xinput;}
+\DoxyCodeLine{363 }
+\DoxyCodeLine{364     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{365         HINSTANCE                       instance;}
+\DoxyCodeLine{366         PFN\_SetProcessDPIAware          SetProcessDPIAware\_;}
+\DoxyCodeLine{367         PFN\_ChangeWindowMessageFilterEx ChangeWindowMessageFilterEx\_;}
+\DoxyCodeLine{368         PFN\_EnableNonClientDpiScaling   EnableNonClientDpiScaling\_;}
+\DoxyCodeLine{369         PFN\_SetProcessDpiAwarenessContext SetProcessDpiAwarenessContext\_;}
+\DoxyCodeLine{370         PFN\_GetDpiForWindow             GetDpiForWindow\_;}
+\DoxyCodeLine{371         PFN\_AdjustWindowRectExForDpi    AdjustWindowRectExForDpi\_;}
+\DoxyCodeLine{372     \} user32;}
+\DoxyCodeLine{373 }
+\DoxyCodeLine{374     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{375         HINSTANCE                       instance;}
+\DoxyCodeLine{376         PFN\_DwmIsCompositionEnabled     IsCompositionEnabled;}
+\DoxyCodeLine{377         PFN\_DwmFlush                    Flush;}
+\DoxyCodeLine{378         PFN\_DwmEnableBlurBehindWindow   EnableBlurBehindWindow;}
+\DoxyCodeLine{379         PFN\_DwmGetColorizationColor     GetColorizationColor;}
+\DoxyCodeLine{380     \} dwmapi;}
+\DoxyCodeLine{381 }
+\DoxyCodeLine{382     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{383         HINSTANCE                       instance;}
+\DoxyCodeLine{384         PFN\_SetProcessDpiAwareness      SetProcessDpiAwareness\_;}
+\DoxyCodeLine{385         PFN\_GetDpiForMonitor            GetDpiForMonitor\_;}
+\DoxyCodeLine{386     \} shcore;}
+\DoxyCodeLine{387 }
+\DoxyCodeLine{388     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{389         HINSTANCE                       instance;}
+\DoxyCodeLine{390         PFN\_RtlVerifyVersionInfo        RtlVerifyVersionInfo\_;}
+\DoxyCodeLine{391     \} ntdll;}
+\DoxyCodeLine{392 }
+\DoxyCodeLine{393 \} \mbox{\hyperlink{struct__GLFWlibraryWin32}{\_GLFWlibraryWin32}};}
+\DoxyCodeLine{394 }
+\DoxyCodeLine{395 \textcolor{comment}{// Win32-\/specific per-\/monitor data}}
+\DoxyCodeLine{396 \textcolor{comment}{//}}
+\DoxyCodeLine{397 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmonitorWin32}{\_GLFWmonitorWin32}}}
+\DoxyCodeLine{398 \{}
+\DoxyCodeLine{399     HMONITOR            handle;}
+\DoxyCodeLine{400     \textcolor{comment}{// This size matches the static size of DISPLAY\_DEVICE.DeviceName}}
+\DoxyCodeLine{401     WCHAR               adapterName[32];}
+\DoxyCodeLine{402     WCHAR               displayName[32];}
+\DoxyCodeLine{403     \textcolor{keywordtype}{char}                publicAdapterName[32];}
+\DoxyCodeLine{404     \textcolor{keywordtype}{char}                publicDisplayName[32];}
+\DoxyCodeLine{405     GLFWbool            modesPruned;}
+\DoxyCodeLine{406     GLFWbool            modeChanged;}
+\DoxyCodeLine{407 }
+\DoxyCodeLine{408 \} \mbox{\hyperlink{struct__GLFWmonitorWin32}{\_GLFWmonitorWin32}};}
+\DoxyCodeLine{409 }
+\DoxyCodeLine{410 \textcolor{comment}{// Win32-\/specific per-\/cursor data}}
+\DoxyCodeLine{411 \textcolor{comment}{//}}
+\DoxyCodeLine{412 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWcursorWin32}{\_GLFWcursorWin32}}}
+\DoxyCodeLine{413 \{}
+\DoxyCodeLine{414     HCURSOR             handle;}
+\DoxyCodeLine{415 }
+\DoxyCodeLine{416 \} \mbox{\hyperlink{struct__GLFWcursorWin32}{\_GLFWcursorWin32}};}
+\DoxyCodeLine{417 }
+\DoxyCodeLine{418 \textcolor{comment}{// Win32-\/specific global timer data}}
+\DoxyCodeLine{419 \textcolor{comment}{//}}
+\DoxyCodeLine{420 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWtimerWin32}{\_GLFWtimerWin32}}}
+\DoxyCodeLine{421 \{}
+\DoxyCodeLine{422     GLFWbool            hasPC;}
+\DoxyCodeLine{423     uint64\_t            frequency;}
+\DoxyCodeLine{424 }
+\DoxyCodeLine{425 \} \mbox{\hyperlink{struct__GLFWtimerWin32}{\_GLFWtimerWin32}};}
+\DoxyCodeLine{426 }
+\DoxyCodeLine{427 \textcolor{comment}{// Win32-\/specific thread local storage data}}
+\DoxyCodeLine{428 \textcolor{comment}{//}}
+\DoxyCodeLine{429 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWtlsWin32}{\_GLFWtlsWin32}}}
+\DoxyCodeLine{430 \{}
+\DoxyCodeLine{431     GLFWbool            allocated;}
+\DoxyCodeLine{432     DWORD               index;}
+\DoxyCodeLine{433 }
+\DoxyCodeLine{434 \} \mbox{\hyperlink{struct__GLFWtlsWin32}{\_GLFWtlsWin32}};}
+\DoxyCodeLine{435 }
+\DoxyCodeLine{436 \textcolor{comment}{// Win32-\/specific mutex data}}
+\DoxyCodeLine{437 \textcolor{comment}{//}}
+\DoxyCodeLine{438 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmutexWin32}{\_GLFWmutexWin32}}}
+\DoxyCodeLine{439 \{}
+\DoxyCodeLine{440     GLFWbool            allocated;}
+\DoxyCodeLine{441     CRITICAL\_SECTION    section;}
+\DoxyCodeLine{442 }
+\DoxyCodeLine{443 \} \mbox{\hyperlink{struct__GLFWmutexWin32}{\_GLFWmutexWin32}};}
+\DoxyCodeLine{444 }
+\DoxyCodeLine{445 }
+\DoxyCodeLine{446 GLFWbool \_glfwRegisterWindowClassWin32(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{447 \textcolor{keywordtype}{void} \_glfwUnregisterWindowClassWin32(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{448 }
+\DoxyCodeLine{449 WCHAR* \_glfwCreateWideStringFromUTF8Win32(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* source);}
+\DoxyCodeLine{450 \textcolor{keywordtype}{char}* \_glfwCreateUTF8FromWideStringWin32(\textcolor{keyword}{const} WCHAR* source);}
+\DoxyCodeLine{451 BOOL \_glfwIsWindowsVersionOrGreaterWin32(WORD major, WORD minor, WORD sp);}
+\DoxyCodeLine{452 BOOL \_glfwIsWindows10BuildOrGreaterWin32(WORD build);}
+\DoxyCodeLine{453 \textcolor{keywordtype}{void} \_glfwInputErrorWin32(\textcolor{keywordtype}{int} error, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* description);}
+\DoxyCodeLine{454 \textcolor{keywordtype}{void} \_glfwUpdateKeyNamesWin32(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{455 }
+\DoxyCodeLine{456 \textcolor{keywordtype}{void} \_glfwInitTimerWin32(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{457 }
+\DoxyCodeLine{458 \textcolor{keywordtype}{void} \_glfwPollMonitorsWin32(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{459 \textcolor{keywordtype}{void} \_glfwSetVideoModeWin32(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \textcolor{keyword}{const} \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}* desired);}
+\DoxyCodeLine{460 \textcolor{keywordtype}{void} \_glfwRestoreVideoModeWin32(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor);}
+\DoxyCodeLine{461 \textcolor{keywordtype}{void} \_glfwGetMonitorContentScaleWin32(HMONITOR handle, \textcolor{keywordtype}{float}* xscale, \textcolor{keywordtype}{float}* yscale);}
+\DoxyCodeLine{462 }
+
+\end{DoxyCode}

@@ -1,0 +1,38 @@
+\hypertarget{position__t_8hpp_source}{}\doxysection{position\+\_\+t.\+hpp}
+\label{position__t_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/input/position\_t.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/input/position\_t.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <cstddef>} \textcolor{comment}{// size\_t}}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <nlohmann/detail/abi\_macros.hpp>}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{16 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{17 \{}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{20 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1position__t}{position\_t}}}
+\DoxyCodeLine{21 \{}
+\DoxyCodeLine{23     std::size\_t \mbox{\hyperlink{structdetail_1_1position__t_ac4d220d61ce61eeffbea40985727a3b0}{chars\_read\_total}} = 0;}
+\DoxyCodeLine{25     std::size\_t \mbox{\hyperlink{structdetail_1_1position__t_a6548d584bd03d1d47bfcd7cf8b1fb0c6}{chars\_read\_current\_line}} = 0;}
+\DoxyCodeLine{27     std::size\_t \mbox{\hyperlink{structdetail_1_1position__t_a9ec1ac6600d1364f4d1c9f67de6a670b}{lines\_read}} = 0;}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{30     \textcolor{keyword}{constexpr} \textcolor{keyword}{operator} size\_t()\textcolor{keyword}{ const}}
+\DoxyCodeLine{31 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{32         \textcolor{keywordflow}{return} \mbox{\hyperlink{structdetail_1_1position__t_ac4d220d61ce61eeffbea40985727a3b0}{chars\_read\_total}};}
+\DoxyCodeLine{33     \}}
+\DoxyCodeLine{34 \};}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{37 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

@@ -1,0 +1,113 @@
+\hypertarget{sparsemap_8hpp_source}{}\doxysection{sparsemap.\+hpp}
+\label{sparsemap_8hpp_source}\index{client/includes/core/sparsemap.hpp@{client/includes/core/sparsemap.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{** EPITECH PROJECT, 2023}}
+\DoxyCodeLine{3 \textcolor{comment}{** rtype}}
+\DoxyCodeLine{4 \textcolor{comment}{** File description:}}
+\DoxyCodeLine{5 \textcolor{comment}{**}}
+\DoxyCodeLine{6 \textcolor{comment}{*/}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include "{}ecs\_traits.hpp"{}}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#include <algorithm>}}
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include <cstddef>}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{keyword}{namespace }ecs \{}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{keyword}{template} <\textcolor{keyword}{typename} Component>}
+\DoxyCodeLine{17 \textcolor{keyword}{class }\mbox{\hyperlink{classecs_1_1SparseMap}{SparseMap}} \{}
+\DoxyCodeLine{18   \textcolor{keyword}{private}:}
+\DoxyCodeLine{19     \textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{size\_t} BLOCK\_SIZE = 16;}
+\DoxyCodeLine{20     \textcolor{keyword}{struct }Block \{}
+\DoxyCodeLine{21         Component components[BLOCK\_SIZE];}
+\DoxyCodeLine{22         entity\_type sparse[BLOCK\_SIZE];}
+\DoxyCodeLine{23         entity\_type dense[BLOCK\_SIZE];}
+\DoxyCodeLine{24     \};}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26   \textcolor{keyword}{public}:}
+\DoxyCodeLine{27     \mbox{\hyperlink{classecs_1_1SparseMap}{SparseMap}}() : blocks(\{\textcolor{keyword}{new} Block()\}), size(0) \{\}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29     \mbox{\hyperlink{classecs_1_1SparseMap}{\string~SparseMap}}() \{}
+\DoxyCodeLine{30         \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} block : this-\/>blocks) \{}
+\DoxyCodeLine{31             \textcolor{keyword}{delete} block;}
+\DoxyCodeLine{32         \}}
+\DoxyCodeLine{33     \}}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{39     \textcolor{keywordtype}{void} \mbox{\hyperlink{classecs_1_1SparseMap_a5f8adc5d3a5dae2afba3562a155c72b8}{insert}}(entity\_type \textcolor{keywordtype}{id}, \textcolor{keyword}{const} Component \&value) \{}
+\DoxyCodeLine{40         \textcolor{keywordtype}{size\_t} sparseIndex = inBlockIndex(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{id} == size \&\& \textcolor{keywordtype}{id} == blocks.size() * BLOCK\_SIZE) \{}
+\DoxyCodeLine{43             blocks.push\_back(\textcolor{keyword}{new} Block());}
+\DoxyCodeLine{44         \}}
+\DoxyCodeLine{45         Block *block = this-\/>blocks[blockIndex(\textcolor{keywordtype}{id})];}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47         \textcolor{keywordflow}{if} (!block-\/>sparse[sparseIndex]) \{}
+\DoxyCodeLine{48             this-\/>max = std::max(\textcolor{keywordtype}{id}, this-\/>max);}
+\DoxyCodeLine{49             this-\/>blocks[blockIndex(this-\/>size)]-\/>dense[inBlockIndex(this-\/>size)] = id;}
+\DoxyCodeLine{50             this-\/>blocks[blockIndex(this-\/>size)]-\/>components[inBlockIndex(this-\/>size)] = value;}
+\DoxyCodeLine{51             block-\/>sparse[sparseIndex] = this-\/>size;}
+\DoxyCodeLine{52             ++size;}
+\DoxyCodeLine{53         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{54             this-\/>blocks[blockIndex(block-\/>sparse[sparseIndex])]-\/>components[inBlockIndex(block-\/>sparse[sparseIndex])] = value;}
+\DoxyCodeLine{55         \}}
+\DoxyCodeLine{56     \}}
+\DoxyCodeLine{57 }
+\DoxyCodeLine{62     \textcolor{keywordtype}{void} \mbox{\hyperlink{classecs_1_1SparseMap_a3c407fbcc3bfb22da175196257856e43}{erase}}(entity\_type \textcolor{keywordtype}{id}) \{}
+\DoxyCodeLine{63         \textcolor{keywordtype}{size\_t} index = inBlockIndex(\textcolor{keywordtype}{id});}
+\DoxyCodeLine{64         Block *block = this-\/>blocks[blockIndex(\textcolor{keywordtype}{id})];}
+\DoxyCodeLine{65         entity\_type previousSparseValue = block-\/>sparse[index];}
+\DoxyCodeLine{66 }
+\DoxyCodeLine{67         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{id} == this-\/>max) \{}
+\DoxyCodeLine{68             updateMax();}
+\DoxyCodeLine{69             \textcolor{keywordflow}{if} (blocks.size() > 1 \&\& max < BLOCK\_SIZE / 2 + (blocks.size() -\/ 2) * BLOCK\_SIZE) \{}
+\DoxyCodeLine{70                 \textcolor{keyword}{delete} this-\/>blocks[this-\/>blocks.size() -\/ 1];}
+\DoxyCodeLine{71                 this-\/>blocks.pop\_back();}
+\DoxyCodeLine{72             \}}
+\DoxyCodeLine{73         \}}
+\DoxyCodeLine{74 }
+\DoxyCodeLine{75         \textcolor{keywordflow}{if} (previousSparseValue != NULL\_ENTITY) \{}
+\DoxyCodeLine{76             block-\/>sparse[index] = NULL\_ENTITY;}
+\DoxyCodeLine{77         \}}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79         block-\/>sparse[index] = block-\/>dense[index];}
+\DoxyCodeLine{80         entity\_type *lastDensePtr = \&this-\/>blocks[blockIndex(this-\/>size -\/ 1)]-\/>dense[inBlockIndex(this-\/>size -\/ 1)];}
+\DoxyCodeLine{81         \textcolor{keywordflow}{if} (*lastDensePtr == \textcolor{keywordtype}{id})}
+\DoxyCodeLine{82             \textcolor{keywordflow}{return};}
+\DoxyCodeLine{83         block-\/>dense[index] = *lastDensePtr;}
+\DoxyCodeLine{84         *lastDensePtr = id;}
+\DoxyCodeLine{85         block-\/>sparse[inBlockIndex(*lastDensePtr)] = index;}
+\DoxyCodeLine{86         -\/-\/size;}
+\DoxyCodeLine{87     \}}
+\DoxyCodeLine{88 }
+\DoxyCodeLine{94     Component \&\mbox{\hyperlink{classecs_1_1SparseMap_a839cd13958165362d3f6665ab88a7f08}{operator[]}}(entity\_type \textcolor{keywordtype}{id}) \{}
+\DoxyCodeLine{95         Block *block = this-\/>blocks[blockIndex(\textcolor{keywordtype}{id})];}
+\DoxyCodeLine{96         \textcolor{keywordtype}{size\_t} denseIndex = block-\/>sparse[inBlockIndex(\textcolor{keywordtype}{id})];}
+\DoxyCodeLine{97         \textcolor{keywordflow}{return} block-\/>components[denseIndex];}
+\DoxyCodeLine{98     \}}
+\DoxyCodeLine{99 }
+\DoxyCodeLine{100   \textcolor{keyword}{private}:}
+\DoxyCodeLine{101     std::vector<Block *> blocks;}
+\DoxyCodeLine{102     \textcolor{keywordtype}{size\_t} size;}
+\DoxyCodeLine{103     entity\_type max;}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{105     \textcolor{keywordtype}{size\_t} inBlockIndex(entity\_type \textcolor{keywordtype}{id}) \{ \textcolor{keywordflow}{return} \textcolor{keywordtype}{id} \% BLOCK\_SIZE; \}}
+\DoxyCodeLine{106 }
+\DoxyCodeLine{107     \textcolor{keywordtype}{size\_t} blockIndex(entity\_type \textcolor{keywordtype}{id}) \{ \textcolor{keywordflow}{return} \textcolor{keywordtype}{id} / BLOCK\_SIZE; \}}
+\DoxyCodeLine{108 }
+\DoxyCodeLine{109     \textcolor{keywordtype}{void} updateMax() \{}
+\DoxyCodeLine{110         \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i = max; i > 0; -\/-\/i) \{}
+\DoxyCodeLine{111             \textcolor{keywordflow}{if} (blocks[blockIndex(i -\/ 1)]-\/>sparse[inBlockIndex(i -\/ 1)] != NULL\_ENTITY) \{}
+\DoxyCodeLine{112                 this-\/>max = i -\/ 1;}
+\DoxyCodeLine{113                 \textcolor{keywordflow}{return};}
+\DoxyCodeLine{114             \}}
+\DoxyCodeLine{115         \}}
+\DoxyCodeLine{116         this-\/>max = 0;}
+\DoxyCodeLine{117     \}}
+\DoxyCodeLine{118 \};}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{120 \} \textcolor{comment}{// namespace ecs}}
+
+\end{DoxyCode}

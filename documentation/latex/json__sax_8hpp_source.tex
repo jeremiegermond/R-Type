@@ -1,0 +1,603 @@
+\hypertarget{json__sax_8hpp_source}{}\doxysection{json\+\_\+sax.\+hpp}
+\label{json__sax_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/input/json\_sax.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/input/json\_sax.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <cstddef>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <string>} \textcolor{comment}{// string}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <utility>} \textcolor{comment}{// move}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <vector>} \textcolor{comment}{// vector}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <nlohmann/detail/exceptions.hpp>}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <nlohmann/detail/macro\_scope.hpp>}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <nlohmann/detail/string\_concat.hpp>}}
+\DoxyCodeLine{19 }
+\DoxyCodeLine{20 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{30 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BasicJsonType>}
+\DoxyCodeLine{31 \textcolor{keyword}{struct }\mbox{\hyperlink{structjson__sax}{json\_sax}}}
+\DoxyCodeLine{32 \{}
+\DoxyCodeLine{33     \textcolor{keyword}{using }number\_integer\_t = \textcolor{keyword}{typename} BasicJsonType::number\_integer\_t;}
+\DoxyCodeLine{34     \textcolor{keyword}{using }number\_unsigned\_t = \textcolor{keyword}{typename} BasicJsonType::number\_unsigned\_t;}
+\DoxyCodeLine{35     \textcolor{keyword}{using }number\_float\_t = \textcolor{keyword}{typename} BasicJsonType::number\_float\_t;}
+\DoxyCodeLine{36     \textcolor{keyword}{using }string\_t = \textcolor{keyword}{typename} BasicJsonType::string\_t;}
+\DoxyCodeLine{37     \textcolor{keyword}{using }binary\_t = \textcolor{keyword}{typename} BasicJsonType::binary\_t;}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{43     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_acbcc09c0ada2782cd73cc4135823181d}{null}}() = 0;}
+\DoxyCodeLine{44 }
+\DoxyCodeLine{50     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_ab89f75382c0fd7fe81c95fc84cfa3150}{boolean}}(\textcolor{keywordtype}{bool} val) = 0;}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{57     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a46cc306b7677553d8f6bd8c9592eb1bd}{number\_integer}}(number\_integer\_t val) = 0;}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{64     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a32f8a32794cb384f0de3d3a96a6bb696}{number\_unsigned}}(number\_unsigned\_t val) = 0;}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{72     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a19eafa3a92fc75e0258a842283396aa9}{number\_float}}(number\_float\_t val, \textcolor{keyword}{const} string\_t\& s) = 0;}
+\DoxyCodeLine{73 }
+\DoxyCodeLine{80     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a3da9ee0c61f1a37e6c6a3d2dccb16765}{string}}(string\_t\& val) = 0;}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{88     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a15d6c5d0dcaceb906405f427faf9b34e}{binary}}(binary\_t\& val) = 0;}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{96     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a54a0883df64f40664395e3dad674aaa5}{start\_object}}(std::size\_t elements) = 0;}
+\DoxyCodeLine{97 }
+\DoxyCodeLine{104     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a3355ecd7e3e9806dcb80b2f8842b82ce}{key}}(string\_t\& val) = 0;}
+\DoxyCodeLine{105 }
+\DoxyCodeLine{110     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_ac34854cab5e023c5d0e8b381a11aba5b}{end\_object}}() = 0;}
+\DoxyCodeLine{111 }
+\DoxyCodeLine{118     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_afc4d5c0d123f2e3c939060a778c4f22c}{start\_array}}(std::size\_t elements) = 0;}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{124     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_a81fbddbf7dc96eab21ef916625ad5f3b}{end\_array}}() = 0;}
+\DoxyCodeLine{125 }
+\DoxyCodeLine{133     \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{structjson__sax_af165920966b60b78e57a2e4d92a63897}{parse\_error}}(std::size\_t position,}
+\DoxyCodeLine{134                              \textcolor{keyword}{const} std::string\& last\_token,}
+\DoxyCodeLine{135                              \textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1exception}{detail::exception}}\& ex) = 0;}
+\DoxyCodeLine{136 }
+\DoxyCodeLine{137     \mbox{\hyperlink{structjson__sax}{json\_sax}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{138     \mbox{\hyperlink{structjson__sax}{json\_sax}}(\textcolor{keyword}{const} \mbox{\hyperlink{structjson__sax}{json\_sax}}\&) = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{139     \mbox{\hyperlink{structjson__sax}{json\_sax}}(\mbox{\hyperlink{structjson__sax}{json\_sax}}\&\&) noexcept = default;}
+\DoxyCodeLine{140     \mbox{\hyperlink{structjson__sax}{json\_sax}}\& operator=(const \mbox{\hyperlink{structjson__sax}{json\_sax}}\&) = default;}
+\DoxyCodeLine{141     \mbox{\hyperlink{structjson__sax}{json\_sax}}\& operator=(\mbox{\hyperlink{structjson__sax}{json\_sax}}\&\&) noexcept = default;}
+\DoxyCodeLine{142     virtual \string~\mbox{\hyperlink{structjson__sax}{json\_sax}}() = default;}
+\DoxyCodeLine{143 \};}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{145 }
+\DoxyCodeLine{146 namespace \mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{147 \{}
+\DoxyCodeLine{161 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BasicJsonType>}
+\DoxyCodeLine{162 \textcolor{keyword}{class }\mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}}
+\DoxyCodeLine{163 \{}
+\DoxyCodeLine{164   \textcolor{keyword}{public}:}
+\DoxyCodeLine{165     \textcolor{keyword}{using }number\_integer\_t = \textcolor{keyword}{typename} BasicJsonType::number\_integer\_t;}
+\DoxyCodeLine{166     \textcolor{keyword}{using }number\_unsigned\_t = \textcolor{keyword}{typename} BasicJsonType::number\_unsigned\_t;}
+\DoxyCodeLine{167     \textcolor{keyword}{using }number\_float\_t = \textcolor{keyword}{typename} BasicJsonType::number\_float\_t;}
+\DoxyCodeLine{168     \textcolor{keyword}{using }string\_t = \textcolor{keyword}{typename} BasicJsonType::string\_t;}
+\DoxyCodeLine{169     \textcolor{keyword}{using }binary\_t = \textcolor{keyword}{typename} BasicJsonType::binary\_t;}
+\DoxyCodeLine{170 }
+\DoxyCodeLine{176     \textcolor{keyword}{explicit} \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser_a3ee72f78d1ebdd8f8573ccf2b8e3ea6f}{json\_sax\_dom\_parser}}(BasicJsonType\& r, \textcolor{keyword}{const} \textcolor{keywordtype}{bool} allow\_exceptions\_ = \textcolor{keyword}{true})}
+\DoxyCodeLine{177         : root(r), allow\_exceptions(allow\_exceptions\_)}
+\DoxyCodeLine{178     \{\}}
+\DoxyCodeLine{179 }
+\DoxyCodeLine{180     \textcolor{comment}{// make class move-\/only}}
+\DoxyCodeLine{181     \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{182     \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}(\mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}\&\&) = \textcolor{keywordflow}{default}; \textcolor{comment}{// NOLINT(hicpp-\/noexcept-\/move,performance-\/noexcept-\/move-\/constructor)}}
+\DoxyCodeLine{183     \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}\& operator=(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{184     \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}\& operator=(\mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{json\_sax\_dom\_parser}}\&\&) = \textcolor{keywordflow}{default}; \textcolor{comment}{// NOLINT(hicpp-\/noexcept-\/move,performance-\/noexcept-\/move-\/constructor)}}
+\DoxyCodeLine{185     \mbox{\hyperlink{classdetail_1_1json__sax__dom__parser}{\string~json\_sax\_dom\_parser}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{186 }
+\DoxyCodeLine{187     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a37a6259cc0c1dae299a7866489dff0bd}{null}}()}
+\DoxyCodeLine{188     \{}
+\DoxyCodeLine{189         handle\_value(\textcolor{keyword}{nullptr});}
+\DoxyCodeLine{190         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{191     \}}
+\DoxyCodeLine{192 }
+\DoxyCodeLine{193     \textcolor{keywordtype}{bool} boolean(\textcolor{keywordtype}{bool} val)}
+\DoxyCodeLine{194     \{}
+\DoxyCodeLine{195         handle\_value(val);}
+\DoxyCodeLine{196         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{197     \}}
+\DoxyCodeLine{198 }
+\DoxyCodeLine{199     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a5763da164f8659d94a56e29df64b4bcc}{number\_integer}}(number\_integer\_t val)}
+\DoxyCodeLine{200     \{}
+\DoxyCodeLine{201         handle\_value(val);}
+\DoxyCodeLine{202         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{203     \}}
+\DoxyCodeLine{204 }
+\DoxyCodeLine{205     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632adce7cc8ec29055c4158828921f2f265e}{number\_unsigned}}(number\_unsigned\_t val)}
+\DoxyCodeLine{206     \{}
+\DoxyCodeLine{207         handle\_value(val);}
+\DoxyCodeLine{208         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{209     \}}
+\DoxyCodeLine{210 }
+\DoxyCodeLine{211     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632ad9966ecb59667235a57b4b999a649eef}{number\_float}}(number\_float\_t val, \textcolor{keyword}{const} string\_t\& \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{212     \{}
+\DoxyCodeLine{213         handle\_value(val);}
+\DoxyCodeLine{214         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{215     \}}
+\DoxyCodeLine{216 }
+\DoxyCodeLine{217     \textcolor{keywordtype}{bool} string(string\_t\& val)}
+\DoxyCodeLine{218     \{}
+\DoxyCodeLine{219         handle\_value(val);}
+\DoxyCodeLine{220         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{221     \}}
+\DoxyCodeLine{222 }
+\DoxyCodeLine{223     \textcolor{keywordtype}{bool} binary(binary\_t\& val)}
+\DoxyCodeLine{224     \{}
+\DoxyCodeLine{225         handle\_value(std::move(val));}
+\DoxyCodeLine{226         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{227     \}}
+\DoxyCodeLine{228 }
+\DoxyCodeLine{229     \textcolor{keywordtype}{bool} start\_object(std::size\_t len)}
+\DoxyCodeLine{230     \{}
+\DoxyCodeLine{231         ref\_stack.push\_back(handle\_value(BasicJsonType::value\_t::object));}
+\DoxyCodeLine{232 }
+\DoxyCodeLine{233         \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(len != \textcolor{keyword}{static\_cast<}std::size\_t\textcolor{keyword}{>}(-\/1) \&\& len > ref\_stack.back()-\/>max\_size()))}
+\DoxyCodeLine{234         \{}
+\DoxyCodeLine{235             JSON\_THROW(out\_of\_range::create(408, concat(\textcolor{stringliteral}{"{}excessive object size: "{}}, std::to\_string(len)), ref\_stack.back()));}
+\DoxyCodeLine{236         \}}
+\DoxyCodeLine{237 }
+\DoxyCodeLine{238         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{239     \}}
+\DoxyCodeLine{240 }
+\DoxyCodeLine{241     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa3c6e0b8a9c15224a8228b9a98ca1531d}{key}}(string\_t\& val)}
+\DoxyCodeLine{242     \{}
+\DoxyCodeLine{243         JSON\_ASSERT(!ref\_stack.empty());}
+\DoxyCodeLine{244         JSON\_ASSERT(ref\_stack.back()-\/>is\_object());}
+\DoxyCodeLine{245 }
+\DoxyCodeLine{246         \textcolor{comment}{// add null at given key and store the reference for later}}
+\DoxyCodeLine{247         object\_element = \&(ref\_stack.back()-\/>m\_value.object-\/>operator[](val));}
+\DoxyCodeLine{248         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{249     \}}
+\DoxyCodeLine{250 }
+\DoxyCodeLine{251     \textcolor{keywordtype}{bool} end\_object()}
+\DoxyCodeLine{252     \{}
+\DoxyCodeLine{253         JSON\_ASSERT(!ref\_stack.empty());}
+\DoxyCodeLine{254         JSON\_ASSERT(ref\_stack.back()-\/>is\_object());}
+\DoxyCodeLine{255 }
+\DoxyCodeLine{256         ref\_stack.back()-\/>set\_parents();}
+\DoxyCodeLine{257         ref\_stack.pop\_back();}
+\DoxyCodeLine{258         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{259     \}}
+\DoxyCodeLine{260 }
+\DoxyCodeLine{261     \textcolor{keywordtype}{bool} start\_array(std::size\_t len)}
+\DoxyCodeLine{262     \{}
+\DoxyCodeLine{263         ref\_stack.push\_back(handle\_value(BasicJsonType::value\_t::array));}
+\DoxyCodeLine{264 }
+\DoxyCodeLine{265         \textcolor{keywordflow}{if} (JSON\_HEDLEY\_UNLIKELY(len != \textcolor{keyword}{static\_cast<}std::size\_t\textcolor{keyword}{>}(-\/1) \&\& len > ref\_stack.back()-\/>max\_size()))}
+\DoxyCodeLine{266         \{}
+\DoxyCodeLine{267             JSON\_THROW(out\_of\_range::create(408, concat(\textcolor{stringliteral}{"{}excessive array size: "{}}, std::to\_string(len)), ref\_stack.back()));}
+\DoxyCodeLine{268         \}}
+\DoxyCodeLine{269 }
+\DoxyCodeLine{270         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{271     \}}
+\DoxyCodeLine{272 }
+\DoxyCodeLine{273     \textcolor{keywordtype}{bool} end\_array()}
+\DoxyCodeLine{274     \{}
+\DoxyCodeLine{275         JSON\_ASSERT(!ref\_stack.empty());}
+\DoxyCodeLine{276         JSON\_ASSERT(ref\_stack.back()-\/>is\_array());}
+\DoxyCodeLine{277 }
+\DoxyCodeLine{278         ref\_stack.back()-\/>set\_parents();}
+\DoxyCodeLine{279         ref\_stack.pop\_back();}
+\DoxyCodeLine{280         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{281     \}}
+\DoxyCodeLine{282 }
+\DoxyCodeLine{283     \textcolor{keyword}{template}<\textcolor{keyword}{class} Exception>}
+\DoxyCodeLine{284     \textcolor{keywordtype}{bool} parse\_error(std::size\_t \textcolor{comment}{/*unused*/}, \textcolor{keyword}{const} std::string\& \textcolor{comment}{/*unused*/},}
+\DoxyCodeLine{285                      \textcolor{keyword}{const} Exception\& ex)}
+\DoxyCodeLine{286     \{}
+\DoxyCodeLine{287         errored = \textcolor{keyword}{true};}
+\DoxyCodeLine{288         \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}\textcolor{keyword}{>}(ex);}
+\DoxyCodeLine{289         \textcolor{keywordflow}{if} (allow\_exceptions)}
+\DoxyCodeLine{290         \{}
+\DoxyCodeLine{291             JSON\_THROW(ex);}
+\DoxyCodeLine{292         \}}
+\DoxyCodeLine{293         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{294     \}}
+\DoxyCodeLine{295 }
+\DoxyCodeLine{296     \textcolor{keyword}{constexpr} \textcolor{keywordtype}{bool} is\_errored()\textcolor{keyword}{ const}}
+\DoxyCodeLine{297 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{298         \textcolor{keywordflow}{return} errored;}
+\DoxyCodeLine{299     \}}
+\DoxyCodeLine{300 }
+\DoxyCodeLine{301   \textcolor{keyword}{private}:}
+\DoxyCodeLine{308     \textcolor{keyword}{template}<\textcolor{keyword}{typename} Value>}
+\DoxyCodeLine{309     JSON\_HEDLEY\_RETURNS\_NON\_NULL}
+\DoxyCodeLine{310     BasicJsonType* handle\_value(Value\&\& v)}
+\DoxyCodeLine{311     \{}
+\DoxyCodeLine{312         \textcolor{keywordflow}{if} (ref\_stack.empty())}
+\DoxyCodeLine{313         \{}
+\DoxyCodeLine{314             root = BasicJsonType(std::forward<Value>(v));}
+\DoxyCodeLine{315             \textcolor{keywordflow}{return} \&root;}
+\DoxyCodeLine{316         \}}
+\DoxyCodeLine{317 }
+\DoxyCodeLine{318         JSON\_ASSERT(ref\_stack.back()-\/>is\_array() || ref\_stack.back()-\/>is\_object());}
+\DoxyCodeLine{319 }
+\DoxyCodeLine{320         \textcolor{keywordflow}{if} (ref\_stack.back()-\/>is\_array())}
+\DoxyCodeLine{321         \{}
+\DoxyCodeLine{322             ref\_stack.back()-\/>m\_value.array-\/>emplace\_back(std::forward<Value>(v));}
+\DoxyCodeLine{323             \textcolor{keywordflow}{return} \&(ref\_stack.back()-\/>m\_value.array-\/>back());}
+\DoxyCodeLine{324         \}}
+\DoxyCodeLine{325 }
+\DoxyCodeLine{326         JSON\_ASSERT(ref\_stack.back()-\/>is\_object());}
+\DoxyCodeLine{327         JSON\_ASSERT(object\_element);}
+\DoxyCodeLine{328         *object\_element = BasicJsonType(std::forward<Value>(v));}
+\DoxyCodeLine{329         \textcolor{keywordflow}{return} object\_element;}
+\DoxyCodeLine{330     \}}
+\DoxyCodeLine{331 }
+\DoxyCodeLine{333     BasicJsonType\& root;}
+\DoxyCodeLine{335     std::vector<BasicJsonType*> ref\_stack \{\};}
+\DoxyCodeLine{337     BasicJsonType* object\_element = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{339     \textcolor{keywordtype}{bool} errored = \textcolor{keyword}{false};}
+\DoxyCodeLine{341     \textcolor{keyword}{const} \textcolor{keywordtype}{bool} allow\_exceptions = \textcolor{keyword}{true};}
+\DoxyCodeLine{342 \};}
+\DoxyCodeLine{343 }
+\DoxyCodeLine{344 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BasicJsonType>}
+\DoxyCodeLine{345 \textcolor{keyword}{class }\mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}}
+\DoxyCodeLine{346 \{}
+\DoxyCodeLine{347   \textcolor{keyword}{public}:}
+\DoxyCodeLine{348     \textcolor{keyword}{using }number\_integer\_t = \textcolor{keyword}{typename} BasicJsonType::number\_integer\_t;}
+\DoxyCodeLine{349     \textcolor{keyword}{using }number\_unsigned\_t = \textcolor{keyword}{typename} BasicJsonType::number\_unsigned\_t;}
+\DoxyCodeLine{350     \textcolor{keyword}{using }number\_float\_t = \textcolor{keyword}{typename} BasicJsonType::number\_float\_t;}
+\DoxyCodeLine{351     \textcolor{keyword}{using }string\_t = \textcolor{keyword}{typename} BasicJsonType::string\_t;}
+\DoxyCodeLine{352     \textcolor{keyword}{using }binary\_t = \textcolor{keyword}{typename} BasicJsonType::binary\_t;}
+\DoxyCodeLine{353     \textcolor{keyword}{using }parser\_callback\_t = \textcolor{keyword}{typename} BasicJsonType::parser\_callback\_t;}
+\DoxyCodeLine{354     \textcolor{keyword}{using }parse\_event\_t = \textcolor{keyword}{typename} BasicJsonType::parse\_event\_t;}
+\DoxyCodeLine{355 }
+\DoxyCodeLine{356     \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}(BasicJsonType\& r,}
+\DoxyCodeLine{357                                  \textcolor{keyword}{const} parser\_callback\_t cb,}
+\DoxyCodeLine{358                                  \textcolor{keyword}{const} \textcolor{keywordtype}{bool} allow\_exceptions\_ = \textcolor{keyword}{true})}
+\DoxyCodeLine{359         : root(r), callback(cb), allow\_exceptions(allow\_exceptions\_)}
+\DoxyCodeLine{360     \{}
+\DoxyCodeLine{361         keep\_stack.push\_back(\textcolor{keyword}{true});}
+\DoxyCodeLine{362     \}}
+\DoxyCodeLine{363 }
+\DoxyCodeLine{364     \textcolor{comment}{// make class move-\/only}}
+\DoxyCodeLine{365     \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{366     \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}(\mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}\&\&) = \textcolor{keywordflow}{default}; \textcolor{comment}{// NOLINT(hicpp-\/noexcept-\/move,performance-\/noexcept-\/move-\/constructor)}}
+\DoxyCodeLine{367     \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}\& operator=(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{368     \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}\& operator=(\mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{json\_sax\_dom\_callback\_parser}}\&\&) = \textcolor{keywordflow}{default}; \textcolor{comment}{// NOLINT(hicpp-\/noexcept-\/move,performance-\/noexcept-\/move-\/constructor)}}
+\DoxyCodeLine{369     \mbox{\hyperlink{classdetail_1_1json__sax__dom__callback__parser}{\string~json\_sax\_dom\_callback\_parser}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{370 }
+\DoxyCodeLine{371     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a37a6259cc0c1dae299a7866489dff0bd}{null}}()}
+\DoxyCodeLine{372     \{}
+\DoxyCodeLine{373         handle\_value(\textcolor{keyword}{nullptr});}
+\DoxyCodeLine{374         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{375     \}}
+\DoxyCodeLine{376 }
+\DoxyCodeLine{377     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a84e2c64f38f78ba3ea5c905ab5a2da27}{boolean}}(\textcolor{keywordtype}{bool} val)}
+\DoxyCodeLine{378     \{}
+\DoxyCodeLine{379         handle\_value(val);}
+\DoxyCodeLine{380         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{381     \}}
+\DoxyCodeLine{382 }
+\DoxyCodeLine{383     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a5763da164f8659d94a56e29df64b4bcc}{number\_integer}}(number\_integer\_t val)}
+\DoxyCodeLine{384     \{}
+\DoxyCodeLine{385         handle\_value(val);}
+\DoxyCodeLine{386         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{387     \}}
+\DoxyCodeLine{388 }
+\DoxyCodeLine{389     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632adce7cc8ec29055c4158828921f2f265e}{number\_unsigned}}(number\_unsigned\_t val)}
+\DoxyCodeLine{390     \{}
+\DoxyCodeLine{391         handle\_value(val);}
+\DoxyCodeLine{392         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{393     \}}
+\DoxyCodeLine{394 }
+\DoxyCodeLine{395     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632ad9966ecb59667235a57b4b999a649eef}{number\_float}}(number\_float\_t val, \textcolor{keyword}{const} string\_t\& \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{396     \{}
+\DoxyCodeLine{397         handle\_value(val);}
+\DoxyCodeLine{398         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{399     \}}
+\DoxyCodeLine{400 }
+\DoxyCodeLine{401     \textcolor{keywordtype}{bool} string(string\_t\& val)}
+\DoxyCodeLine{402     \{}
+\DoxyCodeLine{403         handle\_value(val);}
+\DoxyCodeLine{404         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{405     \}}
+\DoxyCodeLine{406 }
+\DoxyCodeLine{407     \textcolor{keywordtype}{bool} binary(binary\_t\& val)}
+\DoxyCodeLine{408     \{}
+\DoxyCodeLine{409         handle\_value(std::move(val));}
+\DoxyCodeLine{410         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{411     \}}
+\DoxyCodeLine{412 }
+\DoxyCodeLine{413     \textcolor{keywordtype}{bool} start\_object(std::size\_t len)}
+\DoxyCodeLine{414     \{}
+\DoxyCodeLine{415         \textcolor{comment}{// check callback for object start}}
+\DoxyCodeLine{416         \textcolor{keyword}{const} \textcolor{keywordtype}{bool} keep = callback(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ref\_stack.size()), parse\_event\_t::object\_start, \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a94708897ec9db8647dfe695714c98e46}{discarded}});}
+\DoxyCodeLine{417         keep\_stack.push\_back(keep);}
+\DoxyCodeLine{418 }
+\DoxyCodeLine{419         \textcolor{keyword}{auto} val = handle\_value(BasicJsonType::value\_t::object, \textcolor{keyword}{true});}
+\DoxyCodeLine{420         ref\_stack.push\_back(val.second);}
+\DoxyCodeLine{421 }
+\DoxyCodeLine{422         \textcolor{comment}{// check object limit}}
+\DoxyCodeLine{423         \textcolor{keywordflow}{if} (ref\_stack.back() \&\& JSON\_HEDLEY\_UNLIKELY(len != \textcolor{keyword}{static\_cast<}std::size\_t\textcolor{keyword}{>}(-\/1) \&\& len > ref\_stack.back()-\/>max\_size()))}
+\DoxyCodeLine{424         \{}
+\DoxyCodeLine{425             JSON\_THROW(out\_of\_range::create(408, concat(\textcolor{stringliteral}{"{}excessive object size: "{}}, std::to\_string(len)), ref\_stack.back()));}
+\DoxyCodeLine{426         \}}
+\DoxyCodeLine{427 }
+\DoxyCodeLine{428         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{429     \}}
+\DoxyCodeLine{430 }
+\DoxyCodeLine{431     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa3c6e0b8a9c15224a8228b9a98ca1531d}{key}}(string\_t\& val)}
+\DoxyCodeLine{432     \{}
+\DoxyCodeLine{433         BasicJsonType k = BasicJsonType(val);}
+\DoxyCodeLine{434 }
+\DoxyCodeLine{435         \textcolor{comment}{// check callback for key}}
+\DoxyCodeLine{436         \textcolor{keyword}{const} \textcolor{keywordtype}{bool} keep = callback(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ref\_stack.size()), parse\_event\_t::key, k);}
+\DoxyCodeLine{437         key\_keep\_stack.push\_back(keep);}
+\DoxyCodeLine{438 }
+\DoxyCodeLine{439         \textcolor{comment}{// add discarded value at given key and store the reference for later}}
+\DoxyCodeLine{440         \textcolor{keywordflow}{if} (keep \&\& ref\_stack.back())}
+\DoxyCodeLine{441         \{}
+\DoxyCodeLine{442             object\_element = \&(ref\_stack.back()-\/>m\_value.object-\/>operator[](val) = \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a94708897ec9db8647dfe695714c98e46}{discarded}});}
+\DoxyCodeLine{443         \}}
+\DoxyCodeLine{444 }
+\DoxyCodeLine{445         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{446     \}}
+\DoxyCodeLine{447 }
+\DoxyCodeLine{448     \textcolor{keywordtype}{bool} end\_object()}
+\DoxyCodeLine{449     \{}
+\DoxyCodeLine{450         \textcolor{keywordflow}{if} (ref\_stack.back())}
+\DoxyCodeLine{451         \{}
+\DoxyCodeLine{452             \textcolor{keywordflow}{if} (!callback(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ref\_stack.size()) -\/ 1, parse\_event\_t::object\_end, *ref\_stack.back()))}
+\DoxyCodeLine{453             \{}
+\DoxyCodeLine{454                 \textcolor{comment}{// discard object}}
+\DoxyCodeLine{455                 *ref\_stack.back() = \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a94708897ec9db8647dfe695714c98e46}{discarded}};}
+\DoxyCodeLine{456             \}}
+\DoxyCodeLine{457             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{458             \{}
+\DoxyCodeLine{459                 ref\_stack.back()-\/>set\_parents();}
+\DoxyCodeLine{460             \}}
+\DoxyCodeLine{461         \}}
+\DoxyCodeLine{462 }
+\DoxyCodeLine{463         JSON\_ASSERT(!ref\_stack.empty());}
+\DoxyCodeLine{464         JSON\_ASSERT(!keep\_stack.empty());}
+\DoxyCodeLine{465         ref\_stack.pop\_back();}
+\DoxyCodeLine{466         keep\_stack.pop\_back();}
+\DoxyCodeLine{467 }
+\DoxyCodeLine{468         \textcolor{keywordflow}{if} (!ref\_stack.empty() \&\& ref\_stack.back() \&\& ref\_stack.back()-\/>is\_structured())}
+\DoxyCodeLine{469         \{}
+\DoxyCodeLine{470             \textcolor{comment}{// remove discarded value}}
+\DoxyCodeLine{471             \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} it = ref\_stack.back()-\/>begin(); it != ref\_stack.back()-\/>end(); ++it)}
+\DoxyCodeLine{472             \{}
+\DoxyCodeLine{473                 \textcolor{keywordflow}{if} (it-\/>is\_discarded())}
+\DoxyCodeLine{474                 \{}
+\DoxyCodeLine{475                     ref\_stack.back()-\/>erase(it);}
+\DoxyCodeLine{476                     \textcolor{keywordflow}{break};}
+\DoxyCodeLine{477                 \}}
+\DoxyCodeLine{478             \}}
+\DoxyCodeLine{479         \}}
+\DoxyCodeLine{480 }
+\DoxyCodeLine{481         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{482     \}}
+\DoxyCodeLine{483 }
+\DoxyCodeLine{484     \textcolor{keywordtype}{bool} start\_array(std::size\_t len)}
+\DoxyCodeLine{485     \{}
+\DoxyCodeLine{486         \textcolor{keyword}{const} \textcolor{keywordtype}{bool} keep = callback(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ref\_stack.size()), parse\_event\_t::array\_start, \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a94708897ec9db8647dfe695714c98e46}{discarded}});}
+\DoxyCodeLine{487         keep\_stack.push\_back(keep);}
+\DoxyCodeLine{488 }
+\DoxyCodeLine{489         \textcolor{keyword}{auto} val = handle\_value(BasicJsonType::value\_t::array, \textcolor{keyword}{true});}
+\DoxyCodeLine{490         ref\_stack.push\_back(val.second);}
+\DoxyCodeLine{491 }
+\DoxyCodeLine{492         \textcolor{comment}{// check array limit}}
+\DoxyCodeLine{493         \textcolor{keywordflow}{if} (ref\_stack.back() \&\& JSON\_HEDLEY\_UNLIKELY(len != \textcolor{keyword}{static\_cast<}std::size\_t\textcolor{keyword}{>}(-\/1) \&\& len > ref\_stack.back()-\/>max\_size()))}
+\DoxyCodeLine{494         \{}
+\DoxyCodeLine{495             JSON\_THROW(out\_of\_range::create(408, concat(\textcolor{stringliteral}{"{}excessive array size: "{}}, std::to\_string(len)), ref\_stack.back()));}
+\DoxyCodeLine{496         \}}
+\DoxyCodeLine{497 }
+\DoxyCodeLine{498         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{499     \}}
+\DoxyCodeLine{500 }
+\DoxyCodeLine{501     \textcolor{keywordtype}{bool} end\_array()}
+\DoxyCodeLine{502     \{}
+\DoxyCodeLine{503         \textcolor{keywordtype}{bool} keep = \textcolor{keyword}{true};}
+\DoxyCodeLine{504 }
+\DoxyCodeLine{505         \textcolor{keywordflow}{if} (ref\_stack.back())}
+\DoxyCodeLine{506         \{}
+\DoxyCodeLine{507             keep = callback(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ref\_stack.size()) -\/ 1, parse\_event\_t::array\_end, *ref\_stack.back());}
+\DoxyCodeLine{508             \textcolor{keywordflow}{if} (keep)}
+\DoxyCodeLine{509             \{}
+\DoxyCodeLine{510                 ref\_stack.back()-\/>set\_parents();}
+\DoxyCodeLine{511             \}}
+\DoxyCodeLine{512             \textcolor{keywordflow}{else}}
+\DoxyCodeLine{513             \{}
+\DoxyCodeLine{514                 \textcolor{comment}{// discard array}}
+\DoxyCodeLine{515                 *ref\_stack.back() = \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a94708897ec9db8647dfe695714c98e46}{discarded}};}
+\DoxyCodeLine{516             \}}
+\DoxyCodeLine{517         \}}
+\DoxyCodeLine{518 }
+\DoxyCodeLine{519         JSON\_ASSERT(!ref\_stack.empty());}
+\DoxyCodeLine{520         JSON\_ASSERT(!keep\_stack.empty());}
+\DoxyCodeLine{521         ref\_stack.pop\_back();}
+\DoxyCodeLine{522         keep\_stack.pop\_back();}
+\DoxyCodeLine{523 }
+\DoxyCodeLine{524         \textcolor{comment}{// remove discarded value}}
+\DoxyCodeLine{525         \textcolor{keywordflow}{if} (!keep \&\& !ref\_stack.empty() \&\& ref\_stack.back()-\/>is\_array())}
+\DoxyCodeLine{526         \{}
+\DoxyCodeLine{527             ref\_stack.back()-\/>m\_value.array-\/>pop\_back();}
+\DoxyCodeLine{528         \}}
+\DoxyCodeLine{529 }
+\DoxyCodeLine{530         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{531     \}}
+\DoxyCodeLine{532 }
+\DoxyCodeLine{533     \textcolor{keyword}{template}<\textcolor{keyword}{class} Exception>}
+\DoxyCodeLine{534     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdetail_1_1parse__error}{parse\_error}}(std::size\_t \textcolor{comment}{/*unused*/}, \textcolor{keyword}{const} std::string\& \textcolor{comment}{/*unused*/},}
+\DoxyCodeLine{535                      \textcolor{keyword}{const} Exception\& ex)}
+\DoxyCodeLine{536     \{}
+\DoxyCodeLine{537         errored = \textcolor{keyword}{true};}
+\DoxyCodeLine{538         \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}\textcolor{keyword}{>}(ex);}
+\DoxyCodeLine{539         \textcolor{keywordflow}{if} (allow\_exceptions)}
+\DoxyCodeLine{540         \{}
+\DoxyCodeLine{541             JSON\_THROW(ex);}
+\DoxyCodeLine{542         \}}
+\DoxyCodeLine{543         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{544     \}}
+\DoxyCodeLine{545 }
+\DoxyCodeLine{546     \textcolor{keyword}{constexpr} \textcolor{keywordtype}{bool} is\_errored()\textcolor{keyword}{ const}}
+\DoxyCodeLine{547 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{548         \textcolor{keywordflow}{return} errored;}
+\DoxyCodeLine{549     \}}
+\DoxyCodeLine{550 }
+\DoxyCodeLine{551   \textcolor{keyword}{private}:}
+\DoxyCodeLine{567     \textcolor{keyword}{template}<\textcolor{keyword}{typename} Value>}
+\DoxyCodeLine{568     std::pair<bool, BasicJsonType*> handle\_value(Value\&\& v, \textcolor{keyword}{const} \textcolor{keywordtype}{bool} skip\_callback = \textcolor{keyword}{false})}
+\DoxyCodeLine{569     \{}
+\DoxyCodeLine{570         JSON\_ASSERT(!keep\_stack.empty());}
+\DoxyCodeLine{571 }
+\DoxyCodeLine{572         \textcolor{comment}{// do not handle this value if we know it would be added to a discarded}}
+\DoxyCodeLine{573         \textcolor{comment}{// container}}
+\DoxyCodeLine{574         \textcolor{keywordflow}{if} (!keep\_stack.back())}
+\DoxyCodeLine{575         \{}
+\DoxyCodeLine{576             \textcolor{keywordflow}{return} \{\textcolor{keyword}{false}, \textcolor{keyword}{nullptr}\};}
+\DoxyCodeLine{577         \}}
+\DoxyCodeLine{578 }
+\DoxyCodeLine{579         \textcolor{comment}{// create value}}
+\DoxyCodeLine{580         \textcolor{keyword}{auto} value = BasicJsonType(std::forward<Value>(v));}
+\DoxyCodeLine{581 }
+\DoxyCodeLine{582         \textcolor{comment}{// check callback}}
+\DoxyCodeLine{583         \textcolor{keyword}{const} \textcolor{keywordtype}{bool} keep = skip\_callback || callback(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ref\_stack.size()), parse\_event\_t::value, value);}
+\DoxyCodeLine{584 }
+\DoxyCodeLine{585         \textcolor{comment}{// do not handle this value if we just learnt it shall be discarded}}
+\DoxyCodeLine{586         \textcolor{keywordflow}{if} (!keep)}
+\DoxyCodeLine{587         \{}
+\DoxyCodeLine{588             \textcolor{keywordflow}{return} \{\textcolor{keyword}{false}, \textcolor{keyword}{nullptr}\};}
+\DoxyCodeLine{589         \}}
+\DoxyCodeLine{590 }
+\DoxyCodeLine{591         \textcolor{keywordflow}{if} (ref\_stack.empty())}
+\DoxyCodeLine{592         \{}
+\DoxyCodeLine{593             root = std::move(value);}
+\DoxyCodeLine{594             \textcolor{keywordflow}{return} \{\textcolor{keyword}{true}, \&root\};}
+\DoxyCodeLine{595         \}}
+\DoxyCodeLine{596 }
+\DoxyCodeLine{597         \textcolor{comment}{// skip this value if we already decided to skip the parent}}
+\DoxyCodeLine{598         \textcolor{comment}{// (https://github.com/nlohmann/json/issues/971\#issuecomment-\/413678360)}}
+\DoxyCodeLine{599         \textcolor{keywordflow}{if} (!ref\_stack.back())}
+\DoxyCodeLine{600         \{}
+\DoxyCodeLine{601             \textcolor{keywordflow}{return} \{\textcolor{keyword}{false}, \textcolor{keyword}{nullptr}\};}
+\DoxyCodeLine{602         \}}
+\DoxyCodeLine{603 }
+\DoxyCodeLine{604         \textcolor{comment}{// we now only expect arrays and objects}}
+\DoxyCodeLine{605         JSON\_ASSERT(ref\_stack.back()-\/>is\_array() || ref\_stack.back()-\/>is\_object());}
+\DoxyCodeLine{606 }
+\DoxyCodeLine{607         \textcolor{comment}{// array}}
+\DoxyCodeLine{608         \textcolor{keywordflow}{if} (ref\_stack.back()-\/>is\_array())}
+\DoxyCodeLine{609         \{}
+\DoxyCodeLine{610             ref\_stack.back()-\/>m\_value.array-\/>emplace\_back(std::move(value));}
+\DoxyCodeLine{611             \textcolor{keywordflow}{return} \{\textcolor{keyword}{true}, \&(ref\_stack.back()-\/>m\_value.array-\/>back())\};}
+\DoxyCodeLine{612         \}}
+\DoxyCodeLine{613 }
+\DoxyCodeLine{614         \textcolor{comment}{// object}}
+\DoxyCodeLine{615         JSON\_ASSERT(ref\_stack.back()-\/>is\_object());}
+\DoxyCodeLine{616         \textcolor{comment}{// check if we should store an element for the current key}}
+\DoxyCodeLine{617         JSON\_ASSERT(!key\_keep\_stack.empty());}
+\DoxyCodeLine{618         \textcolor{keyword}{const} \textcolor{keywordtype}{bool} store\_element = key\_keep\_stack.back();}
+\DoxyCodeLine{619         key\_keep\_stack.pop\_back();}
+\DoxyCodeLine{620 }
+\DoxyCodeLine{621         \textcolor{keywordflow}{if} (!store\_element)}
+\DoxyCodeLine{622         \{}
+\DoxyCodeLine{623             \textcolor{keywordflow}{return} \{\textcolor{keyword}{false}, \textcolor{keyword}{nullptr}\};}
+\DoxyCodeLine{624         \}}
+\DoxyCodeLine{625 }
+\DoxyCodeLine{626         JSON\_ASSERT(object\_element);}
+\DoxyCodeLine{627         *object\_element = std::move(value);}
+\DoxyCodeLine{628         \textcolor{keywordflow}{return} \{\textcolor{keyword}{true}, object\_element\};}
+\DoxyCodeLine{629     \}}
+\DoxyCodeLine{630 }
+\DoxyCodeLine{632     BasicJsonType\& root;}
+\DoxyCodeLine{634     std::vector<BasicJsonType*> ref\_stack \{\};}
+\DoxyCodeLine{636     std::vector<bool> keep\_stack \{\};}
+\DoxyCodeLine{638     std::vector<bool> key\_keep\_stack \{\};}
+\DoxyCodeLine{640     BasicJsonType* object\_element = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{642     \textcolor{keywordtype}{bool} errored = \textcolor{keyword}{false};}
+\DoxyCodeLine{644     \textcolor{keyword}{const} parser\_callback\_t callback = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{646     \textcolor{keyword}{const} \textcolor{keywordtype}{bool} allow\_exceptions = \textcolor{keyword}{true};}
+\DoxyCodeLine{648     BasicJsonType \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a94708897ec9db8647dfe695714c98e46}{discarded}} = BasicJsonType::value\_t::discarded;}
+\DoxyCodeLine{649 \};}
+\DoxyCodeLine{650 }
+\DoxyCodeLine{651 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BasicJsonType>}
+\DoxyCodeLine{652 \textcolor{keyword}{class }\mbox{\hyperlink{classdetail_1_1json__sax__acceptor}{json\_sax\_acceptor}}}
+\DoxyCodeLine{653 \{}
+\DoxyCodeLine{654   \textcolor{keyword}{public}:}
+\DoxyCodeLine{655     \textcolor{keyword}{using }number\_integer\_t = \textcolor{keyword}{typename} BasicJsonType::number\_integer\_t;}
+\DoxyCodeLine{656     \textcolor{keyword}{using }number\_unsigned\_t = \textcolor{keyword}{typename} BasicJsonType::number\_unsigned\_t;}
+\DoxyCodeLine{657     \textcolor{keyword}{using }number\_float\_t = \textcolor{keyword}{typename} BasicJsonType::number\_float\_t;}
+\DoxyCodeLine{658     \textcolor{keyword}{using }string\_t = \textcolor{keyword}{typename} BasicJsonType::string\_t;}
+\DoxyCodeLine{659     \textcolor{keyword}{using }binary\_t = \textcolor{keyword}{typename} BasicJsonType::binary\_t;}
+\DoxyCodeLine{660 }
+\DoxyCodeLine{661     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a37a6259cc0c1dae299a7866489dff0bd}{null}}()}
+\DoxyCodeLine{662     \{}
+\DoxyCodeLine{663         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{664     \}}
+\DoxyCodeLine{665 }
+\DoxyCodeLine{666     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a84e2c64f38f78ba3ea5c905ab5a2da27}{boolean}}(\textcolor{keywordtype}{bool} \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{667     \{}
+\DoxyCodeLine{668         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{669     \}}
+\DoxyCodeLine{670 }
+\DoxyCodeLine{671     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a5763da164f8659d94a56e29df64b4bcc}{number\_integer}}(number\_integer\_t \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{672     \{}
+\DoxyCodeLine{673         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{674     \}}
+\DoxyCodeLine{675 }
+\DoxyCodeLine{676     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632adce7cc8ec29055c4158828921f2f265e}{number\_unsigned}}(number\_unsigned\_t \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{677     \{}
+\DoxyCodeLine{678         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{679     \}}
+\DoxyCodeLine{680 }
+\DoxyCodeLine{681     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632ad9966ecb59667235a57b4b999a649eef}{number\_float}}(number\_float\_t \textcolor{comment}{/*unused*/}, \textcolor{keyword}{const} string\_t\& \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{682     \{}
+\DoxyCodeLine{683         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{684     \}}
+\DoxyCodeLine{685 }
+\DoxyCodeLine{686     \textcolor{keywordtype}{bool} string(string\_t\& \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{687     \{}
+\DoxyCodeLine{688         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{689     \}}
+\DoxyCodeLine{690 }
+\DoxyCodeLine{691     \textcolor{keywordtype}{bool} binary(binary\_t\& \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{692     \{}
+\DoxyCodeLine{693         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{694     \}}
+\DoxyCodeLine{695 }
+\DoxyCodeLine{696     \textcolor{keywordtype}{bool} start\_object(std::size\_t \textcolor{comment}{/*unused*/} = \textcolor{keyword}{static\_cast<}std::size\_t\textcolor{keyword}{>}(-\/1))}
+\DoxyCodeLine{697     \{}
+\DoxyCodeLine{698         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{699     \}}
+\DoxyCodeLine{700 }
+\DoxyCodeLine{701     \textcolor{keywordtype}{bool} \mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa3c6e0b8a9c15224a8228b9a98ca1531d}{key}}(string\_t\& \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{702     \{}
+\DoxyCodeLine{703         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{704     \}}
+\DoxyCodeLine{705 }
+\DoxyCodeLine{706     \textcolor{keywordtype}{bool} end\_object()}
+\DoxyCodeLine{707     \{}
+\DoxyCodeLine{708         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{709     \}}
+\DoxyCodeLine{710 }
+\DoxyCodeLine{711     \textcolor{keywordtype}{bool} start\_array(std::size\_t \textcolor{comment}{/*unused*/} = \textcolor{keyword}{static\_cast<}std::size\_t\textcolor{keyword}{>}(-\/1))}
+\DoxyCodeLine{712     \{}
+\DoxyCodeLine{713         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{714     \}}
+\DoxyCodeLine{715 }
+\DoxyCodeLine{716     \textcolor{keywordtype}{bool} end\_array()}
+\DoxyCodeLine{717     \{}
+\DoxyCodeLine{718         \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{719     \}}
+\DoxyCodeLine{720 }
+\DoxyCodeLine{721     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdetail_1_1parse__error}{parse\_error}}(std::size\_t \textcolor{comment}{/*unused*/}, \textcolor{keyword}{const} std::string\& \textcolor{comment}{/*unused*/}, \textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1exception}{detail::exception}}\& \textcolor{comment}{/*unused*/})}
+\DoxyCodeLine{722     \{}
+\DoxyCodeLine{723         \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{724     \}}
+\DoxyCodeLine{725 \};}
+\DoxyCodeLine{726 }
+\DoxyCodeLine{727 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{728 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

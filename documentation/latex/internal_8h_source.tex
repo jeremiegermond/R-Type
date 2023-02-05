@@ -1,0 +1,796 @@
+\hypertarget{internal_8h_source}{}\doxysection{internal.\+h}
+\label{internal_8h_source}\index{build/\_deps/raylib-\/src/src/external/glfw/src/internal.h@{build/\_deps/raylib-\/src/src/external/glfw/src/internal.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//========================================================================}}
+\DoxyCodeLine{2 \textcolor{comment}{// GLFW 3.4 -\/ www.glfw.org}}
+\DoxyCodeLine{3 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{4 \textcolor{comment}{// Copyright (c) 2002-\/2006 Marcus Geelnard}}
+\DoxyCodeLine{5 \textcolor{comment}{// Copyright (c) 2006-\/2019 Camilla Löwy <elmindreda@glfw.org>}}
+\DoxyCodeLine{6 \textcolor{comment}{//}}
+\DoxyCodeLine{7 \textcolor{comment}{// This software is provided 'as-\/is', without any express or implied}}
+\DoxyCodeLine{8 \textcolor{comment}{// warranty. In no event will the authors be held liable for any damages}}
+\DoxyCodeLine{9 \textcolor{comment}{// arising from the use of this software.}}
+\DoxyCodeLine{10 \textcolor{comment}{//}}
+\DoxyCodeLine{11 \textcolor{comment}{// Permission is granted to anyone to use this software for any purpose,}}
+\DoxyCodeLine{12 \textcolor{comment}{// including commercial applications, and to alter it and redistribute it}}
+\DoxyCodeLine{13 \textcolor{comment}{// freely, subject to the following restrictions:}}
+\DoxyCodeLine{14 \textcolor{comment}{//}}
+\DoxyCodeLine{15 \textcolor{comment}{// 1. The origin of this software must not be misrepresented; you must not}}
+\DoxyCodeLine{16 \textcolor{comment}{//    claim that you wrote the original software. If you use this software}}
+\DoxyCodeLine{17 \textcolor{comment}{//    in a product, an acknowledgment in the product documentation would}}
+\DoxyCodeLine{18 \textcolor{comment}{//    be appreciated but is not required.}}
+\DoxyCodeLine{19 \textcolor{comment}{//}}
+\DoxyCodeLine{20 \textcolor{comment}{// 2. Altered source versions must be plainly marked as such, and must not}}
+\DoxyCodeLine{21 \textcolor{comment}{//    be misrepresented as being the original software.}}
+\DoxyCodeLine{22 \textcolor{comment}{//}}
+\DoxyCodeLine{23 \textcolor{comment}{// 3. This notice may not be removed or altered from any source}}
+\DoxyCodeLine{24 \textcolor{comment}{//    distribution.}}
+\DoxyCodeLine{25 \textcolor{comment}{//}}
+\DoxyCodeLine{26 \textcolor{comment}{//========================================================================}}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#if defined(\_GLFW\_USE\_CONFIG\_H)}}
+\DoxyCodeLine{31 \textcolor{preprocessor}{ \#include "{}glfw\_config.h"{}}}
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{34 \textcolor{preprocessor}{\#if defined(GLFW\_INCLUDE\_GLCOREARB) || \(\backslash\)}}
+\DoxyCodeLine{35 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_ES1)       || \(\backslash\)}}
+\DoxyCodeLine{36 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_ES2)       || \(\backslash\)}}
+\DoxyCodeLine{37 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_ES3)       || \(\backslash\)}}
+\DoxyCodeLine{38 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_ES31)      || \(\backslash\)}}
+\DoxyCodeLine{39 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_ES32)      || \(\backslash\)}}
+\DoxyCodeLine{40 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_NONE)      || \(\backslash\)}}
+\DoxyCodeLine{41 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_GLEXT)     || \(\backslash\)}}
+\DoxyCodeLine{42 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_GLU)       || \(\backslash\)}}
+\DoxyCodeLine{43 \textcolor{preprocessor}{    defined(GLFW\_INCLUDE\_VULKAN)    || \(\backslash\)}}
+\DoxyCodeLine{44 \textcolor{preprocessor}{    defined(GLFW\_DLL)}}
+\DoxyCodeLine{45 \textcolor{preprocessor}{ \#error "{}You must not define any header option macros when compiling GLFW"{}}}
+\DoxyCodeLine{46 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{47 }
+\DoxyCodeLine{48 \textcolor{preprocessor}{\#define GLFW\_INCLUDE\_NONE}}
+\DoxyCodeLine{49 \textcolor{preprocessor}{\#include "{}../include/GLFW/glfw3.h"{}}}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51 \textcolor{preprocessor}{\#define \_GLFW\_INSERT\_FIRST      0}}
+\DoxyCodeLine{52 \textcolor{preprocessor}{\#define \_GLFW\_INSERT\_LAST       1}}
+\DoxyCodeLine{53 }
+\DoxyCodeLine{54 \textcolor{preprocessor}{\#define \_GLFW\_POLL\_PRESENCE     0}}
+\DoxyCodeLine{55 \textcolor{preprocessor}{\#define \_GLFW\_POLL\_AXES         1}}
+\DoxyCodeLine{56 \textcolor{preprocessor}{\#define \_GLFW\_POLL\_BUTTONS      2}}
+\DoxyCodeLine{57 \textcolor{preprocessor}{\#define \_GLFW\_POLL\_ALL          (\_GLFW\_POLL\_AXES | \_GLFW\_POLL\_BUTTONS)}}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59 \textcolor{preprocessor}{\#define \_GLFW\_MESSAGE\_SIZE      1024}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{61 \textcolor{keyword}{typedef} \textcolor{keywordtype}{int} GLFWbool;}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWerror}{\_GLFWerror}}       \mbox{\hyperlink{struct__GLFWerror}{\_GLFWerror}};}
+\DoxyCodeLine{64 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWinitconfig}{\_GLFWinitconfig}}  \mbox{\hyperlink{struct__GLFWinitconfig}{\_GLFWinitconfig}};}
+\DoxyCodeLine{65 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWwndconfig}{\_GLFWwndconfig}}   \mbox{\hyperlink{struct__GLFWwndconfig}{\_GLFWwndconfig}};}
+\DoxyCodeLine{66 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWctxconfig}{\_GLFWctxconfig}}   \mbox{\hyperlink{struct__GLFWctxconfig}{\_GLFWctxconfig}};}
+\DoxyCodeLine{67 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}}    \mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}};}
+\DoxyCodeLine{68 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWcontext}{\_GLFWcontext}}     \mbox{\hyperlink{struct__GLFWcontext}{\_GLFWcontext}};}
+\DoxyCodeLine{69 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}      \mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}};}
+\DoxyCodeLine{70 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWlibrary}{\_GLFWlibrary}}     \mbox{\hyperlink{struct__GLFWlibrary}{\_GLFWlibrary}};}
+\DoxyCodeLine{71 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}     \mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}};}
+\DoxyCodeLine{72 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}      \mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}};}
+\DoxyCodeLine{73 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmapelement}{\_GLFWmapelement}}  \mbox{\hyperlink{struct__GLFWmapelement}{\_GLFWmapelement}};}
+\DoxyCodeLine{74 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmapping}{\_GLFWmapping}}     \mbox{\hyperlink{struct__GLFWmapping}{\_GLFWmapping}};}
+\DoxyCodeLine{75 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}    \mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}};}
+\DoxyCodeLine{76 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}         \mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}};}
+\DoxyCodeLine{77 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}}       \mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}};}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79 \textcolor{keyword}{typedef} void (* \_GLFWmakecontextcurrentfun)(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}*);}
+\DoxyCodeLine{80 \textcolor{keyword}{typedef} void (* \_GLFWswapbuffersfun)(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}*);}
+\DoxyCodeLine{81 \textcolor{keyword}{typedef} void (* \_GLFWswapintervalfun)(int);}
+\DoxyCodeLine{82 \textcolor{keyword}{typedef} int (* \_GLFWextensionsupportedfun)(\textcolor{keyword}{const} \textcolor{keywordtype}{char}*);}
+\DoxyCodeLine{83 \textcolor{keyword}{typedef} \mbox{\hyperlink{group__context_ga3d47c2d2fbe0be9c505d0e04e91a133c}{GLFWglproc}} (* \_GLFWgetprocaddressfun)(\textcolor{keyword}{const} \textcolor{keywordtype}{char}*);}
+\DoxyCodeLine{84 \textcolor{keyword}{typedef} void (* \_GLFWdestroycontextfun)(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}*);}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{86 \textcolor{preprocessor}{\#define GL\_VERSION 0x1f02}}
+\DoxyCodeLine{87 \textcolor{preprocessor}{\#define GL\_NONE 0}}
+\DoxyCodeLine{88 \textcolor{preprocessor}{\#define GL\_COLOR\_BUFFER\_BIT 0x00004000}}
+\DoxyCodeLine{89 \textcolor{preprocessor}{\#define GL\_UNSIGNED\_BYTE 0x1401}}
+\DoxyCodeLine{90 \textcolor{preprocessor}{\#define GL\_EXTENSIONS 0x1f03}}
+\DoxyCodeLine{91 \textcolor{preprocessor}{\#define GL\_NUM\_EXTENSIONS 0x821d}}
+\DoxyCodeLine{92 \textcolor{preprocessor}{\#define GL\_CONTEXT\_FLAGS 0x821e}}
+\DoxyCodeLine{93 \textcolor{preprocessor}{\#define GL\_CONTEXT\_FLAG\_FORWARD\_COMPATIBLE\_BIT 0x00000001}}
+\DoxyCodeLine{94 \textcolor{preprocessor}{\#define GL\_CONTEXT\_FLAG\_DEBUG\_BIT 0x00000002}}
+\DoxyCodeLine{95 \textcolor{preprocessor}{\#define GL\_CONTEXT\_PROFILE\_MASK 0x9126}}
+\DoxyCodeLine{96 \textcolor{preprocessor}{\#define GL\_CONTEXT\_COMPATIBILITY\_PROFILE\_BIT 0x00000002}}
+\DoxyCodeLine{97 \textcolor{preprocessor}{\#define GL\_CONTEXT\_CORE\_PROFILE\_BIT 0x00000001}}
+\DoxyCodeLine{98 \textcolor{preprocessor}{\#define GL\_RESET\_NOTIFICATION\_STRATEGY\_ARB 0x8256}}
+\DoxyCodeLine{99 \textcolor{preprocessor}{\#define GL\_LOSE\_CONTEXT\_ON\_RESET\_ARB 0x8252}}
+\DoxyCodeLine{100 \textcolor{preprocessor}{\#define GL\_NO\_RESET\_NOTIFICATION\_ARB 0x8261}}
+\DoxyCodeLine{101 \textcolor{preprocessor}{\#define GL\_CONTEXT\_RELEASE\_BEHAVIOR 0x82fb}}
+\DoxyCodeLine{102 \textcolor{preprocessor}{\#define GL\_CONTEXT\_RELEASE\_BEHAVIOR\_FLUSH 0x82fc}}
+\DoxyCodeLine{103 \textcolor{preprocessor}{\#define GL\_CONTEXT\_FLAG\_NO\_ERROR\_BIT\_KHR 0x00000008}}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{105 \textcolor{keyword}{typedef} \textcolor{keywordtype}{int} GLint;}
+\DoxyCodeLine{106 \textcolor{keyword}{typedef} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} GLuint;}
+\DoxyCodeLine{107 \textcolor{keyword}{typedef} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} GLenum;}
+\DoxyCodeLine{108 \textcolor{keyword}{typedef} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} GLbitfield;}
+\DoxyCodeLine{109 \textcolor{keyword}{typedef} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} GLubyte;}
+\DoxyCodeLine{110 }
+\DoxyCodeLine{111 \textcolor{keyword}{typedef} void (APIENTRY * PFNGLCLEARPROC)(GLbitfield);}
+\DoxyCodeLine{112 \textcolor{keyword}{typedef} \textcolor{keyword}{const} GLubyte* (APIENTRY * PFNGLGETSTRINGPROC)(GLenum);}
+\DoxyCodeLine{113 \textcolor{keyword}{typedef} void (APIENTRY * PFNGLGETINTEGERVPROC)(GLenum,GLint*);}
+\DoxyCodeLine{114 \textcolor{keyword}{typedef} \textcolor{keyword}{const} GLubyte* (APIENTRY * PFNGLGETSTRINGIPROC)(GLenum,GLuint);}
+\DoxyCodeLine{115 }
+\DoxyCodeLine{116 \textcolor{preprocessor}{\#define VK\_NULL\_HANDLE 0}}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118 \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}* VkInstance;}
+\DoxyCodeLine{119 \textcolor{keyword}{typedef} \textcolor{keywordtype}{void}* VkPhysicalDevice;}
+\DoxyCodeLine{120 \textcolor{keyword}{typedef} uint64\_t VkSurfaceKHR;}
+\DoxyCodeLine{121 \textcolor{keyword}{typedef} uint32\_t VkFlags;}
+\DoxyCodeLine{122 \textcolor{keyword}{typedef} uint32\_t VkBool32;}
+\DoxyCodeLine{123 }
+\DoxyCodeLine{124 \textcolor{keyword}{typedef} \textcolor{keyword}{enum} VkStructureType}
+\DoxyCodeLine{125 \{}
+\DoxyCodeLine{126     VK\_STRUCTURE\_TYPE\_XLIB\_SURFACE\_CREATE\_INFO\_KHR = 1000004000,}
+\DoxyCodeLine{127     VK\_STRUCTURE\_TYPE\_XCB\_SURFACE\_CREATE\_INFO\_KHR = 1000005000,}
+\DoxyCodeLine{128     VK\_STRUCTURE\_TYPE\_WAYLAND\_SURFACE\_CREATE\_INFO\_KHR = 1000006000,}
+\DoxyCodeLine{129     VK\_STRUCTURE\_TYPE\_WIN32\_SURFACE\_CREATE\_INFO\_KHR = 1000009000,}
+\DoxyCodeLine{130     VK\_STRUCTURE\_TYPE\_MACOS\_SURFACE\_CREATE\_INFO\_MVK = 1000123000,}
+\DoxyCodeLine{131     VK\_STRUCTURE\_TYPE\_METAL\_SURFACE\_CREATE\_INFO\_EXT = 1000217000,}
+\DoxyCodeLine{132     VK\_STRUCTURE\_TYPE\_MAX\_ENUM = 0x7FFFFFFF}
+\DoxyCodeLine{133 \} VkStructureType;}
+\DoxyCodeLine{134 }
+\DoxyCodeLine{135 \textcolor{keyword}{typedef} \textcolor{keyword}{enum} VkResult}
+\DoxyCodeLine{136 \{}
+\DoxyCodeLine{137     VK\_SUCCESS = 0,}
+\DoxyCodeLine{138     VK\_NOT\_READY = 1,}
+\DoxyCodeLine{139     VK\_TIMEOUT = 2,}
+\DoxyCodeLine{140     VK\_EVENT\_SET = 3,}
+\DoxyCodeLine{141     VK\_EVENT\_RESET = 4,}
+\DoxyCodeLine{142     VK\_INCOMPLETE = 5,}
+\DoxyCodeLine{143     VK\_ERROR\_OUT\_OF\_HOST\_MEMORY = -\/1,}
+\DoxyCodeLine{144     VK\_ERROR\_OUT\_OF\_DEVICE\_MEMORY = -\/2,}
+\DoxyCodeLine{145     VK\_ERROR\_INITIALIZATION\_FAILED = -\/3,}
+\DoxyCodeLine{146     VK\_ERROR\_DEVICE\_LOST = -\/4,}
+\DoxyCodeLine{147     VK\_ERROR\_MEMORY\_MAP\_FAILED = -\/5,}
+\DoxyCodeLine{148     VK\_ERROR\_LAYER\_NOT\_PRESENT = -\/6,}
+\DoxyCodeLine{149     VK\_ERROR\_EXTENSION\_NOT\_PRESENT = -\/7,}
+\DoxyCodeLine{150     VK\_ERROR\_FEATURE\_NOT\_PRESENT = -\/8,}
+\DoxyCodeLine{151     VK\_ERROR\_INCOMPATIBLE\_DRIVER = -\/9,}
+\DoxyCodeLine{152     VK\_ERROR\_TOO\_MANY\_OBJECTS = -\/10,}
+\DoxyCodeLine{153     VK\_ERROR\_FORMAT\_NOT\_SUPPORTED = -\/11,}
+\DoxyCodeLine{154     VK\_ERROR\_SURFACE\_LOST\_KHR = -\/1000000000,}
+\DoxyCodeLine{155     VK\_SUBOPTIMAL\_KHR = 1000001003,}
+\DoxyCodeLine{156     VK\_ERROR\_OUT\_OF\_DATE\_KHR = -\/1000001004,}
+\DoxyCodeLine{157     VK\_ERROR\_INCOMPATIBLE\_DISPLAY\_KHR = -\/1000003001,}
+\DoxyCodeLine{158     VK\_ERROR\_NATIVE\_WINDOW\_IN\_USE\_KHR = -\/1000000001,}
+\DoxyCodeLine{159     VK\_ERROR\_VALIDATION\_FAILED\_EXT = -\/1000011001,}
+\DoxyCodeLine{160     VK\_RESULT\_MAX\_ENUM = 0x7FFFFFFF}
+\DoxyCodeLine{161 \} VkResult;}
+\DoxyCodeLine{162 }
+\DoxyCodeLine{163 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structVkAllocationCallbacks}{VkAllocationCallbacks}} \mbox{\hyperlink{structVkAllocationCallbacks}{VkAllocationCallbacks}};}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structVkExtensionProperties}{VkExtensionProperties}}}
+\DoxyCodeLine{166 \{}
+\DoxyCodeLine{167     \textcolor{keywordtype}{char}            extensionName[256];}
+\DoxyCodeLine{168     uint32\_t        specVersion;}
+\DoxyCodeLine{169 \} \mbox{\hyperlink{structVkExtensionProperties}{VkExtensionProperties}};}
+\DoxyCodeLine{170 }
+\DoxyCodeLine{171 \textcolor{keyword}{typedef} void (APIENTRY * PFN\_vkVoidFunction)(void);}
+\DoxyCodeLine{172 }
+\DoxyCodeLine{173 \textcolor{preprocessor}{\#if defined(\_GLFW\_VULKAN\_STATIC)}}
+\DoxyCodeLine{174   PFN\_vkVoidFunction vkGetInstanceProcAddr(VkInstance,\textcolor{keyword}{const} \textcolor{keywordtype}{char}*);}
+\DoxyCodeLine{175   VkResult vkEnumerateInstanceExtensionProperties(\textcolor{keyword}{const} \textcolor{keywordtype}{char}*,uint32\_t*,\mbox{\hyperlink{structVkExtensionProperties}{VkExtensionProperties}}*);}
+\DoxyCodeLine{176 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{177   \textcolor{keyword}{typedef} PFN\_vkVoidFunction (APIENTRY * PFN\_vkGetInstanceProcAddr)(VkInstance,\textcolor{keyword}{const} \textcolor{keywordtype}{char}*);}
+\DoxyCodeLine{178   \textcolor{keyword}{typedef} VkResult (APIENTRY * PFN\_vkEnumerateInstanceExtensionProperties)(\textcolor{keyword}{const} \textcolor{keywordtype}{char}*,uint32\_t*,\mbox{\hyperlink{structVkExtensionProperties}{VkExtensionProperties}}*);}
+\DoxyCodeLine{179 \textcolor{preprocessor}{  \#define vkEnumerateInstanceExtensionProperties \_glfw.vk.EnumerateInstanceExtensionProperties}}
+\DoxyCodeLine{180 \textcolor{preprocessor}{  \#define vkGetInstanceProcAddr \_glfw.vk.GetInstanceProcAddr}}
+\DoxyCodeLine{181 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{182 }
+\DoxyCodeLine{183 \textcolor{preprocessor}{\#if defined(\_GLFW\_COCOA)}}
+\DoxyCodeLine{184 \textcolor{preprocessor}{ \#include "{}cocoa\_platform.h"{}}}
+\DoxyCodeLine{185 \textcolor{preprocessor}{\#elif defined(\_GLFW\_WIN32)}}
+\DoxyCodeLine{186 \textcolor{preprocessor}{ \#include "{}win32\_platform.h"{}}}
+\DoxyCodeLine{187 \textcolor{preprocessor}{\#elif defined(\_GLFW\_X11)}}
+\DoxyCodeLine{188 \textcolor{preprocessor}{ \#include "{}x11\_platform.h"{}}}
+\DoxyCodeLine{189 \textcolor{preprocessor}{\#elif defined(\_GLFW\_WAYLAND)}}
+\DoxyCodeLine{190 \textcolor{preprocessor}{ \#include "{}wl\_platform.h"{}}}
+\DoxyCodeLine{191 \textcolor{preprocessor}{\#elif defined(\_GLFW\_OSMESA)}}
+\DoxyCodeLine{192 \textcolor{preprocessor}{ \#include "{}null\_platform.h"{}}}
+\DoxyCodeLine{193 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{194 \textcolor{preprocessor}{ \#error "{}No supported window creation API selected"{}}}
+\DoxyCodeLine{195 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{196 }
+\DoxyCodeLine{197 \textcolor{preprocessor}{\#include "{}egl\_context.h"{}}}
+\DoxyCodeLine{198 \textcolor{preprocessor}{\#include "{}osmesa\_context.h"{}}}
+\DoxyCodeLine{199 }
+\DoxyCodeLine{200 \textcolor{comment}{// Constructs a version number string from the public header macros}}
+\DoxyCodeLine{201 \textcolor{preprocessor}{\#define \_GLFW\_CONCAT\_VERSION(m, n, r) \#m "{}."{}} \#n "{}."{} \#r}
+\DoxyCodeLine{202 \textcolor{preprocessor}{\#define \_GLFW\_MAKE\_VERSION(m, n, r) \_GLFW\_CONCAT\_VERSION(m, n, r)}}
+\DoxyCodeLine{203 \textcolor{preprocessor}{\#define \_GLFW\_VERSION\_NUMBER \_GLFW\_MAKE\_VERSION(GLFW\_VERSION\_MAJOR, \(\backslash\)}}
+\DoxyCodeLine{204 \textcolor{preprocessor}{                                                GLFW\_VERSION\_MINOR, \(\backslash\)}}
+\DoxyCodeLine{205 \textcolor{preprocessor}{                                                GLFW\_VERSION\_REVISION)}}
+\DoxyCodeLine{206 }
+\DoxyCodeLine{207 \textcolor{comment}{// Checks for whether the library has been initialized}}
+\DoxyCodeLine{208 \textcolor{preprocessor}{\#define \_GLFW\_REQUIRE\_INIT()                         \(\backslash\)}}
+\DoxyCodeLine{209 \textcolor{preprocessor}{    if (!\_glfw.initialized)                          \(\backslash\)}}
+\DoxyCodeLine{210 \textcolor{preprocessor}{    \{                                                \(\backslash\)}}
+\DoxyCodeLine{211 \textcolor{preprocessor}{        \_glfwInputError(GLFW\_NOT\_INITIALIZED, NULL); \(\backslash\)}}
+\DoxyCodeLine{212 \textcolor{preprocessor}{        return;                                      \(\backslash\)}}
+\DoxyCodeLine{213 \textcolor{preprocessor}{    \}}}
+\DoxyCodeLine{214 \textcolor{preprocessor}{\#define \_GLFW\_REQUIRE\_INIT\_OR\_RETURN(x)              \(\backslash\)}}
+\DoxyCodeLine{215 \textcolor{preprocessor}{    if (!\_glfw.initialized)                          \(\backslash\)}}
+\DoxyCodeLine{216 \textcolor{preprocessor}{    \{                                                \(\backslash\)}}
+\DoxyCodeLine{217 \textcolor{preprocessor}{        \_glfwInputError(GLFW\_NOT\_INITIALIZED, NULL); \(\backslash\)}}
+\DoxyCodeLine{218 \textcolor{preprocessor}{        return x;                                    \(\backslash\)}}
+\DoxyCodeLine{219 \textcolor{preprocessor}{    \}}}
+\DoxyCodeLine{220 }
+\DoxyCodeLine{221 \textcolor{comment}{// Swaps the provided pointers}}
+\DoxyCodeLine{222 \textcolor{preprocessor}{\#define \_GLFW\_SWAP\_POINTERS(x, y) \(\backslash\)}}
+\DoxyCodeLine{223 \textcolor{preprocessor}{    \{                             \(\backslash\)}}
+\DoxyCodeLine{224 \textcolor{preprocessor}{        void* t;                  \(\backslash\)}}
+\DoxyCodeLine{225 \textcolor{preprocessor}{        t = x;                    \(\backslash\)}}
+\DoxyCodeLine{226 \textcolor{preprocessor}{        x = y;                    \(\backslash\)}}
+\DoxyCodeLine{227 \textcolor{preprocessor}{        y = t;                    \(\backslash\)}}
+\DoxyCodeLine{228 \textcolor{preprocessor}{    \}}}
+\DoxyCodeLine{229 }
+\DoxyCodeLine{230 \textcolor{comment}{// Per-\/thread error structure}}
+\DoxyCodeLine{231 \textcolor{comment}{//}}
+\DoxyCodeLine{232 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWerror}{\_GLFWerror}}}
+\DoxyCodeLine{233 \{}
+\DoxyCodeLine{234     \mbox{\hyperlink{struct__GLFWerror}{\_GLFWerror}}*     next;}
+\DoxyCodeLine{235     \textcolor{keywordtype}{int}             code;}
+\DoxyCodeLine{236     \textcolor{keywordtype}{char}            description[\_GLFW\_MESSAGE\_SIZE];}
+\DoxyCodeLine{237 \};}
+\DoxyCodeLine{238 }
+\DoxyCodeLine{239 \textcolor{comment}{// Initialization configuration}}
+\DoxyCodeLine{240 \textcolor{comment}{//}}
+\DoxyCodeLine{241 \textcolor{comment}{// Parameters relating to the initialization of the library}}
+\DoxyCodeLine{242 \textcolor{comment}{//}}
+\DoxyCodeLine{243 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWinitconfig}{\_GLFWinitconfig}}}
+\DoxyCodeLine{244 \{}
+\DoxyCodeLine{245     GLFWbool      hatButtons;}
+\DoxyCodeLine{246     \textcolor{keywordtype}{int}           angleType;}
+\DoxyCodeLine{247     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{248         GLFWbool  menubar;}
+\DoxyCodeLine{249         GLFWbool  chdir;}
+\DoxyCodeLine{250     \} ns;}
+\DoxyCodeLine{251     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{252         GLFWbool  xcbVulkanSurface;}
+\DoxyCodeLine{253     \} x11;}
+\DoxyCodeLine{254 \};}
+\DoxyCodeLine{255 }
+\DoxyCodeLine{256 \textcolor{comment}{// Window configuration}}
+\DoxyCodeLine{257 \textcolor{comment}{//}}
+\DoxyCodeLine{258 \textcolor{comment}{// Parameters relating to the creation of the window but not directly related}}
+\DoxyCodeLine{259 \textcolor{comment}{// to the framebuffer.  This is used to pass window creation parameters from}}
+\DoxyCodeLine{260 \textcolor{comment}{// shared code to the platform API.}}
+\DoxyCodeLine{261 \textcolor{comment}{//}}
+\DoxyCodeLine{262 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWwndconfig}{\_GLFWwndconfig}}}
+\DoxyCodeLine{263 \{}
+\DoxyCodeLine{264     \textcolor{keywordtype}{int}           width;}
+\DoxyCodeLine{265     \textcolor{keywordtype}{int}           height;}
+\DoxyCodeLine{266     \textcolor{keyword}{const} \textcolor{keywordtype}{char}*   title;}
+\DoxyCodeLine{267     GLFWbool      resizable;}
+\DoxyCodeLine{268     GLFWbool      visible;}
+\DoxyCodeLine{269     GLFWbool      decorated;}
+\DoxyCodeLine{270     GLFWbool      focused;}
+\DoxyCodeLine{271     GLFWbool      autoIconify;}
+\DoxyCodeLine{272     GLFWbool      floating;}
+\DoxyCodeLine{273     GLFWbool      maximized;}
+\DoxyCodeLine{274     GLFWbool      centerCursor;}
+\DoxyCodeLine{275     GLFWbool      focusOnShow;}
+\DoxyCodeLine{276     GLFWbool      mousePassthrough;}
+\DoxyCodeLine{277     GLFWbool      scaleToMonitor;}
+\DoxyCodeLine{278     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{279         GLFWbool  retina;}
+\DoxyCodeLine{280         \textcolor{keywordtype}{char}      frameName[256];}
+\DoxyCodeLine{281     \} ns;}
+\DoxyCodeLine{282     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{283         \textcolor{keywordtype}{char}      className[256];}
+\DoxyCodeLine{284         \textcolor{keywordtype}{char}      instanceName[256];}
+\DoxyCodeLine{285     \} x11;}
+\DoxyCodeLine{286     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{287         GLFWbool  keymenu;}
+\DoxyCodeLine{288     \} win32;}
+\DoxyCodeLine{289 \};}
+\DoxyCodeLine{290 }
+\DoxyCodeLine{291 \textcolor{comment}{// Context configuration}}
+\DoxyCodeLine{292 \textcolor{comment}{//}}
+\DoxyCodeLine{293 \textcolor{comment}{// Parameters relating to the creation of the context but not directly related}}
+\DoxyCodeLine{294 \textcolor{comment}{// to the framebuffer.  This is used to pass context creation parameters from}}
+\DoxyCodeLine{295 \textcolor{comment}{// shared code to the platform API.}}
+\DoxyCodeLine{296 \textcolor{comment}{//}}
+\DoxyCodeLine{297 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWctxconfig}{\_GLFWctxconfig}}}
+\DoxyCodeLine{298 \{}
+\DoxyCodeLine{299     \textcolor{keywordtype}{int}           client;}
+\DoxyCodeLine{300     \textcolor{keywordtype}{int}           source;}
+\DoxyCodeLine{301     \textcolor{keywordtype}{int}           major;}
+\DoxyCodeLine{302     \textcolor{keywordtype}{int}           minor;}
+\DoxyCodeLine{303     GLFWbool      forward;}
+\DoxyCodeLine{304     GLFWbool      debug;}
+\DoxyCodeLine{305     GLFWbool      noerror;}
+\DoxyCodeLine{306     \textcolor{keywordtype}{int}           profile;}
+\DoxyCodeLine{307     \textcolor{keywordtype}{int}           robustness;}
+\DoxyCodeLine{308     \textcolor{keywordtype}{int}           release;}
+\DoxyCodeLine{309     \mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}*  share;}
+\DoxyCodeLine{310     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{311         GLFWbool  offline;}
+\DoxyCodeLine{312     \} nsgl;}
+\DoxyCodeLine{313 \};}
+\DoxyCodeLine{314 }
+\DoxyCodeLine{315 \textcolor{comment}{// Framebuffer configuration}}
+\DoxyCodeLine{316 \textcolor{comment}{//}}
+\DoxyCodeLine{317 \textcolor{comment}{// This describes buffers and their sizes.  It also contains}}
+\DoxyCodeLine{318 \textcolor{comment}{// a platform-\/specific ID used to map back to the backend API object.}}
+\DoxyCodeLine{319 \textcolor{comment}{//}}
+\DoxyCodeLine{320 \textcolor{comment}{// It is used to pass framebuffer parameters from shared code to the platform}}
+\DoxyCodeLine{321 \textcolor{comment}{// API and also to enumerate and select available framebuffer configs.}}
+\DoxyCodeLine{322 \textcolor{comment}{//}}
+\DoxyCodeLine{323 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}}}
+\DoxyCodeLine{324 \{}
+\DoxyCodeLine{325     \textcolor{keywordtype}{int}         redBits;}
+\DoxyCodeLine{326     \textcolor{keywordtype}{int}         greenBits;}
+\DoxyCodeLine{327     \textcolor{keywordtype}{int}         blueBits;}
+\DoxyCodeLine{328     \textcolor{keywordtype}{int}         alphaBits;}
+\DoxyCodeLine{329     \textcolor{keywordtype}{int}         depthBits;}
+\DoxyCodeLine{330     \textcolor{keywordtype}{int}         stencilBits;}
+\DoxyCodeLine{331     \textcolor{keywordtype}{int}         accumRedBits;}
+\DoxyCodeLine{332     \textcolor{keywordtype}{int}         accumGreenBits;}
+\DoxyCodeLine{333     \textcolor{keywordtype}{int}         accumBlueBits;}
+\DoxyCodeLine{334     \textcolor{keywordtype}{int}         accumAlphaBits;}
+\DoxyCodeLine{335     \textcolor{keywordtype}{int}         auxBuffers;}
+\DoxyCodeLine{336     GLFWbool    stereo;}
+\DoxyCodeLine{337     \textcolor{keywordtype}{int}         samples;}
+\DoxyCodeLine{338     GLFWbool    sRGB;}
+\DoxyCodeLine{339     GLFWbool    doublebuffer;}
+\DoxyCodeLine{340     GLFWbool    transparent;}
+\DoxyCodeLine{341     uintptr\_t   handle;}
+\DoxyCodeLine{342 \};}
+\DoxyCodeLine{343 }
+\DoxyCodeLine{344 \textcolor{comment}{// Context structure}}
+\DoxyCodeLine{345 \textcolor{comment}{//}}
+\DoxyCodeLine{346 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWcontext}{\_GLFWcontext}}}
+\DoxyCodeLine{347 \{}
+\DoxyCodeLine{348     \textcolor{keywordtype}{int}                 client;}
+\DoxyCodeLine{349     \textcolor{keywordtype}{int}                 source;}
+\DoxyCodeLine{350     \textcolor{keywordtype}{int}                 major, minor, revision;}
+\DoxyCodeLine{351     GLFWbool            forward, debug, noerror;}
+\DoxyCodeLine{352     \textcolor{keywordtype}{int}                 profile;}
+\DoxyCodeLine{353     \textcolor{keywordtype}{int}                 robustness;}
+\DoxyCodeLine{354     \textcolor{keywordtype}{int}                 release;}
+\DoxyCodeLine{355 }
+\DoxyCodeLine{356     PFNGLGETSTRINGIPROC  GetStringi;}
+\DoxyCodeLine{357     PFNGLGETINTEGERVPROC GetIntegerv;}
+\DoxyCodeLine{358     PFNGLGETSTRINGPROC   GetString;}
+\DoxyCodeLine{359 }
+\DoxyCodeLine{360     \_GLFWmakecontextcurrentfun  makeCurrent;}
+\DoxyCodeLine{361     \_GLFWswapbuffersfun         swapBuffers;}
+\DoxyCodeLine{362     \_GLFWswapintervalfun        swapInterval;}
+\DoxyCodeLine{363     \_GLFWextensionsupportedfun  extensionSupported;}
+\DoxyCodeLine{364     \_GLFWgetprocaddressfun      getProcAddress;}
+\DoxyCodeLine{365     \_GLFWdestroycontextfun      destroy;}
+\DoxyCodeLine{366 }
+\DoxyCodeLine{367     \textcolor{comment}{// This is defined in the context API's context.h}}
+\DoxyCodeLine{368     \_GLFW\_PLATFORM\_CONTEXT\_STATE;}
+\DoxyCodeLine{369     \textcolor{comment}{// This is defined in egl\_context.h}}
+\DoxyCodeLine{370     \mbox{\hyperlink{struct__GLFWcontextEGL}{\_GLFWcontextEGL}} egl;}
+\DoxyCodeLine{371     \textcolor{comment}{// This is defined in osmesa\_context.h}}
+\DoxyCodeLine{372     \mbox{\hyperlink{struct__GLFWcontextOSMesa}{\_GLFWcontextOSMesa}} osmesa;}
+\DoxyCodeLine{373 \};}
+\DoxyCodeLine{374 }
+\DoxyCodeLine{375 \textcolor{comment}{// Window and context structure}}
+\DoxyCodeLine{376 \textcolor{comment}{//}}
+\DoxyCodeLine{377 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}}
+\DoxyCodeLine{378 \{}
+\DoxyCodeLine{379     \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* next;}
+\DoxyCodeLine{380 }
+\DoxyCodeLine{381     \textcolor{comment}{// Window settings and state}}
+\DoxyCodeLine{382     GLFWbool            resizable;}
+\DoxyCodeLine{383     GLFWbool            decorated;}
+\DoxyCodeLine{384     GLFWbool            autoIconify;}
+\DoxyCodeLine{385     GLFWbool            floating;}
+\DoxyCodeLine{386     GLFWbool            focusOnShow;}
+\DoxyCodeLine{387     GLFWbool            mousePassthrough;}
+\DoxyCodeLine{388     GLFWbool            shouldClose;}
+\DoxyCodeLine{389     \textcolor{keywordtype}{void}*               userPointer;}
+\DoxyCodeLine{390     GLFWbool            doublebuffer;}
+\DoxyCodeLine{391     \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}         videoMode;}
+\DoxyCodeLine{392     \mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}*       monitor;}
+\DoxyCodeLine{393     \mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}*        cursor;}
+\DoxyCodeLine{394 }
+\DoxyCodeLine{395     \textcolor{keywordtype}{int}                 minwidth, minheight;}
+\DoxyCodeLine{396     \textcolor{keywordtype}{int}                 maxwidth, maxheight;}
+\DoxyCodeLine{397     \textcolor{keywordtype}{int}                 numer, denom;}
+\DoxyCodeLine{398 }
+\DoxyCodeLine{399     GLFWbool            stickyKeys;}
+\DoxyCodeLine{400     GLFWbool            stickyMouseButtons;}
+\DoxyCodeLine{401     GLFWbool            lockKeyMods;}
+\DoxyCodeLine{402     \textcolor{keywordtype}{int}                 cursorMode;}
+\DoxyCodeLine{403     \textcolor{keywordtype}{char}                mouseButtons[GLFW\_MOUSE\_BUTTON\_LAST + 1];}
+\DoxyCodeLine{404     \textcolor{keywordtype}{char}                keys[GLFW\_KEY\_LAST + 1];}
+\DoxyCodeLine{405     \textcolor{comment}{// Virtual cursor position when cursor is disabled}}
+\DoxyCodeLine{406     \textcolor{keywordtype}{double}              virtualCursorPosX, virtualCursorPosY;}
+\DoxyCodeLine{407     GLFWbool            rawMouseMotion;}
+\DoxyCodeLine{408 }
+\DoxyCodeLine{409     \mbox{\hyperlink{struct__GLFWcontext}{\_GLFWcontext}}        context;}
+\DoxyCodeLine{410 }
+\DoxyCodeLine{411     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{412         \mbox{\hyperlink{group__window_gaffb62b9d3f7dc2d6e7c89d3d76142f13}{GLFWwindowposfun}}          pos;}
+\DoxyCodeLine{413         \mbox{\hyperlink{group__window_gaac00a2d1d82875c2bac1af223e9d3c58}{GLFWwindowsizefun}}         size;}
+\DoxyCodeLine{414         \mbox{\hyperlink{group__window_ga5c46f9d2435a22b531382ea642216a61}{GLFWwindowclosefun}}        close;}
+\DoxyCodeLine{415         \mbox{\hyperlink{group__window_ga7747bf66194241cff4f12d3500d8f9cd}{GLFWwindowrefreshfun}}      refresh;}
+\DoxyCodeLine{416         \mbox{\hyperlink{group__window_ga6b15f80f61ff396d89720be2a183ca8a}{GLFWwindowfocusfun}}        focus;}
+\DoxyCodeLine{417         \mbox{\hyperlink{group__window_gaaa80beaa1d108e6bc09f666e186e735c}{GLFWwindowiconifyfun}}      iconify;}
+\DoxyCodeLine{418         \mbox{\hyperlink{group__window_ga82868db51248e7bc2deb2082336e6c70}{GLFWwindowmaximizefun}}     maximize;}
+\DoxyCodeLine{419         \mbox{\hyperlink{group__window_ga54302eebe2f81518a544723a1d805388}{GLFWframebuffersizefun}}    fbsize;}
+\DoxyCodeLine{420         \mbox{\hyperlink{group__window_gaca2e04ad85e70a646f07a870c2cad4ee}{GLFWwindowcontentscalefun}} scale;}
+\DoxyCodeLine{421         \mbox{\hyperlink{group__input_gac4312f2199caa15988cebb59ec530373}{GLFWmousebuttonfun}}        mouseButton;}
+\DoxyCodeLine{422         \mbox{\hyperlink{group__input_ga081a67dfb879e14707a5abd7de242b8a}{GLFWcursorposfun}}          cursorPos;}
+\DoxyCodeLine{423         \mbox{\hyperlink{group__input_ga945bb284410b64c49ecc50195692720a}{GLFWcursorenterfun}}        cursorEnter;}
+\DoxyCodeLine{424         \mbox{\hyperlink{group__input_ga077345c3a10d906b2b3f2d550ae02971}{GLFWscrollfun}}             scroll;}
+\DoxyCodeLine{425         \mbox{\hyperlink{group__input_ga9c6c9d019ac11d888e45b11b14772659}{GLFWkeyfun}}                key;}
+\DoxyCodeLine{426         \mbox{\hyperlink{group__input_ga2c4c70bfb3fb990182a4591cd21a374d}{GLFWcharfun}}               character;}
+\DoxyCodeLine{427         \mbox{\hyperlink{group__input_ga78c3d45fdf9aaef0b8d670bf2a9519e2}{GLFWcharmodsfun}}           charmods;}
+\DoxyCodeLine{428         \mbox{\hyperlink{group__input_gabc169084bd5648f192077f102b957496}{GLFWdropfun}}               drop;}
+\DoxyCodeLine{429     \} callbacks;}
+\DoxyCodeLine{430 }
+\DoxyCodeLine{431     \textcolor{comment}{// This is defined in the window API's platform.h}}
+\DoxyCodeLine{432     \_GLFW\_PLATFORM\_WINDOW\_STATE;}
+\DoxyCodeLine{433 \};}
+\DoxyCodeLine{434 }
+\DoxyCodeLine{435 \textcolor{comment}{// Monitor structure}}
+\DoxyCodeLine{436 \textcolor{comment}{//}}
+\DoxyCodeLine{437 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}}
+\DoxyCodeLine{438 \{}
+\DoxyCodeLine{439     \textcolor{keywordtype}{char}            name[128];}
+\DoxyCodeLine{440     \textcolor{keywordtype}{void}*           userPointer;}
+\DoxyCodeLine{441 }
+\DoxyCodeLine{442     \textcolor{comment}{// Physical dimensions in millimeters.}}
+\DoxyCodeLine{443     \textcolor{keywordtype}{int}             widthMM, heightMM;}
+\DoxyCodeLine{444 }
+\DoxyCodeLine{445     \textcolor{comment}{// The window whose video mode is current on this monitor}}
+\DoxyCodeLine{446     \mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}*    window;}
+\DoxyCodeLine{447 }
+\DoxyCodeLine{448     \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}*    modes;}
+\DoxyCodeLine{449     \textcolor{keywordtype}{int}             modeCount;}
+\DoxyCodeLine{450     \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}     currentMode;}
+\DoxyCodeLine{451 }
+\DoxyCodeLine{452     \mbox{\hyperlink{structGLFWgammaramp}{GLFWgammaramp}}   originalRamp;}
+\DoxyCodeLine{453     \mbox{\hyperlink{structGLFWgammaramp}{GLFWgammaramp}}   currentRamp;}
+\DoxyCodeLine{454 }
+\DoxyCodeLine{455     \textcolor{comment}{// This is defined in the window API's platform.h}}
+\DoxyCodeLine{456     \_GLFW\_PLATFORM\_MONITOR\_STATE;}
+\DoxyCodeLine{457 \};}
+\DoxyCodeLine{458 }
+\DoxyCodeLine{459 \textcolor{comment}{// Cursor structure}}
+\DoxyCodeLine{460 \textcolor{comment}{//}}
+\DoxyCodeLine{461 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}}
+\DoxyCodeLine{462 \{}
+\DoxyCodeLine{463     \mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}*    next;}
+\DoxyCodeLine{464 }
+\DoxyCodeLine{465     \textcolor{comment}{// This is defined in the window API's platform.h}}
+\DoxyCodeLine{466     \_GLFW\_PLATFORM\_CURSOR\_STATE;}
+\DoxyCodeLine{467 \};}
+\DoxyCodeLine{468 }
+\DoxyCodeLine{469 \textcolor{comment}{// Gamepad mapping element structure}}
+\DoxyCodeLine{470 \textcolor{comment}{//}}
+\DoxyCodeLine{471 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmapelement}{\_GLFWmapelement}}}
+\DoxyCodeLine{472 \{}
+\DoxyCodeLine{473     uint8\_t         type;}
+\DoxyCodeLine{474     uint8\_t         index;}
+\DoxyCodeLine{475     int8\_t          axisScale;}
+\DoxyCodeLine{476     int8\_t          axisOffset;}
+\DoxyCodeLine{477 \};}
+\DoxyCodeLine{478 }
+\DoxyCodeLine{479 \textcolor{comment}{// Gamepad mapping structure}}
+\DoxyCodeLine{480 \textcolor{comment}{//}}
+\DoxyCodeLine{481 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmapping}{\_GLFWmapping}}}
+\DoxyCodeLine{482 \{}
+\DoxyCodeLine{483     \textcolor{keywordtype}{char}            name[128];}
+\DoxyCodeLine{484     \textcolor{keywordtype}{char}            guid[33];}
+\DoxyCodeLine{485     \mbox{\hyperlink{struct__GLFWmapelement}{\_GLFWmapelement}} buttons[15];}
+\DoxyCodeLine{486     \mbox{\hyperlink{struct__GLFWmapelement}{\_GLFWmapelement}} axes[6];}
+\DoxyCodeLine{487 \};}
+\DoxyCodeLine{488 }
+\DoxyCodeLine{489 \textcolor{comment}{// Joystick structure}}
+\DoxyCodeLine{490 \textcolor{comment}{//}}
+\DoxyCodeLine{491 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}}
+\DoxyCodeLine{492 \{}
+\DoxyCodeLine{493     GLFWbool        present;}
+\DoxyCodeLine{494     \textcolor{keywordtype}{float}*          axes;}
+\DoxyCodeLine{495     \textcolor{keywordtype}{int}             axisCount;}
+\DoxyCodeLine{496     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*  buttons;}
+\DoxyCodeLine{497     \textcolor{keywordtype}{int}             buttonCount;}
+\DoxyCodeLine{498     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*  hats;}
+\DoxyCodeLine{499     \textcolor{keywordtype}{int}             hatCount;}
+\DoxyCodeLine{500     \textcolor{keywordtype}{char}            name[128];}
+\DoxyCodeLine{501     \textcolor{keywordtype}{void}*           userPointer;}
+\DoxyCodeLine{502     \textcolor{keywordtype}{char}            guid[33];}
+\DoxyCodeLine{503     \mbox{\hyperlink{struct__GLFWmapping}{\_GLFWmapping}}*   mapping;}
+\DoxyCodeLine{504 }
+\DoxyCodeLine{505     \textcolor{comment}{// This is defined in the joystick API's joystick.h}}
+\DoxyCodeLine{506     \_GLFW\_PLATFORM\_JOYSTICK\_STATE;}
+\DoxyCodeLine{507 \};}
+\DoxyCodeLine{508 }
+\DoxyCodeLine{509 \textcolor{comment}{// Thread local storage structure}}
+\DoxyCodeLine{510 \textcolor{comment}{//}}
+\DoxyCodeLine{511 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}}
+\DoxyCodeLine{512 \{}
+\DoxyCodeLine{513     \textcolor{comment}{// This is defined in the platform's thread.h}}
+\DoxyCodeLine{514     \_GLFW\_PLATFORM\_TLS\_STATE;}
+\DoxyCodeLine{515 \};}
+\DoxyCodeLine{516 }
+\DoxyCodeLine{517 \textcolor{comment}{// Mutex structure}}
+\DoxyCodeLine{518 \textcolor{comment}{//}}
+\DoxyCodeLine{519 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}}}
+\DoxyCodeLine{520 \{}
+\DoxyCodeLine{521     \textcolor{comment}{// This is defined in the platform's thread.h}}
+\DoxyCodeLine{522     \_GLFW\_PLATFORM\_MUTEX\_STATE;}
+\DoxyCodeLine{523 \};}
+\DoxyCodeLine{524 }
+\DoxyCodeLine{525 \textcolor{comment}{// Library global data}}
+\DoxyCodeLine{526 \textcolor{comment}{//}}
+\DoxyCodeLine{527 \textcolor{keyword}{struct }\mbox{\hyperlink{struct__GLFWlibrary}{\_GLFWlibrary}}}
+\DoxyCodeLine{528 \{}
+\DoxyCodeLine{529     GLFWbool            initialized;}
+\DoxyCodeLine{530 }
+\DoxyCodeLine{531     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{532         \mbox{\hyperlink{struct__GLFWinitconfig}{\_GLFWinitconfig}} init;}
+\DoxyCodeLine{533         \mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}}   framebuffer;}
+\DoxyCodeLine{534         \mbox{\hyperlink{struct__GLFWwndconfig}{\_GLFWwndconfig}}  window;}
+\DoxyCodeLine{535         \mbox{\hyperlink{struct__GLFWctxconfig}{\_GLFWctxconfig}}  context;}
+\DoxyCodeLine{536         \textcolor{keywordtype}{int}             refreshRate;}
+\DoxyCodeLine{537     \} hints;}
+\DoxyCodeLine{538 }
+\DoxyCodeLine{539     \mbox{\hyperlink{struct__GLFWerror}{\_GLFWerror}}*         errorListHead;}
+\DoxyCodeLine{540     \mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}*        cursorListHead;}
+\DoxyCodeLine{541     \mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}*        windowListHead;}
+\DoxyCodeLine{542 }
+\DoxyCodeLine{543     \mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}**      monitors;}
+\DoxyCodeLine{544     \textcolor{keywordtype}{int}                 monitorCount;}
+\DoxyCodeLine{545 }
+\DoxyCodeLine{546     GLFWbool            joysticksInitialized;}
+\DoxyCodeLine{547     \mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}       joysticks[GLFW\_JOYSTICK\_LAST + 1];}
+\DoxyCodeLine{548     \mbox{\hyperlink{struct__GLFWmapping}{\_GLFWmapping}}*       mappings;}
+\DoxyCodeLine{549     \textcolor{keywordtype}{int}                 mappingCount;}
+\DoxyCodeLine{550 }
+\DoxyCodeLine{551     \mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}            errorSlot;}
+\DoxyCodeLine{552     \mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}            contextSlot;}
+\DoxyCodeLine{553     \mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}}          errorLock;}
+\DoxyCodeLine{554 }
+\DoxyCodeLine{555     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{556         uint64\_t        offset;}
+\DoxyCodeLine{557         \textcolor{comment}{// This is defined in the platform's time.h}}
+\DoxyCodeLine{558         \_GLFW\_PLATFORM\_LIBRARY\_TIMER\_STATE;}
+\DoxyCodeLine{559     \} timer;}
+\DoxyCodeLine{560 }
+\DoxyCodeLine{561     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{562         GLFWbool        available;}
+\DoxyCodeLine{563         \textcolor{keywordtype}{void}*           handle;}
+\DoxyCodeLine{564         \textcolor{keywordtype}{char}*           extensions[2];}
+\DoxyCodeLine{565 \textcolor{preprocessor}{\#if !defined(\_GLFW\_VULKAN\_STATIC)}}
+\DoxyCodeLine{566         PFN\_vkEnumerateInstanceExtensionProperties EnumerateInstanceExtensionProperties;}
+\DoxyCodeLine{567         PFN\_vkGetInstanceProcAddr GetInstanceProcAddr;}
+\DoxyCodeLine{568 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{569         GLFWbool        KHR\_surface;}
+\DoxyCodeLine{570 \textcolor{preprocessor}{\#if defined(\_GLFW\_WIN32)}}
+\DoxyCodeLine{571         GLFWbool        KHR\_win32\_surface;}
+\DoxyCodeLine{572 \textcolor{preprocessor}{\#elif defined(\_GLFW\_COCOA)}}
+\DoxyCodeLine{573         GLFWbool        MVK\_macos\_surface;}
+\DoxyCodeLine{574         GLFWbool        EXT\_metal\_surface;}
+\DoxyCodeLine{575 \textcolor{preprocessor}{\#elif defined(\_GLFW\_X11)}}
+\DoxyCodeLine{576         GLFWbool        KHR\_xlib\_surface;}
+\DoxyCodeLine{577         GLFWbool        KHR\_xcb\_surface;}
+\DoxyCodeLine{578 \textcolor{preprocessor}{\#elif defined(\_GLFW\_WAYLAND)}}
+\DoxyCodeLine{579         GLFWbool        KHR\_wayland\_surface;}
+\DoxyCodeLine{580 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{581     \} vk;}
+\DoxyCodeLine{582 }
+\DoxyCodeLine{583     \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{584         \mbox{\hyperlink{group__monitor_gacc7165513fd258601c4cb763c1369693}{GLFWmonitorfun}}  monitor;}
+\DoxyCodeLine{585         \mbox{\hyperlink{group__input_gafc05b099b23b3b23a992bdf6d77c191a}{GLFWjoystickfun}} joystick;}
+\DoxyCodeLine{586     \} callbacks;}
+\DoxyCodeLine{587 }
+\DoxyCodeLine{588     \textcolor{comment}{// This is defined in the window API's platform.h}}
+\DoxyCodeLine{589     \_GLFW\_PLATFORM\_LIBRARY\_WINDOW\_STATE;}
+\DoxyCodeLine{590     \textcolor{comment}{// This is defined in the context API's context.h}}
+\DoxyCodeLine{591     \_GLFW\_PLATFORM\_LIBRARY\_CONTEXT\_STATE;}
+\DoxyCodeLine{592     \textcolor{comment}{// This is defined in the platform's joystick.h}}
+\DoxyCodeLine{593     \_GLFW\_PLATFORM\_LIBRARY\_JOYSTICK\_STATE;}
+\DoxyCodeLine{594     \textcolor{comment}{// This is defined in egl\_context.h}}
+\DoxyCodeLine{595     \mbox{\hyperlink{struct__GLFWlibraryEGL}{\_GLFWlibraryEGL}} egl;}
+\DoxyCodeLine{596     \textcolor{comment}{// This is defined in osmesa\_context.h}}
+\DoxyCodeLine{597     \mbox{\hyperlink{struct__GLFWlibraryOSMesa}{\_GLFWlibraryOSMesa}} osmesa;}
+\DoxyCodeLine{598 \};}
+\DoxyCodeLine{599 }
+\DoxyCodeLine{600 \textcolor{comment}{// Global state shared between compilation units of GLFW}}
+\DoxyCodeLine{601 \textcolor{comment}{//}}
+\DoxyCodeLine{602 \textcolor{keyword}{extern} \mbox{\hyperlink{struct__GLFWlibrary}{\_GLFWlibrary}} \_glfw;}
+\DoxyCodeLine{603 }
+\DoxyCodeLine{604 }
+\DoxyCodeLine{608 }
+\DoxyCodeLine{609 \textcolor{keywordtype}{int} \_glfwPlatformInit(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{610 \textcolor{keywordtype}{void} \_glfwPlatformTerminate(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{611 \textcolor{keyword}{const} \textcolor{keywordtype}{char}* \_glfwPlatformGetVersionString(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{612 }
+\DoxyCodeLine{613 \textcolor{keywordtype}{void} \_glfwPlatformGetCursorPos(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{double}* xpos, \textcolor{keywordtype}{double}* ypos);}
+\DoxyCodeLine{614 \textcolor{keywordtype}{void} \_glfwPlatformSetCursorPos(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{double} xpos, \textcolor{keywordtype}{double} ypos);}
+\DoxyCodeLine{615 \textcolor{keywordtype}{void} \_glfwPlatformSetCursorMode(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} mode);}
+\DoxyCodeLine{616 \textcolor{keywordtype}{void} \_glfwPlatformSetRawMouseMotion(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}} *window, GLFWbool enabled);}
+\DoxyCodeLine{617 GLFWbool \_glfwPlatformRawMouseMotionSupported(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{618 \textcolor{keywordtype}{int} \_glfwPlatformCreateCursor(\mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}* cursor,}
+\DoxyCodeLine{619                               \textcolor{keyword}{const} \mbox{\hyperlink{structGLFWimage}{GLFWimage}}* image, \textcolor{keywordtype}{int} xhot, \textcolor{keywordtype}{int} yhot);}
+\DoxyCodeLine{620 \textcolor{keywordtype}{int} \_glfwPlatformCreateStandardCursor(\mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}* cursor, \textcolor{keywordtype}{int} shape);}
+\DoxyCodeLine{621 \textcolor{keywordtype}{void} \_glfwPlatformDestroyCursor(\mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}* cursor);}
+\DoxyCodeLine{622 \textcolor{keywordtype}{void} \_glfwPlatformSetCursor(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \mbox{\hyperlink{struct__GLFWcursor}{\_GLFWcursor}}* cursor);}
+\DoxyCodeLine{623 }
+\DoxyCodeLine{624 \textcolor{keyword}{const} \textcolor{keywordtype}{char}* \_glfwPlatformGetScancodeName(\textcolor{keywordtype}{int} scancode);}
+\DoxyCodeLine{625 \textcolor{keywordtype}{int} \_glfwPlatformGetKeyScancode(\textcolor{keywordtype}{int} key);}
+\DoxyCodeLine{626 }
+\DoxyCodeLine{627 \textcolor{keywordtype}{void} \_glfwPlatformFreeMonitor(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor);}
+\DoxyCodeLine{628 \textcolor{keywordtype}{void} \_glfwPlatformGetMonitorPos(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \textcolor{keywordtype}{int}* xpos, \textcolor{keywordtype}{int}* ypos);}
+\DoxyCodeLine{629 \textcolor{keywordtype}{void} \_glfwPlatformGetMonitorContentScale(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor,}
+\DoxyCodeLine{630                                          \textcolor{keywordtype}{float}* xscale, \textcolor{keywordtype}{float}* yscale);}
+\DoxyCodeLine{631 \textcolor{keywordtype}{void} \_glfwPlatformGetMonitorWorkarea(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \textcolor{keywordtype}{int}* xpos, \textcolor{keywordtype}{int}* ypos, \textcolor{keywordtype}{int} *width, \textcolor{keywordtype}{int} *height);}
+\DoxyCodeLine{632 \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}* \_glfwPlatformGetVideoModes(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \textcolor{keywordtype}{int}* count);}
+\DoxyCodeLine{633 \textcolor{keywordtype}{void} \_glfwPlatformGetVideoMode(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}* mode);}
+\DoxyCodeLine{634 GLFWbool \_glfwPlatformGetGammaRamp(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \mbox{\hyperlink{structGLFWgammaramp}{GLFWgammaramp}}* ramp);}
+\DoxyCodeLine{635 \textcolor{keywordtype}{void} \_glfwPlatformSetGammaRamp(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \textcolor{keyword}{const} \mbox{\hyperlink{structGLFWgammaramp}{GLFWgammaramp}}* ramp);}
+\DoxyCodeLine{636 }
+\DoxyCodeLine{637 \textcolor{keywordtype}{void} \_glfwPlatformSetClipboardString(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* \textcolor{keywordtype}{string});}
+\DoxyCodeLine{638 \textcolor{keyword}{const} \textcolor{keywordtype}{char}* \_glfwPlatformGetClipboardString(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{639 }
+\DoxyCodeLine{640 GLFWbool \_glfwPlatformInitJoysticks(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{641 \textcolor{keywordtype}{void} \_glfwPlatformTerminateJoysticks(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{642 \textcolor{keywordtype}{int} \_glfwPlatformPollJoystick(\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}* js, \textcolor{keywordtype}{int} mode);}
+\DoxyCodeLine{643 \textcolor{keywordtype}{void} \_glfwPlatformUpdateGamepadGUID(\textcolor{keywordtype}{char}* guid);}
+\DoxyCodeLine{644 }
+\DoxyCodeLine{645 uint64\_t \_glfwPlatformGetTimerValue(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{646 uint64\_t \_glfwPlatformGetTimerFrequency(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{647 }
+\DoxyCodeLine{648 \textcolor{keywordtype}{int} \_glfwPlatformCreateWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{649                               \textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWwndconfig}{\_GLFWwndconfig}}* wndconfig,}
+\DoxyCodeLine{650                               \textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWctxconfig}{\_GLFWctxconfig}}* ctxconfig,}
+\DoxyCodeLine{651                               \textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}}* fbconfig);}
+\DoxyCodeLine{652 \textcolor{keywordtype}{void} \_glfwPlatformDestroyWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{653 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowTitle(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* title);}
+\DoxyCodeLine{654 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowIcon(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{655                                 \textcolor{keywordtype}{int} count, \textcolor{keyword}{const} \mbox{\hyperlink{structGLFWimage}{GLFWimage}}* images);}
+\DoxyCodeLine{656 \textcolor{keywordtype}{void} \_glfwPlatformGetWindowPos(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int}* xpos, \textcolor{keywordtype}{int}* ypos);}
+\DoxyCodeLine{657 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowPos(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} xpos, \textcolor{keywordtype}{int} ypos);}
+\DoxyCodeLine{658 \textcolor{keywordtype}{void} \_glfwPlatformGetWindowSize(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int}* width, \textcolor{keywordtype}{int}* height);}
+\DoxyCodeLine{659 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowSize(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height);}
+\DoxyCodeLine{660 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowSizeLimits(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{661                                       \textcolor{keywordtype}{int} minwidth, \textcolor{keywordtype}{int} minheight,}
+\DoxyCodeLine{662                                       \textcolor{keywordtype}{int} maxwidth, \textcolor{keywordtype}{int} maxheight);}
+\DoxyCodeLine{663 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowAspectRatio(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} numer, \textcolor{keywordtype}{int} denom);}
+\DoxyCodeLine{664 \textcolor{keywordtype}{void} \_glfwPlatformGetFramebufferSize(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int}* width, \textcolor{keywordtype}{int}* height);}
+\DoxyCodeLine{665 \textcolor{keywordtype}{void} \_glfwPlatformGetWindowFrameSize(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{666                                      \textcolor{keywordtype}{int}* left, \textcolor{keywordtype}{int}* top,}
+\DoxyCodeLine{667                                      \textcolor{keywordtype}{int}* right, \textcolor{keywordtype}{int}* bottom);}
+\DoxyCodeLine{668 \textcolor{keywordtype}{void} \_glfwPlatformGetWindowContentScale(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{669                                         \textcolor{keywordtype}{float}* xscale, \textcolor{keywordtype}{float}* yscale);}
+\DoxyCodeLine{670 \textcolor{keywordtype}{void} \_glfwPlatformIconifyWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{671 \textcolor{keywordtype}{void} \_glfwPlatformRestoreWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{672 \textcolor{keywordtype}{void} \_glfwPlatformMaximizeWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{673 \textcolor{keywordtype}{void} \_glfwPlatformShowWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{674 \textcolor{keywordtype}{void} \_glfwPlatformHideWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{675 \textcolor{keywordtype}{void} \_glfwPlatformRequestWindowAttention(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{676 \textcolor{keywordtype}{void} \_glfwPlatformFocusWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{677 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowMonitor(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor,}
+\DoxyCodeLine{678                                    \textcolor{keywordtype}{int} xpos, \textcolor{keywordtype}{int} ypos, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height,}
+\DoxyCodeLine{679                                    \textcolor{keywordtype}{int} refreshRate);}
+\DoxyCodeLine{680 \textcolor{keywordtype}{int} \_glfwPlatformWindowFocused(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{681 \textcolor{keywordtype}{int} \_glfwPlatformWindowIconified(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{682 \textcolor{keywordtype}{int} \_glfwPlatformWindowVisible(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{683 \textcolor{keywordtype}{int} \_glfwPlatformWindowMaximized(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{684 \textcolor{keywordtype}{int} \_glfwPlatformWindowHovered(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{685 \textcolor{keywordtype}{int} \_glfwPlatformFramebufferTransparent(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{686 \textcolor{keywordtype}{float} \_glfwPlatformGetWindowOpacity(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{687 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowResizable(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool enabled);}
+\DoxyCodeLine{688 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowDecorated(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool enabled);}
+\DoxyCodeLine{689 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowFloating(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool enabled);}
+\DoxyCodeLine{690 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowMousePassthrough(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool enabled);}
+\DoxyCodeLine{691 \textcolor{keywordtype}{void} \_glfwPlatformSetWindowOpacity(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{float} opacity);}
+\DoxyCodeLine{692 }
+\DoxyCodeLine{693 \textcolor{keywordtype}{void} \_glfwPlatformPollEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{694 \textcolor{keywordtype}{void} \_glfwPlatformWaitEvents(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{695 \textcolor{keywordtype}{void} \_glfwPlatformWaitEventsTimeout(\textcolor{keywordtype}{double} timeout);}
+\DoxyCodeLine{696 \textcolor{keywordtype}{void} \_glfwPlatformPostEmptyEvent(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{697 }
+\DoxyCodeLine{698 EGLenum \_glfwPlatformGetEGLPlatform(EGLint** attribs);}
+\DoxyCodeLine{699 EGLNativeDisplayType \_glfwPlatformGetEGLNativeDisplay(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{700 EGLNativeWindowType \_glfwPlatformGetEGLNativeWindow(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{701 }
+\DoxyCodeLine{702 \textcolor{keywordtype}{void} \_glfwPlatformGetRequiredInstanceExtensions(\textcolor{keywordtype}{char}** extensions);}
+\DoxyCodeLine{703 \textcolor{keywordtype}{int} \_glfwPlatformGetPhysicalDevicePresentationSupport(VkInstance instance,}
+\DoxyCodeLine{704                                                       VkPhysicalDevice device,}
+\DoxyCodeLine{705                                                       uint32\_t queuefamily);}
+\DoxyCodeLine{706 VkResult \_glfwPlatformCreateWindowSurface(VkInstance instance,}
+\DoxyCodeLine{707                                           \mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{708                                           \textcolor{keyword}{const} \mbox{\hyperlink{structVkAllocationCallbacks}{VkAllocationCallbacks}}* allocator,}
+\DoxyCodeLine{709                                           VkSurfaceKHR* surface);}
+\DoxyCodeLine{710 }
+\DoxyCodeLine{711 GLFWbool \_glfwPlatformCreateTls(\mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}* tls);}
+\DoxyCodeLine{712 \textcolor{keywordtype}{void} \_glfwPlatformDestroyTls(\mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}* tls);}
+\DoxyCodeLine{713 \textcolor{keywordtype}{void}* \_glfwPlatformGetTls(\mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}* tls);}
+\DoxyCodeLine{714 \textcolor{keywordtype}{void} \_glfwPlatformSetTls(\mbox{\hyperlink{struct__GLFWtls}{\_GLFWtls}}* tls, \textcolor{keywordtype}{void}* value);}
+\DoxyCodeLine{715 }
+\DoxyCodeLine{716 GLFWbool \_glfwPlatformCreateMutex(\mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}}* mutex);}
+\DoxyCodeLine{717 \textcolor{keywordtype}{void} \_glfwPlatformDestroyMutex(\mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}}* mutex);}
+\DoxyCodeLine{718 \textcolor{keywordtype}{void} \_glfwPlatformLockMutex(\mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}}* mutex);}
+\DoxyCodeLine{719 \textcolor{keywordtype}{void} \_glfwPlatformUnlockMutex(\mbox{\hyperlink{struct__GLFWmutex}{\_GLFWmutex}}* mutex);}
+\DoxyCodeLine{720 }
+\DoxyCodeLine{721 }
+\DoxyCodeLine{725 }
+\DoxyCodeLine{726 \textcolor{keywordtype}{void} \_glfwInputWindowFocus(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool focused);}
+\DoxyCodeLine{727 \textcolor{keywordtype}{void} \_glfwInputWindowPos(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} xpos, \textcolor{keywordtype}{int} ypos);}
+\DoxyCodeLine{728 \textcolor{keywordtype}{void} \_glfwInputWindowSize(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height);}
+\DoxyCodeLine{729 \textcolor{keywordtype}{void} \_glfwInputFramebufferSize(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height);}
+\DoxyCodeLine{730 \textcolor{keywordtype}{void} \_glfwInputWindowContentScale(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{731                                   \textcolor{keywordtype}{float} xscale, \textcolor{keywordtype}{float} yscale);}
+\DoxyCodeLine{732 \textcolor{keywordtype}{void} \_glfwInputWindowIconify(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool iconified);}
+\DoxyCodeLine{733 \textcolor{keywordtype}{void} \_glfwInputWindowMaximize(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool maximized);}
+\DoxyCodeLine{734 \textcolor{keywordtype}{void} \_glfwInputWindowDamage(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{735 \textcolor{keywordtype}{void} \_glfwInputWindowCloseRequest(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{736 \textcolor{keywordtype}{void} \_glfwInputWindowMonitor(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor);}
+\DoxyCodeLine{737 }
+\DoxyCodeLine{738 \textcolor{keywordtype}{void} \_glfwInputKey(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{739                    \textcolor{keywordtype}{int} key, \textcolor{keywordtype}{int} scancode, \textcolor{keywordtype}{int} action, \textcolor{keywordtype}{int} mods);}
+\DoxyCodeLine{740 \textcolor{keywordtype}{void} \_glfwInputChar(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{741                     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} codepoint, \textcolor{keywordtype}{int} mods, GLFWbool plain);}
+\DoxyCodeLine{742 \textcolor{keywordtype}{void} \_glfwInputScroll(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{double} xoffset, \textcolor{keywordtype}{double} yoffset);}
+\DoxyCodeLine{743 \textcolor{keywordtype}{void} \_glfwInputMouseClick(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} button, \textcolor{keywordtype}{int} action, \textcolor{keywordtype}{int} mods);}
+\DoxyCodeLine{744 \textcolor{keywordtype}{void} \_glfwInputCursorPos(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{double} xpos, \textcolor{keywordtype}{double} ypos);}
+\DoxyCodeLine{745 \textcolor{keywordtype}{void} \_glfwInputCursorEnter(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, GLFWbool entered);}
+\DoxyCodeLine{746 \textcolor{keywordtype}{void} \_glfwInputDrop(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window, \textcolor{keywordtype}{int} count, \textcolor{keyword}{const} \textcolor{keywordtype}{char}** names);}
+\DoxyCodeLine{747 \textcolor{keywordtype}{void} \_glfwInputJoystick(\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}* js, \textcolor{keywordtype}{int} event);}
+\DoxyCodeLine{748 \textcolor{keywordtype}{void} \_glfwInputJoystickAxis(\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}* js, \textcolor{keywordtype}{int} axis, \textcolor{keywordtype}{float} value);}
+\DoxyCodeLine{749 \textcolor{keywordtype}{void} \_glfwInputJoystickButton(\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}* js, \textcolor{keywordtype}{int} button, \textcolor{keywordtype}{char} value);}
+\DoxyCodeLine{750 \textcolor{keywordtype}{void} \_glfwInputJoystickHat(\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}* js, \textcolor{keywordtype}{int} hat, \textcolor{keywordtype}{char} value);}
+\DoxyCodeLine{751 }
+\DoxyCodeLine{752 \textcolor{keywordtype}{void} \_glfwInputMonitor(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \textcolor{keywordtype}{int} action, \textcolor{keywordtype}{int} placement);}
+\DoxyCodeLine{753 \textcolor{keywordtype}{void} \_glfwInputMonitorWindow(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor, \mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{754 }
+\DoxyCodeLine{755 \textcolor{preprocessor}{\#if defined(\_\_GNUC\_\_)}}
+\DoxyCodeLine{756 \textcolor{keywordtype}{void} \_glfwInputError(\textcolor{keywordtype}{int} code, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* format, ...)}
+\DoxyCodeLine{757     \_\_attribute\_\_((format(printf, 2, 3)));}
+\DoxyCodeLine{758 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{759 \textcolor{keywordtype}{void} \_glfwInputError(\textcolor{keywordtype}{int} code, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* format, ...);}
+\DoxyCodeLine{760 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{761 }
+\DoxyCodeLine{762 }
+\DoxyCodeLine{766 }
+\DoxyCodeLine{767 GLFWbool \_glfwStringInExtensionString(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* \textcolor{keywordtype}{string}, \textcolor{keyword}{const} \textcolor{keywordtype}{char}* extensions);}
+\DoxyCodeLine{768 \textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}}* \_glfwChooseFBConfig(\textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}}* desired,}
+\DoxyCodeLine{769                                          \textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWfbconfig}{\_GLFWfbconfig}}* alternatives,}
+\DoxyCodeLine{770                                          \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} count);}
+\DoxyCodeLine{771 GLFWbool \_glfwRefreshContextAttribs(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window,}
+\DoxyCodeLine{772                                     \textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWctxconfig}{\_GLFWctxconfig}}* ctxconfig);}
+\DoxyCodeLine{773 GLFWbool \_glfwIsValidContextConfig(\textcolor{keyword}{const} \mbox{\hyperlink{struct__GLFWctxconfig}{\_GLFWctxconfig}}* ctxconfig);}
+\DoxyCodeLine{774 }
+\DoxyCodeLine{775 \textcolor{keyword}{const} \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}* \_glfwChooseVideoMode(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor,}
+\DoxyCodeLine{776                                         \textcolor{keyword}{const} \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}* desired);}
+\DoxyCodeLine{777 \textcolor{keywordtype}{int} \_glfwCompareVideoModes(\textcolor{keyword}{const} \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}* first, \textcolor{keyword}{const} \mbox{\hyperlink{structGLFWvidmode}{GLFWvidmode}}* second);}
+\DoxyCodeLine{778 \mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* \_glfwAllocMonitor(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* name, \textcolor{keywordtype}{int} widthMM, \textcolor{keywordtype}{int} heightMM);}
+\DoxyCodeLine{779 \textcolor{keywordtype}{void} \_glfwFreeMonitor(\mbox{\hyperlink{struct__GLFWmonitor}{\_GLFWmonitor}}* monitor);}
+\DoxyCodeLine{780 \textcolor{keywordtype}{void} \_glfwAllocGammaArrays(\mbox{\hyperlink{structGLFWgammaramp}{GLFWgammaramp}}* ramp, \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} size);}
+\DoxyCodeLine{781 \textcolor{keywordtype}{void} \_glfwFreeGammaArrays(\mbox{\hyperlink{structGLFWgammaramp}{GLFWgammaramp}}* ramp);}
+\DoxyCodeLine{782 \textcolor{keywordtype}{void} \_glfwSplitBPP(\textcolor{keywordtype}{int} bpp, \textcolor{keywordtype}{int}* red, \textcolor{keywordtype}{int}* green, \textcolor{keywordtype}{int}* blue);}
+\DoxyCodeLine{783 }
+\DoxyCodeLine{784 \mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}* \_glfwAllocJoystick(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* name,}
+\DoxyCodeLine{785                                   \textcolor{keyword}{const} \textcolor{keywordtype}{char}* guid,}
+\DoxyCodeLine{786                                   \textcolor{keywordtype}{int} axisCount,}
+\DoxyCodeLine{787                                   \textcolor{keywordtype}{int} buttonCount,}
+\DoxyCodeLine{788                                   \textcolor{keywordtype}{int} hatCount);}
+\DoxyCodeLine{789 \textcolor{keywordtype}{void} \_glfwFreeJoystick(\mbox{\hyperlink{struct__GLFWjoystick}{\_GLFWjoystick}}* js);}
+\DoxyCodeLine{790 \textcolor{keywordtype}{void} \_glfwCenterCursorInContentArea(\mbox{\hyperlink{struct__GLFWwindow}{\_GLFWwindow}}* window);}
+\DoxyCodeLine{791 }
+\DoxyCodeLine{792 GLFWbool \_glfwInitVulkan(\textcolor{keywordtype}{int} mode);}
+\DoxyCodeLine{793 \textcolor{keywordtype}{void} \_glfwTerminateVulkan(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{794 \textcolor{keyword}{const} \textcolor{keywordtype}{char}* \_glfwGetVulkanResultString(VkResult result);}
+\DoxyCodeLine{795 }
+\DoxyCodeLine{796 \textcolor{keywordtype}{char}* \_glfw\_strdup(\textcolor{keyword}{const} \textcolor{keywordtype}{char}* source);}
+\DoxyCodeLine{797 \textcolor{keywordtype}{float} \_glfw\_fminf(\textcolor{keywordtype}{float} a, \textcolor{keywordtype}{float} b);}
+\DoxyCodeLine{798 \textcolor{keywordtype}{float} \_glfw\_fmaxf(\textcolor{keywordtype}{float} a, \textcolor{keywordtype}{float} b);}
+\DoxyCodeLine{799 }
+
+\end{DoxyCode}

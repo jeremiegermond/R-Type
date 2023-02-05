@@ -1,0 +1,126 @@
+\hypertarget{struct__GLFWlibraryWin32}{}\doxysection{\+\_\+\+GLFWlibrary\+Win32 Struct Reference}
+\label{struct__GLFWlibraryWin32}\index{\_GLFWlibraryWin32@{\_GLFWlibraryWin32}}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a7e717a64c0602a812dcfe2951143f70f}\label{struct__GLFWlibraryWin32_a7e717a64c0602a812dcfe2951143f70f}} 
+HWND {\bfseries helper\+Window\+Handle}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_ad3e98a8c4f9cd7003322e78d9b237da5}\label{struct__GLFWlibraryWin32_ad3e98a8c4f9cd7003322e78d9b237da5}} 
+HDEVNOTIFY {\bfseries device\+Notification\+Handle}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a348783bede840a99987a498af6c6cee7}\label{struct__GLFWlibraryWin32_a348783bede840a99987a498af6c6cee7}} 
+DWORD {\bfseries foreground\+Lock\+Timeout}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_ac9e9762a5f0aef3991e3097f8665a5e6}\label{struct__GLFWlibraryWin32_ac9e9762a5f0aef3991e3097f8665a5e6}} 
+int {\bfseries acquired\+Monitor\+Count}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_adf964a0fdd5190f55acfb420ced56ad1}\label{struct__GLFWlibraryWin32_adf964a0fdd5190f55acfb420ced56ad1}} 
+char $\ast$ {\bfseries clipboard\+String}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_afbb74c43631901321b2636244c15b6df}\label{struct__GLFWlibraryWin32_afbb74c43631901321b2636244c15b6df}} 
+short int {\bfseries keycodes} \mbox{[}512\mbox{]}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a48ce104b43749f9ae68e00bd0206ca1a}\label{struct__GLFWlibraryWin32_a48ce104b43749f9ae68e00bd0206ca1a}} 
+short int {\bfseries scancodes} \mbox{[}GLFW\+\_\+\+KEY\+\_\+\+LAST+1\mbox{]}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a0447114a0c1852ea8227738f456e8023}\label{struct__GLFWlibraryWin32_a0447114a0c1852ea8227738f456e8023}} 
+char {\bfseries keynames} \mbox{[}GLFW\+\_\+\+KEY\+\_\+\+LAST+1\mbox{]}\mbox{[}5\mbox{]}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_ad4057dba1b37255eee5f61d4b81cd501}\label{struct__GLFWlibraryWin32_ad4057dba1b37255eee5f61d4b81cd501}} 
+double {\bfseries restore\+Cursor\+PosX}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_ac60024c8c809d9374c31def4845cfce7}\label{struct__GLFWlibraryWin32_ac60024c8c809d9374c31def4845cfce7}} 
+double {\bfseries restore\+Cursor\+PosY}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a2b790e87849b7cab484a508a16088ad3}\label{struct__GLFWlibraryWin32_a2b790e87849b7cab484a508a16088ad3}} 
+\mbox{\hyperlink{struct__GLFWwindow}{\+\_\+\+GLFWwindow}} $\ast$ {\bfseries disabled\+Cursor\+Window}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a70d83ca005d2f3cf9df6cbe3a9671ed9}\label{struct__GLFWlibraryWin32_a70d83ca005d2f3cf9df6cbe3a9671ed9}} 
+RAWINPUT $\ast$ {\bfseries raw\+Input}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_aa9dd8e6f56396cc9434e2be32e96d0ec}\label{struct__GLFWlibraryWin32_aa9dd8e6f56396cc9434e2be32e96d0ec}} 
+int {\bfseries raw\+Input\+Size}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a7ce4bcfd5eed9bd2e0c931cd5da2b157}\label{struct__GLFWlibraryWin32_a7ce4bcfd5eed9bd2e0c931cd5da2b157}} 
+UINT {\bfseries mouse\+Trail\+Size}
+\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a3c6c6a15fb6eeab371db01ee810fd60b}\label{struct__GLFWlibraryWin32_a3c6c6a15fb6eeab371db01ee810fd60b}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>HINSTANCE {\bfseries instance}\\
+\>PFN\_timeGetTime {\bfseries GetTime}\\
+\} {\bfseries winmm}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a75b7a4fc73042b813539d5c9523c822b}\label{struct__GLFWlibraryWin32_a75b7a4fc73042b813539d5c9523c822b}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>HINSTANCE {\bfseries instance}\\
+\>PFN\_DirectInput8Create {\bfseries Create}\\
+\>IDirectInput8W $\ast$ {\bfseries api}\\
+\} {\bfseries dinput8}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a83b9d4f86c0216a17d63ba0e1593071b}\label{struct__GLFWlibraryWin32_a83b9d4f86c0216a17d63ba0e1593071b}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>HINSTANCE {\bfseries instance}\\
+\>PFN\_XInputGetCapabilities {\bfseries GetCapabilities}\\
+\>PFN\_XInputGetState {\bfseries GetState}\\
+\} {\bfseries xinput}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_ad2efdb8e4d9113f308a4a3bd69e2851b}\label{struct__GLFWlibraryWin32_ad2efdb8e4d9113f308a4a3bd69e2851b}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>HINSTANCE {\bfseries instance}\\
+\>PFN\_SetProcessDPIAware {\bfseries SetProcessDPIAware\_}\\
+\>PFN\_ChangeWindowMessageFilterEx {\bfseries ChangeWindowMessageFilterEx\_}\\
+\>PFN\_EnableNonClientDpiScaling {\bfseries EnableNonClientDpiScaling\_}\\
+\>PFN\_SetProcessDpiAwarenessContext {\bfseries SetProcessDpiAwarenessContext\_}\\
+\>PFN\_GetDpiForWindow {\bfseries GetDpiForWindow\_}\\
+\>PFN\_AdjustWindowRectExForDpi {\bfseries AdjustWindowRectExForDpi\_}\\
+\} {\bfseries user32}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a141e512b763ef544551f08e626410c52}\label{struct__GLFWlibraryWin32_a141e512b763ef544551f08e626410c52}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>HINSTANCE {\bfseries instance}\\
+\>PFN\_DwmIsCompositionEnabled {\bfseries IsCompositionEnabled}\\
+\>PFN\_DwmFlush {\bfseries Flush}\\
+\>PFN\_DwmEnableBlurBehindWindow {\bfseries EnableBlurBehindWindow}\\
+\>PFN\_DwmGetColorizationColor {\bfseries GetColorizationColor}\\
+\} {\bfseries dwmapi}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a5072de2c9defab2b8dcf417f8e7d8fd3}\label{struct__GLFWlibraryWin32_a5072de2c9defab2b8dcf417f8e7d8fd3}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>HINSTANCE {\bfseries instance}\\
+\>PFN\_SetProcessDpiAwareness {\bfseries SetProcessDpiAwareness\_}\\
+\>PFN\_GetDpiForMonitor {\bfseries GetDpiForMonitor\_}\\
+\} {\bfseries shcore}\\
+
+\end{tabbing}\item 
+\mbox{\Hypertarget{struct__GLFWlibraryWin32_a1303e71cb2e0cf8e3a720372fa476024}\label{struct__GLFWlibraryWin32_a1303e71cb2e0cf8e3a720372fa476024}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>HINSTANCE {\bfseries instance}\\
+\>PFN\_RtlVerifyVersionInfo {\bfseries RtlVerifyVersionInfo\_}\\
+\} {\bfseries ntdll}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+build/\+\_\+deps/raylib-\/src/src/external/glfw/src/win32\+\_\+platform.\+h\end{DoxyCompactItemize}

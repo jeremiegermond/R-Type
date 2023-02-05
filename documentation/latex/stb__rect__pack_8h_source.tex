@@ -1,0 +1,626 @@
+\hypertarget{stb__rect__pack_8h_source}{}\doxysection{stb\+\_\+rect\+\_\+pack.\+h}
+\label{stb__rect__pack_8h_source}\index{build/\_deps/raylib-\/src/src/external/stb\_rect\_pack.h@{build/\_deps/raylib-\/src/src/external/stb\_rect\_pack.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{// stb\_rect\_pack.h -\/ v1.01 -\/ public domain -\/ rectangle packing}}
+\DoxyCodeLine{2 \textcolor{comment}{// Sean Barrett 2014}}
+\DoxyCodeLine{3 \textcolor{comment}{//}}
+\DoxyCodeLine{4 \textcolor{comment}{// Useful for e.g. packing rectangular textures into an atlas.}}
+\DoxyCodeLine{5 \textcolor{comment}{// Does not do rotation.}}
+\DoxyCodeLine{6 \textcolor{comment}{//}}
+\DoxyCodeLine{7 \textcolor{comment}{// Before \#including,}}
+\DoxyCodeLine{8 \textcolor{comment}{//}}
+\DoxyCodeLine{9 \textcolor{comment}{//    \#define STB\_RECT\_PACK\_IMPLEMENTATION}}
+\DoxyCodeLine{10 \textcolor{comment}{//}}
+\DoxyCodeLine{11 \textcolor{comment}{// in the file that you want to have the implementation.}}
+\DoxyCodeLine{12 \textcolor{comment}{//}}
+\DoxyCodeLine{13 \textcolor{comment}{// Not necessarily the awesomest packing method, but better than}}
+\DoxyCodeLine{14 \textcolor{comment}{// the totally naive one in stb\_truetype (which is primarily what}}
+\DoxyCodeLine{15 \textcolor{comment}{// this is meant to replace).}}
+\DoxyCodeLine{16 \textcolor{comment}{//}}
+\DoxyCodeLine{17 \textcolor{comment}{// Has only had a few tests run, may have issues.}}
+\DoxyCodeLine{18 \textcolor{comment}{//}}
+\DoxyCodeLine{19 \textcolor{comment}{// More docs to come.}}
+\DoxyCodeLine{20 \textcolor{comment}{//}}
+\DoxyCodeLine{21 \textcolor{comment}{// No memory allocations; uses qsort() and assert() from stdlib.}}
+\DoxyCodeLine{22 \textcolor{comment}{// Can override those by defining STBRP\_SORT and STBRP\_ASSERT.}}
+\DoxyCodeLine{23 \textcolor{comment}{//}}
+\DoxyCodeLine{24 \textcolor{comment}{// This library currently uses the Skyline Bottom-\/Left algorithm.}}
+\DoxyCodeLine{25 \textcolor{comment}{//}}
+\DoxyCodeLine{26 \textcolor{comment}{// Please note: better rectangle packers are welcome! Please}}
+\DoxyCodeLine{27 \textcolor{comment}{// implement them to the same API, but with a different init}}
+\DoxyCodeLine{28 \textcolor{comment}{// function.}}
+\DoxyCodeLine{29 \textcolor{comment}{//}}
+\DoxyCodeLine{30 \textcolor{comment}{// Credits}}
+\DoxyCodeLine{31 \textcolor{comment}{//}}
+\DoxyCodeLine{32 \textcolor{comment}{//  Library}}
+\DoxyCodeLine{33 \textcolor{comment}{//    Sean Barrett}}
+\DoxyCodeLine{34 \textcolor{comment}{//  Minor features}}
+\DoxyCodeLine{35 \textcolor{comment}{//    Martins Mozeiko}}
+\DoxyCodeLine{36 \textcolor{comment}{//    github:IntellectualKitty}}
+\DoxyCodeLine{37 \textcolor{comment}{//}}
+\DoxyCodeLine{38 \textcolor{comment}{//  Bugfixes / warning fixes}}
+\DoxyCodeLine{39 \textcolor{comment}{//    Jeremy Jaussaud}}
+\DoxyCodeLine{40 \textcolor{comment}{//    Fabian Giesen}}
+\DoxyCodeLine{41 \textcolor{comment}{//}}
+\DoxyCodeLine{42 \textcolor{comment}{// Version history:}}
+\DoxyCodeLine{43 \textcolor{comment}{//}}
+\DoxyCodeLine{44 \textcolor{comment}{//     1.01  (2021-\/07-\/11)  always use large rect mode, expose STBRP\_\_MAXVAL in public section}}
+\DoxyCodeLine{45 \textcolor{comment}{//     1.00  (2019-\/02-\/25)  avoid small space waste; gracefully fail too-\/wide rectangles}}
+\DoxyCodeLine{46 \textcolor{comment}{//     0.99  (2019-\/02-\/07)  warning fixes}}
+\DoxyCodeLine{47 \textcolor{comment}{//     0.11  (2017-\/03-\/03)  return packing success/fail result}}
+\DoxyCodeLine{48 \textcolor{comment}{//     0.10  (2016-\/10-\/25)  remove cast-\/away-\/const to avoid warnings}}
+\DoxyCodeLine{49 \textcolor{comment}{//     0.09  (2016-\/08-\/27)  fix compiler warnings}}
+\DoxyCodeLine{50 \textcolor{comment}{//     0.08  (2015-\/09-\/13)  really fix bug with empty rects (w=0 or h=0)}}
+\DoxyCodeLine{51 \textcolor{comment}{//     0.07  (2015-\/09-\/13)  fix bug with empty rects (w=0 or h=0)}}
+\DoxyCodeLine{52 \textcolor{comment}{//     0.06  (2015-\/04-\/15)  added STBRP\_SORT to allow replacing qsort}}
+\DoxyCodeLine{53 \textcolor{comment}{//     0.05:  added STBRP\_ASSERT to allow replacing assert}}
+\DoxyCodeLine{54 \textcolor{comment}{//     0.04:  fixed minor bug in STBRP\_LARGE\_RECTS support}}
+\DoxyCodeLine{55 \textcolor{comment}{//     0.01:  initial release}}
+\DoxyCodeLine{56 \textcolor{comment}{//}}
+\DoxyCodeLine{57 \textcolor{comment}{// LICENSE}}
+\DoxyCodeLine{58 \textcolor{comment}{//}}
+\DoxyCodeLine{59 \textcolor{comment}{//   See end of file for license information.}}
+\DoxyCodeLine{60 }
+\DoxyCodeLine{62 \textcolor{comment}{//}}
+\DoxyCodeLine{63 \textcolor{comment}{//       INCLUDE SECTION}}
+\DoxyCodeLine{64 \textcolor{comment}{//}}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{66 \textcolor{preprocessor}{\#ifndef STB\_INCLUDE\_STB\_RECT\_PACK\_H}}
+\DoxyCodeLine{67 \textcolor{preprocessor}{\#define STB\_INCLUDE\_STB\_RECT\_PACK\_H}}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69 \textcolor{preprocessor}{\#define STB\_RECT\_PACK\_VERSION  1}}
+\DoxyCodeLine{70 }
+\DoxyCodeLine{71 \textcolor{preprocessor}{\#ifdef STBRP\_STATIC}}
+\DoxyCodeLine{72 \textcolor{preprocessor}{\#define STBRP\_DEF static}}
+\DoxyCodeLine{73 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{74 \textcolor{preprocessor}{\#define STBRP\_DEF extern}}
+\DoxyCodeLine{75 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{76 }
+\DoxyCodeLine{77 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{78 \textcolor{keyword}{extern} \textcolor{stringliteral}{"{}C"{}} \{}
+\DoxyCodeLine{79 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} \mbox{\hyperlink{structstbrp__context}{stbrp\_context}};}
+\DoxyCodeLine{82 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structstbrp__node}{stbrp\_node}}    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}};}
+\DoxyCodeLine{83 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}}    \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}};}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85 \textcolor{keyword}{typedef} \textcolor{keywordtype}{int}            stbrp\_coord;}
+\DoxyCodeLine{86 }
+\DoxyCodeLine{87 \textcolor{preprocessor}{\#define STBRP\_\_MAXVAL  0x7fffffff}}
+\DoxyCodeLine{88 \textcolor{comment}{// Mostly for internal use, but this is the maximum supported coordinate value.}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90 STBRP\_DEF \textcolor{keywordtype}{int} stbrp\_pack\_rects (\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *rects, \textcolor{keywordtype}{int} num\_rects);}
+\DoxyCodeLine{91 \textcolor{comment}{// Assign packed locations to rectangles. The rectangles are of type}}
+\DoxyCodeLine{92 \textcolor{comment}{// 'stbrp\_rect' defined below, stored in the array 'rects', and there}}
+\DoxyCodeLine{93 \textcolor{comment}{// are 'num\_rects' many of them.}}
+\DoxyCodeLine{94 \textcolor{comment}{//}}
+\DoxyCodeLine{95 \textcolor{comment}{// Rectangles which are successfully packed have the 'was\_packed' flag}}
+\DoxyCodeLine{96 \textcolor{comment}{// set to a non-\/zero value and 'x' and 'y' store the minimum location}}
+\DoxyCodeLine{97 \textcolor{comment}{// on each axis (i.e. bottom-\/left in cartesian coordinates, top-\/left}}
+\DoxyCodeLine{98 \textcolor{comment}{// if you imagine y increasing downwards). Rectangles which do not fit}}
+\DoxyCodeLine{99 \textcolor{comment}{// have the 'was\_packed' flag set to 0.}}
+\DoxyCodeLine{100 \textcolor{comment}{//}}
+\DoxyCodeLine{101 \textcolor{comment}{// You should not try to access the 'rects' array from another thread}}
+\DoxyCodeLine{102 \textcolor{comment}{// while this function is running, as the function temporarily reorders}}
+\DoxyCodeLine{103 \textcolor{comment}{// the array while it executes.}}
+\DoxyCodeLine{104 \textcolor{comment}{//}}
+\DoxyCodeLine{105 \textcolor{comment}{// To pack into another rectangle, you need to call stbrp\_init\_target}}
+\DoxyCodeLine{106 \textcolor{comment}{// again. To continue packing into the same rectangle, you can call}}
+\DoxyCodeLine{107 \textcolor{comment}{// this function again. Calling this multiple times with multiple rect}}
+\DoxyCodeLine{108 \textcolor{comment}{// arrays will probably produce worse packing results than calling it}}
+\DoxyCodeLine{109 \textcolor{comment}{// a single time with the full rectangle array, but the option is}}
+\DoxyCodeLine{110 \textcolor{comment}{// available.}}
+\DoxyCodeLine{111 \textcolor{comment}{//}}
+\DoxyCodeLine{112 \textcolor{comment}{// The function returns 1 if all of the rectangles were successfully}}
+\DoxyCodeLine{113 \textcolor{comment}{// packed and 0 otherwise.}}
+\DoxyCodeLine{114 }
+\DoxyCodeLine{115 \textcolor{keyword}{struct }\mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}}}
+\DoxyCodeLine{116 \{}
+\DoxyCodeLine{117    \textcolor{comment}{// reserved for your use:}}
+\DoxyCodeLine{118    \textcolor{keywordtype}{int}            id;}
+\DoxyCodeLine{119 }
+\DoxyCodeLine{120    \textcolor{comment}{// input:}}
+\DoxyCodeLine{121    stbrp\_coord    w, h;}
+\DoxyCodeLine{122 }
+\DoxyCodeLine{123    \textcolor{comment}{// output:}}
+\DoxyCodeLine{124    stbrp\_coord    x, y;}
+\DoxyCodeLine{125    \textcolor{keywordtype}{int}            was\_packed;  \textcolor{comment}{// non-\/zero if valid packing}}
+\DoxyCodeLine{126 }
+\DoxyCodeLine{127 \}; \textcolor{comment}{// 16 bytes, nominally}}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129 }
+\DoxyCodeLine{130 STBRP\_DEF \textcolor{keywordtype}{void} stbrp\_init\_target (\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height, \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *nodes, \textcolor{keywordtype}{int} num\_nodes);}
+\DoxyCodeLine{131 \textcolor{comment}{// Initialize a rectangle packer to:}}
+\DoxyCodeLine{132 \textcolor{comment}{//    pack a rectangle that is 'width' by 'height' in dimensions}}
+\DoxyCodeLine{133 \textcolor{comment}{//    using temporary storage provided by the array 'nodes', which is 'num\_nodes' long}}
+\DoxyCodeLine{134 \textcolor{comment}{//}}
+\DoxyCodeLine{135 \textcolor{comment}{// You must call this function every time you start packing into a new target.}}
+\DoxyCodeLine{136 \textcolor{comment}{//}}
+\DoxyCodeLine{137 \textcolor{comment}{// There is no "{}shutdown"{} function. The 'nodes' memory must stay valid for}}
+\DoxyCodeLine{138 \textcolor{comment}{// the following stbrp\_pack\_rects() call (or calls), but can be freed after}}
+\DoxyCodeLine{139 \textcolor{comment}{// the call (or calls) finish.}}
+\DoxyCodeLine{140 \textcolor{comment}{//}}
+\DoxyCodeLine{141 \textcolor{comment}{// Note: to guarantee best results, either:}}
+\DoxyCodeLine{142 \textcolor{comment}{//       1. make sure 'num\_nodes' >= 'width'}}
+\DoxyCodeLine{143 \textcolor{comment}{//   or  2. call stbrp\_allow\_out\_of\_mem() defined below with 'allow\_out\_of\_mem = 1'}}
+\DoxyCodeLine{144 \textcolor{comment}{//}}
+\DoxyCodeLine{145 \textcolor{comment}{// If you don't do either of the above things, widths will be quantized to multiples}}
+\DoxyCodeLine{146 \textcolor{comment}{// of small integers to guarantee the algorithm doesn't run out of temporary storage.}}
+\DoxyCodeLine{147 \textcolor{comment}{//}}
+\DoxyCodeLine{148 \textcolor{comment}{// If you do \#2, then the non-\/quantized algorithm will be used, but the algorithm}}
+\DoxyCodeLine{149 \textcolor{comment}{// may run out of temporary storage and be unable to pack some rectangles.}}
+\DoxyCodeLine{150 }
+\DoxyCodeLine{151 STBRP\_DEF \textcolor{keywordtype}{void} stbrp\_setup\_allow\_out\_of\_mem (\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \textcolor{keywordtype}{int} allow\_out\_of\_mem);}
+\DoxyCodeLine{152 \textcolor{comment}{// Optionally call this function after init but before doing any packing to}}
+\DoxyCodeLine{153 \textcolor{comment}{// change the handling of the out-\/of-\/temp-\/memory scenario, described above.}}
+\DoxyCodeLine{154 \textcolor{comment}{// If you call init again, this will be reset to the default (false).}}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{156 }
+\DoxyCodeLine{157 STBRP\_DEF \textcolor{keywordtype}{void} stbrp\_setup\_heuristic (\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \textcolor{keywordtype}{int} heuristic);}
+\DoxyCodeLine{158 \textcolor{comment}{// Optionally select which packing heuristic the library should use. Different}}
+\DoxyCodeLine{159 \textcolor{comment}{// heuristics will produce better/worse results for different data sets.}}
+\DoxyCodeLine{160 \textcolor{comment}{// If you call init again, this will be reset to the default.}}
+\DoxyCodeLine{161 }
+\DoxyCodeLine{162 \textcolor{keyword}{enum}}
+\DoxyCodeLine{163 \{}
+\DoxyCodeLine{164    STBRP\_HEURISTIC\_Skyline\_default=0,}
+\DoxyCodeLine{165    STBRP\_HEURISTIC\_Skyline\_BL\_sortHeight = STBRP\_HEURISTIC\_Skyline\_default,}
+\DoxyCodeLine{166    STBRP\_HEURISTIC\_Skyline\_BF\_sortHeight}
+\DoxyCodeLine{167 \};}
+\DoxyCodeLine{168 }
+\DoxyCodeLine{169 }
+\DoxyCodeLine{171 \textcolor{comment}{//}}
+\DoxyCodeLine{172 \textcolor{comment}{// the details of the following structures don't matter to you, but they must}}
+\DoxyCodeLine{173 \textcolor{comment}{// be visible so you can handle the memory allocations for them}}
+\DoxyCodeLine{174 }
+\DoxyCodeLine{175 \textcolor{keyword}{struct }\mbox{\hyperlink{structstbrp__node}{stbrp\_node}}}
+\DoxyCodeLine{176 \{}
+\DoxyCodeLine{177    stbrp\_coord  x,y;}
+\DoxyCodeLine{178    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}}  *next;}
+\DoxyCodeLine{179 \};}
+\DoxyCodeLine{180 }
+\DoxyCodeLine{181 \textcolor{keyword}{struct }\mbox{\hyperlink{structstbrp__context}{stbrp\_context}}}
+\DoxyCodeLine{182 \{}
+\DoxyCodeLine{183    \textcolor{keywordtype}{int} width;}
+\DoxyCodeLine{184    \textcolor{keywordtype}{int} height;}
+\DoxyCodeLine{185    \textcolor{keywordtype}{int} align;}
+\DoxyCodeLine{186    \textcolor{keywordtype}{int} init\_mode;}
+\DoxyCodeLine{187    \textcolor{keywordtype}{int} heuristic;}
+\DoxyCodeLine{188    \textcolor{keywordtype}{int} num\_nodes;}
+\DoxyCodeLine{189    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *active\_head;}
+\DoxyCodeLine{190    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *free\_head;}
+\DoxyCodeLine{191    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} extra[2]; \textcolor{comment}{// we allocate two extra nodes so optimal user-\/node-\/count is 'width' not 'width+2'}}
+\DoxyCodeLine{192 \};}
+\DoxyCodeLine{193 }
+\DoxyCodeLine{194 \textcolor{preprocessor}{\#ifdef \_\_cplusplus}}
+\DoxyCodeLine{195 \}}
+\DoxyCodeLine{196 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{197 }
+\DoxyCodeLine{198 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{199 }
+\DoxyCodeLine{201 \textcolor{comment}{//}}
+\DoxyCodeLine{202 \textcolor{comment}{//     IMPLEMENTATION SECTION}}
+\DoxyCodeLine{203 \textcolor{comment}{//}}
+\DoxyCodeLine{204 }
+\DoxyCodeLine{205 \textcolor{preprocessor}{\#ifdef STB\_RECT\_PACK\_IMPLEMENTATION}}
+\DoxyCodeLine{206 \textcolor{preprocessor}{\#ifndef STBRP\_SORT}}
+\DoxyCodeLine{207 \textcolor{preprocessor}{\#include <stdlib.h>}}
+\DoxyCodeLine{208 \textcolor{preprocessor}{\#define STBRP\_SORT qsort}}
+\DoxyCodeLine{209 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{210 }
+\DoxyCodeLine{211 \textcolor{preprocessor}{\#ifndef STBRP\_ASSERT}}
+\DoxyCodeLine{212 \textcolor{preprocessor}{\#include <assert.h>}}
+\DoxyCodeLine{213 \textcolor{preprocessor}{\#define STBRP\_ASSERT assert}}
+\DoxyCodeLine{214 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{215 }
+\DoxyCodeLine{216 \textcolor{preprocessor}{\#ifdef \_MSC\_VER}}
+\DoxyCodeLine{217 \textcolor{preprocessor}{\#define STBRP\_\_NOTUSED(v)  (void)(v)}}
+\DoxyCodeLine{218 \textcolor{preprocessor}{\#define STBRP\_\_CDECL       \_\_cdecl}}
+\DoxyCodeLine{219 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{220 \textcolor{preprocessor}{\#define STBRP\_\_NOTUSED(v)  (void)sizeof(v)}}
+\DoxyCodeLine{221 \textcolor{preprocessor}{\#define STBRP\_\_CDECL}}
+\DoxyCodeLine{222 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{223 }
+\DoxyCodeLine{224 \textcolor{keyword}{enum}}
+\DoxyCodeLine{225 \{}
+\DoxyCodeLine{226    STBRP\_\_INIT\_skyline = 1}
+\DoxyCodeLine{227 \};}
+\DoxyCodeLine{228 }
+\DoxyCodeLine{229 STBRP\_DEF \textcolor{keywordtype}{void} stbrp\_setup\_heuristic(\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \textcolor{keywordtype}{int} heuristic)}
+\DoxyCodeLine{230 \{}
+\DoxyCodeLine{231    \textcolor{keywordflow}{switch} (context-\/>init\_mode) \{}
+\DoxyCodeLine{232       \textcolor{keywordflow}{case} STBRP\_\_INIT\_skyline:}
+\DoxyCodeLine{233          STBRP\_ASSERT(heuristic == STBRP\_HEURISTIC\_Skyline\_BL\_sortHeight || heuristic == STBRP\_HEURISTIC\_Skyline\_BF\_sortHeight);}
+\DoxyCodeLine{234          context-\/>heuristic = heuristic;}
+\DoxyCodeLine{235          \textcolor{keywordflow}{break};}
+\DoxyCodeLine{236       \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{237          STBRP\_ASSERT(0);}
+\DoxyCodeLine{238    \}}
+\DoxyCodeLine{239 \}}
+\DoxyCodeLine{240 }
+\DoxyCodeLine{241 STBRP\_DEF \textcolor{keywordtype}{void} stbrp\_setup\_allow\_out\_of\_mem(\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \textcolor{keywordtype}{int} allow\_out\_of\_mem)}
+\DoxyCodeLine{242 \{}
+\DoxyCodeLine{243    \textcolor{keywordflow}{if} (allow\_out\_of\_mem)}
+\DoxyCodeLine{244       \textcolor{comment}{// if it's ok to run out of memory, then don't bother aligning them;}}
+\DoxyCodeLine{245       \textcolor{comment}{// this gives better packing, but may fail due to OOM (even though}}
+\DoxyCodeLine{246       \textcolor{comment}{// the rectangles easily fit). @TODO a smarter approach would be to only}}
+\DoxyCodeLine{247       \textcolor{comment}{// quantize once we've hit OOM, then we could get rid of this parameter.}}
+\DoxyCodeLine{248       context-\/>align = 1;}
+\DoxyCodeLine{249    \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{250       \textcolor{comment}{// if it's not ok to run out of memory, then quantize the widths}}
+\DoxyCodeLine{251       \textcolor{comment}{// so that num\_nodes is always enough nodes.}}
+\DoxyCodeLine{252       \textcolor{comment}{//}}
+\DoxyCodeLine{253       \textcolor{comment}{// I.e. num\_nodes * align >= width}}
+\DoxyCodeLine{254       \textcolor{comment}{//                  align >= width / num\_nodes}}
+\DoxyCodeLine{255       \textcolor{comment}{//                  align = ceil(width/num\_nodes)}}
+\DoxyCodeLine{256 }
+\DoxyCodeLine{257       context-\/>align = (context-\/>width + context-\/>num\_nodes-\/1) / context-\/>num\_nodes;}
+\DoxyCodeLine{258    \}}
+\DoxyCodeLine{259 \}}
+\DoxyCodeLine{260 }
+\DoxyCodeLine{261 STBRP\_DEF \textcolor{keywordtype}{void} stbrp\_init\_target(\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height, \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *nodes, \textcolor{keywordtype}{int} num\_nodes)}
+\DoxyCodeLine{262 \{}
+\DoxyCodeLine{263    \textcolor{keywordtype}{int} i;}
+\DoxyCodeLine{264 }
+\DoxyCodeLine{265    \textcolor{keywordflow}{for} (i=0; i < num\_nodes-\/1; ++i)}
+\DoxyCodeLine{266       nodes[i].next = \&nodes[i+1];}
+\DoxyCodeLine{267    nodes[i].next = NULL;}
+\DoxyCodeLine{268    context-\/>init\_mode = STBRP\_\_INIT\_skyline;}
+\DoxyCodeLine{269    context-\/>heuristic = STBRP\_HEURISTIC\_Skyline\_default;}
+\DoxyCodeLine{270    context-\/>free\_head = \&nodes[0];}
+\DoxyCodeLine{271    context-\/>active\_head = \&context-\/>extra[0];}
+\DoxyCodeLine{272    context-\/>width = width;}
+\DoxyCodeLine{273    context-\/>height = height;}
+\DoxyCodeLine{274    context-\/>num\_nodes = num\_nodes;}
+\DoxyCodeLine{275    stbrp\_setup\_allow\_out\_of\_mem(context, 0);}
+\DoxyCodeLine{276 }
+\DoxyCodeLine{277    \textcolor{comment}{// node 0 is the full width, node 1 is the sentinel (lets us not store width explicitly)}}
+\DoxyCodeLine{278    context-\/>extra[0].x = 0;}
+\DoxyCodeLine{279    context-\/>extra[0].y = 0;}
+\DoxyCodeLine{280    context-\/>extra[0].next = \&context-\/>extra[1];}
+\DoxyCodeLine{281    context-\/>extra[1].x = (stbrp\_coord) width;}
+\DoxyCodeLine{282    context-\/>extra[1].y = (1<<30);}
+\DoxyCodeLine{283    context-\/>extra[1].next = NULL;}
+\DoxyCodeLine{284 \}}
+\DoxyCodeLine{285 }
+\DoxyCodeLine{286 \textcolor{comment}{// find minimum y position if it starts at x1}}
+\DoxyCodeLine{287 \textcolor{keyword}{static} \textcolor{keywordtype}{int} stbrp\_\_skyline\_find\_min\_y(\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *c, \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *first, \textcolor{keywordtype}{int} x0, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} *pwaste)}
+\DoxyCodeLine{288 \{}
+\DoxyCodeLine{289    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *node = first;}
+\DoxyCodeLine{290    \textcolor{keywordtype}{int} x1 = x0 + width;}
+\DoxyCodeLine{291    \textcolor{keywordtype}{int} min\_y, visited\_width, waste\_area;}
+\DoxyCodeLine{292 }
+\DoxyCodeLine{293    STBRP\_\_NOTUSED(c);}
+\DoxyCodeLine{294 }
+\DoxyCodeLine{295    STBRP\_ASSERT(first-\/>x <= x0);}
+\DoxyCodeLine{296 }
+\DoxyCodeLine{297 \textcolor{preprocessor}{   \#if 0}}
+\DoxyCodeLine{298    \textcolor{comment}{// skip in case we're past the node}}
+\DoxyCodeLine{299    \textcolor{keywordflow}{while} (node-\/>next-\/>x <= x0)}
+\DoxyCodeLine{300       ++node;}
+\DoxyCodeLine{301 \textcolor{preprocessor}{   \#else}}
+\DoxyCodeLine{302    STBRP\_ASSERT(node-\/>next-\/>x > x0); \textcolor{comment}{// we ended up handling this in the caller for efficiency}}
+\DoxyCodeLine{303 \textcolor{preprocessor}{   \#endif}}
+\DoxyCodeLine{304 }
+\DoxyCodeLine{305    STBRP\_ASSERT(node-\/>x <= x0);}
+\DoxyCodeLine{306 }
+\DoxyCodeLine{307    min\_y = 0;}
+\DoxyCodeLine{308    waste\_area = 0;}
+\DoxyCodeLine{309    visited\_width = 0;}
+\DoxyCodeLine{310    \textcolor{keywordflow}{while} (node-\/>x < x1) \{}
+\DoxyCodeLine{311       \textcolor{keywordflow}{if} (node-\/>y > min\_y) \{}
+\DoxyCodeLine{312          \textcolor{comment}{// raise min\_y higher.}}
+\DoxyCodeLine{313          \textcolor{comment}{// we've accounted for all waste up to min\_y,}}
+\DoxyCodeLine{314          \textcolor{comment}{// but we'll now add more waste for everything we've visted}}
+\DoxyCodeLine{315          waste\_area += visited\_width * (node-\/>y -\/ min\_y);}
+\DoxyCodeLine{316          min\_y = node-\/>y;}
+\DoxyCodeLine{317          \textcolor{comment}{// the first time through, visited\_width might be reduced}}
+\DoxyCodeLine{318          \textcolor{keywordflow}{if} (node-\/>x < x0)}
+\DoxyCodeLine{319             visited\_width += node-\/>next-\/>x -\/ x0;}
+\DoxyCodeLine{320          \textcolor{keywordflow}{else}}
+\DoxyCodeLine{321             visited\_width += node-\/>next-\/>x -\/ node-\/>x;}
+\DoxyCodeLine{322       \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{323          \textcolor{comment}{// add waste area}}
+\DoxyCodeLine{324          \textcolor{keywordtype}{int} under\_width = node-\/>next-\/>x -\/ node-\/>x;}
+\DoxyCodeLine{325          \textcolor{keywordflow}{if} (under\_width + visited\_width > width)}
+\DoxyCodeLine{326             under\_width = width -\/ visited\_width;}
+\DoxyCodeLine{327          waste\_area += under\_width * (min\_y -\/ node-\/>y);}
+\DoxyCodeLine{328          visited\_width += under\_width;}
+\DoxyCodeLine{329       \}}
+\DoxyCodeLine{330       node = node-\/>next;}
+\DoxyCodeLine{331    \}}
+\DoxyCodeLine{332 }
+\DoxyCodeLine{333    *pwaste = waste\_area;}
+\DoxyCodeLine{334    \textcolor{keywordflow}{return} min\_y;}
+\DoxyCodeLine{335 \}}
+\DoxyCodeLine{336 }
+\DoxyCodeLine{337 \textcolor{keyword}{typedef} \textcolor{keyword}{struct}}
+\DoxyCodeLine{338 \{}
+\DoxyCodeLine{339    \textcolor{keywordtype}{int} x,y;}
+\DoxyCodeLine{340    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} **prev\_link;}
+\DoxyCodeLine{341 \} stbrp\_\_findresult;}
+\DoxyCodeLine{342 }
+\DoxyCodeLine{343 \textcolor{keyword}{static} stbrp\_\_findresult stbrp\_\_skyline\_find\_best\_pos(\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *c, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height)}
+\DoxyCodeLine{344 \{}
+\DoxyCodeLine{345    \textcolor{keywordtype}{int} best\_waste = (1<<30), best\_x, best\_y = (1 << 30);}
+\DoxyCodeLine{346    stbrp\_\_findresult fr;}
+\DoxyCodeLine{347    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} **prev, *node, *tail, **best = NULL;}
+\DoxyCodeLine{348 }
+\DoxyCodeLine{349    \textcolor{comment}{// align to multiple of c-\/>align}}
+\DoxyCodeLine{350    width = (width + c-\/>align -\/ 1);}
+\DoxyCodeLine{351    width -\/= width \% c-\/>align;}
+\DoxyCodeLine{352    STBRP\_ASSERT(width \% c-\/>align == 0);}
+\DoxyCodeLine{353 }
+\DoxyCodeLine{354    \textcolor{comment}{// if it can't possibly fit, bail immediately}}
+\DoxyCodeLine{355    \textcolor{keywordflow}{if} (width > c-\/>width || height > c-\/>height) \{}
+\DoxyCodeLine{356       fr.prev\_link = NULL;}
+\DoxyCodeLine{357       fr.x = fr.y = 0;}
+\DoxyCodeLine{358       \textcolor{keywordflow}{return} fr;}
+\DoxyCodeLine{359    \}}
+\DoxyCodeLine{360 }
+\DoxyCodeLine{361    node = c-\/>active\_head;}
+\DoxyCodeLine{362    prev = \&c-\/>active\_head;}
+\DoxyCodeLine{363    \textcolor{keywordflow}{while} (node-\/>x + width <= c-\/>width) \{}
+\DoxyCodeLine{364       \textcolor{keywordtype}{int} y,waste;}
+\DoxyCodeLine{365       y = stbrp\_\_skyline\_find\_min\_y(c, node, node-\/>x, width, \&waste);}
+\DoxyCodeLine{366       \textcolor{keywordflow}{if} (c-\/>heuristic == STBRP\_HEURISTIC\_Skyline\_BL\_sortHeight) \{ \textcolor{comment}{// actually just want to test BL}}
+\DoxyCodeLine{367          \textcolor{comment}{// bottom left}}
+\DoxyCodeLine{368          \textcolor{keywordflow}{if} (y < best\_y) \{}
+\DoxyCodeLine{369             best\_y = y;}
+\DoxyCodeLine{370             best = prev;}
+\DoxyCodeLine{371          \}}
+\DoxyCodeLine{372       \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{373          \textcolor{comment}{// best-\/fit}}
+\DoxyCodeLine{374          \textcolor{keywordflow}{if} (y + height <= c-\/>height) \{}
+\DoxyCodeLine{375             \textcolor{comment}{// can only use it if it first vertically}}
+\DoxyCodeLine{376             \textcolor{keywordflow}{if} (y < best\_y || (y == best\_y \&\& waste < best\_waste)) \{}
+\DoxyCodeLine{377                best\_y = y;}
+\DoxyCodeLine{378                best\_waste = waste;}
+\DoxyCodeLine{379                best = prev;}
+\DoxyCodeLine{380             \}}
+\DoxyCodeLine{381          \}}
+\DoxyCodeLine{382       \}}
+\DoxyCodeLine{383       prev = \&node-\/>next;}
+\DoxyCodeLine{384       node = node-\/>next;}
+\DoxyCodeLine{385    \}}
+\DoxyCodeLine{386 }
+\DoxyCodeLine{387    best\_x = (best == NULL) ? 0 : (*best)-\/>x;}
+\DoxyCodeLine{388 }
+\DoxyCodeLine{389    \textcolor{comment}{// if doing best-\/fit (BF), we also have to try aligning right edge to each node position}}
+\DoxyCodeLine{390    \textcolor{comment}{//}}
+\DoxyCodeLine{391    \textcolor{comment}{// e.g, if fitting}}
+\DoxyCodeLine{392    \textcolor{comment}{//}}
+\DoxyCodeLine{393    \textcolor{comment}{//     \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_}}
+\DoxyCodeLine{394    \textcolor{comment}{//    |\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_|}}
+\DoxyCodeLine{395    \textcolor{comment}{//}}
+\DoxyCodeLine{396    \textcolor{comment}{//            into}}
+\DoxyCodeLine{397    \textcolor{comment}{//}}
+\DoxyCodeLine{398    \textcolor{comment}{//   |                         |}}
+\DoxyCodeLine{399    \textcolor{comment}{//   |             \_\_\_\_\_\_\_\_\_\_\_\_|}}
+\DoxyCodeLine{400    \textcolor{comment}{//   |\_\_\_\_\_\_\_\_\_\_\_\_|}}
+\DoxyCodeLine{401    \textcolor{comment}{//}}
+\DoxyCodeLine{402    \textcolor{comment}{// then right-\/aligned reduces waste, but bottom-\/left BL is always chooses left-\/aligned}}
+\DoxyCodeLine{403    \textcolor{comment}{//}}
+\DoxyCodeLine{404    \textcolor{comment}{// This makes BF take about 2x the time}}
+\DoxyCodeLine{405 }
+\DoxyCodeLine{406    if (c-\/>heuristic == STBRP\_HEURISTIC\_Skyline\_BF\_sortHeight) \{}
+\DoxyCodeLine{407       tail = c-\/>active\_head;}
+\DoxyCodeLine{408       node = c-\/>active\_head;}
+\DoxyCodeLine{409       prev = \&c-\/>active\_head;}
+\DoxyCodeLine{410       \textcolor{comment}{// find first node that's admissible}}
+\DoxyCodeLine{411       \textcolor{keywordflow}{while} (tail-\/>x < width)}
+\DoxyCodeLine{412          tail = tail-\/>next;}
+\DoxyCodeLine{413       \textcolor{keywordflow}{while} (tail) \{}
+\DoxyCodeLine{414          \textcolor{keywordtype}{int} xpos = tail-\/>x -\/ width;}
+\DoxyCodeLine{415          \textcolor{keywordtype}{int} y,waste;}
+\DoxyCodeLine{416          STBRP\_ASSERT(xpos >= 0);}
+\DoxyCodeLine{417          \textcolor{comment}{// find the left position that matches this}}
+\DoxyCodeLine{418          \textcolor{keywordflow}{while} (node-\/>next-\/>x <= xpos) \{}
+\DoxyCodeLine{419             prev = \&node-\/>next;}
+\DoxyCodeLine{420             node = node-\/>next;}
+\DoxyCodeLine{421          \}}
+\DoxyCodeLine{422          STBRP\_ASSERT(node-\/>next-\/>x > xpos \&\& node-\/>x <= xpos);}
+\DoxyCodeLine{423          y = stbrp\_\_skyline\_find\_min\_y(c, node, xpos, width, \&waste);}
+\DoxyCodeLine{424          \textcolor{keywordflow}{if} (y + height <= c-\/>height) \{}
+\DoxyCodeLine{425             \textcolor{keywordflow}{if} (y <= best\_y) \{}
+\DoxyCodeLine{426                \textcolor{keywordflow}{if} (y < best\_y || waste < best\_waste || (waste==best\_waste \&\& xpos < best\_x)) \{}
+\DoxyCodeLine{427                   best\_x = xpos;}
+\DoxyCodeLine{428                   STBRP\_ASSERT(y <= best\_y);}
+\DoxyCodeLine{429                   best\_y = y;}
+\DoxyCodeLine{430                   best\_waste = waste;}
+\DoxyCodeLine{431                   best = prev;}
+\DoxyCodeLine{432                \}}
+\DoxyCodeLine{433             \}}
+\DoxyCodeLine{434          \}}
+\DoxyCodeLine{435          tail = tail-\/>next;}
+\DoxyCodeLine{436       \}}
+\DoxyCodeLine{437    \}}
+\DoxyCodeLine{438 }
+\DoxyCodeLine{439    fr.prev\_link = best;}
+\DoxyCodeLine{440    fr.x = best\_x;}
+\DoxyCodeLine{441    fr.y = best\_y;}
+\DoxyCodeLine{442    \textcolor{keywordflow}{return} fr;}
+\DoxyCodeLine{443 \}}
+\DoxyCodeLine{444 }
+\DoxyCodeLine{445 \textcolor{keyword}{static} stbrp\_\_findresult stbrp\_\_skyline\_pack\_rectangle(\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \textcolor{keywordtype}{int} width, \textcolor{keywordtype}{int} height)}
+\DoxyCodeLine{446 \{}
+\DoxyCodeLine{447    \textcolor{comment}{// find best position according to heuristic}}
+\DoxyCodeLine{448    stbrp\_\_findresult res = stbrp\_\_skyline\_find\_best\_pos(context, width, height);}
+\DoxyCodeLine{449    \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *node, *cur;}
+\DoxyCodeLine{450 }
+\DoxyCodeLine{451    \textcolor{comment}{// bail if:}}
+\DoxyCodeLine{452    \textcolor{comment}{//    1. it failed}}
+\DoxyCodeLine{453    \textcolor{comment}{//    2. the best node doesn't fit (we don't always check this)}}
+\DoxyCodeLine{454    \textcolor{comment}{//    3. we're out of memory}}
+\DoxyCodeLine{455    \textcolor{keywordflow}{if} (res.prev\_link == NULL || res.y + height > context-\/>height || context-\/>free\_head == NULL) \{}
+\DoxyCodeLine{456       res.prev\_link = NULL;}
+\DoxyCodeLine{457       \textcolor{keywordflow}{return} res;}
+\DoxyCodeLine{458    \}}
+\DoxyCodeLine{459 }
+\DoxyCodeLine{460    \textcolor{comment}{// on success, create new node}}
+\DoxyCodeLine{461    node = context-\/>free\_head;}
+\DoxyCodeLine{462    node-\/>x = (stbrp\_coord) res.x;}
+\DoxyCodeLine{463    node-\/>y = (stbrp\_coord) (res.y + height);}
+\DoxyCodeLine{464 }
+\DoxyCodeLine{465    context-\/>free\_head = node-\/>next;}
+\DoxyCodeLine{466 }
+\DoxyCodeLine{467    \textcolor{comment}{// insert the new node into the right starting point, and}}
+\DoxyCodeLine{468    \textcolor{comment}{// let 'cur' point to the remaining nodes needing to be}}
+\DoxyCodeLine{469    \textcolor{comment}{// stiched back in}}
+\DoxyCodeLine{470 }
+\DoxyCodeLine{471    cur = *res.prev\_link;}
+\DoxyCodeLine{472    \textcolor{keywordflow}{if} (cur-\/>x < res.x) \{}
+\DoxyCodeLine{473       \textcolor{comment}{// preserve the existing one, so start testing with the next one}}
+\DoxyCodeLine{474       \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *next = cur-\/>next;}
+\DoxyCodeLine{475       cur-\/>next = node;}
+\DoxyCodeLine{476       cur = next;}
+\DoxyCodeLine{477    \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{478       *res.prev\_link = node;}
+\DoxyCodeLine{479    \}}
+\DoxyCodeLine{480 }
+\DoxyCodeLine{481    \textcolor{comment}{// from here, traverse cur and free the nodes, until we get to one}}
+\DoxyCodeLine{482    \textcolor{comment}{// that shouldn't be freed}}
+\DoxyCodeLine{483    \textcolor{keywordflow}{while} (cur-\/>next \&\& cur-\/>next-\/>x <= res.x + width) \{}
+\DoxyCodeLine{484       \mbox{\hyperlink{structstbrp__node}{stbrp\_node}} *next = cur-\/>next;}
+\DoxyCodeLine{485       \textcolor{comment}{// move the current node to the free list}}
+\DoxyCodeLine{486       cur-\/>next = context-\/>free\_head;}
+\DoxyCodeLine{487       context-\/>free\_head = cur;}
+\DoxyCodeLine{488       cur = next;}
+\DoxyCodeLine{489    \}}
+\DoxyCodeLine{490 }
+\DoxyCodeLine{491    \textcolor{comment}{// stitch the list back in}}
+\DoxyCodeLine{492    node-\/>next = cur;}
+\DoxyCodeLine{493 }
+\DoxyCodeLine{494    \textcolor{keywordflow}{if} (cur-\/>x < res.x + width)}
+\DoxyCodeLine{495       cur-\/>x = (stbrp\_coord) (res.x + width);}
+\DoxyCodeLine{496 }
+\DoxyCodeLine{497 \textcolor{preprocessor}{\#ifdef \_DEBUG}}
+\DoxyCodeLine{498    cur = context-\/>active\_head;}
+\DoxyCodeLine{499    \textcolor{keywordflow}{while} (cur-\/>x < context-\/>width) \{}
+\DoxyCodeLine{500       STBRP\_ASSERT(cur-\/>x < cur-\/>next-\/>x);}
+\DoxyCodeLine{501       cur = cur-\/>next;}
+\DoxyCodeLine{502    \}}
+\DoxyCodeLine{503    STBRP\_ASSERT(cur-\/>next == NULL);}
+\DoxyCodeLine{504 }
+\DoxyCodeLine{505    \{}
+\DoxyCodeLine{506       \textcolor{keywordtype}{int} count=0;}
+\DoxyCodeLine{507       cur = context-\/>active\_head;}
+\DoxyCodeLine{508       \textcolor{keywordflow}{while} (cur) \{}
+\DoxyCodeLine{509          cur = cur-\/>next;}
+\DoxyCodeLine{510          ++count;}
+\DoxyCodeLine{511       \}}
+\DoxyCodeLine{512       cur = context-\/>free\_head;}
+\DoxyCodeLine{513       \textcolor{keywordflow}{while} (cur) \{}
+\DoxyCodeLine{514          cur = cur-\/>next;}
+\DoxyCodeLine{515          ++count;}
+\DoxyCodeLine{516       \}}
+\DoxyCodeLine{517       STBRP\_ASSERT(count == context-\/>num\_nodes+2);}
+\DoxyCodeLine{518    \}}
+\DoxyCodeLine{519 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{520 }
+\DoxyCodeLine{521    \textcolor{keywordflow}{return} res;}
+\DoxyCodeLine{522 \}}
+\DoxyCodeLine{523 }
+\DoxyCodeLine{524 \textcolor{keyword}{static} \textcolor{keywordtype}{int} STBRP\_\_CDECL rect\_height\_compare(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *a, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *b)}
+\DoxyCodeLine{525 \{}
+\DoxyCodeLine{526    \textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *p = (\textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *) a;}
+\DoxyCodeLine{527    \textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *q = (\textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *) b;}
+\DoxyCodeLine{528    \textcolor{keywordflow}{if} (p-\/>h > q-\/>h)}
+\DoxyCodeLine{529       \textcolor{keywordflow}{return} -\/1;}
+\DoxyCodeLine{530    \textcolor{keywordflow}{if} (p-\/>h < q-\/>h)}
+\DoxyCodeLine{531       \textcolor{keywordflow}{return}  1;}
+\DoxyCodeLine{532    \textcolor{keywordflow}{return} (p-\/>w > q-\/>w) ? -\/1 : (p-\/>w < q-\/>w);}
+\DoxyCodeLine{533 \}}
+\DoxyCodeLine{534 }
+\DoxyCodeLine{535 \textcolor{keyword}{static} \textcolor{keywordtype}{int} STBRP\_\_CDECL rect\_original\_order(\textcolor{keyword}{const} \textcolor{keywordtype}{void} *a, \textcolor{keyword}{const} \textcolor{keywordtype}{void} *b)}
+\DoxyCodeLine{536 \{}
+\DoxyCodeLine{537    \textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *p = (\textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *) a;}
+\DoxyCodeLine{538    \textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *q = (\textcolor{keyword}{const} \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *) b;}
+\DoxyCodeLine{539    \textcolor{keywordflow}{return} (p-\/>was\_packed < q-\/>was\_packed) ? -\/1 : (p-\/>was\_packed > q-\/>was\_packed);}
+\DoxyCodeLine{540 \}}
+\DoxyCodeLine{541 }
+\DoxyCodeLine{542 STBRP\_DEF \textcolor{keywordtype}{int} stbrp\_pack\_rects(\mbox{\hyperlink{structstbrp__context}{stbrp\_context}} *context, \mbox{\hyperlink{structstbrp__rect}{stbrp\_rect}} *rects, \textcolor{keywordtype}{int} num\_rects)}
+\DoxyCodeLine{543 \{}
+\DoxyCodeLine{544    \textcolor{keywordtype}{int} i, all\_rects\_packed = 1;}
+\DoxyCodeLine{545 }
+\DoxyCodeLine{546    \textcolor{comment}{// we use the 'was\_packed' field internally to allow sorting/unsorting}}
+\DoxyCodeLine{547    \textcolor{keywordflow}{for} (i=0; i < num\_rects; ++i) \{}
+\DoxyCodeLine{548       rects[i].was\_packed = i;}
+\DoxyCodeLine{549    \}}
+\DoxyCodeLine{550 }
+\DoxyCodeLine{551    \textcolor{comment}{// sort according to heuristic}}
+\DoxyCodeLine{552    STBRP\_SORT(rects, num\_rects, \textcolor{keyword}{sizeof}(rects[0]), rect\_height\_compare);}
+\DoxyCodeLine{553 }
+\DoxyCodeLine{554    \textcolor{keywordflow}{for} (i=0; i < num\_rects; ++i) \{}
+\DoxyCodeLine{555       \textcolor{keywordflow}{if} (rects[i].w == 0 || rects[i].h == 0) \{}
+\DoxyCodeLine{556          rects[i].x = rects[i].y = 0;  \textcolor{comment}{// empty rect needs no space}}
+\DoxyCodeLine{557       \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{558          stbrp\_\_findresult fr = stbrp\_\_skyline\_pack\_rectangle(context, rects[i].w, rects[i].h);}
+\DoxyCodeLine{559          \textcolor{keywordflow}{if} (fr.prev\_link) \{}
+\DoxyCodeLine{560             rects[i].x = (stbrp\_coord) fr.x;}
+\DoxyCodeLine{561             rects[i].y = (stbrp\_coord) fr.y;}
+\DoxyCodeLine{562          \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{563             rects[i].x = rects[i].y = STBRP\_\_MAXVAL;}
+\DoxyCodeLine{564          \}}
+\DoxyCodeLine{565       \}}
+\DoxyCodeLine{566    \}}
+\DoxyCodeLine{567 }
+\DoxyCodeLine{568    \textcolor{comment}{// unsort}}
+\DoxyCodeLine{569    STBRP\_SORT(rects, num\_rects, \textcolor{keyword}{sizeof}(rects[0]), rect\_original\_order);}
+\DoxyCodeLine{570 }
+\DoxyCodeLine{571    \textcolor{comment}{// set was\_packed flags and all\_rects\_packed status}}
+\DoxyCodeLine{572    \textcolor{keywordflow}{for} (i=0; i < num\_rects; ++i) \{}
+\DoxyCodeLine{573       rects[i].was\_packed = !(rects[i].x == STBRP\_\_MAXVAL \&\& rects[i].y == STBRP\_\_MAXVAL);}
+\DoxyCodeLine{574       \textcolor{keywordflow}{if} (!rects[i].was\_packed)}
+\DoxyCodeLine{575          all\_rects\_packed = 0;}
+\DoxyCodeLine{576    \}}
+\DoxyCodeLine{577 }
+\DoxyCodeLine{578    \textcolor{comment}{// return the all\_rects\_packed status}}
+\DoxyCodeLine{579    \textcolor{keywordflow}{return} all\_rects\_packed;}
+\DoxyCodeLine{580 \}}
+\DoxyCodeLine{581 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{582 }
+\DoxyCodeLine{583 \textcolor{comment}{/*}}
+\DoxyCodeLine{584 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{585 \textcolor{comment}{This software is available under 2 licenses -\/-\/ choose whichever you prefer.}}
+\DoxyCodeLine{586 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{587 \textcolor{comment}{ALTERNATIVE A -\/ MIT License}}
+\DoxyCodeLine{588 \textcolor{comment}{Copyright (c) 2017 Sean Barrett}}
+\DoxyCodeLine{589 \textcolor{comment}{Permission is hereby granted, free of charge, to any person obtaining a copy of}}
+\DoxyCodeLine{590 \textcolor{comment}{this software and associated documentation files (the "{}Software"{}), to deal in}}
+\DoxyCodeLine{591 \textcolor{comment}{the Software without restriction, including without limitation the rights to}}
+\DoxyCodeLine{592 \textcolor{comment}{use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies}}
+\DoxyCodeLine{593 \textcolor{comment}{of the Software, and to permit persons to whom the Software is furnished to do}}
+\DoxyCodeLine{594 \textcolor{comment}{so, subject to the following conditions:}}
+\DoxyCodeLine{595 \textcolor{comment}{The above copyright notice and this permission notice shall be included in all}}
+\DoxyCodeLine{596 \textcolor{comment}{copies or substantial portions of the Software.}}
+\DoxyCodeLine{597 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR}}
+\DoxyCodeLine{598 \textcolor{comment}{IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,}}
+\DoxyCodeLine{599 \textcolor{comment}{FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE}}
+\DoxyCodeLine{600 \textcolor{comment}{AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER}}
+\DoxyCodeLine{601 \textcolor{comment}{LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,}}
+\DoxyCodeLine{602 \textcolor{comment}{OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE}}
+\DoxyCodeLine{603 \textcolor{comment}{SOFTWARE.}}
+\DoxyCodeLine{604 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{605 \textcolor{comment}{ALTERNATIVE B -\/ Public Domain (www.unlicense.org)}}
+\DoxyCodeLine{606 \textcolor{comment}{This is free and unencumbered software released into the public domain.}}
+\DoxyCodeLine{607 \textcolor{comment}{Anyone is free to copy, modify, publish, use, compile, sell, or distribute this}}
+\DoxyCodeLine{608 \textcolor{comment}{software, either in source code form or as a compiled binary, for any purpose,}}
+\DoxyCodeLine{609 \textcolor{comment}{commercial or non-\/commercial, and by any means.}}
+\DoxyCodeLine{610 \textcolor{comment}{In jurisdictions that recognize copyright laws, the author or authors of this}}
+\DoxyCodeLine{611 \textcolor{comment}{software dedicate any and all copyright interest in the software to the public}}
+\DoxyCodeLine{612 \textcolor{comment}{domain. We make this dedication for the benefit of the public at large and to}}
+\DoxyCodeLine{613 \textcolor{comment}{the detriment of our heirs and successors. We intend this dedication to be an}}
+\DoxyCodeLine{614 \textcolor{comment}{overt act of relinquishment in perpetuity of all present and future rights to}}
+\DoxyCodeLine{615 \textcolor{comment}{this software under copyright law.}}
+\DoxyCodeLine{616 \textcolor{comment}{THE SOFTWARE IS PROVIDED "{}AS IS"{}, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR}}
+\DoxyCodeLine{617 \textcolor{comment}{IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,}}
+\DoxyCodeLine{618 \textcolor{comment}{FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE}}
+\DoxyCodeLine{619 \textcolor{comment}{AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN}}
+\DoxyCodeLine{620 \textcolor{comment}{ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION}}
+\DoxyCodeLine{621 \textcolor{comment}{WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.}}
+\DoxyCodeLine{622 \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{623 \textcolor{comment}{*/}}
+
+\end{DoxyCode}

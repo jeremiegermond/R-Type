@@ -1,0 +1,40 @@
+\hypertarget{structma__resource__manager__data__supply}{}\doxysection{ma\+\_\+resource\+\_\+manager\+\_\+data\+\_\+supply Struct Reference}
+\label{structma__resource__manager__data__supply}\index{ma\_resource\_manager\_data\_supply@{ma\_resource\_manager\_data\_supply}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structma__resource__manager__data__supply_a9e31139de7942c69c9faf489e37183c6}\label{structma__resource__manager__data__supply_a9e31139de7942c69c9faf489e37183c6}} 
+{\bfseries MA\+\_\+\+ATOMIC} (4, ma\+\_\+resource\+\_\+manager\+\_\+data\+\_\+supply\+\_\+type) type
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structma__resource__manager__data__supply_aab0d6a950d112c9162d15cea49c614be}\label{structma__resource__manager__data__supply_aab0d6a950d112c9162d15cea49c614be}} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>const void $\ast$ {\bfseries pData}\\
+\>\>size\_t {\bfseries sizeInBytes}\\
+\>\} {\bfseries encoded}\\
+\>struct \{\\
+\>\>const void $\ast$ {\bfseries pData}\\
+\>\>ma\_uint64 {\bfseries totalFrameCount}\\
+\>\>ma\_uint64 {\bfseries decodedFrameCount}\\
+\>\>ma\_format {\bfseries format}\\
+\>\>ma\_uint32 {\bfseries channels}\\
+\>\>ma\_uint32 {\bfseries sampleRate}\\
+\>\} {\bfseries decoded}\\
+\>struct \{\\
+\>\>\mbox{\hyperlink{structma__paged__audio__buffer__data}{ma\_paged\_audio\_buffer\_data}} {\bfseries data}\\
+\>\>ma\_uint64 {\bfseries decodedFrameCount}\\
+\>\>ma\_uint32 {\bfseries sampleRate}\\
+\>\} {\bfseries decodedPaged}\\
+\} {\bfseries backend}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+build/\+\_\+deps/raylib-\/src/src/external/miniaudio.\+h\end{DoxyCompactItemize}

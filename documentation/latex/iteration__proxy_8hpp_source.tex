@@ -1,0 +1,232 @@
+\hypertarget{iteration__proxy_8hpp_source}{}\doxysection{iteration\+\_\+proxy.\+hpp}
+\label{iteration__proxy_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/iterators/iteration\_proxy.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/iterators/iteration\_proxy.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <cstddef>} \textcolor{comment}{// size\_t}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <iterator>} \textcolor{comment}{// input\_iterator\_tag}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <string>} \textcolor{comment}{// string, to\_string}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <tuple>} \textcolor{comment}{// tuple\_size, get, tuple\_element}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <utility>} \textcolor{comment}{// move}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#if JSON\_HAS\_RANGES}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{    \#include <ranges>} \textcolor{comment}{// enable\_borrowed\_range}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#include <nlohmann/detail/abi\_macros.hpp>}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#include <nlohmann/detail/meta/type\_traits.hpp>}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#include <nlohmann/detail/value\_t.hpp>}}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{26 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{27 \{}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{keyword}{template}<\textcolor{keyword}{typename} \textcolor{keywordtype}{string}\_type>}
+\DoxyCodeLine{30 \textcolor{keywordtype}{void} int\_to\_string( string\_type\& target, std::size\_t value )}
+\DoxyCodeLine{31 \{}
+\DoxyCodeLine{32     \textcolor{comment}{// For ADL}}
+\DoxyCodeLine{33     \textcolor{keyword}{using }std::to\_string;}
+\DoxyCodeLine{34     target = to\_string(value);}
+\DoxyCodeLine{35 \}}
+\DoxyCodeLine{36 \textcolor{keyword}{template}<\textcolor{keyword}{typename} IteratorType> \textcolor{keyword}{class }iteration\_proxy\_value}
+\DoxyCodeLine{37 \{}
+\DoxyCodeLine{38   \textcolor{keyword}{public}:}
+\DoxyCodeLine{39     \textcolor{keyword}{using }difference\_type = std::ptrdiff\_t;}
+\DoxyCodeLine{40     \textcolor{keyword}{using }value\_type = iteration\_proxy\_value;}
+\DoxyCodeLine{41     \textcolor{keyword}{using }pointer = value\_type *;}
+\DoxyCodeLine{42     \textcolor{keyword}{using }reference = value\_type \&;}
+\DoxyCodeLine{43     \textcolor{keyword}{using }iterator\_category = std::input\_iterator\_tag;}
+\DoxyCodeLine{44     \textcolor{keyword}{using }string\_type = \textcolor{keyword}{typename} std::remove\_cv< typename std::remove\_reference<decltype( std::declval<IteratorType>().key() ) >::type >::type;}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46   \textcolor{keyword}{private}:}
+\DoxyCodeLine{48     IteratorType anchor\{\};}
+\DoxyCodeLine{50     std::size\_t array\_index = 0;}
+\DoxyCodeLine{52     \textcolor{keyword}{mutable} std::size\_t array\_index\_last = 0;}
+\DoxyCodeLine{54     \textcolor{keyword}{mutable} string\_type array\_index\_str = \textcolor{stringliteral}{"{}0"{}};}
+\DoxyCodeLine{56     string\_type empty\_str\{\};}
+\DoxyCodeLine{57 }
+\DoxyCodeLine{58   \textcolor{keyword}{public}:}
+\DoxyCodeLine{59     \textcolor{keyword}{explicit} iteration\_proxy\_value() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{60     \textcolor{keyword}{explicit} iteration\_proxy\_value(IteratorType it, std::size\_t array\_index\_ = 0)}
+\DoxyCodeLine{61     noexcept(std::is\_nothrow\_move\_constructible<IteratorType>::value}
+\DoxyCodeLine{62              \&\& std::is\_nothrow\_default\_constructible<string\_type>::value)}
+\DoxyCodeLine{63         : anchor(std::move(it))}
+\DoxyCodeLine{64         , array\_index(array\_index\_)}
+\DoxyCodeLine{65     \{\}}
+\DoxyCodeLine{66 }
+\DoxyCodeLine{67     iteration\_proxy\_value(iteration\_proxy\_value \textcolor{keyword}{const}\&) = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{68     iteration\_proxy\_value\& operator=(iteration\_proxy\_value \textcolor{keyword}{const}\&) = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{69     \textcolor{comment}{// older GCCs are a bit fussy and require explicit noexcept specifiers on defaulted functions}}
+\DoxyCodeLine{70     iteration\_proxy\_value(iteration\_proxy\_value\&\&)}
+\DoxyCodeLine{71     noexcept(std::is\_nothrow\_move\_constructible<IteratorType>::value}
+\DoxyCodeLine{72              \&\& std::is\_nothrow\_move\_constructible<string\_type>::value) = default;}
+\DoxyCodeLine{73     iteration\_proxy\_value\& operator=(iteration\_proxy\_value\&\&)}
+\DoxyCodeLine{74     noexcept(std::is\_nothrow\_move\_assignable<IteratorType>::value}
+\DoxyCodeLine{75              \&\& std::is\_nothrow\_move\_assignable<string\_type>::value) = default;}
+\DoxyCodeLine{76     \string~iteration\_proxy\_value() = default;}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{79     const \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value}}\& operator*()\textcolor{keyword}{ const}}
+\DoxyCodeLine{80 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{81         \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
+\DoxyCodeLine{82     \}}
+\DoxyCodeLine{83 }
+\DoxyCodeLine{85     \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value}}\& \mbox{\hyperlink{classdetail_1_1iteration__proxy__value_a52dffef3e0c58a6bcd5b8b9e6fcf4552}{operator++}}()}
+\DoxyCodeLine{86     \{}
+\DoxyCodeLine{87         ++anchor;}
+\DoxyCodeLine{88         ++array\_index;}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90         \textcolor{keywordflow}{return} *\textcolor{keyword}{this};}
+\DoxyCodeLine{91     \}}
+\DoxyCodeLine{92 }
+\DoxyCodeLine{93     \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value}} \mbox{\hyperlink{classdetail_1_1iteration__proxy__value_a52dffef3e0c58a6bcd5b8b9e6fcf4552}{operator++}}(\textcolor{keywordtype}{int})\& \textcolor{comment}{// NOLINT(cert-\/dcl21-\/cpp)}}
+\DoxyCodeLine{94     \{}
+\DoxyCodeLine{95         \textcolor{keyword}{auto} tmp = \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value}}(anchor, array\_index);}
+\DoxyCodeLine{96         ++anchor;}
+\DoxyCodeLine{97         ++array\_index;}
+\DoxyCodeLine{98         \textcolor{keywordflow}{return} tmp;}
+\DoxyCodeLine{99     \}}
+\DoxyCodeLine{100 }
+\DoxyCodeLine{102     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdetail_1_1iteration__proxy__value_a139d22be442a277268cfb78bb4eef95d}{operator==}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value}}\& o)\textcolor{keyword}{ const}}
+\DoxyCodeLine{103 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{104         \textcolor{keywordflow}{return} anchor == o.anchor;}
+\DoxyCodeLine{105     \}}
+\DoxyCodeLine{106 }
+\DoxyCodeLine{108     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classdetail_1_1iteration__proxy__value_a23745b98de19578adc4efb509e59be28}{operator!=}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value}}\& o)\textcolor{keyword}{ const}}
+\DoxyCodeLine{109 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{110         \textcolor{keywordflow}{return} anchor != o.anchor;}
+\DoxyCodeLine{111     \}}
+\DoxyCodeLine{112 }
+\DoxyCodeLine{114     \textcolor{keyword}{const} string\_type\& \mbox{\hyperlink{classdetail_1_1iteration__proxy__value_ad12633bc0d3ac7a651381b174a7914ee}{key}}()\textcolor{keyword}{ const}}
+\DoxyCodeLine{115 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{116         JSON\_ASSERT(anchor.m\_object != \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{117 }
+\DoxyCodeLine{118         \textcolor{keywordflow}{switch} (anchor.m\_object-\/>type())}
+\DoxyCodeLine{119         \{}
+\DoxyCodeLine{120             \textcolor{comment}{// use integer array index as key}}
+\DoxyCodeLine{121             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632af1f713c9e000f5d3f280adbd124df4f5}{value\_t::array}}:}
+\DoxyCodeLine{122             \{}
+\DoxyCodeLine{123                 \textcolor{keywordflow}{if} (array\_index != array\_index\_last)}
+\DoxyCodeLine{124                 \{}
+\DoxyCodeLine{125                     int\_to\_string( array\_index\_str, array\_index );}
+\DoxyCodeLine{126                     array\_index\_last = array\_index;}
+\DoxyCodeLine{127                 \}}
+\DoxyCodeLine{128                 \textcolor{keywordflow}{return} array\_index\_str;}
+\DoxyCodeLine{129             \}}
+\DoxyCodeLine{130 }
+\DoxyCodeLine{131             \textcolor{comment}{// use key from the object}}
+\DoxyCodeLine{132             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632aa8cfde6331bd59eb2ac96f8911c4b666}{value\_t::object}}:}
+\DoxyCodeLine{133                 \textcolor{keywordflow}{return} anchor.key();}
+\DoxyCodeLine{134 }
+\DoxyCodeLine{135             \textcolor{comment}{// use an empty key for all primitive types}}
+\DoxyCodeLine{136             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a37a6259cc0c1dae299a7866489dff0bd}{value\_t::null}}:}
+\DoxyCodeLine{137             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632ab45cffe084dd3d20d928bee85e7b0f21}{value\_t::string}}:}
+\DoxyCodeLine{138             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a84e2c64f38f78ba3ea5c905ab5a2da27}{value\_t::boolean}}:}
+\DoxyCodeLine{139             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a5763da164f8659d94a56e29df64b4bcc}{value\_t::number\_integer}}:}
+\DoxyCodeLine{140             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632adce7cc8ec29055c4158828921f2f265e}{value\_t::number\_unsigned}}:}
+\DoxyCodeLine{141             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632ad9966ecb59667235a57b4b999a649eef}{value\_t::number\_float}}:}
+\DoxyCodeLine{142             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a9d7183f16acce70658f686ae7f1a4d20}{value\_t::binary}}:}
+\DoxyCodeLine{143             \textcolor{keywordflow}{case} \mbox{\hyperlink{namespacedetail_a917c3efabea8a20dc72d9ae2c673d632a94708897ec9db8647dfe695714c98e46}{value\_t::discarded}}:}
+\DoxyCodeLine{144             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{145                 \textcolor{keywordflow}{return} empty\_str;}
+\DoxyCodeLine{146         \}}
+\DoxyCodeLine{147     \}}
+\DoxyCodeLine{148 }
+\DoxyCodeLine{150     \textcolor{keyword}{typename} IteratorType::reference \mbox{\hyperlink{classdetail_1_1iteration__proxy__value_aac08993af9f4f0bf3d058b4beae36a45}{value}}()\textcolor{keyword}{ const}}
+\DoxyCodeLine{151 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{152         \textcolor{keywordflow}{return} anchor.value();}
+\DoxyCodeLine{153     \}}
+\DoxyCodeLine{154 \};}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{157 \textcolor{keyword}{template}<\textcolor{keyword}{typename} IteratorType> \textcolor{keyword}{class }iteration\_proxy}
+\DoxyCodeLine{158 \{}
+\DoxyCodeLine{159   \textcolor{keyword}{private}:}
+\DoxyCodeLine{161     \textcolor{keyword}{typename} IteratorType::pointer container = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{162 }
+\DoxyCodeLine{163   \textcolor{keyword}{public}:}
+\DoxyCodeLine{164     \textcolor{keyword}{explicit} iteration\_proxy() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{165 }
+\DoxyCodeLine{167     \textcolor{keyword}{explicit} \mbox{\hyperlink{classdetail_1_1iteration__proxy_abc711365efc12210a983fba0e39b5811}{iteration\_proxy}}(\textcolor{keyword}{typename} IteratorType::reference cont) noexcept}
+\DoxyCodeLine{168         : container(\&cont) \{\}}
+\DoxyCodeLine{169 }
+\DoxyCodeLine{170     \mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}}(\mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}} \textcolor{keyword}{const}\&) = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{171     \mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}}\& operator=(\mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}} \textcolor{keyword}{const}\&) = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{172     \mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}}(\mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}}\&\&) noexcept = default;}
+\DoxyCodeLine{173     \mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}}\& operator=(\mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}}\&\&) noexcept = default;}
+\DoxyCodeLine{174     \string~\mbox{\hyperlink{classdetail_1_1iteration__proxy}{iteration\_proxy}}() = default;}
+\DoxyCodeLine{175 }
+\DoxyCodeLine{177     \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value}}<IteratorType> \mbox{\hyperlink{classdetail_1_1iteration__proxy_a8d35bb0cd56024e1ab1c7277de32e2ab}{begin}}() const noexcept}
+\DoxyCodeLine{178     \{}
+\DoxyCodeLine{179         \textcolor{keywordflow}{return} \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value<IteratorType>}}(container-\/>begin());}
+\DoxyCodeLine{180     \}}
+\DoxyCodeLine{181 }
+\DoxyCodeLine{183     \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value<IteratorType>}} \mbox{\hyperlink{classdetail_1_1iteration__proxy_a1037b697552341a5697fa15ee95250d1}{end}}() const noexcept}
+\DoxyCodeLine{184     \{}
+\DoxyCodeLine{185         \textcolor{keywordflow}{return} \mbox{\hyperlink{classdetail_1_1iteration__proxy__value}{iteration\_proxy\_value<IteratorType>}}(container-\/>end());}
+\DoxyCodeLine{186     \}}
+\DoxyCodeLine{187 \};}
+\DoxyCodeLine{188 }
+\DoxyCodeLine{189 \textcolor{comment}{// Structured Bindings Support}}
+\DoxyCodeLine{190 \textcolor{comment}{// For further reference see https://blog.tartanllama.xyz/structured-\/bindings/}}
+\DoxyCodeLine{191 \textcolor{comment}{// And see https://github.com/nlohmann/json/pull/1391}}
+\DoxyCodeLine{192 \textcolor{keyword}{template}<std::\textcolor{keywordtype}{size\_t} N, \textcolor{keyword}{typename} IteratorType, enable\_if\_t<N == 0, \textcolor{keywordtype}{int}> = 0>}
+\DoxyCodeLine{193 \textcolor{keyword}{auto} get(\textcolor{keyword}{const} nlohmann::detail::iteration\_proxy\_value<IteratorType>\& i) -\/> \textcolor{keyword}{decltype}(i.key())}
+\DoxyCodeLine{194 \{}
+\DoxyCodeLine{195     \textcolor{keywordflow}{return} i.key();}
+\DoxyCodeLine{196 \}}
+\DoxyCodeLine{197 \textcolor{comment}{// Structured Bindings Support}}
+\DoxyCodeLine{198 \textcolor{comment}{// For further reference see https://blog.tartanllama.xyz/structured-\/bindings/}}
+\DoxyCodeLine{199 \textcolor{comment}{// And see https://github.com/nlohmann/json/pull/1391}}
+\DoxyCodeLine{200 \textcolor{keyword}{template}<std::\textcolor{keywordtype}{size\_t} N, \textcolor{keyword}{typename} IteratorType, enable\_if\_t<N == 1, \textcolor{keywordtype}{int}> = 0>}
+\DoxyCodeLine{201 \textcolor{keyword}{auto} get(\textcolor{keyword}{const} nlohmann::detail::iteration\_proxy\_value<IteratorType>\& i) -\/> \textcolor{keyword}{decltype}(i.value())}
+\DoxyCodeLine{202 \{}
+\DoxyCodeLine{203     \textcolor{keywordflow}{return} i.value();}
+\DoxyCodeLine{204 \}}
+\DoxyCodeLine{205 }
+\DoxyCodeLine{206 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{207 NLOHMANN\_JSON\_NAMESPACE\_END}
+\DoxyCodeLine{208 }
+\DoxyCodeLine{209 \textcolor{comment}{// The Addition to the STD Namespace is required to add}}
+\DoxyCodeLine{210 \textcolor{comment}{// Structured Bindings Support to the iteration\_proxy\_value class}}
+\DoxyCodeLine{211 \textcolor{comment}{// For further reference see https://blog.tartanllama.xyz/structured-\/bindings/}}
+\DoxyCodeLine{212 \textcolor{comment}{// And see https://github.com/nlohmann/json/pull/1391}}
+\DoxyCodeLine{213 \textcolor{keyword}{namespace }std}
+\DoxyCodeLine{214 \{}
+\DoxyCodeLine{215 }
+\DoxyCodeLine{216 \textcolor{preprocessor}{\#if defined(\_\_clang\_\_)}}
+\DoxyCodeLine{217     \textcolor{comment}{// Fix: https://github.com/nlohmann/json/issues/1401}}
+\DoxyCodeLine{218 \textcolor{preprocessor}{    \#pragma clang diagnostic push}}
+\DoxyCodeLine{219 \textcolor{preprocessor}{    \#pragma clang diagnostic ignored "{}-\/Wmismatched-\/tags"{}}}
+\DoxyCodeLine{220 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{221 \textcolor{keyword}{template}<\textcolor{keyword}{typename} IteratorType>}
+\DoxyCodeLine{222 \textcolor{keyword}{class }tuple\_size<::nlohmann::detail::iteration\_proxy\_value<IteratorType>>}
+\DoxyCodeLine{223             : \textcolor{keyword}{public} std::integral\_constant<std::size\_t, 2> \{\};}
+\DoxyCodeLine{224 }
+\DoxyCodeLine{225 \textcolor{keyword}{template}<std::\textcolor{keywordtype}{size\_t} N, \textcolor{keyword}{typename} IteratorType>}
+\DoxyCodeLine{226 \textcolor{keyword}{class }tuple\_element<N, ::nlohmann::detail::iteration\_proxy\_value<IteratorType >>}
+\DoxyCodeLine{227 \{}
+\DoxyCodeLine{228   \textcolor{keyword}{public}:}
+\DoxyCodeLine{229     \textcolor{keyword}{using }type = \textcolor{keyword}{decltype}(}
+\DoxyCodeLine{230                      get<N>(std::declval <}
+\DoxyCodeLine{231                             ::nlohmann::detail::iteration\_proxy\_value<IteratorType >> ()));}
+\DoxyCodeLine{232 \};}
+\DoxyCodeLine{233 \textcolor{preprocessor}{\#if defined(\_\_clang\_\_)}}
+\DoxyCodeLine{234 \textcolor{preprocessor}{    \#pragma clang diagnostic pop}}
+\DoxyCodeLine{235 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{236 }
+\DoxyCodeLine{237 \}  \textcolor{comment}{// namespace std}}
+\DoxyCodeLine{238 }
+\DoxyCodeLine{239 \textcolor{preprocessor}{\#if JSON\_HAS\_RANGES}}
+\DoxyCodeLine{240     \textcolor{keyword}{template} <\textcolor{keyword}{typename} IteratorType>}
+\DoxyCodeLine{241     \textcolor{keyword}{inline} \textcolor{keyword}{constexpr} bool ::std::ranges::enable\_borrowed\_range<::nlohmann::detail::iteration\_proxy<IteratorType>> = \textcolor{keyword}{true};}
+\DoxyCodeLine{242 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

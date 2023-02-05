@@ -1,0 +1,46 @@
+\hypertarget{button_8hpp_source}{}\doxysection{button.\+hpp}
+\label{button_8hpp_source}\index{client/includes/button.hpp@{client/includes/button.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{** EPITECH PROJECT, 2023}}
+\DoxyCodeLine{3 \textcolor{comment}{** rtype}}
+\DoxyCodeLine{4 \textcolor{comment}{** File description:}}
+\DoxyCodeLine{5 \textcolor{comment}{** Button.hpp by thibb1}}
+\DoxyCodeLine{6 \textcolor{comment}{*/}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#ifndef RTYPE\_BUTTON\_HPP}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define RTYPE\_BUTTON\_HPP}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include "{}deps.hpp"{}}}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{keyword}{class }\mbox{\hyperlink{classButton}{Button}} \{}
+\DoxyCodeLine{14   \textcolor{keyword}{private}:}
+\DoxyCodeLine{15     std::string \_text;}
+\DoxyCodeLine{16     Rectangle \_bounds\{\};}
+\DoxyCodeLine{17     \textcolor{keywordtype}{bool} \_pressed;}
+\DoxyCodeLine{18     \textcolor{keywordtype}{bool} \_enabled;}
+\DoxyCodeLine{19     \textcolor{keywordtype}{bool} \_hovered;}
+\DoxyCodeLine{20     Vector2 \_textPosition\{\};}
+\DoxyCodeLine{21     Color \_baseColor\{\};}
+\DoxyCodeLine{22     Color \_selectedColor\{\};}
+\DoxyCodeLine{23     Color \_hoveredColor\{\};}
+\DoxyCodeLine{24     Color \_borderColor\{\};}
+\DoxyCodeLine{25     Color \_selectedBorderColor\{\};}
+\DoxyCodeLine{26     std::function<void()> \_callback;}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{28   \textcolor{keyword}{public}:}
+\DoxyCodeLine{29     \mbox{\hyperlink{classButton}{Button}}(\textcolor{keyword}{const} std::string \&name, Rectangle bounds, \textcolor{keywordtype}{bool} enabled = \textcolor{keyword}{true});}
+\DoxyCodeLine{30     \mbox{\hyperlink{classButton}{\string~Button}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{31     \textcolor{keywordtype}{bool} \mbox{\hyperlink{classButton_a11db7074128cffaf95b81ebe8f679558}{UpdateButton}}();}
+\DoxyCodeLine{32     \textcolor{keywordtype}{void} \mbox{\hyperlink{classButton_a6aaa2b781c933a296f41a8eca890eb1f}{Draw}}();}
+\DoxyCodeLine{33     \textcolor{keywordtype}{void} \mbox{\hyperlink{classButton_afa95ca0852d71fde80242e9d01477a76}{SetEnabled}}(\textcolor{keywordtype}{bool} enabled);}
+\DoxyCodeLine{34     \textcolor{keyword}{template} <\textcolor{keyword}{typename} T>}
+\DoxyCodeLine{35     \textcolor{keywordtype}{void} SetCallback(T \&\&callback) \{}
+\DoxyCodeLine{36         \_callback = std::forward<T>(callback);}
+\DoxyCodeLine{37     \}}
+\DoxyCodeLine{38 \};}
+\DoxyCodeLine{39 }
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// RTYPE\_BUTTON\_HPP}}
+
+\end{DoxyCode}

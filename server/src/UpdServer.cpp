@@ -7,6 +7,9 @@
 
 #include "network.hpp"
 
+/**
+ * It starts the server
+ */
 void UdpServer::start() {
     std::cout << "UDP server started on port 12345" << std::endl;
     srand(time(nullptr));
@@ -37,12 +40,23 @@ void UdpServer::start() {
     _io_context.run();
 }
 
+/**
+ * It closes the socket and cancels any pending asynchronous operations
+ */
 UdpServer::~UdpServer() {
     std::cout << "UDP server stopped" << std::endl;
     _socket.cancel();
     _socket.close();
 }
 
+/**
+ * It handles a request from a client
+ * 
+ * @param ec error code
+ * @param bytes_recvd The number of bytes received.
+ * 
+ * @return The return type is void.
+ */
 void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
     if (!ec && bytes_recvd > 0) {
         std::string msg(_buffer.begin(), _buffer.begin() + bytes_recvd);
@@ -97,11 +111,27 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
     }
 }
 
+/**
+ * "Send a message to the specified endpoint."
+ * 
+ * The first thing we do is lock the socket mutex. This is because we're going to be using the socket,
+ * and we don't want another thread to be using it at the same time
+ * 
+ * @param endpoint The endpoint to send the message to.
+ * @param msg The message to send.
+ */
 void UdpServer::sendResponse(const udp::endpoint &endpoint, const std::string &msg) {
     std::lock_guard<std::mutex> lock(_socketMutex);
     _socket.send_to(asio::buffer(msg), endpoint);
 }
 
+/**
+ * "When a request is received, handle it and then wait for the next request."
+ * 
+ * The first thing we do is check if the server has been stopped. If it has, we return immediately
+ * 
+ * @return a future that will receive the result of the asynchronous operation.
+ */
 void UdpServer::receiveRequest() {
     if (_stopServer)
         return;
@@ -111,6 +141,11 @@ void UdpServer::receiveRequest() {
     });
 }
 
+/**
+ * If a client hasn't sent a message in the last 5 seconds, remove it from the server
+ * 
+ * @return A pointer to the client
+ */
 void UdpServer::checkAlive() {
     if (_clients.empty())
         return;
@@ -128,6 +163,12 @@ void UdpServer::checkAlive() {
     }
 }
 
+/**
+ * It sends a message to all clients except the sender
+ * 
+ * @param msg The message to send to all clients.
+ * @param includeSender If true, the sender of the message will also receive the message.
+ */
 void UdpServer::sendAll(const std::string &msg, bool includeSender) {
     for (auto &client : _clients) {
         if (includeSender || client.first != _sender_endpoint)
@@ -135,6 +176,12 @@ void UdpServer::sendAll(const std::string &msg, bool includeSender) {
     }
 }
 
+/**
+ * It removes a client from the server
+ * 
+ * @param endpoint The endpoint of the client to remove.
+ * @param erase if true, the client will be erased from the map.
+ */
 void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
     if (_clients.find(endpoint) != _clients.end()) {
         _ids.insert(_clients[endpoint].getId());
@@ -144,6 +191,10 @@ void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
     }
 }
 
+/**
+ * It updates the positions of the enemies and bullets, checks for collisions, and sends messages to
+ * the clients
+ */
 void UdpServer::simulate() {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // update frame time

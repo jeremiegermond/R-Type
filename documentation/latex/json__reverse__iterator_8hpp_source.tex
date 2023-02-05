@@ -1,0 +1,101 @@
+\hypertarget{json__reverse__iterator_8hpp_source}{}\doxysection{json\+\_\+reverse\+\_\+iterator.\+hpp}
+\label{json__reverse__iterator_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/iterators/json\_reverse\_iterator.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/iterators/json\_reverse\_iterator.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <cstddef>} \textcolor{comment}{// ptrdiff\_t}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <iterator>} \textcolor{comment}{// reverse\_iterator}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <utility>} \textcolor{comment}{// declval}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <nlohmann/detail/abi\_macros.hpp>}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{18 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{19 \{}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{22 \textcolor{comment}{// reverse\_iterator //}}
+\DoxyCodeLine{24 \textcolor{comment}{}}
+\DoxyCodeLine{43 \textcolor{keyword}{template}<\textcolor{keyword}{typename} Base>}
+\DoxyCodeLine{44 \textcolor{keyword}{class }\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}} : \textcolor{keyword}{public} std::reverse\_iterator<Base>}
+\DoxyCodeLine{45 \{}
+\DoxyCodeLine{46   \textcolor{keyword}{public}:}
+\DoxyCodeLine{47     \textcolor{keyword}{using }difference\_type = std::ptrdiff\_t;}
+\DoxyCodeLine{49     \textcolor{keyword}{using }\mbox{\hyperlink{classdetail_1_1json__reverse__iterator_ab306723c375c396a5ccd90e2d31ad651}{base\_iterator}} = std::reverse\_iterator<Base>;}
+\DoxyCodeLine{51     \textcolor{keyword}{using }\mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a81a4d0a61246d4ece37fd14eacfadda0}{reference}} = \textcolor{keyword}{typename} Base::reference;}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{54     \textcolor{keyword}{explicit} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_ad0012dca9469c2d5669ca2e446c8957d}{json\_reverse\_iterator}}(\textcolor{keyword}{const} \textcolor{keyword}{typename} base\_iterator::iterator\_type\& it) noexcept}
+\DoxyCodeLine{55         : \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_ab306723c375c396a5ccd90e2d31ad651}{base\_iterator}}(it) \{\}}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{58     \textcolor{keyword}{explicit} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a95ef832171f9aba019f284125bed75ca}{json\_reverse\_iterator}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_ab306723c375c396a5ccd90e2d31ad651}{base\_iterator}}\& it) noexcept : \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_ab306723c375c396a5ccd90e2d31ad651}{base\_iterator}}(it) \{\}}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{61     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a000addec834a8db323312794737623da}{operator++}}(\textcolor{keywordtype}{int})\& \textcolor{comment}{// NOLINT(cert-\/dcl21-\/cpp)}}
+\DoxyCodeLine{62     \{}
+\DoxyCodeLine{63         \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\textcolor{keyword}{>}(base\_iterator::operator++(1));}
+\DoxyCodeLine{64     \}}
+\DoxyCodeLine{65 }
+\DoxyCodeLine{67     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\& \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a3e611d63a209fdfd1278c2a9d86c40e3}{operator++}}()}
+\DoxyCodeLine{68     \{}
+\DoxyCodeLine{69         \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\&\textcolor{keyword}{>}(base\_iterator::operator++());}
+\DoxyCodeLine{70     \}}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{73     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a1abdaf558ee194cdd44e9cee82fce77d}{operator-\/-\/}}(\textcolor{keywordtype}{int})\& \textcolor{comment}{// NOLINT(cert-\/dcl21-\/cpp)}}
+\DoxyCodeLine{74     \{}
+\DoxyCodeLine{75         \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\textcolor{keyword}{>}(base\_iterator::operator-\/-\/(1));}
+\DoxyCodeLine{76     \}}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{79     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\& \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a9736216bab45871b1c62eb68df0613c3}{operator-\/-\/}}()}
+\DoxyCodeLine{80     \{}
+\DoxyCodeLine{81         \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\&\textcolor{keyword}{>}(base\_iterator::operator-\/-\/());}
+\DoxyCodeLine{82     \}}
+\DoxyCodeLine{83 }
+\DoxyCodeLine{85     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\& \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a4e433b66cce1a79c88bfe645de9794dc}{operator+=}}(difference\_type i)}
+\DoxyCodeLine{86     \{}
+\DoxyCodeLine{87         \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\&\textcolor{keyword}{>}(base\_iterator::operator+=(i));}
+\DoxyCodeLine{88     \}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{91     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_adff7b1171a9a154b5a339b0a0e85404d}{operator+}}(difference\_type i)\textcolor{keyword}{ const}}
+\DoxyCodeLine{92 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{93         \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\textcolor{keyword}{>}(base\_iterator::operator+(i));}
+\DoxyCodeLine{94     \}}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{97     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_abb64fbf5298d1bdc987496f57a288877}{operator-\/}}(difference\_type i)\textcolor{keyword}{ const}}
+\DoxyCodeLine{98 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{99         \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\textcolor{keyword}{>}(base\_iterator::operator-\/(i));}
+\DoxyCodeLine{100     \}}
+\DoxyCodeLine{101 }
+\DoxyCodeLine{103     difference\_type \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a6eba395b9f3f0b2c470c5a240a041128}{operator-\/}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator}{json\_reverse\_iterator}}\& other)\textcolor{keyword}{ const}}
+\DoxyCodeLine{104 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{105         \textcolor{keywordflow}{return} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_ab306723c375c396a5ccd90e2d31ad651}{base\_iterator}}(*\textcolor{keyword}{this}) -\/ \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_ab306723c375c396a5ccd90e2d31ad651}{base\_iterator}}(other);}
+\DoxyCodeLine{106     \}}
+\DoxyCodeLine{107 }
+\DoxyCodeLine{109     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a81a4d0a61246d4ece37fd14eacfadda0}{reference}} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a50a57718a9d49039b7592bf34f5819a2}{operator[]}}(difference\_type n)\textcolor{keyword}{ const}}
+\DoxyCodeLine{110 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{111         \textcolor{keywordflow}{return} *(this-\/>\mbox{\hyperlink{classdetail_1_1json__reverse__iterator_adff7b1171a9a154b5a339b0a0e85404d}{operator+}}(n));}
+\DoxyCodeLine{112     \}}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{115     \textcolor{keyword}{auto} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a68d4f0c3e978afdc7509ee88e2f7b996}{key}}() const -\/> decltype(std::declval<Base>().\mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a68d4f0c3e978afdc7509ee88e2f7b996}{key}}())}
+\DoxyCodeLine{116     \{}
+\DoxyCodeLine{117         \textcolor{keyword}{auto} it = -\/-\/this-\/>base();}
+\DoxyCodeLine{118         \textcolor{keywordflow}{return} it.key();}
+\DoxyCodeLine{119     \}}
+\DoxyCodeLine{120 }
+\DoxyCodeLine{122     \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a81a4d0a61246d4ece37fd14eacfadda0}{reference}} \mbox{\hyperlink{classdetail_1_1json__reverse__iterator_a90132b4589e7b8c6cfdf4e25e1c311fe}{value}}()\textcolor{keyword}{ const}}
+\DoxyCodeLine{123 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{124         \textcolor{keyword}{auto} it = -\/-\/this-\/>base();}
+\DoxyCodeLine{125         \textcolor{keywordflow}{return} it.operator * ();}
+\DoxyCodeLine{126     \}}
+\DoxyCodeLine{127 \};}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{130 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

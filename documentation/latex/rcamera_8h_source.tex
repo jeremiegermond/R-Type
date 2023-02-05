@@ -1,0 +1,564 @@
+\hypertarget{rcamera_8h_source}{}\doxysection{rcamera.\+h}
+\label{rcamera_8h_source}\index{build/\_deps/raylib-\/src/src/rcamera.h@{build/\_deps/raylib-\/src/src/rcamera.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*******************************************************************************************}}
+\DoxyCodeLine{2 \textcolor{comment}{*}}
+\DoxyCodeLine{3 \textcolor{comment}{*   rcamera -\/ Basic camera system for multiple camera modes}}
+\DoxyCodeLine{4 \textcolor{comment}{*}}
+\DoxyCodeLine{5 \textcolor{comment}{*   NOTE: Memory footprint of this library is aproximately 52 bytes (global variables)}}
+\DoxyCodeLine{6 \textcolor{comment}{*}}
+\DoxyCodeLine{7 \textcolor{comment}{*   CONFIGURATION:}}
+\DoxyCodeLine{8 \textcolor{comment}{*}}
+\DoxyCodeLine{9 \textcolor{comment}{*   \#define CAMERA\_IMPLEMENTATION}}
+\DoxyCodeLine{10 \textcolor{comment}{*       Generates the implementation of the library into the included file.}}
+\DoxyCodeLine{11 \textcolor{comment}{*       If not defined, the library is in header only mode and can be included in other headers}}
+\DoxyCodeLine{12 \textcolor{comment}{*       or source files without problems. But only ONE file should hold the implementation.}}
+\DoxyCodeLine{13 \textcolor{comment}{*}}
+\DoxyCodeLine{14 \textcolor{comment}{*   \#define CAMERA\_STANDALONE}}
+\DoxyCodeLine{15 \textcolor{comment}{*       If defined, the library can be used as standalone as a camera system but some}}
+\DoxyCodeLine{16 \textcolor{comment}{*       functions must be redefined to manage inputs accordingly.}}
+\DoxyCodeLine{17 \textcolor{comment}{*}}
+\DoxyCodeLine{18 \textcolor{comment}{*   CONTRIBUTORS:}}
+\DoxyCodeLine{19 \textcolor{comment}{*       Ramon Santamaria:   Supervision, review, update and maintenance}}
+\DoxyCodeLine{20 \textcolor{comment}{*       Marc Palau:         Initial implementation (2014)}}
+\DoxyCodeLine{21 \textcolor{comment}{*}}
+\DoxyCodeLine{22 \textcolor{comment}{*}}
+\DoxyCodeLine{23 \textcolor{comment}{*   LICENSE: zlib/libpng}}
+\DoxyCodeLine{24 \textcolor{comment}{*}}
+\DoxyCodeLine{25 \textcolor{comment}{*   Copyright (c) 2015-\/2022 Ramon Santamaria (@raysan5)}}
+\DoxyCodeLine{26 \textcolor{comment}{*}}
+\DoxyCodeLine{27 \textcolor{comment}{*   This software is provided "{}as-\/is"{}, without any express or implied warranty. In no event}}
+\DoxyCodeLine{28 \textcolor{comment}{*   will the authors be held liable for any damages arising from the use of this software.}}
+\DoxyCodeLine{29 \textcolor{comment}{*}}
+\DoxyCodeLine{30 \textcolor{comment}{*   Permission is granted to anyone to use this software for any purpose, including commercial}}
+\DoxyCodeLine{31 \textcolor{comment}{*   applications, and to alter it and redistribute it freely, subject to the following restrictions:}}
+\DoxyCodeLine{32 \textcolor{comment}{*}}
+\DoxyCodeLine{33 \textcolor{comment}{*     1. The origin of this software must not be misrepresented; you must not claim that you}}
+\DoxyCodeLine{34 \textcolor{comment}{*     wrote the original software. If you use this software in a product, an acknowledgment}}
+\DoxyCodeLine{35 \textcolor{comment}{*     in the product documentation would be appreciated but is not required.}}
+\DoxyCodeLine{36 \textcolor{comment}{*}}
+\DoxyCodeLine{37 \textcolor{comment}{*     2. Altered source versions must be plainly marked as such, and must not be misrepresented}}
+\DoxyCodeLine{38 \textcolor{comment}{*     as being the original software.}}
+\DoxyCodeLine{39 \textcolor{comment}{*}}
+\DoxyCodeLine{40 \textcolor{comment}{*     3. This notice may not be removed or altered from any source distribution.}}
+\DoxyCodeLine{41 \textcolor{comment}{*}}
+\DoxyCodeLine{42 \textcolor{comment}{**********************************************************************************************/}}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{44 \textcolor{preprocessor}{\#ifndef RCAMERA\_H}}
+\DoxyCodeLine{45 \textcolor{preprocessor}{\#define RCAMERA\_H}}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{48 \textcolor{comment}{// Defines and Macros}}
+\DoxyCodeLine{49 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{50 \textcolor{comment}{//...}}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{52 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{53 \textcolor{comment}{// Types and Structures Definition}}
+\DoxyCodeLine{54 \textcolor{comment}{// NOTE: Below types are required for CAMERA\_STANDALONE usage}}
+\DoxyCodeLine{55 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{56 \textcolor{preprocessor}{\#if defined(CAMERA\_STANDALONE)}}
+\DoxyCodeLine{57     \textcolor{comment}{// Vector2 type}}
+\DoxyCodeLine{58     \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structVector2}{Vector2}} \{}
+\DoxyCodeLine{59         \textcolor{keywordtype}{float} x;}
+\DoxyCodeLine{60         \textcolor{keywordtype}{float} y;}
+\DoxyCodeLine{61     \} \mbox{\hyperlink{structVector2}{Vector2}};}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63     \textcolor{comment}{// Vector3 type}}
+\DoxyCodeLine{64     \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structVector3}{Vector3}} \{}
+\DoxyCodeLine{65         \textcolor{keywordtype}{float} x;}
+\DoxyCodeLine{66         \textcolor{keywordtype}{float} y;}
+\DoxyCodeLine{67         \textcolor{keywordtype}{float} z;}
+\DoxyCodeLine{68     \} \mbox{\hyperlink{structVector3}{Vector3}};}
+\DoxyCodeLine{69 }
+\DoxyCodeLine{70     \textcolor{comment}{// Camera type, defines a camera position/orientation in 3d space}}
+\DoxyCodeLine{71     \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structCamera3D}{Camera3D}} \{}
+\DoxyCodeLine{72         \mbox{\hyperlink{structVector3}{Vector3}} position;       \textcolor{comment}{// Camera position}}
+\DoxyCodeLine{73         \mbox{\hyperlink{structVector3}{Vector3}} target;         \textcolor{comment}{// Camera target it looks-\/at}}
+\DoxyCodeLine{74         \mbox{\hyperlink{structVector3}{Vector3}} up;             \textcolor{comment}{// Camera up vector (rotation over its axis)}}
+\DoxyCodeLine{75         \textcolor{keywordtype}{float} fovy;             \textcolor{comment}{// Camera field-\/of-\/view apperture in Y (degrees) in perspective, used as near plane width in orthographic}}
+\DoxyCodeLine{76         \textcolor{keywordtype}{int} type;               \textcolor{comment}{// Camera type, defines projection type: CAMERA\_PERSPECTIVE or CAMERA\_ORTHOGRAPHIC}}
+\DoxyCodeLine{77     \} \mbox{\hyperlink{structCamera3D}{Camera3D}};}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79     \textcolor{keyword}{typedef} \mbox{\hyperlink{structCamera3D}{Camera3D}} \mbox{\hyperlink{structCamera}{Camera}};    \textcolor{comment}{// Camera type fallback, defaults to Camera3D}}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81     \textcolor{comment}{// Camera system modes}}
+\DoxyCodeLine{82     \textcolor{keyword}{typedef} \textcolor{keyword}{enum} \{}
+\DoxyCodeLine{83         CAMERA\_CUSTOM = 0,}
+\DoxyCodeLine{84         CAMERA\_FREE,}
+\DoxyCodeLine{85         CAMERA\_ORBITAL,}
+\DoxyCodeLine{86         CAMERA\_FIRST\_PERSON,}
+\DoxyCodeLine{87         CAMERA\_THIRD\_PERSON}
+\DoxyCodeLine{88     \} CameraMode;}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90     \textcolor{comment}{// Camera projection modes}}
+\DoxyCodeLine{91     \textcolor{keyword}{typedef} \textcolor{keyword}{enum} \{}
+\DoxyCodeLine{92         CAMERA\_PERSPECTIVE = 0,}
+\DoxyCodeLine{93         CAMERA\_ORTHOGRAPHIC}
+\DoxyCodeLine{94     \} CameraProjection;}
+\DoxyCodeLine{95 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{96 }
+\DoxyCodeLine{97 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{98 \textcolor{comment}{// Global Variables Definition}}
+\DoxyCodeLine{99 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{100 \textcolor{comment}{//...}}
+\DoxyCodeLine{101 }
+\DoxyCodeLine{102 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{103 \textcolor{comment}{// Module Functions Declaration}}
+\DoxyCodeLine{104 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{105 }
+\DoxyCodeLine{106 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{107 \textcolor{keyword}{extern} \textcolor{stringliteral}{"{}C"{}} \{            \textcolor{comment}{// Prevents name mangling of functions}}
+\DoxyCodeLine{108 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{109 }
+\DoxyCodeLine{110 \textcolor{preprocessor}{\#if defined(CAMERA\_STANDALONE)}}
+\DoxyCodeLine{111 \textcolor{keywordtype}{void} SetCameraMode(\mbox{\hyperlink{structCamera}{Camera}} camera, \textcolor{keywordtype}{int} mode);                \textcolor{comment}{// Set camera mode (multiple camera modes available)}}
+\DoxyCodeLine{112 \textcolor{keywordtype}{void} UpdateCamera(\mbox{\hyperlink{structCamera}{Camera}} *camera);                          \textcolor{comment}{// Update camera position for selected mode}}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114 \textcolor{keywordtype}{void} SetCameraPanControl(\textcolor{keywordtype}{int} keyPan);                       \textcolor{comment}{// Set camera pan key to combine with mouse movement (free camera)}}
+\DoxyCodeLine{115 \textcolor{keywordtype}{void} SetCameraAltControl(\textcolor{keywordtype}{int} keyAlt);                       \textcolor{comment}{// Set camera alt key to combine with mouse movement (free camera)}}
+\DoxyCodeLine{116 \textcolor{keywordtype}{void} SetCameraSmoothZoomControl(\textcolor{keywordtype}{int} szoomKey);              \textcolor{comment}{// Set camera smooth zoom key to combine with mouse (free camera)}}
+\DoxyCodeLine{117 \textcolor{keywordtype}{void} SetCameraMoveControls(\textcolor{keywordtype}{int} keyFront, \textcolor{keywordtype}{int} keyBack,}
+\DoxyCodeLine{118                            \textcolor{keywordtype}{int} keyRight, \textcolor{keywordtype}{int} keyLeft,}
+\DoxyCodeLine{119                            \textcolor{keywordtype}{int} keyUp, \textcolor{keywordtype}{int} keyDown);         \textcolor{comment}{// Set camera move controls (1st person and 3rd person cameras)}}
+\DoxyCodeLine{120 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{121 }
+\DoxyCodeLine{122 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{123 \}}
+\DoxyCodeLine{124 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{125 }
+\DoxyCodeLine{126 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// CAMERA\_H}}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{128 }
+\DoxyCodeLine{129 \textcolor{comment}{/***********************************************************************************}}
+\DoxyCodeLine{130 \textcolor{comment}{*}}
+\DoxyCodeLine{131 \textcolor{comment}{*   CAMERA IMPLEMENTATION}}
+\DoxyCodeLine{132 \textcolor{comment}{*}}
+\DoxyCodeLine{133 \textcolor{comment}{************************************************************************************/}}
+\DoxyCodeLine{134 }
+\DoxyCodeLine{135 \textcolor{preprocessor}{\#if defined(CAMERA\_IMPLEMENTATION)}}
+\DoxyCodeLine{136 }
+\DoxyCodeLine{137 \textcolor{preprocessor}{\#include <math.h>}               \textcolor{comment}{// Required for: sinf(), cosf(), sqrtf()}}
+\DoxyCodeLine{138 }
+\DoxyCodeLine{139 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{140 \textcolor{comment}{// Defines and Macros}}
+\DoxyCodeLine{141 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{142 \textcolor{preprocessor}{\#ifndef PI}}
+\DoxyCodeLine{143 \textcolor{preprocessor}{    \#define PI 3.14159265358979323846}}
+\DoxyCodeLine{144 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{145 \textcolor{preprocessor}{\#ifndef DEG2RAD}}
+\DoxyCodeLine{146 \textcolor{preprocessor}{    \#define DEG2RAD (PI/180.0f)}}
+\DoxyCodeLine{147 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{148 \textcolor{preprocessor}{\#ifndef RAD2DEG}}
+\DoxyCodeLine{149 \textcolor{preprocessor}{    \#define RAD2DEG (180.0f/PI)}}
+\DoxyCodeLine{150 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{151 }
+\DoxyCodeLine{152 \textcolor{comment}{// Camera mouse movement sensitivity}}
+\DoxyCodeLine{153 \textcolor{preprocessor}{\#define CAMERA\_MOUSE\_MOVE\_SENSITIVITY                   0.5f    }\textcolor{comment}{// TODO: it should be independant of framerate}}
+\DoxyCodeLine{154 \textcolor{preprocessor}{\#define CAMERA\_MOUSE\_SCROLL\_SENSITIVITY                 1.5f}}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{156 \textcolor{comment}{// FREE\_CAMERA}}
+\DoxyCodeLine{157 \textcolor{preprocessor}{\#define CAMERA\_FREE\_MOUSE\_SENSITIVITY                   0.01f}}
+\DoxyCodeLine{158 \textcolor{preprocessor}{\#define CAMERA\_FREE\_DISTANCE\_MIN\_CLAMP                  0.3f}}
+\DoxyCodeLine{159 \textcolor{preprocessor}{\#define CAMERA\_FREE\_DISTANCE\_MAX\_CLAMP                  120.0f}}
+\DoxyCodeLine{160 \textcolor{preprocessor}{\#define CAMERA\_FREE\_MIN\_CLAMP                           85.0f}}
+\DoxyCodeLine{161 \textcolor{preprocessor}{\#define CAMERA\_FREE\_MAX\_CLAMP                          -\/85.0f}}
+\DoxyCodeLine{162 \textcolor{preprocessor}{\#define CAMERA\_FREE\_SMOOTH\_ZOOM\_SENSITIVITY             0.05f}}
+\DoxyCodeLine{163 \textcolor{preprocessor}{\#define CAMERA\_FREE\_PANNING\_DIVIDER                     5.1f}}
+\DoxyCodeLine{164 }
+\DoxyCodeLine{165 \textcolor{comment}{// ORBITAL\_CAMERA}}
+\DoxyCodeLine{166 \textcolor{preprocessor}{\#define CAMERA\_ORBITAL\_SPEED                            0.5f       }\textcolor{comment}{// Radians per second}}
+\DoxyCodeLine{167 }
+\DoxyCodeLine{168 \textcolor{comment}{// FIRST\_PERSON}}
+\DoxyCodeLine{169 \textcolor{comment}{//\#define CAMERA\_FIRST\_PERSON\_MOUSE\_SENSITIVITY           0.003f}}
+\DoxyCodeLine{170 \textcolor{preprocessor}{\#define CAMERA\_FIRST\_PERSON\_FOCUS\_DISTANCE              25.0f}}
+\DoxyCodeLine{171 \textcolor{preprocessor}{\#define CAMERA\_FIRST\_PERSON\_MIN\_CLAMP                   89.0f}}
+\DoxyCodeLine{172 \textcolor{preprocessor}{\#define CAMERA\_FIRST\_PERSON\_MAX\_CLAMP                  -\/89.0f}}
+\DoxyCodeLine{173 }
+\DoxyCodeLine{174 \textcolor{comment}{// When walking, y-\/position of the player moves up-\/down at step frequency (swinging) but}}
+\DoxyCodeLine{175 \textcolor{comment}{// also the body slightly tilts left-\/right on every step, when all the body weight is left over one foot (tilting)}}
+\DoxyCodeLine{176 \textcolor{preprocessor}{\#define CAMERA\_FIRST\_PERSON\_STEP\_FREQUENCY               1.8f       }\textcolor{comment}{// Step frequency when walking (steps per second)}}
+\DoxyCodeLine{177 \textcolor{preprocessor}{\#define CAMERA\_FIRST\_PERSON\_SWINGING\_DELTA               0.03f      }\textcolor{comment}{// Maximum up-\/down swinging distance when walking}}
+\DoxyCodeLine{178 \textcolor{preprocessor}{\#define CAMERA\_FIRST\_PERSON\_TILTING\_DELTA                0.005f     }\textcolor{comment}{// Maximum left-\/right tilting distance when walking}}
+\DoxyCodeLine{179 }
+\DoxyCodeLine{180 \textcolor{comment}{// THIRD\_PERSON}}
+\DoxyCodeLine{181 \textcolor{comment}{//\#define CAMERA\_THIRD\_PERSON\_MOUSE\_SENSITIVITY           0.003f}}
+\DoxyCodeLine{182 \textcolor{preprocessor}{\#define CAMERA\_THIRD\_PERSON\_DISTANCE\_CLAMP              1.2f}}
+\DoxyCodeLine{183 \textcolor{preprocessor}{\#define CAMERA\_THIRD\_PERSON\_MIN\_CLAMP                   5.0f}}
+\DoxyCodeLine{184 \textcolor{preprocessor}{\#define CAMERA\_THIRD\_PERSON\_MAX\_CLAMP                  -\/85.0f}}
+\DoxyCodeLine{185 \textcolor{preprocessor}{\#define CAMERA\_THIRD\_PERSON\_OFFSET                      (Vector3)\{ 0.4f, 0.0f, 0.0f \}}}
+\DoxyCodeLine{186 }
+\DoxyCodeLine{187 \textcolor{comment}{// PLAYER (used by camera)}}
+\DoxyCodeLine{188 \textcolor{preprocessor}{\#define PLAYER\_MOVEMENT\_SENSITIVITY                     2.0f}}
+\DoxyCodeLine{189 }
+\DoxyCodeLine{190 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{191 \textcolor{comment}{// Types and Structures Definition}}
+\DoxyCodeLine{192 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{193 \textcolor{comment}{// Camera move modes (first person and third person cameras)}}
+\DoxyCodeLine{194 \textcolor{keyword}{typedef} \textcolor{keyword}{enum} \{}
+\DoxyCodeLine{195     MOVE\_FRONT = 0,}
+\DoxyCodeLine{196     MOVE\_BACK,}
+\DoxyCodeLine{197     MOVE\_RIGHT,}
+\DoxyCodeLine{198     MOVE\_LEFT,}
+\DoxyCodeLine{199     MOVE\_UP,}
+\DoxyCodeLine{200     MOVE\_DOWN}
+\DoxyCodeLine{201 \} CameraMove;}
+\DoxyCodeLine{202 }
+\DoxyCodeLine{203 \textcolor{comment}{// Camera global state context data [56 bytes]}}
+\DoxyCodeLine{204 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\{}
+\DoxyCodeLine{205     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} mode;              \textcolor{comment}{// Current camera mode}}
+\DoxyCodeLine{206     \textcolor{keywordtype}{float} targetDistance;           \textcolor{comment}{// Camera distance from position to target}}
+\DoxyCodeLine{207     \textcolor{keywordtype}{float} playerEyesPosition;       \textcolor{comment}{// Player eyes position from ground (in meters)}}
+\DoxyCodeLine{208     \mbox{\hyperlink{structVector2}{Vector2}} angle;                  \textcolor{comment}{// Camera angle in plane XZ}}
+\DoxyCodeLine{209 }
+\DoxyCodeLine{210     \textcolor{comment}{// Camera movement control keys}}
+\DoxyCodeLine{211     \textcolor{keywordtype}{int} moveControl[6];             \textcolor{comment}{// Move controls (CAMERA\_FIRST\_PERSON)}}
+\DoxyCodeLine{212     \textcolor{keywordtype}{int} smoothZoomControl;          \textcolor{comment}{// Smooth zoom control key}}
+\DoxyCodeLine{213     \textcolor{keywordtype}{int} altControl;                 \textcolor{comment}{// Alternative control key}}
+\DoxyCodeLine{214     \textcolor{keywordtype}{int} panControl;                 \textcolor{comment}{// Pan view control key}}
+\DoxyCodeLine{215 \} CameraData;}
+\DoxyCodeLine{216 }
+\DoxyCodeLine{217 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{218 \textcolor{comment}{// Global Variables Definition}}
+\DoxyCodeLine{219 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{220 \textcolor{keyword}{static} CameraData CAMERA = \{        \textcolor{comment}{// Global CAMERA state context}}
+\DoxyCodeLine{221     .mode = 0,}
+\DoxyCodeLine{222     .targetDistance = 0,}
+\DoxyCodeLine{223     .playerEyesPosition = 1.85f,}
+\DoxyCodeLine{224     .angle = \{ 0 \},}
+\DoxyCodeLine{225     .moveControl = \{ \textcolor{charliteral}{'W'}, \textcolor{charliteral}{'S'}, \textcolor{charliteral}{'D'}, \textcolor{charliteral}{'A'}, \textcolor{charliteral}{'E'}, \textcolor{charliteral}{'Q'} \},}
+\DoxyCodeLine{226     .smoothZoomControl = 341,       \textcolor{comment}{// raylib: KEY\_LEFT\_CONTROL}}
+\DoxyCodeLine{227     .altControl = 342,              \textcolor{comment}{// raylib: KEY\_LEFT\_ALT}}
+\DoxyCodeLine{228     .panControl = 2                 \textcolor{comment}{// raylib: MOUSE\_BUTTON\_MIDDLE}}
+\DoxyCodeLine{229 \};}
+\DoxyCodeLine{230 }
+\DoxyCodeLine{231 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{232 \textcolor{comment}{// Module specific Functions Declaration}}
+\DoxyCodeLine{233 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{234 \textcolor{preprocessor}{\#if defined(CAMERA\_STANDALONE)}}
+\DoxyCodeLine{235 \textcolor{comment}{// NOTE: Camera controls depend on some raylib input functions}}
+\DoxyCodeLine{236 \textcolor{keyword}{static} \textcolor{keywordtype}{void} EnableCursor() \{\}       \textcolor{comment}{// Unlock cursor}}
+\DoxyCodeLine{237 \textcolor{keyword}{static} \textcolor{keywordtype}{void} DisableCursor() \{\}      \textcolor{comment}{// Lock cursor}}
+\DoxyCodeLine{238 }
+\DoxyCodeLine{239 \textcolor{keyword}{static} \textcolor{keywordtype}{int} IsKeyDown(\textcolor{keywordtype}{int} key) \{ \textcolor{keywordflow}{return} 0; \}}
+\DoxyCodeLine{240 }
+\DoxyCodeLine{241 \textcolor{keyword}{static} \textcolor{keywordtype}{int} IsMouseButtonDown(\textcolor{keywordtype}{int} button) \{ \textcolor{keywordflow}{return} 0;\}}
+\DoxyCodeLine{242 \textcolor{keyword}{static} \textcolor{keywordtype}{float} GetMouseWheelMove() \{ \textcolor{keywordflow}{return} 0.0f; \}}
+\DoxyCodeLine{243 \textcolor{keyword}{static} \mbox{\hyperlink{structVector2}{Vector2}} GetMousePosition() \{ \textcolor{keywordflow}{return} (\mbox{\hyperlink{structVector2}{Vector2}})\{ 0.0f, 0.0f \}; \}}
+\DoxyCodeLine{244 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{245 }
+\DoxyCodeLine{246 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{247 \textcolor{comment}{// Module Functions Definition}}
+\DoxyCodeLine{248 \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{249 }
+\DoxyCodeLine{250 \textcolor{comment}{// Select camera mode (multiple camera modes available)}}
+\DoxyCodeLine{251 \textcolor{keywordtype}{void} SetCameraMode(\mbox{\hyperlink{structCamera}{Camera}} camera, \textcolor{keywordtype}{int} mode)}
+\DoxyCodeLine{252 \{}
+\DoxyCodeLine{253     \mbox{\hyperlink{structVector3}{Vector3}} v1 = camera.position;}
+\DoxyCodeLine{254     \mbox{\hyperlink{structVector3}{Vector3}} v2 = camera.target;}
+\DoxyCodeLine{255 }
+\DoxyCodeLine{256     \textcolor{keywordtype}{float} dx = v2.x -\/ v1.x;}
+\DoxyCodeLine{257     \textcolor{keywordtype}{float} dy = v2.y -\/ v1.y;}
+\DoxyCodeLine{258     \textcolor{keywordtype}{float} dz = v2.z -\/ v1.z;}
+\DoxyCodeLine{259 }
+\DoxyCodeLine{260     CAMERA.targetDistance = sqrtf(dx*dx + dy*dy + dz*dz);   \textcolor{comment}{// Distance to target}}
+\DoxyCodeLine{261 }
+\DoxyCodeLine{262     \textcolor{comment}{// Camera angle calculation}}
+\DoxyCodeLine{263     CAMERA.angle.x = atan2f(dx, dz);                        \textcolor{comment}{// Camera angle in plane XZ (0 aligned with Z, move positive CCW)}}
+\DoxyCodeLine{264     CAMERA.angle.y = atan2f(dy, sqrtf(dx*dx + dz*dz));      \textcolor{comment}{// Camera angle in plane XY (0 aligned with X, move positive CW)}}
+\DoxyCodeLine{265 }
+\DoxyCodeLine{266     CAMERA.playerEyesPosition = camera.position.y;          \textcolor{comment}{// Init player eyes position to camera Y position}}
+\DoxyCodeLine{267 }
+\DoxyCodeLine{268     \textcolor{comment}{// Lock cursor for first person and third person cameras}}
+\DoxyCodeLine{269     \textcolor{keywordflow}{if} ((mode == CAMERA\_FIRST\_PERSON) || (mode == CAMERA\_THIRD\_PERSON)) DisableCursor();}
+\DoxyCodeLine{270     \textcolor{keywordflow}{else} EnableCursor();}
+\DoxyCodeLine{271 }
+\DoxyCodeLine{272     CAMERA.mode = mode;}
+\DoxyCodeLine{273 \}}
+\DoxyCodeLine{274 }
+\DoxyCodeLine{275 \textcolor{comment}{// Update camera depending on selected mode}}
+\DoxyCodeLine{276 \textcolor{comment}{// NOTE: Camera controls depend on some raylib functions:}}
+\DoxyCodeLine{277 \textcolor{comment}{//       System: EnableCursor(), DisableCursor()}}
+\DoxyCodeLine{278 \textcolor{comment}{//       Mouse: IsMouseButtonDown(), GetMousePosition(), GetMouseWheelMove()}}
+\DoxyCodeLine{279 \textcolor{comment}{//       Keys:  IsKeyDown()}}
+\DoxyCodeLine{280 \textcolor{keywordtype}{void} UpdateCamera(\mbox{\hyperlink{structCamera}{Camera}} *camera)}
+\DoxyCodeLine{281 \{}
+\DoxyCodeLine{282     \textcolor{keyword}{static} \textcolor{keywordtype}{float} swingCounter = 0.0f;    \textcolor{comment}{// Used for 1st person swinging movement}}
+\DoxyCodeLine{283 }
+\DoxyCodeLine{284     \textcolor{comment}{// TODO: Compute CAMERA.targetDistance and CAMERA.angle here (?)}}
+\DoxyCodeLine{285 }
+\DoxyCodeLine{286     \textcolor{comment}{// Mouse movement detection}}
+\DoxyCodeLine{287     \mbox{\hyperlink{structVector2}{Vector2}} mousePositionDelta = GetMouseDelta();}
+\DoxyCodeLine{288     \textcolor{keywordtype}{float} mouseWheelMove = GetMouseWheelMove();}
+\DoxyCodeLine{289 }
+\DoxyCodeLine{290     \textcolor{comment}{// Keys input detection}}
+\DoxyCodeLine{291     \textcolor{comment}{// TODO: Input detection is raylib-\/dependant, it could be moved outside the module}}
+\DoxyCodeLine{292     \textcolor{keywordtype}{bool} keyPan = IsMouseButtonDown(CAMERA.panControl);}
+\DoxyCodeLine{293     \textcolor{keywordtype}{bool} keyAlt = IsKeyDown(CAMERA.altControl);}
+\DoxyCodeLine{294     \textcolor{keywordtype}{bool} szoomKey = IsKeyDown(CAMERA.smoothZoomControl);}
+\DoxyCodeLine{295     \textcolor{keywordtype}{bool} direction[6] = \{ IsKeyDown(CAMERA.moveControl[MOVE\_FRONT]),}
+\DoxyCodeLine{296                           IsKeyDown(CAMERA.moveControl[MOVE\_BACK]),}
+\DoxyCodeLine{297                           IsKeyDown(CAMERA.moveControl[MOVE\_RIGHT]),}
+\DoxyCodeLine{298                           IsKeyDown(CAMERA.moveControl[MOVE\_LEFT]),}
+\DoxyCodeLine{299                           IsKeyDown(CAMERA.moveControl[MOVE\_UP]),}
+\DoxyCodeLine{300                           IsKeyDown(CAMERA.moveControl[MOVE\_DOWN]) \};}
+\DoxyCodeLine{301 }
+\DoxyCodeLine{302     \textcolor{comment}{// Support for multiple automatic camera modes}}
+\DoxyCodeLine{303     \textcolor{comment}{// NOTE: In case of CAMERA\_CUSTOM nothing happens here, user must update it manually}}
+\DoxyCodeLine{304     \textcolor{keywordflow}{switch} (CAMERA.mode)}
+\DoxyCodeLine{305     \{}
+\DoxyCodeLine{306         \textcolor{keywordflow}{case} CAMERA\_FREE:           \textcolor{comment}{// Camera free controls, using standard 3d-\/content-\/creation scheme}}
+\DoxyCodeLine{307         \{}
+\DoxyCodeLine{308             \textcolor{comment}{// Camera zoom}}
+\DoxyCodeLine{309             \textcolor{keywordflow}{if} ((CAMERA.targetDistance < CAMERA\_FREE\_DISTANCE\_MAX\_CLAMP) \&\& (mouseWheelMove < 0))}
+\DoxyCodeLine{310             \{}
+\DoxyCodeLine{311                 CAMERA.targetDistance -\/= (mouseWheelMove*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY);}
+\DoxyCodeLine{312                 \textcolor{keywordflow}{if} (CAMERA.targetDistance > CAMERA\_FREE\_DISTANCE\_MAX\_CLAMP) CAMERA.targetDistance = CAMERA\_FREE\_DISTANCE\_MAX\_CLAMP;}
+\DoxyCodeLine{313             \}}
+\DoxyCodeLine{314 }
+\DoxyCodeLine{315             \textcolor{comment}{// Camera looking down}}
+\DoxyCodeLine{316             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((camera-\/>position.y > camera-\/>target.y) \&\& (CAMERA.targetDistance == CAMERA\_FREE\_DISTANCE\_MAX\_CLAMP) \&\& (mouseWheelMove < 0))}
+\DoxyCodeLine{317             \{}
+\DoxyCodeLine{318                 camera-\/>target.x += mouseWheelMove*(camera-\/>target.x -\/ camera-\/>position.x)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{319                 camera-\/>target.y += mouseWheelMove*(camera-\/>target.y -\/ camera-\/>position.y)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{320                 camera-\/>target.z += mouseWheelMove*(camera-\/>target.z -\/ camera-\/>position.z)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{321             \}}
+\DoxyCodeLine{322             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((camera-\/>position.y > camera-\/>target.y) \&\& (camera-\/>target.y >= 0))}
+\DoxyCodeLine{323             \{}
+\DoxyCodeLine{324                 camera-\/>target.x += mouseWheelMove*(camera-\/>target.x -\/ camera-\/>position.x)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{325                 camera-\/>target.y += mouseWheelMove*(camera-\/>target.y -\/ camera-\/>position.y)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{326                 camera-\/>target.z += mouseWheelMove*(camera-\/>target.z -\/ camera-\/>position.z)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{327 }
+\DoxyCodeLine{328                 \textcolor{comment}{// if (camera-\/>target.y < 0) camera-\/>target.y = -\/0.001;}}
+\DoxyCodeLine{329             \}}
+\DoxyCodeLine{330             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((camera-\/>position.y > camera-\/>target.y) \&\& (camera-\/>target.y < 0) \&\& (mouseWheelMove > 0))}
+\DoxyCodeLine{331             \{}
+\DoxyCodeLine{332                 CAMERA.targetDistance -\/= (mouseWheelMove*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY);}
+\DoxyCodeLine{333                 \textcolor{keywordflow}{if} (CAMERA.targetDistance < CAMERA\_FREE\_DISTANCE\_MIN\_CLAMP) CAMERA.targetDistance = CAMERA\_FREE\_DISTANCE\_MIN\_CLAMP;}
+\DoxyCodeLine{334             \}}
+\DoxyCodeLine{335             \textcolor{comment}{// Camera looking up}}
+\DoxyCodeLine{336             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((camera-\/>position.y < camera-\/>target.y) \&\& (CAMERA.targetDistance == CAMERA\_FREE\_DISTANCE\_MAX\_CLAMP) \&\& (mouseWheelMove < 0))}
+\DoxyCodeLine{337             \{}
+\DoxyCodeLine{338                 camera-\/>target.x += mouseWheelMove*(camera-\/>target.x -\/ camera-\/>position.x)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{339                 camera-\/>target.y += mouseWheelMove*(camera-\/>target.y -\/ camera-\/>position.y)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{340                 camera-\/>target.z += mouseWheelMove*(camera-\/>target.z -\/ camera-\/>position.z)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{341             \}}
+\DoxyCodeLine{342             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((camera-\/>position.y < camera-\/>target.y) \&\& (camera-\/>target.y <= 0))}
+\DoxyCodeLine{343             \{}
+\DoxyCodeLine{344                 camera-\/>target.x += mouseWheelMove*(camera-\/>target.x -\/ camera-\/>position.x)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{345                 camera-\/>target.y += mouseWheelMove*(camera-\/>target.y -\/ camera-\/>position.y)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{346                 camera-\/>target.z += mouseWheelMove*(camera-\/>target.z -\/ camera-\/>position.z)*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY/CAMERA.targetDistance;}
+\DoxyCodeLine{347 }
+\DoxyCodeLine{348                 \textcolor{comment}{// if (camera-\/>target.y > 0) camera-\/>target.y = 0.001;}}
+\DoxyCodeLine{349             \}}
+\DoxyCodeLine{350             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} ((camera-\/>position.y < camera-\/>target.y) \&\& (camera-\/>target.y > 0) \&\& (mouseWheelMove > 0))}
+\DoxyCodeLine{351             \{}
+\DoxyCodeLine{352                 CAMERA.targetDistance -\/= (mouseWheelMove*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY);}
+\DoxyCodeLine{353                 \textcolor{keywordflow}{if} (CAMERA.targetDistance < CAMERA\_FREE\_DISTANCE\_MIN\_CLAMP) CAMERA.targetDistance = CAMERA\_FREE\_DISTANCE\_MIN\_CLAMP;}
+\DoxyCodeLine{354             \}}
+\DoxyCodeLine{355 }
+\DoxyCodeLine{356             \textcolor{comment}{// Input keys checks}}
+\DoxyCodeLine{357             \textcolor{keywordflow}{if} (keyPan)}
+\DoxyCodeLine{358             \{}
+\DoxyCodeLine{359                 \textcolor{keywordflow}{if} (keyAlt)     \textcolor{comment}{// Alternative key behaviour}}
+\DoxyCodeLine{360                 \{}
+\DoxyCodeLine{361                     \textcolor{keywordflow}{if} (szoomKey)}
+\DoxyCodeLine{362                     \{}
+\DoxyCodeLine{363                         \textcolor{comment}{// Camera smooth zoom}}
+\DoxyCodeLine{364                         CAMERA.targetDistance += (mousePositionDelta.y*CAMERA\_FREE\_SMOOTH\_ZOOM\_SENSITIVITY);}
+\DoxyCodeLine{365                     \}}
+\DoxyCodeLine{366                     \textcolor{keywordflow}{else}}
+\DoxyCodeLine{367                     \{}
+\DoxyCodeLine{368                         \textcolor{comment}{// Camera rotation}}
+\DoxyCodeLine{369                         CAMERA.angle.x += mousePositionDelta.x*-\/CAMERA\_FREE\_MOUSE\_SENSITIVITY;}
+\DoxyCodeLine{370                         CAMERA.angle.y += mousePositionDelta.y*-\/CAMERA\_FREE\_MOUSE\_SENSITIVITY;}
+\DoxyCodeLine{371 }
+\DoxyCodeLine{372                         \textcolor{comment}{// Angle clamp}}
+\DoxyCodeLine{373                         \textcolor{keywordflow}{if} (CAMERA.angle.y > CAMERA\_FREE\_MIN\_CLAMP*DEG2RAD) CAMERA.angle.y = CAMERA\_FREE\_MIN\_CLAMP*DEG2RAD;}
+\DoxyCodeLine{374                         \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (CAMERA.angle.y < CAMERA\_FREE\_MAX\_CLAMP*DEG2RAD) CAMERA.angle.y = CAMERA\_FREE\_MAX\_CLAMP*DEG2RAD;}
+\DoxyCodeLine{375                     \}}
+\DoxyCodeLine{376                 \}}
+\DoxyCodeLine{377                 \textcolor{keywordflow}{else}}
+\DoxyCodeLine{378                 \{}
+\DoxyCodeLine{379                     \textcolor{comment}{// Camera panning}}
+\DoxyCodeLine{380                     camera-\/>target.x += ((mousePositionDelta.x*CAMERA\_FREE\_MOUSE\_SENSITIVITY)*cosf(CAMERA.angle.x) + (mousePositionDelta.y*-\/CAMERA\_FREE\_MOUSE\_SENSITIVITY)*sinf(CAMERA.angle.x)*sinf(CAMERA.angle.y))*(CAMERA.targetDistance/CAMERA\_FREE\_PANNING\_DIVIDER);}
+\DoxyCodeLine{381                     camera-\/>target.y += ((mousePositionDelta.y*CAMERA\_FREE\_MOUSE\_SENSITIVITY)*cosf(CAMERA.angle.y))*(CAMERA.targetDistance/CAMERA\_FREE\_PANNING\_DIVIDER);}
+\DoxyCodeLine{382                     camera-\/>target.z += ((mousePositionDelta.x*-\/CAMERA\_FREE\_MOUSE\_SENSITIVITY)*sinf(CAMERA.angle.x) + (mousePositionDelta.y*-\/CAMERA\_FREE\_MOUSE\_SENSITIVITY)*cosf(CAMERA.angle.x)*sinf(CAMERA.angle.y))*(CAMERA.targetDistance/CAMERA\_FREE\_PANNING\_DIVIDER);}
+\DoxyCodeLine{383                 \}}
+\DoxyCodeLine{384             \}}
+\DoxyCodeLine{385 }
+\DoxyCodeLine{386             \textcolor{comment}{// Update camera position with changes}}
+\DoxyCodeLine{387             camera-\/>position.x = -\/sinf(CAMERA.angle.x)*CAMERA.targetDistance*cosf(CAMERA.angle.y) + camera-\/>target.x;}
+\DoxyCodeLine{388             camera-\/>position.y = -\/sinf(CAMERA.angle.y)*CAMERA.targetDistance + camera-\/>target.y;}
+\DoxyCodeLine{389             camera-\/>position.z = -\/cosf(CAMERA.angle.x)*CAMERA.targetDistance*cosf(CAMERA.angle.y) + camera-\/>target.z;}
+\DoxyCodeLine{390 }
+\DoxyCodeLine{391         \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{392         \textcolor{keywordflow}{case} CAMERA\_ORBITAL:        \textcolor{comment}{// Camera just orbits around target, only zoom allowed}}
+\DoxyCodeLine{393         \{}
+\DoxyCodeLine{394             CAMERA.angle.x += CAMERA\_ORBITAL\_SPEED*GetFrameTime();      \textcolor{comment}{// Camera orbit angle}}
+\DoxyCodeLine{395             CAMERA.targetDistance -\/= (mouseWheelMove*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY);   \textcolor{comment}{// Camera zoom}}
+\DoxyCodeLine{396 }
+\DoxyCodeLine{397             \textcolor{comment}{// Camera distance clamp}}
+\DoxyCodeLine{398             \textcolor{keywordflow}{if} (CAMERA.targetDistance < CAMERA\_THIRD\_PERSON\_DISTANCE\_CLAMP) CAMERA.targetDistance = CAMERA\_THIRD\_PERSON\_DISTANCE\_CLAMP;}
+\DoxyCodeLine{399 }
+\DoxyCodeLine{400             \textcolor{comment}{// Update camera position with changes}}
+\DoxyCodeLine{401             camera-\/>position.x = sinf(CAMERA.angle.x)*CAMERA.targetDistance*cosf(CAMERA.angle.y) + camera-\/>target.x;}
+\DoxyCodeLine{402             camera-\/>position.y = ((CAMERA.angle.y <= 0.0f)? 1 : -\/1)*sinf(CAMERA.angle.y)*CAMERA.targetDistance*sinf(CAMERA.angle.y) + camera-\/>target.y;}
+\DoxyCodeLine{403             camera-\/>position.z = cosf(CAMERA.angle.x)*CAMERA.targetDistance*cosf(CAMERA.angle.y) + camera-\/>target.z;}
+\DoxyCodeLine{404 }
+\DoxyCodeLine{405         \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{406         \textcolor{keywordflow}{case} CAMERA\_FIRST\_PERSON:   \textcolor{comment}{// Camera moves as in a first-\/person game, controls are configurable}}
+\DoxyCodeLine{407         \{}
+\DoxyCodeLine{408             camera-\/>position.x += (sinf(CAMERA.angle.x)*direction[MOVE\_BACK] -\/}
+\DoxyCodeLine{409                                    sinf(CAMERA.angle.x)*direction[MOVE\_FRONT] -\/}
+\DoxyCodeLine{410                                    cosf(CAMERA.angle.x)*direction[MOVE\_LEFT] +}
+\DoxyCodeLine{411                                    cosf(CAMERA.angle.x)*direction[MOVE\_RIGHT])*PLAYER\_MOVEMENT\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{412 }
+\DoxyCodeLine{413             camera-\/>position.y += (sinf(CAMERA.angle.y)*direction[MOVE\_FRONT] -\/}
+\DoxyCodeLine{414                                    sinf(CAMERA.angle.y)*direction[MOVE\_BACK] +}
+\DoxyCodeLine{415                                    1.0f*direction[MOVE\_UP] -\/ 1.0f*direction[MOVE\_DOWN])*PLAYER\_MOVEMENT\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{416 }
+\DoxyCodeLine{417             camera-\/>position.z += (cosf(CAMERA.angle.x)*direction[MOVE\_BACK] -\/}
+\DoxyCodeLine{418                                    cosf(CAMERA.angle.x)*direction[MOVE\_FRONT] +}
+\DoxyCodeLine{419                                    sinf(CAMERA.angle.x)*direction[MOVE\_LEFT] -\/}
+\DoxyCodeLine{420                                    sinf(CAMERA.angle.x)*direction[MOVE\_RIGHT])*PLAYER\_MOVEMENT\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{421 }
+\DoxyCodeLine{422             \textcolor{comment}{// Camera orientation calculation}}
+\DoxyCodeLine{423             CAMERA.angle.x -\/= mousePositionDelta.x*CAMERA\_MOUSE\_MOVE\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{424             CAMERA.angle.y -\/= mousePositionDelta.y*CAMERA\_MOUSE\_MOVE\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{425 }
+\DoxyCodeLine{426             \textcolor{comment}{// Angle clamp}}
+\DoxyCodeLine{427             \textcolor{keywordflow}{if} (CAMERA.angle.y > CAMERA\_FIRST\_PERSON\_MIN\_CLAMP*DEG2RAD) CAMERA.angle.y = CAMERA\_FIRST\_PERSON\_MIN\_CLAMP*DEG2RAD;}
+\DoxyCodeLine{428             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (CAMERA.angle.y < CAMERA\_FIRST\_PERSON\_MAX\_CLAMP*DEG2RAD) CAMERA.angle.y = CAMERA\_FIRST\_PERSON\_MAX\_CLAMP*DEG2RAD;}
+\DoxyCodeLine{429 }
+\DoxyCodeLine{430             \textcolor{comment}{// Calculate translation matrix}}
+\DoxyCodeLine{431             \mbox{\hyperlink{structMatrix}{Matrix}} matTranslation = \{ 1.0f, 0.0f, 0.0f, 0.0f,}
+\DoxyCodeLine{432                                       0.0f, 1.0f, 0.0f, 0.0f,}
+\DoxyCodeLine{433                                       0.0f, 0.0f, 1.0f, (CAMERA.targetDistance/CAMERA\_FREE\_PANNING\_DIVIDER),}
+\DoxyCodeLine{434                                       0.0f, 0.0f, 0.0f, 1.0f \};}
+\DoxyCodeLine{435 }
+\DoxyCodeLine{436             \textcolor{comment}{// Calculate rotation matrix}}
+\DoxyCodeLine{437             \mbox{\hyperlink{structMatrix}{Matrix}} matRotation = \{ 1.0f, 0.0f, 0.0f, 0.0f,}
+\DoxyCodeLine{438                                    0.0f, 1.0f, 0.0f, 0.0f,}
+\DoxyCodeLine{439                                    0.0f, 0.0f, 1.0f, 0.0f,}
+\DoxyCodeLine{440                                    0.0f, 0.0f, 0.0f, 1.0f \};}
+\DoxyCodeLine{441 }
+\DoxyCodeLine{442             \textcolor{keywordtype}{float} cosz = cosf(0.0f);}
+\DoxyCodeLine{443             \textcolor{keywordtype}{float} sinz = sinf(0.0f);}
+\DoxyCodeLine{444             \textcolor{keywordtype}{float} cosy = cosf(-\/(PI*2 -\/ CAMERA.angle.x));}
+\DoxyCodeLine{445             \textcolor{keywordtype}{float} siny = sinf(-\/(PI*2 -\/ CAMERA.angle.x));}
+\DoxyCodeLine{446             \textcolor{keywordtype}{float} cosx = cosf(-\/(PI*2 -\/ CAMERA.angle.y));}
+\DoxyCodeLine{447             \textcolor{keywordtype}{float} sinx = sinf(-\/(PI*2 -\/ CAMERA.angle.y));}
+\DoxyCodeLine{448 }
+\DoxyCodeLine{449             matRotation.m0 = cosz*cosy;}
+\DoxyCodeLine{450             matRotation.m4 = (cosz*siny*sinx) -\/ (sinz*cosx);}
+\DoxyCodeLine{451             matRotation.m8 = (cosz*siny*cosx) + (sinz*sinx);}
+\DoxyCodeLine{452             matRotation.m1 = sinz*cosy;}
+\DoxyCodeLine{453             matRotation.m5 = (sinz*siny*sinx) + (cosz*cosx);}
+\DoxyCodeLine{454             matRotation.m9 = (sinz*siny*cosx) -\/ (cosz*sinx);}
+\DoxyCodeLine{455             matRotation.m2 = -\/siny;}
+\DoxyCodeLine{456             matRotation.m6 = cosy*sinx;}
+\DoxyCodeLine{457             matRotation.m10= cosy*cosx;}
+\DoxyCodeLine{458 }
+\DoxyCodeLine{459             \textcolor{comment}{// Multiply translation and rotation matrices}}
+\DoxyCodeLine{460             \mbox{\hyperlink{structMatrix}{Matrix}} matTransform = \{ 0 \};}
+\DoxyCodeLine{461             matTransform.m0 = matTranslation.m0*matRotation.m0 + matTranslation.m1*matRotation.m4 + matTranslation.m2*matRotation.m8 + matTranslation.m3*matRotation.m12;}
+\DoxyCodeLine{462             matTransform.m1 = matTranslation.m0*matRotation.m1 + matTranslation.m1*matRotation.m5 + matTranslation.m2*matRotation.m9 + matTranslation.m3*matRotation.m13;}
+\DoxyCodeLine{463             matTransform.m2 = matTranslation.m0*matRotation.m2 + matTranslation.m1*matRotation.m6 + matTranslation.m2*matRotation.m10 + matTranslation.m3*matRotation.m14;}
+\DoxyCodeLine{464             matTransform.m3 = matTranslation.m0*matRotation.m3 + matTranslation.m1*matRotation.m7 + matTranslation.m2*matRotation.m11 + matTranslation.m3*matRotation.m15;}
+\DoxyCodeLine{465             matTransform.m4 = matTranslation.m4*matRotation.m0 + matTranslation.m5*matRotation.m4 + matTranslation.m6*matRotation.m8 + matTranslation.m7*matRotation.m12;}
+\DoxyCodeLine{466             matTransform.m5 = matTranslation.m4*matRotation.m1 + matTranslation.m5*matRotation.m5 + matTranslation.m6*matRotation.m9 + matTranslation.m7*matRotation.m13;}
+\DoxyCodeLine{467             matTransform.m6 = matTranslation.m4*matRotation.m2 + matTranslation.m5*matRotation.m6 + matTranslation.m6*matRotation.m10 + matTranslation.m7*matRotation.m14;}
+\DoxyCodeLine{468             matTransform.m7 = matTranslation.m4*matRotation.m3 + matTranslation.m5*matRotation.m7 + matTranslation.m6*matRotation.m11 + matTranslation.m7*matRotation.m15;}
+\DoxyCodeLine{469             matTransform.m8 = matTranslation.m8*matRotation.m0 + matTranslation.m9*matRotation.m4 + matTranslation.m10*matRotation.m8 + matTranslation.m11*matRotation.m12;}
+\DoxyCodeLine{470             matTransform.m9 = matTranslation.m8*matRotation.m1 + matTranslation.m9*matRotation.m5 + matTranslation.m10*matRotation.m9 + matTranslation.m11*matRotation.m13;}
+\DoxyCodeLine{471             matTransform.m10 = matTranslation.m8*matRotation.m2 + matTranslation.m9*matRotation.m6 + matTranslation.m10*matRotation.m10 + matTranslation.m11*matRotation.m14;}
+\DoxyCodeLine{472             matTransform.m11 = matTranslation.m8*matRotation.m3 + matTranslation.m9*matRotation.m7 + matTranslation.m10*matRotation.m11 + matTranslation.m11*matRotation.m15;}
+\DoxyCodeLine{473             matTransform.m12 = matTranslation.m12*matRotation.m0 + matTranslation.m13*matRotation.m4 + matTranslation.m14*matRotation.m8 + matTranslation.m15*matRotation.m12;}
+\DoxyCodeLine{474             matTransform.m13 = matTranslation.m12*matRotation.m1 + matTranslation.m13*matRotation.m5 + matTranslation.m14*matRotation.m9 + matTranslation.m15*matRotation.m13;}
+\DoxyCodeLine{475             matTransform.m14 = matTranslation.m12*matRotation.m2 + matTranslation.m13*matRotation.m6 + matTranslation.m14*matRotation.m10 + matTranslation.m15*matRotation.m14;}
+\DoxyCodeLine{476             matTransform.m15 = matTranslation.m12*matRotation.m3 + matTranslation.m13*matRotation.m7 + matTranslation.m14*matRotation.m11 + matTranslation.m15*matRotation.m15;}
+\DoxyCodeLine{477 }
+\DoxyCodeLine{478             camera-\/>target.x = camera-\/>position.x -\/ matTransform.m12;}
+\DoxyCodeLine{479             camera-\/>target.y = camera-\/>position.y -\/ matTransform.m13;}
+\DoxyCodeLine{480             camera-\/>target.z = camera-\/>position.z -\/ matTransform.m14;}
+\DoxyCodeLine{481 }
+\DoxyCodeLine{482             \textcolor{comment}{// Camera position update}}
+\DoxyCodeLine{483             \textcolor{comment}{// NOTE: On CAMERA\_FIRST\_PERSON player Y-\/movement is limited to player 'eyes position'}}
+\DoxyCodeLine{484             camera-\/>position.y = CAMERA.playerEyesPosition;}
+\DoxyCodeLine{485 }
+\DoxyCodeLine{486             \textcolor{comment}{// Camera swinging (y-\/movement), only when walking (some key pressed)}}
+\DoxyCodeLine{487             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 6; i++) \textcolor{keywordflow}{if} (direction[i]) \{ swingCounter += GetFrameTime(); \textcolor{keywordflow}{break}; \}}
+\DoxyCodeLine{488             camera-\/>position.y -\/= sinf(2*PI*CAMERA\_FIRST\_PERSON\_STEP\_FREQUENCY*swingCounter)*CAMERA\_FIRST\_PERSON\_SWINGING\_DELTA;}
+\DoxyCodeLine{489 }
+\DoxyCodeLine{490             \textcolor{comment}{// Camera waiving (xz-\/movement), only when walking (some key pressed)}}
+\DoxyCodeLine{491             camera-\/>up.x = sinf(2*PI*CAMERA\_FIRST\_PERSON\_STEP\_FREQUENCY*swingCounter)*CAMERA\_FIRST\_PERSON\_TILTING\_DELTA;}
+\DoxyCodeLine{492             camera-\/>up.z = -\/sinf(2*PI*CAMERA\_FIRST\_PERSON\_STEP\_FREQUENCY*swingCounter)*CAMERA\_FIRST\_PERSON\_TILTING\_DELTA;}
+\DoxyCodeLine{493 }
+\DoxyCodeLine{494         \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{495         \textcolor{keywordflow}{case} CAMERA\_THIRD\_PERSON:   \textcolor{comment}{// Camera moves as in a third-\/person game, following target at a distance, controls are configurable}}
+\DoxyCodeLine{496         \{}
+\DoxyCodeLine{497             camera-\/>position.x += (sinf(CAMERA.angle.x)*direction[MOVE\_BACK] -\/}
+\DoxyCodeLine{498                                    sinf(CAMERA.angle.x)*direction[MOVE\_FRONT] -\/}
+\DoxyCodeLine{499                                    cosf(CAMERA.angle.x)*direction[MOVE\_LEFT] +}
+\DoxyCodeLine{500                                    cosf(CAMERA.angle.x)*direction[MOVE\_RIGHT])*PLAYER\_MOVEMENT\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{501 }
+\DoxyCodeLine{502             camera-\/>position.y += (sinf(CAMERA.angle.y)*direction[MOVE\_FRONT] -\/}
+\DoxyCodeLine{503                                    sinf(CAMERA.angle.y)*direction[MOVE\_BACK] +}
+\DoxyCodeLine{504                                    1.0f*direction[MOVE\_UP] -\/ 1.0f*direction[MOVE\_DOWN])*PLAYER\_MOVEMENT\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{505 }
+\DoxyCodeLine{506             camera-\/>position.z += (cosf(CAMERA.angle.x)*direction[MOVE\_BACK] -\/}
+\DoxyCodeLine{507                                    cosf(CAMERA.angle.x)*direction[MOVE\_FRONT] +}
+\DoxyCodeLine{508                                    sinf(CAMERA.angle.x)*direction[MOVE\_LEFT] -\/}
+\DoxyCodeLine{509                                    sinf(CAMERA.angle.x)*direction[MOVE\_RIGHT])*PLAYER\_MOVEMENT\_SENSITIVITY*GetFrameTime();}
+\DoxyCodeLine{510 }
+\DoxyCodeLine{511             \textcolor{comment}{// Camera orientation calculation}}
+\DoxyCodeLine{512             CAMERA.angle.x += (mousePositionDelta.x*-\/CAMERA\_MOUSE\_MOVE\_SENSITIVITY);}
+\DoxyCodeLine{513             CAMERA.angle.y += (mousePositionDelta.y*-\/CAMERA\_MOUSE\_MOVE\_SENSITIVITY);}
+\DoxyCodeLine{514 }
+\DoxyCodeLine{515             \textcolor{comment}{// Angle clamp}}
+\DoxyCodeLine{516             \textcolor{keywordflow}{if} (CAMERA.angle.y > CAMERA\_THIRD\_PERSON\_MIN\_CLAMP*DEG2RAD) CAMERA.angle.y = CAMERA\_THIRD\_PERSON\_MIN\_CLAMP*DEG2RAD;}
+\DoxyCodeLine{517             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (CAMERA.angle.y < CAMERA\_THIRD\_PERSON\_MAX\_CLAMP*DEG2RAD) CAMERA.angle.y = CAMERA\_THIRD\_PERSON\_MAX\_CLAMP*DEG2RAD;}
+\DoxyCodeLine{518 }
+\DoxyCodeLine{519             \textcolor{comment}{// Camera zoom}}
+\DoxyCodeLine{520             CAMERA.targetDistance -\/= (mouseWheelMove*CAMERA\_MOUSE\_SCROLL\_SENSITIVITY);}
+\DoxyCodeLine{521 }
+\DoxyCodeLine{522             \textcolor{comment}{// Camera distance clamp}}
+\DoxyCodeLine{523             \textcolor{keywordflow}{if} (CAMERA.targetDistance < CAMERA\_THIRD\_PERSON\_DISTANCE\_CLAMP) CAMERA.targetDistance = CAMERA\_THIRD\_PERSON\_DISTANCE\_CLAMP;}
+\DoxyCodeLine{524 }
+\DoxyCodeLine{525             camera-\/>position.x = sinf(CAMERA.angle.x)*CAMERA.targetDistance*cosf(CAMERA.angle.y) + camera-\/>target.x;}
+\DoxyCodeLine{526 }
+\DoxyCodeLine{527             \textcolor{keywordflow}{if} (CAMERA.angle.y <= 0.0f) camera-\/>position.y = sinf(CAMERA.angle.y)*CAMERA.targetDistance*sinf(CAMERA.angle.y) + camera-\/>target.y;}
+\DoxyCodeLine{528             \textcolor{keywordflow}{else} camera-\/>position.y = -\/sinf(CAMERA.angle.y)*CAMERA.targetDistance*sinf(CAMERA.angle.y) + camera-\/>target.y;}
+\DoxyCodeLine{529 }
+\DoxyCodeLine{530             camera-\/>position.z = cosf(CAMERA.angle.x)*CAMERA.targetDistance*cosf(CAMERA.angle.y) + camera-\/>target.z;}
+\DoxyCodeLine{531 }
+\DoxyCodeLine{532         \} \textcolor{keywordflow}{break};}
+\DoxyCodeLine{533         \textcolor{keywordflow}{case} CAMERA\_CUSTOM: \textcolor{keywordflow}{break};}
+\DoxyCodeLine{534         \textcolor{keywordflow}{default}: \textcolor{keywordflow}{break};}
+\DoxyCodeLine{535     \}}
+\DoxyCodeLine{536 \}}
+\DoxyCodeLine{537 }
+\DoxyCodeLine{538 \textcolor{comment}{// Set camera pan key to combine with mouse movement (free camera)}}
+\DoxyCodeLine{539 \textcolor{keywordtype}{void} SetCameraPanControl(\textcolor{keywordtype}{int} keyPan) \{ CAMERA.panControl = keyPan; \}}
+\DoxyCodeLine{540 }
+\DoxyCodeLine{541 \textcolor{comment}{// Set camera alt key to combine with mouse movement (free camera)}}
+\DoxyCodeLine{542 \textcolor{keywordtype}{void} SetCameraAltControl(\textcolor{keywordtype}{int} keyAlt) \{ CAMERA.altControl = keyAlt; \}}
+\DoxyCodeLine{543 }
+\DoxyCodeLine{544 \textcolor{comment}{// Set camera smooth zoom key to combine with mouse (free camera)}}
+\DoxyCodeLine{545 \textcolor{keywordtype}{void} SetCameraSmoothZoomControl(\textcolor{keywordtype}{int} szoomKey) \{ CAMERA.smoothZoomControl = szoomKey; \}}
+\DoxyCodeLine{546 }
+\DoxyCodeLine{547 \textcolor{comment}{// Set camera move controls (1st person and 3rd person cameras)}}
+\DoxyCodeLine{548 \textcolor{keywordtype}{void} SetCameraMoveControls(\textcolor{keywordtype}{int} keyFront, \textcolor{keywordtype}{int} keyBack, \textcolor{keywordtype}{int} keyRight, \textcolor{keywordtype}{int} keyLeft, \textcolor{keywordtype}{int} keyUp, \textcolor{keywordtype}{int} keyDown)}
+\DoxyCodeLine{549 \{}
+\DoxyCodeLine{550     CAMERA.moveControl[MOVE\_FRONT] = keyFront;}
+\DoxyCodeLine{551     CAMERA.moveControl[MOVE\_BACK] = keyBack;}
+\DoxyCodeLine{552     CAMERA.moveControl[MOVE\_RIGHT] = keyRight;}
+\DoxyCodeLine{553     CAMERA.moveControl[MOVE\_LEFT] = keyLeft;}
+\DoxyCodeLine{554     CAMERA.moveControl[MOVE\_UP] = keyUp;}
+\DoxyCodeLine{555     CAMERA.moveControl[MOVE\_DOWN] = keyDown;}
+\DoxyCodeLine{556 \}}
+\DoxyCodeLine{557 }
+\DoxyCodeLine{558 \textcolor{preprocessor}{\#endif }\textcolor{comment}{// CAMERA\_IMPLEMENTATION}}
+
+\end{DoxyCode}

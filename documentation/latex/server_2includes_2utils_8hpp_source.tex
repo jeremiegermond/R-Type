@@ -1,0 +1,69 @@
+\hypertarget{server_2includes_2utils_8hpp_source}{}\doxysection{utils.\+hpp}
+\label{server_2includes_2utils_8hpp_source}\index{server/includes/utils.hpp@{server/includes/utils.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{/*}}
+\DoxyCodeLine{2 \textcolor{comment}{** EPITECH PROJECT, 2023}}
+\DoxyCodeLine{3 \textcolor{comment}{** rtype}}
+\DoxyCodeLine{4 \textcolor{comment}{** File description:}}
+\DoxyCodeLine{5 \textcolor{comment}{** utils.hpp by thibb1}}
+\DoxyCodeLine{6 \textcolor{comment}{*/}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{preprocessor}{\#include <asio.hpp>}}
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <map>}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <random>}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <regex>}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#include <unordered\_map>}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#include "{}raylib.h"{}}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#include "{}raymath.h"{}}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{keyword}{using namespace }std::chrono;}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#define NB\_R "{}(-\/?[0-\/9]+\(\backslash\)\(\backslash\).?[0-\/9]*)"{}}}
+\DoxyCodeLine{25 }
+\DoxyCodeLine{26 std::vector<std::string> split(\textcolor{keyword}{const} std::string \&s, \textcolor{keywordtype}{char} delim);}
+\DoxyCodeLine{27 std::string floatToString(\textcolor{keywordtype}{float} number, \textcolor{keywordtype}{int} precision = 1);}
+\DoxyCodeLine{28 std::string vectorToString(Vector2 vector2);}
+\DoxyCodeLine{29 }
+\DoxyCodeLine{30 \textcolor{keywordtype}{bool} isMatch(\textcolor{keyword}{const} std::string \&str, \textcolor{keyword}{const} std::string \&pattern);}
+\DoxyCodeLine{31 \textcolor{keywordtype}{bool} isNumber(\textcolor{keyword}{const} std::string \&str);}
+\DoxyCodeLine{32 std::string getMatch(\textcolor{keyword}{const} std::string \&str, \textcolor{keyword}{const} std::string \&pattern, \textcolor{keywordtype}{int} index = 0);}
+\DoxyCodeLine{33 std::vector<std::string> getMatches(\textcolor{keyword}{const} std::string \&str, \textcolor{keyword}{const} std::string \&pattern);}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35 BoundingBox GetBoundingBoxAroundPoint(Vector2 vector2, \textcolor{keywordtype}{float} scale);}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{keyword}{class }\mbox{\hyperlink{classidGenerator}{idGenerator}} \{}
+\DoxyCodeLine{38   \textcolor{keyword}{private}:}
+\DoxyCodeLine{39     std::vector<unsigned int> ids;}
+\DoxyCodeLine{40     std::mt19937 gen;}
+\DoxyCodeLine{41     std::uniform\_int\_distribution<> dis;}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{43   \textcolor{keyword}{public}:}
+\DoxyCodeLine{44     \textcolor{comment}{// Clang-\/Tidy: Random number generator seeded with a default argument will generate a predictable sequence of values}}
+\DoxyCodeLine{45     \mbox{\hyperlink{classidGenerator}{idGenerator}}() \{}
+\DoxyCodeLine{46         \textcolor{comment}{// Warning: this is not a good way to seed the generator}}
+\DoxyCodeLine{47         std::random\_device rd;}
+\DoxyCodeLine{48         gen = std::mt19937(rd());}
+\DoxyCodeLine{49         \textcolor{comment}{// This is the good way to seed the generator:}}
+\DoxyCodeLine{50         \textcolor{comment}{// std::random\_device rd;}}
+\DoxyCodeLine{51         \textcolor{comment}{// std::mt19937 gen(rd());}}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53         dis = std::uniform\_int\_distribution<>(0, 1000000);}
+\DoxyCodeLine{54         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 1000000; i++) \{}
+\DoxyCodeLine{55             ids.push\_back(dis(gen));}
+\DoxyCodeLine{56         \}}
+\DoxyCodeLine{57     \}}
+\DoxyCodeLine{58     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} getUniqueId() \{}
+\DoxyCodeLine{59         \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} \textcolor{keywordtype}{id} = ids.back();}
+\DoxyCodeLine{60         ids.pop\_back();}
+\DoxyCodeLine{61         \textcolor{keywordflow}{return} id;}
+\DoxyCodeLine{62     \}}
+\DoxyCodeLine{63 \};}
+
+\end{DoxyCode}

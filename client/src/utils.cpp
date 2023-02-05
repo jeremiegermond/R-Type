@@ -46,6 +46,15 @@ bool isMatch(const std::string &str, const std::string &pattern) {
  */
 bool isNumber(const std::string &str) { return isMatch(str, "^[0-9]+$"); }
 
+/**
+ * It returns the first match of the given pattern in the given string
+ * 
+ * @param str The string to search in
+ * @param pattern The regular expression pattern to match.
+ * @param index The index of the match to return.
+ * 
+ * @return The string that matches the pattern.
+ */
 std::string getMatch(const std::string &str, const std::string &pattern, int index) {
     std::regex reg(pattern);
     std::smatch match;
@@ -55,6 +64,14 @@ std::string getMatch(const std::string &str, const std::string &pattern, int ind
     return "";
 }
 
+/**
+ * It takes a string and a pattern, and returns a vector of strings that match the pattern
+ * 
+ * @param str The string to search in
+ * @param pattern The regular expression pattern to match.
+ * 
+ * @return A vector of strings.
+ */
 std::vector<std::string> getMatches(const std::string &str, const std::string &pattern) {
     std::regex reg(pattern);
     std::smatch match;

@@ -1,0 +1,94 @@
+\hypertarget{byte__container__with__subtype_8hpp_source}{}\doxysection{byte\+\_\+container\+\_\+with\+\_\+subtype.\+hpp}
+\label{byte__container__with__subtype_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/byte\_container\_with\_subtype.hpp@{build/\_deps/json-\/src/include/nlohmann/byte\_container\_with\_subtype.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <cstdint>} \textcolor{comment}{// uint8\_t, uint64\_t}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <tuple>} \textcolor{comment}{// tie}}
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <utility>} \textcolor{comment}{// move}}
+\DoxyCodeLine{14 }
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <nlohmann/detail/abi\_macros.hpp>}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{18 }
+\DoxyCodeLine{21 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BinaryType>}
+\DoxyCodeLine{22 \textcolor{keyword}{class }\mbox{\hyperlink{classbyte__container__with__subtype}{byte\_container\_with\_subtype}} : \textcolor{keyword}{public} BinaryType}
+\DoxyCodeLine{23 \{}
+\DoxyCodeLine{24   \textcolor{keyword}{public}:}
+\DoxyCodeLine{25     \textcolor{keyword}{using }container\_type = BinaryType;}
+\DoxyCodeLine{26     \textcolor{keyword}{using }subtype\_type = std::uint64\_t;}
+\DoxyCodeLine{27 }
+\DoxyCodeLine{29     \mbox{\hyperlink{classbyte__container__with__subtype_a17bc4a2dabb6c7a5ec2cba3f3aaf0431}{byte\_container\_with\_subtype}}() noexcept(noexcept(container\_type()))}
+\DoxyCodeLine{30         : container\_type()}
+\DoxyCodeLine{31     \{\}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{34     \mbox{\hyperlink{classbyte__container__with__subtype_a7f9fb60d4a835e97fbf1c2de7fa382e2}{byte\_container\_with\_subtype}}(\textcolor{keyword}{const} container\_type\& b) \textcolor{keyword}{noexcept}(\textcolor{keyword}{noexcept}(container\_type(b)))}
+\DoxyCodeLine{35         : container\_type(b)}
+\DoxyCodeLine{36     \{\}}
+\DoxyCodeLine{37 }
+\DoxyCodeLine{39     \mbox{\hyperlink{classbyte__container__with__subtype_a42b8b66b00eb5c0057d4420e196dadf0}{byte\_container\_with\_subtype}}(container\_type\&\& b) \textcolor{keyword}{noexcept}(\textcolor{keyword}{noexcept}(container\_type(std::move(b))))}
+\DoxyCodeLine{40         : container\_type(std::move(b))}
+\DoxyCodeLine{41     \{\}}
+\DoxyCodeLine{42 }
+\DoxyCodeLine{44     \mbox{\hyperlink{classbyte__container__with__subtype_a759c6a582dd0684adf7fb9641ef586a4}{byte\_container\_with\_subtype}}(\textcolor{keyword}{const} container\_type\& b, subtype\_type subtype\_) \textcolor{keyword}{noexcept}(\textcolor{keyword}{noexcept}(container\_type(b)))}
+\DoxyCodeLine{45         : container\_type(b)}
+\DoxyCodeLine{46         , m\_subtype(subtype\_)}
+\DoxyCodeLine{47         , m\_has\_subtype(\textcolor{keyword}{true})}
+\DoxyCodeLine{48     \{\}}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{51     \mbox{\hyperlink{classbyte__container__with__subtype_a3b43bde08a4bff8917bcfad01d9e6089}{byte\_container\_with\_subtype}}(container\_type\&\& b, subtype\_type subtype\_) \textcolor{keyword}{noexcept}(\textcolor{keyword}{noexcept}(container\_type(std::move(b))))}
+\DoxyCodeLine{52         : container\_type(std::move(b))}
+\DoxyCodeLine{53         , m\_subtype(subtype\_)}
+\DoxyCodeLine{54         , m\_has\_subtype(\textcolor{keyword}{true})}
+\DoxyCodeLine{55     \{\}}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{57     \textcolor{keywordtype}{bool} operator==(\textcolor{keyword}{const} \mbox{\hyperlink{classbyte__container__with__subtype}{byte\_container\_with\_subtype}}\& rhs)\textcolor{keyword}{ const}}
+\DoxyCodeLine{58 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{59         \textcolor{keywordflow}{return} std::tie(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const }BinaryType\&\textcolor{keyword}{>}(*\textcolor{keyword}{this}), m\_subtype, m\_has\_subtype) ==}
+\DoxyCodeLine{60                std::tie(\textcolor{keyword}{static\_cast<}\textcolor{keyword}{const }BinaryType\&\textcolor{keyword}{>}(rhs), rhs.m\_subtype, rhs.m\_has\_subtype);}
+\DoxyCodeLine{61     \}}
+\DoxyCodeLine{62 }
+\DoxyCodeLine{63     \textcolor{keywordtype}{bool} operator!=(\textcolor{keyword}{const} \mbox{\hyperlink{classbyte__container__with__subtype}{byte\_container\_with\_subtype}}\& rhs)\textcolor{keyword}{ const}}
+\DoxyCodeLine{64 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{65         \textcolor{keywordflow}{return} !(rhs == *\textcolor{keyword}{this});}
+\DoxyCodeLine{66     \}}
+\DoxyCodeLine{67 }
+\DoxyCodeLine{70     \textcolor{keywordtype}{void} \mbox{\hyperlink{classbyte__container__with__subtype_aa211ecfe3f0a626e96c54ea7e160491b}{set\_subtype}}(subtype\_type subtype\_) \textcolor{keyword}{noexcept}}
+\DoxyCodeLine{71     \{}
+\DoxyCodeLine{72         m\_subtype = subtype\_;}
+\DoxyCodeLine{73         m\_has\_subtype = \textcolor{keyword}{true};}
+\DoxyCodeLine{74     \}}
+\DoxyCodeLine{75 }
+\DoxyCodeLine{78     \textcolor{keyword}{constexpr} subtype\_type \mbox{\hyperlink{classbyte__container__with__subtype_a678460360dd494c33fbfde782e7c8201}{subtype}}() const noexcept}
+\DoxyCodeLine{79     \{}
+\DoxyCodeLine{80         \textcolor{keywordflow}{return} m\_has\_subtype ? m\_subtype : \textcolor{keyword}{static\_cast<}subtype\_type\textcolor{keyword}{>}(-\/1);}
+\DoxyCodeLine{81     \}}
+\DoxyCodeLine{82 }
+\DoxyCodeLine{85     \textcolor{keyword}{constexpr} \textcolor{keywordtype}{bool} \mbox{\hyperlink{classbyte__container__with__subtype_a793fab04ad06741b6909dde032d9ea35}{has\_subtype}}() const noexcept}
+\DoxyCodeLine{86     \{}
+\DoxyCodeLine{87         \textcolor{keywordflow}{return} m\_has\_subtype;}
+\DoxyCodeLine{88     \}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{92     \textcolor{keywordtype}{void} \mbox{\hyperlink{classbyte__container__with__subtype_ad18f6a7557a2bfce28f1ed8d4d10607c}{clear\_subtype}}() noexcept}
+\DoxyCodeLine{93     \{}
+\DoxyCodeLine{94         m\_subtype = 0;}
+\DoxyCodeLine{95         m\_has\_subtype = \textcolor{keyword}{false};}
+\DoxyCodeLine{96     \}}
+\DoxyCodeLine{97 }
+\DoxyCodeLine{98   \textcolor{keyword}{private}:}
+\DoxyCodeLine{99     subtype\_type m\_subtype = 0;}
+\DoxyCodeLine{100     \textcolor{keywordtype}{bool} m\_has\_subtype = \textcolor{keyword}{false};}
+\DoxyCodeLine{101 \};}
+\DoxyCodeLine{102 }
+\DoxyCodeLine{103 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

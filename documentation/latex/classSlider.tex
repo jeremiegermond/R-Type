@@ -1,0 +1,122 @@
+\hypertarget{classSlider}{}\doxysection{Slider Class Reference}
+\label{classSlider}\index{Slider@{Slider}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classSlider_a07e855273f96619eccc90c6559cb33ea}{Slider}} (const std\+::string \&name, Rectangle bounds, float $\ast$value, float min\+Value, float max\+Value, bool enabled=true)
+\item 
+bool \mbox{\hyperlink{classSlider_a9b2a1c0235e5b787f57437ad9f298e1b}{Update\+Slider}} ()
+\item 
+void \mbox{\hyperlink{classSlider_a87ae38e394d916107503c26dc7c2291c}{Draw}} ()
+\item 
+void \mbox{\hyperlink{classSlider_a82a924ea6674d1b36ad12e06403122c2}{Set\+Enabled}} (bool enabled)
+\item 
+void \mbox{\hyperlink{classSlider_aa57c1ba728593185a57db8fb06afed14}{Set\+Values}} (float $\ast$value, float min\+Value, float max\+Value)
+\item 
+void \mbox{\hyperlink{classSlider_a80b8aa612d4a419bbdb1bbb1bdbb0900}{Set\+Value}} (float $\ast$value, bool enable=true)
+\item 
+\mbox{\Hypertarget{classSlider_ae6692df0b458984c2596e6a50a6a3e41}\label{classSlider_ae6692df0b458984c2596e6a50a6a3e41}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries Set\+Callback} (T \&\&callback)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classSlider_a07e855273f96619eccc90c6559cb33ea}\label{classSlider_a07e855273f96619eccc90c6559cb33ea}} 
+\index{Slider@{Slider}!Slider@{Slider}}
+\index{Slider@{Slider}!Slider@{Slider}}
+\doxysubsubsection{\texorpdfstring{Slider()}{Slider()}}
+{\footnotesize\ttfamily Slider\+::\+Slider (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{Rectangle}]{bounds,  }\item[{float $\ast$}]{value,  }\item[{float}]{min\+Value,  }\item[{float}]{max\+Value,  }\item[{bool}]{enabled = {\ttfamily true} }\end{DoxyParamCaption})}
+
+It creates a new \mbox{\hyperlink{classSlider}{Slider}} object with the given name, bounds, value, min\+Value, max\+Value, and enabled
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the slider. This is used to label the slider. \\
+\hline
+{\em bounds} & The rectangle that defines the size and position of the slider. \\
+\hline
+{\em value} & The value that the slider will modify. \\
+\hline
+{\em min\+Value} & The minimum value the slider can be set to. \\
+\hline
+{\em max\+Value} & The maximum value the slider can have. \\
+\hline
+{\em enabled} & Whether or not the slider is enabled. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classSlider_a87ae38e394d916107503c26dc7c2291c}\label{classSlider_a87ae38e394d916107503c26dc7c2291c}} 
+\index{Slider@{Slider}!Draw@{Draw}}
+\index{Draw@{Draw}!Slider@{Slider}}
+\doxysubsubsection{\texorpdfstring{Draw()}{Draw()}}
+{\footnotesize\ttfamily void Slider\+::\+Draw (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It draws a rectangle with a rectangle inside it
+
+\begin{DoxyReturn}{Returns}
+A pointer to the value of the slider. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classSlider_a82a924ea6674d1b36ad12e06403122c2}\label{classSlider_a82a924ea6674d1b36ad12e06403122c2}} 
+\index{Slider@{Slider}!SetEnabled@{SetEnabled}}
+\index{SetEnabled@{SetEnabled}!Slider@{Slider}}
+\doxysubsubsection{\texorpdfstring{SetEnabled()}{SetEnabled()}}
+{\footnotesize\ttfamily void Slider\+::\+Set\+Enabled (\begin{DoxyParamCaption}\item[{bool}]{enabled }\end{DoxyParamCaption})}
+
+Sets the enabled state of the slider.
+
+
+\begin{DoxyParams}{Parameters}
+{\em enabled} & Whether or not the slider is enabled. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classSlider_a80b8aa612d4a419bbdb1bbb1bdbb0900}\label{classSlider_a80b8aa612d4a419bbdb1bbb1bdbb0900}} 
+\index{Slider@{Slider}!SetValue@{SetValue}}
+\index{SetValue@{SetValue}!Slider@{Slider}}
+\doxysubsubsection{\texorpdfstring{SetValue()}{SetValue()}}
+{\footnotesize\ttfamily void Slider\+::\+Set\+Value (\begin{DoxyParamCaption}\item[{float $\ast$}]{value,  }\item[{bool}]{enable = {\ttfamily true} }\end{DoxyParamCaption})}
+
+It sets the value of the slider to the value of the float pointer passed in
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The value to set the slider to. \\
+\hline
+{\em enable} & If true, the slider will be enabled. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classSlider_aa57c1ba728593185a57db8fb06afed14}\label{classSlider_aa57c1ba728593185a57db8fb06afed14}} 
+\index{Slider@{Slider}!SetValues@{SetValues}}
+\index{SetValues@{SetValues}!Slider@{Slider}}
+\doxysubsubsection{\texorpdfstring{SetValues()}{SetValues()}}
+{\footnotesize\ttfamily void Slider\+::\+Set\+Values (\begin{DoxyParamCaption}\item[{float $\ast$}]{value,  }\item[{float}]{min\+Value,  }\item[{float}]{max\+Value }\end{DoxyParamCaption})}
+
+Set the value, minimum value, and maximum value of the slider.
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & This is the value that the slider will be changing. \\
+\hline
+{\em min\+Value} & The minimum value of the slider. \\
+\hline
+{\em max\+Value} & The maximum value of the slider. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classSlider_a9b2a1c0235e5b787f57437ad9f298e1b}\label{classSlider_a9b2a1c0235e5b787f57437ad9f298e1b}} 
+\index{Slider@{Slider}!UpdateSlider@{UpdateSlider}}
+\index{UpdateSlider@{UpdateSlider}!Slider@{Slider}}
+\doxysubsubsection{\texorpdfstring{UpdateSlider()}{UpdateSlider()}}
+{\footnotesize\ttfamily bool Slider\+::\+Update\+Slider (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+If the mouse is over the slider, and the left mouse button is pressed, the slider is dragged, and the value is updated accordingly
+
+\begin{DoxyReturn}{Returns}
+A boolean value. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+client/includes/slider.\+hpp\item 
+client/src/slider.\+cpp\end{DoxyCompactItemize}

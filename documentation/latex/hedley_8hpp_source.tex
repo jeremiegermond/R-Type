@@ -1,0 +1,2051 @@
+\hypertarget{hedley_8hpp_source}{}\doxysection{hedley.\+hpp}
+\label{hedley_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/thirdparty/hedley/hedley.hpp@{build/\_deps/json-\/src/include/nlohmann/thirdparty/hedley/hedley.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{2 }
+\DoxyCodeLine{3 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{4 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{5 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{6 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{7 \textcolor{comment}{//}}
+\DoxyCodeLine{8 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{9 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2016-\/2021 Evan Nemerson <evan@nemerson.com>}}
+\DoxyCodeLine{10 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{11 }
+\DoxyCodeLine{12 \textcolor{comment}{/* Hedley -\/ https://nemequ.github.io/hedley}}
+\DoxyCodeLine{13 \textcolor{comment}{ * Created by Evan Nemerson <evan@nemerson.com>}}
+\DoxyCodeLine{14 \textcolor{comment}{ */}}
+\DoxyCodeLine{15 }
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#if !defined(JSON\_HEDLEY\_VERSION) || (JSON\_HEDLEY\_VERSION < 15)}}
+\DoxyCodeLine{17 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_VERSION)}}
+\DoxyCodeLine{18 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_VERSION}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_VERSION 15}}
+\DoxyCodeLine{21 }
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_STRINGIFY\_EX)}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_STRINGIFY\_EX}}
+\DoxyCodeLine{24 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_STRINGIFY\_EX(x) \#x}}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_STRINGIFY)}}
+\DoxyCodeLine{28 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_STRINGIFY}}
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{30 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_STRINGIFY(x) JSON\_HEDLEY\_STRINGIFY\_EX(x)}}
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CONCAT\_EX)}}
+\DoxyCodeLine{33 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CONCAT\_EX}}
+\DoxyCodeLine{34 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{35 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CONCAT\_EX(a,b) a\#\#b}}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CONCAT)}}
+\DoxyCodeLine{38 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CONCAT}}
+\DoxyCodeLine{39 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{40 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CONCAT(a,b) JSON\_HEDLEY\_CONCAT\_EX(a,b)}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{42 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CONCAT3\_EX)}}
+\DoxyCodeLine{43 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CONCAT3\_EX}}
+\DoxyCodeLine{44 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{45 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CONCAT3\_EX(a,b,c) a\#\#b\#\#c}}
+\DoxyCodeLine{46 }
+\DoxyCodeLine{47 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CONCAT3)}}
+\DoxyCodeLine{48 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CONCAT3}}
+\DoxyCodeLine{49 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{50 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CONCAT3(a,b,c) JSON\_HEDLEY\_CONCAT3\_EX(a,b,c)}}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{52 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_VERSION\_ENCODE)}}
+\DoxyCodeLine{53 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_VERSION\_ENCODE}}
+\DoxyCodeLine{54 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{55 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_VERSION\_ENCODE(major,minor,revision) (((major) * 1000000) + ((minor) * 1000) + (revision))}}
+\DoxyCodeLine{56 }
+\DoxyCodeLine{57 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_VERSION\_DECODE\_MAJOR)}}
+\DoxyCodeLine{58 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_VERSION\_DECODE\_MAJOR}}
+\DoxyCodeLine{59 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{60 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_VERSION\_DECODE\_MAJOR(version) ((version) / 1000000)}}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_VERSION\_DECODE\_MINOR)}}
+\DoxyCodeLine{63 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_VERSION\_DECODE\_MINOR}}
+\DoxyCodeLine{64 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{65 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_VERSION\_DECODE\_MINOR(version) (((version) \% 1000000) / 1000)}}
+\DoxyCodeLine{66 }
+\DoxyCodeLine{67 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_VERSION\_DECODE\_REVISION)}}
+\DoxyCodeLine{68 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_VERSION\_DECODE\_REVISION}}
+\DoxyCodeLine{69 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{70 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_VERSION\_DECODE\_REVISION(version) ((version) \% 1000)}}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_VERSION)}}
+\DoxyCodeLine{73 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_VERSION}}
+\DoxyCodeLine{74 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{75 \textcolor{preprocessor}{\#if defined(\_\_GNUC\_\_) \&\& defined(\_\_GNUC\_PATCHLEVEL\_\_)}}
+\DoxyCodeLine{76 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_GNUC\_\_, \_\_GNUC\_MINOR\_\_, \_\_GNUC\_PATCHLEVEL\_\_)}}
+\DoxyCodeLine{77 \textcolor{preprocessor}{\#elif defined(\_\_GNUC\_\_)}}
+\DoxyCodeLine{78 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_GNUC\_\_, \_\_GNUC\_MINOR\_\_, 0)}}
+\DoxyCodeLine{79 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{80 }
+\DoxyCodeLine{81 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_VERSION\_CHECK)}}
+\DoxyCodeLine{82 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_VERSION\_CHECK}}
+\DoxyCodeLine{83 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{84 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_VERSION)}}
+\DoxyCodeLine{85 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_GNUC\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{86 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{87 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{88 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_MSVC\_VERSION)}}
+\DoxyCodeLine{91 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_MSVC\_VERSION}}
+\DoxyCodeLine{92 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{93 \textcolor{preprocessor}{\#if defined(\_MSC\_FULL\_VER) \&\& (\_MSC\_FULL\_VER >= 140000000) \&\& !defined(\_\_ICL)}}
+\DoxyCodeLine{94 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MSVC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_MSC\_FULL\_VER / 10000000, (\_MSC\_FULL\_VER \% 10000000) / 100000, (\_MSC\_FULL\_VER \% 100000) / 100)}}
+\DoxyCodeLine{95 \textcolor{preprocessor}{\#elif defined(\_MSC\_FULL\_VER) \&\& !defined(\_\_ICL)}}
+\DoxyCodeLine{96 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MSVC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_MSC\_FULL\_VER / 1000000, (\_MSC\_FULL\_VER \% 1000000) / 10000, (\_MSC\_FULL\_VER \% 10000) / 10)}}
+\DoxyCodeLine{97 \textcolor{preprocessor}{\#elif defined(\_MSC\_VER) \&\& !defined(\_\_ICL)}}
+\DoxyCodeLine{98 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MSVC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_MSC\_VER / 100, \_MSC\_VER \% 100, 0)}}
+\DoxyCodeLine{99 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{100 }
+\DoxyCodeLine{101 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_MSVC\_VERSION\_CHECK)}}
+\DoxyCodeLine{102 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_MSVC\_VERSION\_CHECK}}
+\DoxyCodeLine{103 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{104 \textcolor{preprocessor}{\#if !defined(JSON\_HEDLEY\_MSVC\_VERSION)}}
+\DoxyCodeLine{105 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{106 \textcolor{preprocessor}{\#elif defined(\_MSC\_VER) \&\& (\_MSC\_VER >= 1400)}}
+\DoxyCodeLine{107 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(major,minor,patch) (\_MSC\_FULL\_VER >= ((major * 10000000) + (minor * 100000) + (patch)))}}
+\DoxyCodeLine{108 \textcolor{preprocessor}{\#elif defined(\_MSC\_VER) \&\& (\_MSC\_VER >= 1200)}}
+\DoxyCodeLine{109 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(major,minor,patch) (\_MSC\_FULL\_VER >= ((major * 1000000) + (minor * 10000) + (patch)))}}
+\DoxyCodeLine{110 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{111 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(major,minor,patch) (\_MSC\_VER >= ((major * 100) + (minor)))}}
+\DoxyCodeLine{112 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{113 }
+\DoxyCodeLine{114 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_INTEL\_VERSION)}}
+\DoxyCodeLine{115 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_INTEL\_VERSION}}
+\DoxyCodeLine{116 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{117 \textcolor{preprocessor}{\#if defined(\_\_INTEL\_COMPILER) \&\& defined(\_\_INTEL\_COMPILER\_UPDATE) \&\& !defined(\_\_ICL)}}
+\DoxyCodeLine{118 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INTEL\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_INTEL\_COMPILER / 100, \_\_INTEL\_COMPILER \% 100, \_\_INTEL\_COMPILER\_UPDATE)}}
+\DoxyCodeLine{119 \textcolor{preprocessor}{\#elif defined(\_\_INTEL\_COMPILER) \&\& !defined(\_\_ICL)}}
+\DoxyCodeLine{120 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INTEL\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_INTEL\_COMPILER / 100, \_\_INTEL\_COMPILER \% 100, 0)}}
+\DoxyCodeLine{121 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{122 }
+\DoxyCodeLine{123 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_INTEL\_VERSION\_CHECK)}}
+\DoxyCodeLine{124 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_INTEL\_VERSION\_CHECK}}
+\DoxyCodeLine{125 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{126 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_INTEL\_VERSION)}}
+\DoxyCodeLine{127 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_INTEL\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{128 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{129 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{130 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{132 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_INTEL\_CL\_VERSION)}}
+\DoxyCodeLine{133 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_INTEL\_CL\_VERSION}}
+\DoxyCodeLine{134 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{135 \textcolor{preprocessor}{\#if defined(\_\_INTEL\_COMPILER) \&\& defined(\_\_INTEL\_COMPILER\_UPDATE) \&\& defined(\_\_ICL)}}
+\DoxyCodeLine{136 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INTEL\_CL\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_INTEL\_COMPILER, \_\_INTEL\_COMPILER\_UPDATE, 0)}}
+\DoxyCodeLine{137 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{138 }
+\DoxyCodeLine{139 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK)}}
+\DoxyCodeLine{140 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK}}
+\DoxyCodeLine{141 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{142 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_INTEL\_CL\_VERSION)}}
+\DoxyCodeLine{143 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_INTEL\_CL\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{144 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{145 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{146 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{147 }
+\DoxyCodeLine{148 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PGI\_VERSION)}}
+\DoxyCodeLine{149 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PGI\_VERSION}}
+\DoxyCodeLine{150 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{151 \textcolor{preprocessor}{\#if defined(\_\_PGI) \&\& defined(\_\_PGIC\_\_) \&\& defined(\_\_PGIC\_MINOR\_\_) \&\& defined(\_\_PGIC\_PATCHLEVEL\_\_)}}
+\DoxyCodeLine{152 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PGI\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_PGIC\_\_, \_\_PGIC\_MINOR\_\_, \_\_PGIC\_PATCHLEVEL\_\_)}}
+\DoxyCodeLine{153 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{154 }
+\DoxyCodeLine{155 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PGI\_VERSION\_CHECK)}}
+\DoxyCodeLine{156 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PGI\_VERSION\_CHECK}}
+\DoxyCodeLine{157 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{158 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PGI\_VERSION)}}
+\DoxyCodeLine{159 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PGI\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_PGI\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{160 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{161 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PGI\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{162 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{163 }
+\DoxyCodeLine{164 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_SUNPRO\_VERSION)}}
+\DoxyCodeLine{165 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_SUNPRO\_VERSION}}
+\DoxyCodeLine{166 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{167 \textcolor{preprocessor}{\#if defined(\_\_SUNPRO\_C) \&\& (\_\_SUNPRO\_C > 0x1000)}}
+\DoxyCodeLine{168 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SUNPRO\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE((((\_\_SUNPRO\_C >> 16) \& 0xf) * 10) + ((\_\_SUNPRO\_C >> 12) \& 0xf), (((\_\_SUNPRO\_C >> 8) \& 0xf) * 10) + ((\_\_SUNPRO\_C >> 4) \& 0xf), (\_\_SUNPRO\_C \& 0xf) * 10)}}
+\DoxyCodeLine{169 \textcolor{preprocessor}{\#elif defined(\_\_SUNPRO\_C)}}
+\DoxyCodeLine{170 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SUNPRO\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE((\_\_SUNPRO\_C >> 8) \& 0xf, (\_\_SUNPRO\_C >> 4) \& 0xf, (\_\_SUNPRO\_C) \& 0xf)}}
+\DoxyCodeLine{171 \textcolor{preprocessor}{\#elif defined(\_\_SUNPRO\_CC) \&\& (\_\_SUNPRO\_CC > 0x1000)}}
+\DoxyCodeLine{172 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SUNPRO\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE((((\_\_SUNPRO\_CC >> 16) \& 0xf) * 10) + ((\_\_SUNPRO\_CC >> 12) \& 0xf), (((\_\_SUNPRO\_CC >> 8) \& 0xf) * 10) + ((\_\_SUNPRO\_CC >> 4) \& 0xf), (\_\_SUNPRO\_CC \& 0xf) * 10)}}
+\DoxyCodeLine{173 \textcolor{preprocessor}{\#elif defined(\_\_SUNPRO\_CC)}}
+\DoxyCodeLine{174 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SUNPRO\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE((\_\_SUNPRO\_CC >> 8) \& 0xf, (\_\_SUNPRO\_CC >> 4) \& 0xf, (\_\_SUNPRO\_CC) \& 0xf)}}
+\DoxyCodeLine{175 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK)}}
+\DoxyCodeLine{178 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK}}
+\DoxyCodeLine{179 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{180 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_SUNPRO\_VERSION)}}
+\DoxyCodeLine{181 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_SUNPRO\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{182 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{183 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{184 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{185 }
+\DoxyCodeLine{186 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_EMSCRIPTEN\_VERSION)}}
+\DoxyCodeLine{187 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_EMSCRIPTEN\_VERSION}}
+\DoxyCodeLine{188 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{189 \textcolor{preprocessor}{\#if defined(\_\_EMSCRIPTEN\_\_)}}
+\DoxyCodeLine{190 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_EMSCRIPTEN\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_EMSCRIPTEN\_major\_\_, \_\_EMSCRIPTEN\_minor\_\_, \_\_EMSCRIPTEN\_tiny\_\_)}}
+\DoxyCodeLine{191 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{192 }
+\DoxyCodeLine{193 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_EMSCRIPTEN\_VERSION\_CHECK)}}
+\DoxyCodeLine{194 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_EMSCRIPTEN\_VERSION\_CHECK}}
+\DoxyCodeLine{195 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{196 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_EMSCRIPTEN\_VERSION)}}
+\DoxyCodeLine{197 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_EMSCRIPTEN\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_EMSCRIPTEN\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{198 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{199 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_EMSCRIPTEN\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{200 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{201 }
+\DoxyCodeLine{202 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_ARM\_VERSION)}}
+\DoxyCodeLine{203 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_ARM\_VERSION}}
+\DoxyCodeLine{204 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{205 \textcolor{preprocessor}{\#if defined(\_\_CC\_ARM) \&\& defined(\_\_ARMCOMPILER\_VERSION)}}
+\DoxyCodeLine{206 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ARM\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_ARMCOMPILER\_VERSION / 1000000, (\_\_ARMCOMPILER\_VERSION \% 1000000) / 10000, (\_\_ARMCOMPILER\_VERSION \% 10000) / 100)}}
+\DoxyCodeLine{207 \textcolor{preprocessor}{\#elif defined(\_\_CC\_ARM) \&\& defined(\_\_ARMCC\_VERSION)}}
+\DoxyCodeLine{208 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ARM\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_ARMCC\_VERSION / 1000000, (\_\_ARMCC\_VERSION \% 1000000) / 10000, (\_\_ARMCC\_VERSION \% 10000) / 100)}}
+\DoxyCodeLine{209 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{210 }
+\DoxyCodeLine{211 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_ARM\_VERSION\_CHECK)}}
+\DoxyCodeLine{212 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_ARM\_VERSION\_CHECK}}
+\DoxyCodeLine{213 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{214 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_ARM\_VERSION)}}
+\DoxyCodeLine{215 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ARM\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_ARM\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{216 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{217 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ARM\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{218 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{219 }
+\DoxyCodeLine{220 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IBM\_VERSION)}}
+\DoxyCodeLine{221 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_IBM\_VERSION}}
+\DoxyCodeLine{222 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{223 \textcolor{preprocessor}{\#if defined(\_\_ibmxl\_\_)}}
+\DoxyCodeLine{224 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IBM\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_ibmxl\_version\_\_, \_\_ibmxl\_release\_\_, \_\_ibmxl\_modification\_\_)}}
+\DoxyCodeLine{225 \textcolor{preprocessor}{\#elif defined(\_\_xlC\_\_) \&\& defined(\_\_xlC\_ver\_\_)}}
+\DoxyCodeLine{226 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IBM\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_xlC\_\_ >> 8, \_\_xlC\_\_ \& 0xff, (\_\_xlC\_ver\_\_ >> 8) \& 0xff)}}
+\DoxyCodeLine{227 \textcolor{preprocessor}{\#elif defined(\_\_xlC\_\_)}}
+\DoxyCodeLine{228 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IBM\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_xlC\_\_ >> 8, \_\_xlC\_\_ \& 0xff, 0)}}
+\DoxyCodeLine{229 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{230 }
+\DoxyCodeLine{231 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IBM\_VERSION\_CHECK)}}
+\DoxyCodeLine{232 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_IBM\_VERSION\_CHECK}}
+\DoxyCodeLine{233 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{234 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IBM\_VERSION)}}
+\DoxyCodeLine{235 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IBM\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_IBM\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{236 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{237 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IBM\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{238 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{239 }
+\DoxyCodeLine{240 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_VERSION)}}
+\DoxyCodeLine{241 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_VERSION}}
+\DoxyCodeLine{242 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{243 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{244 \textcolor{preprocessor}{    defined(\_\_TI\_COMPILER\_VERSION\_\_) \&\& \(\backslash\)}}
+\DoxyCodeLine{245 \textcolor{preprocessor}{    ( \(\backslash\)}}
+\DoxyCodeLine{246 \textcolor{preprocessor}{      defined(\_\_TMS470\_\_) || defined(\_\_TI\_ARM\_\_) || \(\backslash\)}}
+\DoxyCodeLine{247 \textcolor{preprocessor}{      defined(\_\_MSP430\_\_) || \(\backslash\)}}
+\DoxyCodeLine{248 \textcolor{preprocessor}{      defined(\_\_TMS320C2000\_\_) \(\backslash\)}}
+\DoxyCodeLine{249 \textcolor{preprocessor}{    )}}
+\DoxyCodeLine{250 \textcolor{preprocessor}{\#if (\_\_TI\_COMPILER\_VERSION\_\_ >= 16000000)}}
+\DoxyCodeLine{251 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TI\_COMPILER\_VERSION\_\_ / 1000000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000000) / 1000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000))}}
+\DoxyCodeLine{252 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{253 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{254 }
+\DoxyCodeLine{255 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_VERSION\_CHECK)}}
+\DoxyCodeLine{256 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_VERSION\_CHECK}}
+\DoxyCodeLine{257 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{258 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_VERSION)}}
+\DoxyCodeLine{259 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TI\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{260 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{261 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{262 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{263 }
+\DoxyCodeLine{264 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL2000\_VERSION)}}
+\DoxyCodeLine{265 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL2000\_VERSION}}
+\DoxyCodeLine{266 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{267 \textcolor{preprocessor}{\#if defined(\_\_TI\_COMPILER\_VERSION\_\_) \&\& defined(\_\_TMS320C2000\_\_)}}
+\DoxyCodeLine{268 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL2000\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TI\_COMPILER\_VERSION\_\_ / 1000000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000000) / 1000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000))}}
+\DoxyCodeLine{269 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{270 }
+\DoxyCodeLine{271 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK)}}
+\DoxyCodeLine{272 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK}}
+\DoxyCodeLine{273 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{274 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL2000\_VERSION)}}
+\DoxyCodeLine{275 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TI\_CL2000\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{276 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{277 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{278 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{279 }
+\DoxyCodeLine{280 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL430\_VERSION)}}
+\DoxyCodeLine{281 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL430\_VERSION}}
+\DoxyCodeLine{282 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{283 \textcolor{preprocessor}{\#if defined(\_\_TI\_COMPILER\_VERSION\_\_) \&\& defined(\_\_MSP430\_\_)}}
+\DoxyCodeLine{284 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL430\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TI\_COMPILER\_VERSION\_\_ / 1000000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000000) / 1000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000))}}
+\DoxyCodeLine{285 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{286 }
+\DoxyCodeLine{287 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK)}}
+\DoxyCodeLine{288 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK}}
+\DoxyCodeLine{289 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{290 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL430\_VERSION)}}
+\DoxyCodeLine{291 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TI\_CL430\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{292 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{293 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{294 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{295 }
+\DoxyCodeLine{296 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_ARMCL\_VERSION)}}
+\DoxyCodeLine{297 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_ARMCL\_VERSION}}
+\DoxyCodeLine{298 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{299 \textcolor{preprocessor}{\#if defined(\_\_TI\_COMPILER\_VERSION\_\_) \&\& (defined(\_\_TMS470\_\_) || defined(\_\_TI\_ARM\_\_))}}
+\DoxyCodeLine{300 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_ARMCL\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TI\_COMPILER\_VERSION\_\_ / 1000000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000000) / 1000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000))}}
+\DoxyCodeLine{301 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{302 }
+\DoxyCodeLine{303 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK)}}
+\DoxyCodeLine{304 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK}}
+\DoxyCodeLine{305 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{306 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_ARMCL\_VERSION)}}
+\DoxyCodeLine{307 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TI\_ARMCL\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{308 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{309 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{310 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{311 }
+\DoxyCodeLine{312 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL6X\_VERSION)}}
+\DoxyCodeLine{313 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL6X\_VERSION}}
+\DoxyCodeLine{314 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{315 \textcolor{preprocessor}{\#if defined(\_\_TI\_COMPILER\_VERSION\_\_) \&\& defined(\_\_TMS320C6X\_\_)}}
+\DoxyCodeLine{316 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL6X\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TI\_COMPILER\_VERSION\_\_ / 1000000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000000) / 1000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000))}}
+\DoxyCodeLine{317 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{318 }
+\DoxyCodeLine{319 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK)}}
+\DoxyCodeLine{320 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK}}
+\DoxyCodeLine{321 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{322 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL6X\_VERSION)}}
+\DoxyCodeLine{323 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TI\_CL6X\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{324 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{325 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{326 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{327 }
+\DoxyCodeLine{328 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL7X\_VERSION)}}
+\DoxyCodeLine{329 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL7X\_VERSION}}
+\DoxyCodeLine{330 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{331 \textcolor{preprocessor}{\#if defined(\_\_TI\_COMPILER\_VERSION\_\_) \&\& defined(\_\_C7000\_\_)}}
+\DoxyCodeLine{332 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL7X\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TI\_COMPILER\_VERSION\_\_ / 1000000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000000) / 1000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000))}}
+\DoxyCodeLine{333 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{334 }
+\DoxyCodeLine{335 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK)}}
+\DoxyCodeLine{336 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK}}
+\DoxyCodeLine{337 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{338 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CL7X\_VERSION)}}
+\DoxyCodeLine{339 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TI\_CL7X\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{340 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{341 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{342 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{343 }
+\DoxyCodeLine{344 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CLPRU\_VERSION)}}
+\DoxyCodeLine{345 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CLPRU\_VERSION}}
+\DoxyCodeLine{346 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{347 \textcolor{preprocessor}{\#if defined(\_\_TI\_COMPILER\_VERSION\_\_) \&\& defined(\_\_PRU\_\_)}}
+\DoxyCodeLine{348 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CLPRU\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TI\_COMPILER\_VERSION\_\_ / 1000000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000000) / 1000, (\_\_TI\_COMPILER\_VERSION\_\_ \% 1000))}}
+\DoxyCodeLine{349 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{350 }
+\DoxyCodeLine{351 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK)}}
+\DoxyCodeLine{352 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK}}
+\DoxyCodeLine{353 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{354 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TI\_CLPRU\_VERSION)}}
+\DoxyCodeLine{355 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TI\_CLPRU\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{356 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{357 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{358 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{359 }
+\DoxyCodeLine{360 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CRAY\_VERSION)}}
+\DoxyCodeLine{361 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CRAY\_VERSION}}
+\DoxyCodeLine{362 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{363 \textcolor{preprocessor}{\#if defined(\_CRAYC)}}
+\DoxyCodeLine{364 \textcolor{preprocessor}{    \#if defined(\_RELEASE\_PATCHLEVEL)}}
+\DoxyCodeLine{365 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_CRAY\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_RELEASE\_MAJOR, \_RELEASE\_MINOR, \_RELEASE\_PATCHLEVEL)}}
+\DoxyCodeLine{366 \textcolor{preprocessor}{    \#else}}
+\DoxyCodeLine{367 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_CRAY\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_RELEASE\_MAJOR, \_RELEASE\_MINOR, 0)}}
+\DoxyCodeLine{368 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{369 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{370 }
+\DoxyCodeLine{371 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CRAY\_VERSION\_CHECK)}}
+\DoxyCodeLine{372 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CRAY\_VERSION\_CHECK}}
+\DoxyCodeLine{373 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{374 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CRAY\_VERSION)}}
+\DoxyCodeLine{375 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_CRAY\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{376 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{377 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{378 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{379 }
+\DoxyCodeLine{380 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IAR\_VERSION)}}
+\DoxyCodeLine{381 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_IAR\_VERSION}}
+\DoxyCodeLine{382 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{383 \textcolor{preprocessor}{\#if defined(\_\_IAR\_SYSTEMS\_ICC\_\_)}}
+\DoxyCodeLine{384 \textcolor{preprocessor}{    \#if \_\_VER\_\_ > 1000}}
+\DoxyCodeLine{385 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_IAR\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE((\_\_VER\_\_ / 1000000), ((\_\_VER\_\_ / 1000) \% 1000), (\_\_VER\_\_ \% 1000))}}
+\DoxyCodeLine{386 \textcolor{preprocessor}{    \#else}}
+\DoxyCodeLine{387 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_IAR\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_VER\_\_ / 100, \_\_VER\_\_ \% 100, 0)}}
+\DoxyCodeLine{388 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{389 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{390 }
+\DoxyCodeLine{391 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IAR\_VERSION\_CHECK)}}
+\DoxyCodeLine{392 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_IAR\_VERSION\_CHECK}}
+\DoxyCodeLine{393 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{394 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IAR\_VERSION)}}
+\DoxyCodeLine{395 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IAR\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_IAR\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{396 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{397 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IAR\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{398 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{399 }
+\DoxyCodeLine{400 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TINYC\_VERSION)}}
+\DoxyCodeLine{401 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TINYC\_VERSION}}
+\DoxyCodeLine{402 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{403 \textcolor{preprocessor}{\#if defined(\_\_TINYC\_\_)}}
+\DoxyCodeLine{404 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TINYC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_TINYC\_\_ / 1000, (\_\_TINYC\_\_ / 100) \% 10, \_\_TINYC\_\_ \% 100)}}
+\DoxyCodeLine{405 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{406 }
+\DoxyCodeLine{407 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TINYC\_VERSION\_CHECK)}}
+\DoxyCodeLine{408 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_TINYC\_VERSION\_CHECK}}
+\DoxyCodeLine{409 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{410 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_TINYC\_VERSION)}}
+\DoxyCodeLine{411 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TINYC\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_TINYC\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{412 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{413 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_TINYC\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{414 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{415 }
+\DoxyCodeLine{416 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DMC\_VERSION)}}
+\DoxyCodeLine{417 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DMC\_VERSION}}
+\DoxyCodeLine{418 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{419 \textcolor{preprocessor}{\#if defined(\_\_DMC\_\_)}}
+\DoxyCodeLine{420 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DMC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_DMC\_\_ >> 8, (\_\_DMC\_\_ >> 4) \& 0xf, \_\_DMC\_\_ \& 0xf)}}
+\DoxyCodeLine{421 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{422 }
+\DoxyCodeLine{423 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DMC\_VERSION\_CHECK)}}
+\DoxyCodeLine{424 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DMC\_VERSION\_CHECK}}
+\DoxyCodeLine{425 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{426 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DMC\_VERSION)}}
+\DoxyCodeLine{427 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DMC\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_DMC\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{428 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{429 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DMC\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{430 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{431 }
+\DoxyCodeLine{432 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_COMPCERT\_VERSION)}}
+\DoxyCodeLine{433 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_COMPCERT\_VERSION}}
+\DoxyCodeLine{434 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{435 \textcolor{preprocessor}{\#if defined(\_\_COMPCERT\_VERSION\_\_)}}
+\DoxyCodeLine{436 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_COMPCERT\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_COMPCERT\_VERSION\_\_ / 10000, (\_\_COMPCERT\_VERSION\_\_ / 100) \% 100, \_\_COMPCERT\_VERSION\_\_ \% 100)}}
+\DoxyCodeLine{437 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{438 }
+\DoxyCodeLine{439 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_COMPCERT\_VERSION\_CHECK)}}
+\DoxyCodeLine{440 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_COMPCERT\_VERSION\_CHECK}}
+\DoxyCodeLine{441 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{442 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_COMPCERT\_VERSION)}}
+\DoxyCodeLine{443 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_COMPCERT\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_COMPCERT\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{444 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{445 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_COMPCERT\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{446 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{447 }
+\DoxyCodeLine{448 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PELLES\_VERSION)}}
+\DoxyCodeLine{449 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PELLES\_VERSION}}
+\DoxyCodeLine{450 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{451 \textcolor{preprocessor}{\#if defined(\_\_POCC\_\_)}}
+\DoxyCodeLine{452 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PELLES\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_POCC\_\_ / 100, \_\_POCC\_\_ \% 100, 0)}}
+\DoxyCodeLine{453 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{454 }
+\DoxyCodeLine{455 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PELLES\_VERSION\_CHECK)}}
+\DoxyCodeLine{456 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PELLES\_VERSION\_CHECK}}
+\DoxyCodeLine{457 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{458 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PELLES\_VERSION)}}
+\DoxyCodeLine{459 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_PELLES\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{460 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{461 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{462 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{463 }
+\DoxyCodeLine{464 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_MCST\_LCC\_VERSION)}}
+\DoxyCodeLine{465 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_MCST\_LCC\_VERSION}}
+\DoxyCodeLine{466 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{467 \textcolor{preprocessor}{\#if defined(\_\_LCC\_\_) \&\& defined(\_\_LCC\_MINOR\_\_)}}
+\DoxyCodeLine{468 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MCST\_LCC\_VERSION JSON\_HEDLEY\_VERSION\_ENCODE(\_\_LCC\_\_ / 100, \_\_LCC\_\_ \% 100, \_\_LCC\_MINOR\_\_)}}
+\DoxyCodeLine{469 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{470 }
+\DoxyCodeLine{471 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK)}}
+\DoxyCodeLine{472 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK}}
+\DoxyCodeLine{473 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{474 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_MCST\_LCC\_VERSION)}}
+\DoxyCodeLine{475 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_MCST\_LCC\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{476 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{477 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{478 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{479 }
+\DoxyCodeLine{480 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_VERSION)}}
+\DoxyCodeLine{481 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_VERSION}}
+\DoxyCodeLine{482 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{483 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{484 \textcolor{preprocessor}{    defined(JSON\_HEDLEY\_GNUC\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{485 \textcolor{preprocessor}{    !defined(\_\_clang\_\_) \&\& \(\backslash\)}}
+\DoxyCodeLine{486 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_INTEL\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{487 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_PGI\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{488 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_ARM\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{489 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_CRAY\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{490 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TI\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{491 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TI\_ARMCL\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{492 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TI\_CL430\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{493 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TI\_CL2000\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{494 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TI\_CL6X\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{495 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TI\_CL7X\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{496 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TI\_CLPRU\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{497 \textcolor{preprocessor}{    !defined(\_\_COMPCERT\_\_) \&\& \(\backslash\)}}
+\DoxyCodeLine{498 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_MCST\_LCC\_VERSION)}}
+\DoxyCodeLine{499 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_VERSION JSON\_HEDLEY\_GNUC\_VERSION}}
+\DoxyCodeLine{500 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{501 }
+\DoxyCodeLine{502 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_VERSION\_CHECK)}}
+\DoxyCodeLine{503 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_VERSION\_CHECK}}
+\DoxyCodeLine{504 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{505 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_VERSION)}}
+\DoxyCodeLine{506 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch) (JSON\_HEDLEY\_GCC\_VERSION >= JSON\_HEDLEY\_VERSION\_ENCODE(major, minor, patch))}}
+\DoxyCodeLine{507 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{508 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{509 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{510 }
+\DoxyCodeLine{511 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_ATTRIBUTE)}}
+\DoxyCodeLine{512 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_ATTRIBUTE}}
+\DoxyCodeLine{513 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{514 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{515 \textcolor{preprocessor}{  defined(\_\_has\_attribute) \&\& \(\backslash\)}}
+\DoxyCodeLine{516 \textcolor{preprocessor}{  ( \(\backslash\)}}
+\DoxyCodeLine{517 \textcolor{preprocessor}{    (!defined(JSON\_HEDLEY\_IAR\_VERSION) || JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,5,9)) \(\backslash\)}}
+\DoxyCodeLine{518 \textcolor{preprocessor}{  )}}
+\DoxyCodeLine{519 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_HAS\_ATTRIBUTE(attribute) \_\_has\_attribute(attribute)}}
+\DoxyCodeLine{520 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{521 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_HAS\_ATTRIBUTE(attribute) (0)}}
+\DoxyCodeLine{522 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{523 }
+\DoxyCodeLine{524 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_HAS\_ATTRIBUTE)}}
+\DoxyCodeLine{525 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_HAS\_ATTRIBUTE}}
+\DoxyCodeLine{526 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{527 \textcolor{preprocessor}{\#if defined(\_\_has\_attribute)}}
+\DoxyCodeLine{528 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_HAS\_ATTRIBUTE(attribute)}}
+\DoxyCodeLine{529 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{530 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{531 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{532 }
+\DoxyCodeLine{533 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_HAS\_ATTRIBUTE)}}
+\DoxyCodeLine{534 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_HAS\_ATTRIBUTE}}
+\DoxyCodeLine{535 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{536 \textcolor{preprocessor}{\#if defined(\_\_has\_attribute)}}
+\DoxyCodeLine{537 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_HAS\_ATTRIBUTE(attribute)}}
+\DoxyCodeLine{538 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{539 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{540 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{541 }
+\DoxyCodeLine{542 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE)}}
+\DoxyCodeLine{543 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE}}
+\DoxyCodeLine{544 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{545 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{546 \textcolor{preprocessor}{    defined(\_\_has\_cpp\_attribute) \&\& \(\backslash\)}}
+\DoxyCodeLine{547 \textcolor{preprocessor}{    defined(\_\_cplusplus) \&\& \(\backslash\)}}
+\DoxyCodeLine{548 \textcolor{preprocessor}{    (!defined(JSON\_HEDLEY\_SUNPRO\_VERSION) || JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,15,0))}}
+\DoxyCodeLine{549 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE(attribute) \_\_has\_cpp\_attribute(attribute)}}
+\DoxyCodeLine{550 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{551 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE(attribute) (0)}}
+\DoxyCodeLine{552 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{553 }
+\DoxyCodeLine{554 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE\_NS)}}
+\DoxyCodeLine{555 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE\_NS}}
+\DoxyCodeLine{556 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{557 \textcolor{preprocessor}{\#if !defined(\_\_cplusplus) || !defined(\_\_has\_cpp\_attribute)}}
+\DoxyCodeLine{558 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE\_NS(ns,attribute) (0)}}
+\DoxyCodeLine{559 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{560 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_PGI\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{561 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_IAR\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{562 \textcolor{preprocessor}{    (!defined(JSON\_HEDLEY\_SUNPRO\_VERSION) || JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,15,0)) \&\& \(\backslash\)}}
+\DoxyCodeLine{563 \textcolor{preprocessor}{    (!defined(JSON\_HEDLEY\_MSVC\_VERSION) || JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(19,20,0))}}
+\DoxyCodeLine{564 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE\_NS(ns,attribute) JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE(ns::attribute)}}
+\DoxyCodeLine{565 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{566 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE\_NS(ns,attribute) (0)}}
+\DoxyCodeLine{567 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{568 }
+\DoxyCodeLine{569 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_HAS\_CPP\_ATTRIBUTE)}}
+\DoxyCodeLine{570 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_HAS\_CPP\_ATTRIBUTE}}
+\DoxyCodeLine{571 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{572 \textcolor{preprocessor}{\#if defined(\_\_has\_cpp\_attribute) \&\& defined(\_\_cplusplus)}}
+\DoxyCodeLine{573 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_CPP\_ATTRIBUTE(attribute,major,minor,patch) \_\_has\_cpp\_attribute(attribute)}}
+\DoxyCodeLine{574 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{575 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_CPP\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{576 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{577 }
+\DoxyCodeLine{578 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_HAS\_CPP\_ATTRIBUTE)}}
+\DoxyCodeLine{579 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_HAS\_CPP\_ATTRIBUTE}}
+\DoxyCodeLine{580 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{581 \textcolor{preprocessor}{\#if defined(\_\_has\_cpp\_attribute) \&\& defined(\_\_cplusplus)}}
+\DoxyCodeLine{582 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_CPP\_ATTRIBUTE(attribute,major,minor,patch) \_\_has\_cpp\_attribute(attribute)}}
+\DoxyCodeLine{583 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{584 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_CPP\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{585 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{586 }
+\DoxyCodeLine{587 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_BUILTIN)}}
+\DoxyCodeLine{588 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_BUILTIN}}
+\DoxyCodeLine{589 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{590 \textcolor{preprocessor}{\#if defined(\_\_has\_builtin)}}
+\DoxyCodeLine{591 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_BUILTIN(builtin) \_\_has\_builtin(builtin)}}
+\DoxyCodeLine{592 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{593 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_BUILTIN(builtin) (0)}}
+\DoxyCodeLine{594 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{595 }
+\DoxyCodeLine{596 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_HAS\_BUILTIN)}}
+\DoxyCodeLine{597 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_HAS\_BUILTIN}}
+\DoxyCodeLine{598 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{599 \textcolor{preprocessor}{\#if defined(\_\_has\_builtin)}}
+\DoxyCodeLine{600 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_BUILTIN(builtin,major,minor,patch) \_\_has\_builtin(builtin)}}
+\DoxyCodeLine{601 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{602 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_BUILTIN(builtin,major,minor,patch) JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{603 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{604 }
+\DoxyCodeLine{605 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_HAS\_BUILTIN)}}
+\DoxyCodeLine{606 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_HAS\_BUILTIN}}
+\DoxyCodeLine{607 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{608 \textcolor{preprocessor}{\#if defined(\_\_has\_builtin)}}
+\DoxyCodeLine{609 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_BUILTIN(builtin,major,minor,patch) \_\_has\_builtin(builtin)}}
+\DoxyCodeLine{610 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{611 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_BUILTIN(builtin,major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{612 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{613 }
+\DoxyCodeLine{614 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_FEATURE)}}
+\DoxyCodeLine{615 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_FEATURE}}
+\DoxyCodeLine{616 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{617 \textcolor{preprocessor}{\#if defined(\_\_has\_feature)}}
+\DoxyCodeLine{618 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_FEATURE(feature) \_\_has\_feature(feature)}}
+\DoxyCodeLine{619 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{620 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_FEATURE(feature) (0)}}
+\DoxyCodeLine{621 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{622 }
+\DoxyCodeLine{623 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_HAS\_FEATURE)}}
+\DoxyCodeLine{624 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_HAS\_FEATURE}}
+\DoxyCodeLine{625 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{626 \textcolor{preprocessor}{\#if defined(\_\_has\_feature)}}
+\DoxyCodeLine{627 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_FEATURE(feature,major,minor,patch) \_\_has\_feature(feature)}}
+\DoxyCodeLine{628 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{629 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_FEATURE(feature,major,minor,patch) JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{630 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{631 }
+\DoxyCodeLine{632 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_HAS\_FEATURE)}}
+\DoxyCodeLine{633 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_HAS\_FEATURE}}
+\DoxyCodeLine{634 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{635 \textcolor{preprocessor}{\#if defined(\_\_has\_feature)}}
+\DoxyCodeLine{636 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_FEATURE(feature,major,minor,patch) \_\_has\_feature(feature)}}
+\DoxyCodeLine{637 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{638 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_FEATURE(feature,major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{639 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{640 }
+\DoxyCodeLine{641 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_EXTENSION)}}
+\DoxyCodeLine{642 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_EXTENSION}}
+\DoxyCodeLine{643 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{644 \textcolor{preprocessor}{\#if defined(\_\_has\_extension)}}
+\DoxyCodeLine{645 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_EXTENSION(extension) \_\_has\_extension(extension)}}
+\DoxyCodeLine{646 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{647 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_EXTENSION(extension) (0)}}
+\DoxyCodeLine{648 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{649 }
+\DoxyCodeLine{650 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_HAS\_EXTENSION)}}
+\DoxyCodeLine{651 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_HAS\_EXTENSION}}
+\DoxyCodeLine{652 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{653 \textcolor{preprocessor}{\#if defined(\_\_has\_extension)}}
+\DoxyCodeLine{654 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_EXTENSION(extension,major,minor,patch) \_\_has\_extension(extension)}}
+\DoxyCodeLine{655 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{656 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_EXTENSION(extension,major,minor,patch) JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{657 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{658 }
+\DoxyCodeLine{659 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_HAS\_EXTENSION)}}
+\DoxyCodeLine{660 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_HAS\_EXTENSION}}
+\DoxyCodeLine{661 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{662 \textcolor{preprocessor}{\#if defined(\_\_has\_extension)}}
+\DoxyCodeLine{663 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_EXTENSION(extension,major,minor,patch) \_\_has\_extension(extension)}}
+\DoxyCodeLine{664 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{665 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_EXTENSION(extension,major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{666 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{667 }
+\DoxyCodeLine{668 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_DECLSPEC\_ATTRIBUTE)}}
+\DoxyCodeLine{669 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_DECLSPEC\_ATTRIBUTE}}
+\DoxyCodeLine{670 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{671 \textcolor{preprocessor}{\#if defined(\_\_has\_declspec\_attribute)}}
+\DoxyCodeLine{672 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_DECLSPEC\_ATTRIBUTE(attribute) \_\_has\_declspec\_attribute(attribute)}}
+\DoxyCodeLine{673 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{674 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_DECLSPEC\_ATTRIBUTE(attribute) (0)}}
+\DoxyCodeLine{675 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{676 }
+\DoxyCodeLine{677 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_HAS\_DECLSPEC\_ATTRIBUTE)}}
+\DoxyCodeLine{678 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_HAS\_DECLSPEC\_ATTRIBUTE}}
+\DoxyCodeLine{679 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{680 \textcolor{preprocessor}{\#if defined(\_\_has\_declspec\_attribute)}}
+\DoxyCodeLine{681 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_DECLSPEC\_ATTRIBUTE(attribute,major,minor,patch) \_\_has\_declspec\_attribute(attribute)}}
+\DoxyCodeLine{682 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{683 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_DECLSPEC\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{684 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{685 }
+\DoxyCodeLine{686 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_HAS\_DECLSPEC\_ATTRIBUTE)}}
+\DoxyCodeLine{687 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_HAS\_DECLSPEC\_ATTRIBUTE}}
+\DoxyCodeLine{688 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{689 \textcolor{preprocessor}{\#if defined(\_\_has\_declspec\_attribute)}}
+\DoxyCodeLine{690 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_DECLSPEC\_ATTRIBUTE(attribute,major,minor,patch) \_\_has\_declspec\_attribute(attribute)}}
+\DoxyCodeLine{691 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{692 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_DECLSPEC\_ATTRIBUTE(attribute,major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{693 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{694 }
+\DoxyCodeLine{695 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_HAS\_WARNING)}}
+\DoxyCodeLine{696 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_HAS\_WARNING}}
+\DoxyCodeLine{697 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{698 \textcolor{preprocessor}{\#if defined(\_\_has\_warning)}}
+\DoxyCodeLine{699 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_WARNING(warning) \_\_has\_warning(warning)}}
+\DoxyCodeLine{700 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{701 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_HAS\_WARNING(warning) (0)}}
+\DoxyCodeLine{702 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{703 }
+\DoxyCodeLine{704 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GNUC\_HAS\_WARNING)}}
+\DoxyCodeLine{705 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GNUC\_HAS\_WARNING}}
+\DoxyCodeLine{706 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{707 \textcolor{preprocessor}{\#if defined(\_\_has\_warning)}}
+\DoxyCodeLine{708 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_WARNING(warning,major,minor,patch) \_\_has\_warning(warning)}}
+\DoxyCodeLine{709 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{710 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GNUC\_HAS\_WARNING(warning,major,minor,patch) JSON\_HEDLEY\_GNUC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{711 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{712 }
+\DoxyCodeLine{713 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_HAS\_WARNING)}}
+\DoxyCodeLine{714 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_HAS\_WARNING}}
+\DoxyCodeLine{715 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{716 \textcolor{preprocessor}{\#if defined(\_\_has\_warning)}}
+\DoxyCodeLine{717 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_WARNING(warning,major,minor,patch) \_\_has\_warning(warning)}}
+\DoxyCodeLine{718 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{719 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_HAS\_WARNING(warning,major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{720 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{721 }
+\DoxyCodeLine{722 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{723 \textcolor{preprocessor}{    (defined(\_\_STDC\_VERSION\_\_) \&\& (\_\_STDC\_VERSION\_\_ >= 199901L)) || \(\backslash\)}}
+\DoxyCodeLine{724 \textcolor{preprocessor}{    defined(\_\_clang\_\_) || \(\backslash\)}}
+\DoxyCodeLine{725 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,0,0) || \(\backslash\)}}
+\DoxyCodeLine{726 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{727 \textcolor{preprocessor}{    JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0) || \(\backslash\)}}
+\DoxyCodeLine{728 \textcolor{preprocessor}{    JSON\_HEDLEY\_PGI\_VERSION\_CHECK(18,4,0) || \(\backslash\)}}
+\DoxyCodeLine{729 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{730 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{731 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,7,0) || \(\backslash\)}}
+\DoxyCodeLine{732 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(2,0,1) || \(\backslash\)}}
+\DoxyCodeLine{733 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,1,0) || \(\backslash\)}}
+\DoxyCodeLine{734 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,0,0) || \(\backslash\)}}
+\DoxyCodeLine{735 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{736 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{737 \textcolor{preprocessor}{    JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(5,0,0) || \(\backslash\)}}
+\DoxyCodeLine{738 \textcolor{preprocessor}{    JSON\_HEDLEY\_TINYC\_VERSION\_CHECK(0,9,17) || \(\backslash\)}}
+\DoxyCodeLine{739 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(8,0,0) || \(\backslash\)}}
+\DoxyCodeLine{740 \textcolor{preprocessor}{    (JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) \&\& defined(\_\_C99\_PRAGMA\_OPERATOR))}}
+\DoxyCodeLine{741 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRAGMA(value) \_Pragma(\#value)}}
+\DoxyCodeLine{742 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(15,0,0)}}
+\DoxyCodeLine{743 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRAGMA(value) \_\_pragma(value)}}
+\DoxyCodeLine{744 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{745 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRAGMA(value)}}
+\DoxyCodeLine{746 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{747 }
+\DoxyCodeLine{748 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_PUSH)}}
+\DoxyCodeLine{749 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_PUSH}}
+\DoxyCodeLine{750 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{751 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_POP)}}
+\DoxyCodeLine{752 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_POP}}
+\DoxyCodeLine{753 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{754 \textcolor{preprocessor}{\#if defined(\_\_clang\_\_)}}
+\DoxyCodeLine{755 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \_Pragma("{}clang diagnostic push"{}})}
+\DoxyCodeLine{756 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP \_Pragma("{}clang diagnostic pop"{}})}
+\DoxyCodeLine{757 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0)}}
+\DoxyCodeLine{758 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \_Pragma("{}warning(push)"{}})}
+\DoxyCodeLine{759 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP \_Pragma("{}warning(pop)"{}})}
+\DoxyCodeLine{760 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,6,0)}}
+\DoxyCodeLine{761 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \_Pragma("{}GCC diagnostic push"{}})}
+\DoxyCodeLine{762 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP \_Pragma("{}GCC diagnostic pop"{}})}
+\DoxyCodeLine{763 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{764 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(15,0,0) || \(\backslash\)}}
+\DoxyCodeLine{765 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{766 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \_\_pragma(warning(push))}}
+\DoxyCodeLine{767 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP \_\_pragma(warning(pop))}}
+\DoxyCodeLine{768 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_ARM\_VERSION\_CHECK(5,6,0)}}
+\DoxyCodeLine{769 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \_Pragma("{}push"{}})}
+\DoxyCodeLine{770 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP \_Pragma("{}pop"{}})}
+\DoxyCodeLine{771 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{772 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{773 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{774 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,4,0) || \(\backslash\)}}
+\DoxyCodeLine{775 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(8,1,0) || \(\backslash\)}}
+\DoxyCodeLine{776 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{777 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0)}}
+\DoxyCodeLine{778 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \_Pragma("{}diag\_push"{}})}
+\DoxyCodeLine{779 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP \_Pragma("{}diag\_pop"{}})}
+\DoxyCodeLine{780 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(2,90,0)}}
+\DoxyCodeLine{781 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \_Pragma("{}warning(push)"{}})}
+\DoxyCodeLine{782 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP \_Pragma("{}warning(pop)"{}})}
+\DoxyCodeLine{783 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{784 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_PUSH}}
+\DoxyCodeLine{785 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_POP}}
+\DoxyCodeLine{786 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{787 }
+\DoxyCodeLine{788 \textcolor{comment}{/* JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_ is for}}
+\DoxyCodeLine{789 \textcolor{comment}{   HEDLEY INTERNAL USE ONLY.  API subject to change without notice. */}}
+\DoxyCodeLine{790 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_)}}
+\DoxyCodeLine{791 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_}}
+\DoxyCodeLine{792 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{793 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{794 \textcolor{preprocessor}{\#  if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wc++98-\/compat"{}})}
+\DoxyCodeLine{795 \textcolor{preprocessor}{\#    if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wc++17-\/extensions"{}})}
+\DoxyCodeLine{796 \textcolor{preprocessor}{\#      if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wc++1z-\/extensions"{}})}
+\DoxyCodeLine{797 \textcolor{preprocessor}{\#        define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_(xpr) \(\backslash\)}}
+\DoxyCodeLine{798 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{799 \textcolor{preprocessor}{    \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wc++98-\/compat\(\backslash\)"{}"{}}) \(\backslash\)}
+\DoxyCodeLine{800     \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wc++17-\/extensions\(\backslash\)"{}"{}) \(\backslash\)}
+\DoxyCodeLine{801     \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wc++1z-\/extensions\(\backslash\)"{}"{}) \(\backslash\)}
+\DoxyCodeLine{802     xpr \(\backslash\)}
+\DoxyCodeLine{803     JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{804 \textcolor{preprocessor}{\#      else}}
+\DoxyCodeLine{805 \textcolor{preprocessor}{\#        define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_(xpr) \(\backslash\)}}
+\DoxyCodeLine{806 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{807 \textcolor{preprocessor}{    \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wc++98-\/compat\(\backslash\)"{}"{}}) \(\backslash\)}
+\DoxyCodeLine{808     \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wc++17-\/extensions\(\backslash\)"{}"{}) \(\backslash\)}
+\DoxyCodeLine{809     xpr \(\backslash\)}
+\DoxyCodeLine{810     JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{811 \textcolor{preprocessor}{\#      endif}}
+\DoxyCodeLine{812 \textcolor{preprocessor}{\#    else}}
+\DoxyCodeLine{813 \textcolor{preprocessor}{\#      define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_(xpr) \(\backslash\)}}
+\DoxyCodeLine{814 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{815 \textcolor{preprocessor}{    \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wc++98-\/compat\(\backslash\)"{}"{}}) \(\backslash\)}
+\DoxyCodeLine{816     xpr \(\backslash\)}
+\DoxyCodeLine{817     JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{818 \textcolor{preprocessor}{\#    endif}}
+\DoxyCodeLine{819 \textcolor{preprocessor}{\#  endif}}
+\DoxyCodeLine{820 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{821 \textcolor{preprocessor}{\#if !defined(JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_)}}
+\DoxyCodeLine{822 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_(x) x}}
+\DoxyCodeLine{823 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{824 }
+\DoxyCodeLine{825 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CONST\_CAST)}}
+\DoxyCodeLine{826 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CONST\_CAST}}
+\DoxyCodeLine{827 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{828 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{829 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_CONST\_CAST(T, expr) (const\_cast<T>(expr))}}
+\DoxyCodeLine{830 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{831 \textcolor{preprocessor}{  JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wcast-\/qual"{}}) || \(\backslash\)}
+\DoxyCodeLine{832   JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,6,0) || \(\backslash\)}
+\DoxyCodeLine{833   JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0)}
+\DoxyCodeLine{834 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_CONST\_CAST(T, expr) (\_\_extension\_\_ (\{ \(\backslash\)}}
+\DoxyCodeLine{835 \textcolor{preprocessor}{        JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{836 \textcolor{preprocessor}{        JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CAST\_QUAL \(\backslash\)}}
+\DoxyCodeLine{837 \textcolor{preprocessor}{        ((T) (expr)); \(\backslash\)}}
+\DoxyCodeLine{838 \textcolor{preprocessor}{        JSON\_HEDLEY\_DIAGNOSTIC\_POP \(\backslash\)}}
+\DoxyCodeLine{839 \textcolor{preprocessor}{    \}))}}
+\DoxyCodeLine{840 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{841 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_CONST\_CAST(T, expr) ((T) (expr))}}
+\DoxyCodeLine{842 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{843 }
+\DoxyCodeLine{844 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_REINTERPRET\_CAST)}}
+\DoxyCodeLine{845 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_REINTERPRET\_CAST}}
+\DoxyCodeLine{846 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{847 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{848 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_REINTERPRET\_CAST(T, expr) (reinterpret\_cast<T>(expr))}}
+\DoxyCodeLine{849 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{850 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_REINTERPRET\_CAST(T, expr) ((T) (expr))}}
+\DoxyCodeLine{851 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{852 }
+\DoxyCodeLine{853 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_STATIC\_CAST)}}
+\DoxyCodeLine{854 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_STATIC\_CAST}}
+\DoxyCodeLine{855 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{856 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{857 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_STATIC\_CAST(T, expr) (static\_cast<T>(expr))}}
+\DoxyCodeLine{858 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{859 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_STATIC\_CAST(T, expr) ((T) (expr))}}
+\DoxyCodeLine{860 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{861 }
+\DoxyCodeLine{862 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CPP\_CAST)}}
+\DoxyCodeLine{863 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CPP\_CAST}}
+\DoxyCodeLine{864 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{865 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{866 \textcolor{preprocessor}{\#  if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wold-\/style-\/cast"{}})}
+\DoxyCodeLine{867 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_CPP\_CAST(T, expr) \(\backslash\)}}
+\DoxyCodeLine{868 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{869 \textcolor{preprocessor}{    \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wold-\/style-\/cast\(\backslash\)"{}"{}}) \(\backslash\)}
+\DoxyCodeLine{870     ((T) (expr)) \(\backslash\)}
+\DoxyCodeLine{871     JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{872 \textcolor{preprocessor}{\#  elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,3,0)}}
+\DoxyCodeLine{873 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_CPP\_CAST(T, expr) \(\backslash\)}}
+\DoxyCodeLine{874 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{875 \textcolor{preprocessor}{    \_Pragma("{}diag\_suppress=Pe137"{}}) \(\backslash\)}
+\DoxyCodeLine{876     JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{877 \textcolor{preprocessor}{\#  else}}
+\DoxyCodeLine{878 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_CPP\_CAST(T, expr) ((T) (expr))}}
+\DoxyCodeLine{879 \textcolor{preprocessor}{\#  endif}}
+\DoxyCodeLine{880 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{881 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_CPP\_CAST(T, expr) (expr)}}
+\DoxyCodeLine{882 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{883 }
+\DoxyCodeLine{884 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED)}}
+\DoxyCodeLine{885 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED}}
+\DoxyCodeLine{886 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{887 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wdeprecated-\/declarations"{}})}
+\DoxyCodeLine{888 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wdeprecated-\/declarations\(\backslash\)"{}"{}})}
+\DoxyCodeLine{889 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0)}}
+\DoxyCodeLine{890 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}warning(disable:1478 1786)"{}})}
+\DoxyCodeLine{891 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{892 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_\_pragma(warning(disable:1478 1786))}}
+\DoxyCodeLine{893 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PGI\_VERSION\_CHECK(20,7,0)}}
+\DoxyCodeLine{894 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}diag\_suppress 1215,1216,1444,1445"{}})}
+\DoxyCodeLine{895 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0)}}
+\DoxyCodeLine{896 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}diag\_suppress 1215,1444"{}})}
+\DoxyCodeLine{897 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,3,0)}}
+\DoxyCodeLine{898 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}GCC diagnostic ignored \(\backslash\)"{}-\/Wdeprecated-\/declarations\(\backslash\)"{}"{}})}
+\DoxyCodeLine{899 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(15,0,0)}}
+\DoxyCodeLine{900 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_\_pragma(warning(disable:4996))}}
+\DoxyCodeLine{901 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{902 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}diag\_suppress 1215,1444"{}})}
+\DoxyCodeLine{903 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{904 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{905 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{906 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{907 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{908 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{909 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{910 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{911 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{912 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{913 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{914 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0)}}
+\DoxyCodeLine{915 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}diag\_suppress 1291,1718"{}})}
+\DoxyCodeLine{916 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,13,0) \&\& !defined(\_\_cplusplus)}}
+\DoxyCodeLine{917 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}error\_messages(off,E\_DEPRECATED\_ATT,E\_DEPRECATED\_ATT\_MESS)"{}})}
+\DoxyCodeLine{918 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,13,0) \&\& defined(\_\_cplusplus)}}
+\DoxyCodeLine{919 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}error\_messages(off,symdeprecated,symdeprecated2)"{}})}
+\DoxyCodeLine{920 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{921 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}diag\_suppress=Pe1444,Pe1215"{}})}
+\DoxyCodeLine{922 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(2,90,0)}}
+\DoxyCodeLine{923 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED \_Pragma("{}warn(disable:2241)"{}})}
+\DoxyCodeLine{924 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{925 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_DEPRECATED}}
+\DoxyCodeLine{926 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{927 }
+\DoxyCodeLine{928 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS)}}
+\DoxyCodeLine{929 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS}}
+\DoxyCodeLine{930 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{931 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wunknown-\/pragmas"{}})}
+\DoxyCodeLine{932 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wunknown-\/pragmas\(\backslash\)"{}"{}})}
+\DoxyCodeLine{933 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0)}}
+\DoxyCodeLine{934 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}warning(disable:161)"{}})}
+\DoxyCodeLine{935 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{936 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_\_pragma(warning(disable:161))}}
+\DoxyCodeLine{937 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0)}}
+\DoxyCodeLine{938 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}diag\_suppress 1675"{}})}
+\DoxyCodeLine{939 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,3,0)}}
+\DoxyCodeLine{940 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}GCC diagnostic ignored \(\backslash\)"{}-\/Wunknown-\/pragmas\(\backslash\)"{}"{}})}
+\DoxyCodeLine{941 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(15,0,0)}}
+\DoxyCodeLine{942 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_\_pragma(warning(disable:4068))}}
+\DoxyCodeLine{943 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{944 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(16,9,0) || \(\backslash\)}}
+\DoxyCodeLine{945 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(8,0,0) || \(\backslash\)}}
+\DoxyCodeLine{946 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{947 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,3,0)}}
+\DoxyCodeLine{948 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}diag\_suppress 163"{}})}
+\DoxyCodeLine{949 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{950 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}diag\_suppress 163"{}})}
+\DoxyCodeLine{951 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{952 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}diag\_suppress=Pe161"{}})}
+\DoxyCodeLine{953 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{954 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \_Pragma("{}diag\_suppress 161"{}})}
+\DoxyCodeLine{955 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{956 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS}}
+\DoxyCodeLine{957 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{958 }
+\DoxyCodeLine{959 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES)}}
+\DoxyCodeLine{960 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES}}
+\DoxyCodeLine{961 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{962 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wunknown-\/attributes"{}})}
+\DoxyCodeLine{963 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wunknown-\/attributes\(\backslash\)"{}"{}})}
+\DoxyCodeLine{964 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,6,0)}}
+\DoxyCodeLine{965 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}GCC diagnostic ignored \(\backslash\)"{}-\/Wdeprecated-\/declarations\(\backslash\)"{}"{}})}
+\DoxyCodeLine{966 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(17,0,0)}}
+\DoxyCodeLine{967 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}warning(disable:1292)"{}})}
+\DoxyCodeLine{968 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{969 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_\_pragma(warning(disable:1292))}}
+\DoxyCodeLine{970 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(19,0,0)}}
+\DoxyCodeLine{971 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_\_pragma(warning(disable:5030))}}
+\DoxyCodeLine{972 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PGI\_VERSION\_CHECK(20,7,0)}}
+\DoxyCodeLine{973 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}diag\_suppress 1097,1098"{}})}
+\DoxyCodeLine{974 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0)}}
+\DoxyCodeLine{975 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}diag\_suppress 1097"{}})}
+\DoxyCodeLine{976 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,14,0) \&\& defined(\_\_cplusplus)}}
+\DoxyCodeLine{977 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}error\_messages(off,attrskipunsup)"{}})}
+\DoxyCodeLine{978 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{979 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(18,1,0) || \(\backslash\)}}
+\DoxyCodeLine{980 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(8,3,0) || \(\backslash\)}}
+\DoxyCodeLine{981 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0)}}
+\DoxyCodeLine{982 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}diag\_suppress 1173"{}})}
+\DoxyCodeLine{983 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{984 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}diag\_suppress=Pe1097"{}})}
+\DoxyCodeLine{985 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{986 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES \_Pragma("{}diag\_suppress 1097"{}})}
+\DoxyCodeLine{987 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{988 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_CPP\_ATTRIBUTES}}
+\DoxyCodeLine{989 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{990 }
+\DoxyCodeLine{991 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CAST\_QUAL)}}
+\DoxyCodeLine{992 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CAST\_QUAL}}
+\DoxyCodeLine{993 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{994 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wcast-\/qual"{}})}
+\DoxyCodeLine{995 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CAST\_QUAL \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wcast-\/qual\(\backslash\)"{}"{}})}
+\DoxyCodeLine{996 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0)}}
+\DoxyCodeLine{997 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CAST\_QUAL \_Pragma("{}warning(disable:2203 2331)"{}})}
+\DoxyCodeLine{998 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,0,0)}}
+\DoxyCodeLine{999 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CAST\_QUAL \_Pragma("{}GCC diagnostic ignored \(\backslash\)"{}-\/Wcast-\/qual\(\backslash\)"{}"{}})}
+\DoxyCodeLine{1000 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1001 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CAST\_QUAL}}
+\DoxyCodeLine{1002 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1003 }
+\DoxyCodeLine{1004 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNUSED\_FUNCTION)}}
+\DoxyCodeLine{1005 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNUSED\_FUNCTION}}
+\DoxyCodeLine{1006 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1007 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wunused-\/function"{}})}
+\DoxyCodeLine{1008 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNUSED\_FUNCTION \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wunused-\/function\(\backslash\)"{}"{}})}
+\DoxyCodeLine{1009 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,4,0)}}
+\DoxyCodeLine{1010 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNUSED\_FUNCTION \_Pragma("{}GCC diagnostic ignored \(\backslash\)"{}-\/Wunused-\/function\(\backslash\)"{}"{}})}
+\DoxyCodeLine{1011 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(1,0,0)}}
+\DoxyCodeLine{1012 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNUSED\_FUNCTION \_\_pragma(warning(disable:4505))}}
+\DoxyCodeLine{1013 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1014 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNUSED\_FUNCTION \_Pragma("{}diag\_suppress 3142"{}})}
+\DoxyCodeLine{1015 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1016 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNUSED\_FUNCTION}}
+\DoxyCodeLine{1017 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1018 }
+\DoxyCodeLine{1019 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DEPRECATED)}}
+\DoxyCodeLine{1020 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DEPRECATED}}
+\DoxyCodeLine{1021 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1022 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_DEPRECATED\_FOR)}}
+\DoxyCodeLine{1023 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_DEPRECATED\_FOR}}
+\DoxyCodeLine{1024 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1025 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1026 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(14,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1027 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1028 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED(since) \_\_declspec(deprecated("{}Since "{}} \# since))}
+\DoxyCodeLine{1029 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED\_FOR(since, replacement) \_\_declspec(deprecated("{}Since "{}} \#since "{}; use "{} \#replacement))}
+\DoxyCodeLine{1030 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1031 \textcolor{preprocessor}{    (JSON\_HEDLEY\_HAS\_EXTENSION(attribute\_deprecated\_with\_message) \&\& !defined(JSON\_HEDLEY\_IAR\_VERSION)) || \(\backslash\)}}
+\DoxyCodeLine{1032 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1033 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1034 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(5,6,0) || \(\backslash\)}}
+\DoxyCodeLine{1035 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,13,0) || \(\backslash\)}}
+\DoxyCodeLine{1036 \textcolor{preprocessor}{    JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1037 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(18,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1038 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(18,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1039 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(8,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1040 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1041 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1042 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1043 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED(since) \_\_attribute\_\_((\_\_deprecated\_\_("{}Since "{}} \#since)))}
+\DoxyCodeLine{1044 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED\_FOR(since, replacement) \_\_attribute\_\_((\_\_deprecated\_\_("{}Since "{}} \#since "{}; use "{} \#replacement)))}
+\DoxyCodeLine{1045 \textcolor{preprocessor}{\#elif defined(\_\_cplusplus) \&\& (\_\_cplusplus >= 201402L)}}
+\DoxyCodeLine{1046 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED(since) JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[deprecated("{}Since "{}} \#since)]])}
+\DoxyCodeLine{1047 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED\_FOR(since, replacement) JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[deprecated("{}Since "{}} \#since "{}; use "{} \#replacement)]])}
+\DoxyCodeLine{1048 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1049 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(deprecated) || \(\backslash\)}}
+\DoxyCodeLine{1050 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1051 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1052 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1053 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1054 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1055 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1056 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1057 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1058 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1059 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1060 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1061 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1062 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1063 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10) || \(\backslash\)}}
+\DoxyCodeLine{1064 \textcolor{preprocessor}{    JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,10,0)}}
+\DoxyCodeLine{1065 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED(since) \_\_attribute\_\_((\_\_deprecated\_\_))}}
+\DoxyCodeLine{1066 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED\_FOR(since, replacement) \_\_attribute\_\_((\_\_deprecated\_\_))}}
+\DoxyCodeLine{1067 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1068 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(13,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1069 \textcolor{preprocessor}{    JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(6,50,0) || \(\backslash\)}}
+\DoxyCodeLine{1070 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1071 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED(since) \_\_declspec(deprecated)}}
+\DoxyCodeLine{1072 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED\_FOR(since, replacement) \_\_declspec(deprecated)}}
+\DoxyCodeLine{1073 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{1074 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED(since) \_Pragma("{}deprecated"{}})}
+\DoxyCodeLine{1075 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED\_FOR(since, replacement) \_Pragma("{}deprecated"{}})}
+\DoxyCodeLine{1076 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1077 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED(since)}}
+\DoxyCodeLine{1078 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_DEPRECATED\_FOR(since, replacement)}}
+\DoxyCodeLine{1079 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1080 }
+\DoxyCodeLine{1081 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_UNAVAILABLE)}}
+\DoxyCodeLine{1082 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_UNAVAILABLE}}
+\DoxyCodeLine{1083 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1084 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1085 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(warning) || \(\backslash\)}}
+\DoxyCodeLine{1086 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1087 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1088 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1089 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNAVAILABLE(available\_since) \_\_attribute\_\_((\_\_warning\_\_("{}Not available until "{}} \#available\_since)))}
+\DoxyCodeLine{1090 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1091 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNAVAILABLE(available\_since)}}
+\DoxyCodeLine{1092 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1093 }
+\DoxyCodeLine{1094 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_WARN\_UNUSED\_RESULT)}}
+\DoxyCodeLine{1095 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_WARN\_UNUSED\_RESULT}}
+\DoxyCodeLine{1096 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1097 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_WARN\_UNUSED\_RESULT\_MSG)}}
+\DoxyCodeLine{1098 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_WARN\_UNUSED\_RESULT\_MSG}}
+\DoxyCodeLine{1099 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1100 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1101 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(warn\_unused\_result) || \(\backslash\)}}
+\DoxyCodeLine{1102 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1103 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1104 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1105 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1106 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1107 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1108 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1109 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1110 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1111 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1112 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1113 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1114 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1115 \textcolor{preprocessor}{    (JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,15,0) \&\& defined(\_\_cplusplus)) || \(\backslash\)}}
+\DoxyCodeLine{1116 \textcolor{preprocessor}{    JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1117 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1118 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT \_\_attribute\_\_((\_\_warn\_unused\_result\_\_))}}
+\DoxyCodeLine{1119 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT\_MSG(msg) \_\_attribute\_\_((\_\_warn\_unused\_result\_\_))}}
+\DoxyCodeLine{1120 \textcolor{preprocessor}{\#elif (JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE(nodiscard) >= 201907L)}}
+\DoxyCodeLine{1121 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[nodiscard]])}}
+\DoxyCodeLine{1122 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT\_MSG(msg) JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[nodiscard(msg)]])}}
+\DoxyCodeLine{1123 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE(nodiscard)}}
+\DoxyCodeLine{1124 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[nodiscard]])}}
+\DoxyCodeLine{1125 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT\_MSG(msg) JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[nodiscard]])}}
+\DoxyCodeLine{1126 \textcolor{preprocessor}{\#elif defined(\_Check\_return\_) }\textcolor{comment}{/* SAL */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{1127 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT \_Check\_return\_}}
+\DoxyCodeLine{1128 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT\_MSG(msg) \_Check\_return\_}}
+\DoxyCodeLine{1129 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1130 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT}}
+\DoxyCodeLine{1131 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_WARN\_UNUSED\_RESULT\_MSG(msg)}}
+\DoxyCodeLine{1132 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1133 }
+\DoxyCodeLine{1134 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_SENTINEL)}}
+\DoxyCodeLine{1135 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_SENTINEL}}
+\DoxyCodeLine{1136 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1137 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1138 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(sentinel) || \(\backslash\)}}
+\DoxyCodeLine{1139 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1140 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1141 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(5,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1142 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1143 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SENTINEL(position) \_\_attribute\_\_((\_\_sentinel\_\_(position)))}}
+\DoxyCodeLine{1144 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1145 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_SENTINEL(position)}}
+\DoxyCodeLine{1146 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1147 }
+\DoxyCodeLine{1148 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_NO\_RETURN)}}
+\DoxyCodeLine{1149 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_NO\_RETURN}}
+\DoxyCodeLine{1150 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1151 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{1152 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_\_noreturn}}
+\DoxyCodeLine{1153 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1154 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1155 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1156 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_\_attribute\_\_((\_\_noreturn\_\_))}}
+\DoxyCodeLine{1157 \textcolor{preprocessor}{\#elif defined(\_\_STDC\_VERSION\_\_) \&\& \_\_STDC\_VERSION\_\_ >= 201112L}}
+\DoxyCodeLine{1158 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_Noreturn}}
+\DoxyCodeLine{1159 \textcolor{preprocessor}{\#elif defined(\_\_cplusplus) \&\& (\_\_cplusplus >= 201103L)}}
+\DoxyCodeLine{1160 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[noreturn]])}}
+\DoxyCodeLine{1161 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1162 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(noreturn) || \(\backslash\)}}
+\DoxyCodeLine{1163 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1164 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,11,0) || \(\backslash\)}}
+\DoxyCodeLine{1165 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1166 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1167 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1168 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1169 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1170 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1171 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1172 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1173 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1174 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1175 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1176 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1177 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1178 \textcolor{preprocessor}{    JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,10,0)}}
+\DoxyCodeLine{1179 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_\_attribute\_\_((\_\_noreturn\_\_))}}
+\DoxyCodeLine{1180 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,10,0)}}
+\DoxyCodeLine{1181 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_Pragma("{}does\_not\_return"{}})}
+\DoxyCodeLine{1182 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1183 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(13,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1184 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1185 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_\_declspec(noreturn)}}
+\DoxyCodeLine{1186 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_cplusplus)}}
+\DoxyCodeLine{1187 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_Pragma("{}FUNC\_NEVER\_RETURNS;"{}})}
+\DoxyCodeLine{1188 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_COMPCERT\_VERSION\_CHECK(3,2,0)}}
+\DoxyCodeLine{1189 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_\_attribute((noreturn))}}
+\DoxyCodeLine{1190 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(9,0,0)}}
+\DoxyCodeLine{1191 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN \_\_declspec(noreturn)}}
+\DoxyCodeLine{1192 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1193 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_RETURN}}
+\DoxyCodeLine{1194 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1195 }
+\DoxyCodeLine{1196 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_NO\_ESCAPE)}}
+\DoxyCodeLine{1197 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_NO\_ESCAPE}}
+\DoxyCodeLine{1198 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1199 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_ATTRIBUTE(noescape)}}
+\DoxyCodeLine{1200 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_ESCAPE \_\_attribute\_\_((\_\_noescape\_\_))}}
+\DoxyCodeLine{1201 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1202 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_ESCAPE}}
+\DoxyCodeLine{1203 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1204 }
+\DoxyCodeLine{1205 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_UNREACHABLE)}}
+\DoxyCodeLine{1206 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_UNREACHABLE}}
+\DoxyCodeLine{1207 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1208 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_UNREACHABLE\_RETURN)}}
+\DoxyCodeLine{1209 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_UNREACHABLE\_RETURN}}
+\DoxyCodeLine{1210 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1211 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_ASSUME)}}
+\DoxyCodeLine{1212 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_ASSUME}}
+\DoxyCodeLine{1213 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1214 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1215 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(13,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1216 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1217 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1218 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ASSUME(expr) \_\_assume(expr)}}
+\DoxyCodeLine{1219 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_HAS\_BUILTIN(\_\_builtin\_assume)}}
+\DoxyCodeLine{1220 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ASSUME(expr) \_\_builtin\_assume(expr)}}
+\DoxyCodeLine{1221 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1222 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1223 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(4,0,0)}}
+\DoxyCodeLine{1224 \textcolor{preprocessor}{    \#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{1225 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_ASSUME(expr) std::\_nassert(expr)}}
+\DoxyCodeLine{1226 \textcolor{preprocessor}{    \#else}}
+\DoxyCodeLine{1227 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_ASSUME(expr) \_nassert(expr)}}
+\DoxyCodeLine{1228 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1229 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1230 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1231 \textcolor{preprocessor}{    (JSON\_HEDLEY\_HAS\_BUILTIN(\_\_builtin\_unreachable) \&\& (!defined(JSON\_HEDLEY\_ARM\_VERSION))) || \(\backslash\)}}
+\DoxyCodeLine{1232 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1233 \textcolor{preprocessor}{    JSON\_HEDLEY\_PGI\_VERSION\_CHECK(18,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1234 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1235 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(13,1,5) || \(\backslash\)}}
+\DoxyCodeLine{1236 \textcolor{preprocessor}{    JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(10,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1237 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1238 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNREACHABLE() \_\_builtin\_unreachable()}}
+\DoxyCodeLine{1239 \textcolor{preprocessor}{\#elif defined(JSON\_HEDLEY\_ASSUME)}}
+\DoxyCodeLine{1240 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNREACHABLE() JSON\_HEDLEY\_ASSUME(0)}}
+\DoxyCodeLine{1241 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1242 \textcolor{preprocessor}{\#if !defined(JSON\_HEDLEY\_ASSUME)}}
+\DoxyCodeLine{1243 \textcolor{preprocessor}{    \#if defined(JSON\_HEDLEY\_UNREACHABLE)}}
+\DoxyCodeLine{1244 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_ASSUME(expr) JSON\_HEDLEY\_STATIC\_CAST(void, ((expr) ? 1 : (JSON\_HEDLEY\_UNREACHABLE(), 1)))}}
+\DoxyCodeLine{1245 \textcolor{preprocessor}{    \#else}}
+\DoxyCodeLine{1246 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_ASSUME(expr) JSON\_HEDLEY\_STATIC\_CAST(void, expr)}}
+\DoxyCodeLine{1247 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1248 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1249 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_UNREACHABLE)}}
+\DoxyCodeLine{1250 \textcolor{preprocessor}{    \#if  \(\backslash\)}}
+\DoxyCodeLine{1251 \textcolor{preprocessor}{        JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1252 \textcolor{preprocessor}{        JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(4,0,0)}}
+\DoxyCodeLine{1253 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_UNREACHABLE\_RETURN(value) return (JSON\_HEDLEY\_STATIC\_CAST(void, JSON\_HEDLEY\_ASSUME(0)), (value))}}
+\DoxyCodeLine{1254 \textcolor{preprocessor}{    \#else}}
+\DoxyCodeLine{1255 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_UNREACHABLE\_RETURN(value) JSON\_HEDLEY\_UNREACHABLE()}}
+\DoxyCodeLine{1256 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1257 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1258 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNREACHABLE\_RETURN(value) return (value)}}
+\DoxyCodeLine{1259 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1260 \textcolor{preprocessor}{\#if !defined(JSON\_HEDLEY\_UNREACHABLE)}}
+\DoxyCodeLine{1261 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNREACHABLE() JSON\_HEDLEY\_ASSUME(0)}}
+\DoxyCodeLine{1262 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1263 }
+\DoxyCodeLine{1264 JSON\_HEDLEY\_DIAGNOSTIC\_PUSH}
+\DoxyCodeLine{1265 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wpedantic"{}})}
+\DoxyCodeLine{1266 \textcolor{preprocessor}{    \#pragma clang diagnostic ignored "{}-\/Wpedantic"{}}}
+\DoxyCodeLine{1267 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1268 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wc++98-\/compat-\/pedantic"{}}) \&\& defined(\_\_cplusplus)}
+\DoxyCodeLine{1269 \textcolor{preprocessor}{    \#pragma clang diagnostic ignored "{}-\/Wc++98-\/compat-\/pedantic"{}}}
+\DoxyCodeLine{1270 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1271 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_GCC\_HAS\_WARNING("{}-\/Wvariadic-\/macros"{}},4,0,0)}
+\DoxyCodeLine{1272 \textcolor{preprocessor}{    \#if defined(\_\_clang\_\_)}}
+\DoxyCodeLine{1273 \textcolor{preprocessor}{        \#pragma clang diagnostic ignored "{}-\/Wvariadic-\/macros"{}}}
+\DoxyCodeLine{1274 \textcolor{preprocessor}{    \#elif defined(JSON\_HEDLEY\_GCC\_VERSION)}}
+\DoxyCodeLine{1275 \textcolor{preprocessor}{        \#pragma GCC diagnostic ignored "{}-\/Wvariadic-\/macros"{}}}
+\DoxyCodeLine{1276 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1277 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1278 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_NON\_NULL)}}
+\DoxyCodeLine{1279 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_NON\_NULL}}
+\DoxyCodeLine{1280 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1281 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1282 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(nonnull) || \(\backslash\)}}
+\DoxyCodeLine{1283 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1284 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1285 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0)}}
+\DoxyCodeLine{1286 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NON\_NULL(...) \_\_attribute\_\_((\_\_nonnull\_\_(\_\_VA\_ARGS\_\_)))}}
+\DoxyCodeLine{1287 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1288 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NON\_NULL(...)}}
+\DoxyCodeLine{1289 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1290 JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{1291 }
+\DoxyCodeLine{1292 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PRINTF\_FORMAT)}}
+\DoxyCodeLine{1293 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PRINTF\_FORMAT}}
+\DoxyCodeLine{1294 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1295 \textcolor{preprocessor}{\#if defined(\_\_MINGW32\_\_) \&\& JSON\_HEDLEY\_GCC\_HAS\_ATTRIBUTE(format,4,4,0) \&\& !defined(\_\_USE\_MINGW\_ANSI\_STDIO)}}
+\DoxyCodeLine{1296 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRINTF\_FORMAT(string\_idx,first\_to\_check) \_\_attribute\_\_((\_\_format\_\_(ms\_printf, string\_idx, first\_to\_check)))}}
+\DoxyCodeLine{1297 \textcolor{preprocessor}{\#elif defined(\_\_MINGW32\_\_) \&\& JSON\_HEDLEY\_GCC\_HAS\_ATTRIBUTE(format,4,4,0) \&\& defined(\_\_USE\_MINGW\_ANSI\_STDIO)}}
+\DoxyCodeLine{1298 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRINTF\_FORMAT(string\_idx,first\_to\_check) \_\_attribute\_\_((\_\_format\_\_(gnu\_printf, string\_idx, first\_to\_check)))}}
+\DoxyCodeLine{1299 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1300 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(format) || \(\backslash\)}}
+\DoxyCodeLine{1301 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1302 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1303 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(5,6,0) || \(\backslash\)}}
+\DoxyCodeLine{1304 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1305 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1306 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1307 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1308 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1309 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1310 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1311 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1312 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1313 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1314 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1315 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1316 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1317 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRINTF\_FORMAT(string\_idx,first\_to\_check) \_\_attribute\_\_((\_\_format\_\_(\_\_printf\_\_, string\_idx, first\_to\_check)))}}
+\DoxyCodeLine{1318 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(6,0,0)}}
+\DoxyCodeLine{1319 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRINTF\_FORMAT(string\_idx,first\_to\_check) \_\_declspec(vaformat(printf,string\_idx,first\_to\_check))}}
+\DoxyCodeLine{1320 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1321 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_PRINTF\_FORMAT(string\_idx,first\_to\_check)}}
+\DoxyCodeLine{1322 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1323 }
+\DoxyCodeLine{1324 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CONSTEXPR)}}
+\DoxyCodeLine{1325 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CONSTEXPR}}
+\DoxyCodeLine{1326 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1327 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{1328 \textcolor{preprocessor}{    \#if \_\_cplusplus >= 201103L}}
+\DoxyCodeLine{1329 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_CONSTEXPR JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_(constexpr)}}
+\DoxyCodeLine{1330 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1331 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1332 \textcolor{preprocessor}{\#if !defined(JSON\_HEDLEY\_CONSTEXPR)}}
+\DoxyCodeLine{1333 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_CONSTEXPR}}
+\DoxyCodeLine{1334 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1335 }
+\DoxyCodeLine{1336 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PREDICT)}}
+\DoxyCodeLine{1337 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PREDICT}}
+\DoxyCodeLine{1338 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1339 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_LIKELY)}}
+\DoxyCodeLine{1340 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_LIKELY}}
+\DoxyCodeLine{1341 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1342 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_UNLIKELY)}}
+\DoxyCodeLine{1343 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_UNLIKELY}}
+\DoxyCodeLine{1344 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1345 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_UNPREDICTABLE)}}
+\DoxyCodeLine{1346 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_UNPREDICTABLE}}
+\DoxyCodeLine{1347 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1348 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_BUILTIN(\_\_builtin\_unpredictable)}}
+\DoxyCodeLine{1349 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNPREDICTABLE(expr) \_\_builtin\_unpredictable((expr))}}
+\DoxyCodeLine{1350 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1351 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1352 \textcolor{preprocessor}{  (JSON\_HEDLEY\_HAS\_BUILTIN(\_\_builtin\_expect\_with\_probability) \&\& !defined(JSON\_HEDLEY\_PGI\_VERSION)) || \(\backslash\)}}
+\DoxyCodeLine{1353 \textcolor{preprocessor}{  JSON\_HEDLEY\_GCC\_VERSION\_CHECK(9,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1354 \textcolor{preprocessor}{  JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1355 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT(expr, value, probability) \_\_builtin\_expect\_with\_probability(  (expr), (value), (probability))}}
+\DoxyCodeLine{1356 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT\_TRUE(expr, probability)   \_\_builtin\_expect\_with\_probability(!!(expr),    1   , (probability))}}
+\DoxyCodeLine{1357 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT\_FALSE(expr, probability)  \_\_builtin\_expect\_with\_probability(!!(expr),    0   , (probability))}}
+\DoxyCodeLine{1358 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_LIKELY(expr)                      \_\_builtin\_expect                 (!!(expr),    1                  )}}
+\DoxyCodeLine{1359 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_UNLIKELY(expr)                    \_\_builtin\_expect                 (!!(expr),    0                  )}}
+\DoxyCodeLine{1360 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1361 \textcolor{preprocessor}{  (JSON\_HEDLEY\_HAS\_BUILTIN(\_\_builtin\_expect) \&\& !defined(JSON\_HEDLEY\_INTEL\_CL\_VERSION)) || \(\backslash\)}}
+\DoxyCodeLine{1362 \textcolor{preprocessor}{  JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1363 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1364 \textcolor{preprocessor}{  (JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,15,0) \&\& defined(\_\_cplusplus)) || \(\backslash\)}}
+\DoxyCodeLine{1365 \textcolor{preprocessor}{  JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1366 \textcolor{preprocessor}{  JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1367 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1368 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,7,0) || \(\backslash\)}}
+\DoxyCodeLine{1369 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(3,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1370 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1371 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(6,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1372 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1373 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1374 \textcolor{preprocessor}{  JSON\_HEDLEY\_TINYC\_VERSION\_CHECK(0,9,27) || \(\backslash\)}}
+\DoxyCodeLine{1375 \textcolor{preprocessor}{  JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(8,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1376 \textcolor{preprocessor}{  JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1377 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT(expr, expected, probability) \(\backslash\)}}
+\DoxyCodeLine{1378 \textcolor{preprocessor}{    (((probability) >= 0.9) ? \_\_builtin\_expect((expr), (expected)) : (JSON\_HEDLEY\_STATIC\_CAST(void, expected), (expr)))}}
+\DoxyCodeLine{1379 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT\_TRUE(expr, probability) \(\backslash\)}}
+\DoxyCodeLine{1380 \textcolor{preprocessor}{    (\_\_extension\_\_ (\{ \(\backslash\)}}
+\DoxyCodeLine{1381 \textcolor{preprocessor}{        double hedley\_probability\_ = (probability); \(\backslash\)}}
+\DoxyCodeLine{1382 \textcolor{preprocessor}{        ((hedley\_probability\_ >= 0.9) ? \_\_builtin\_expect(!!(expr), 1) : ((hedley\_probability\_ <= 0.1) ? \_\_builtin\_expect(!!(expr), 0) : !!(expr))); \(\backslash\)}}
+\DoxyCodeLine{1383 \textcolor{preprocessor}{    \}))}}
+\DoxyCodeLine{1384 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT\_FALSE(expr, probability) \(\backslash\)}}
+\DoxyCodeLine{1385 \textcolor{preprocessor}{    (\_\_extension\_\_ (\{ \(\backslash\)}}
+\DoxyCodeLine{1386 \textcolor{preprocessor}{        double hedley\_probability\_ = (probability); \(\backslash\)}}
+\DoxyCodeLine{1387 \textcolor{preprocessor}{        ((hedley\_probability\_ >= 0.9) ? \_\_builtin\_expect(!!(expr), 0) : ((hedley\_probability\_ <= 0.1) ? \_\_builtin\_expect(!!(expr), 1) : !!(expr))); \(\backslash\)}}
+\DoxyCodeLine{1388 \textcolor{preprocessor}{    \}))}}
+\DoxyCodeLine{1389 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_LIKELY(expr)   \_\_builtin\_expect(!!(expr), 1)}}
+\DoxyCodeLine{1390 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_UNLIKELY(expr) \_\_builtin\_expect(!!(expr), 0)}}
+\DoxyCodeLine{1391 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1392 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT(expr, expected, probability) (JSON\_HEDLEY\_STATIC\_CAST(void, expected), (expr))}}
+\DoxyCodeLine{1393 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT\_TRUE(expr, probability) (!!(expr))}}
+\DoxyCodeLine{1394 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PREDICT\_FALSE(expr, probability) (!!(expr))}}
+\DoxyCodeLine{1395 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_LIKELY(expr) (!!(expr))}}
+\DoxyCodeLine{1396 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_UNLIKELY(expr) (!!(expr))}}
+\DoxyCodeLine{1397 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1398 \textcolor{preprocessor}{\#if !defined(JSON\_HEDLEY\_UNPREDICTABLE)}}
+\DoxyCodeLine{1399 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_UNPREDICTABLE(expr) JSON\_HEDLEY\_PREDICT(expr, 1, 0.5)}}
+\DoxyCodeLine{1400 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1401 }
+\DoxyCodeLine{1402 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_MALLOC)}}
+\DoxyCodeLine{1403 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_MALLOC}}
+\DoxyCodeLine{1404 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1405 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1406 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(malloc) || \(\backslash\)}}
+\DoxyCodeLine{1407 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1408 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1409 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,11,0) || \(\backslash\)}}
+\DoxyCodeLine{1410 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1411 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(12,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1412 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1413 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1414 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1415 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1416 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1417 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1418 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1419 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1420 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1421 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1422 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1423 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1424 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MALLOC \_\_attribute\_\_((\_\_malloc\_\_))}}
+\DoxyCodeLine{1425 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,10,0)}}
+\DoxyCodeLine{1426 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MALLOC \_Pragma("{}returns\_new\_memory"{}})}
+\DoxyCodeLine{1427 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1428 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(14,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1429 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1430 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MALLOC \_\_declspec(restrict)}}
+\DoxyCodeLine{1431 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1432 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_MALLOC}}
+\DoxyCodeLine{1433 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1434 }
+\DoxyCodeLine{1435 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PURE)}}
+\DoxyCodeLine{1436 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PURE}}
+\DoxyCodeLine{1437 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1438 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1439 \textcolor{preprocessor}{  JSON\_HEDLEY\_HAS\_ATTRIBUTE(pure) || \(\backslash\)}}
+\DoxyCodeLine{1440 \textcolor{preprocessor}{  JSON\_HEDLEY\_GCC\_VERSION\_CHECK(2,96,0) || \(\backslash\)}}
+\DoxyCodeLine{1441 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1442 \textcolor{preprocessor}{  JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,11,0) || \(\backslash\)}}
+\DoxyCodeLine{1443 \textcolor{preprocessor}{  JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1444 \textcolor{preprocessor}{  JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1445 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1446 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1447 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1448 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1449 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1450 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1451 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1452 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1453 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1454 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1455 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1456 \textcolor{preprocessor}{  JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1457 \textcolor{preprocessor}{  JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1458 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PURE \_\_attribute\_\_((\_\_pure\_\_))}}
+\DoxyCodeLine{1459 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,10,0)}}
+\DoxyCodeLine{1460 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PURE \_Pragma("{}does\_not\_write\_global\_data"{}})}
+\DoxyCodeLine{1461 \textcolor{preprocessor}{\#elif defined(\_\_cplusplus) \&\& \(\backslash\)}}
+\DoxyCodeLine{1462 \textcolor{preprocessor}{    ( \(\backslash\)}}
+\DoxyCodeLine{1463 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(2,0,1) || \(\backslash\)}}
+\DoxyCodeLine{1464 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(4,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1465 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) \(\backslash\)}}
+\DoxyCodeLine{1466 \textcolor{preprocessor}{    )}}
+\DoxyCodeLine{1467 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PURE \_Pragma("{}FUNC\_IS\_PURE;"{}})}
+\DoxyCodeLine{1468 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1469 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PURE}}
+\DoxyCodeLine{1470 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1471 }
+\DoxyCodeLine{1472 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CONST)}}
+\DoxyCodeLine{1473 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CONST}}
+\DoxyCodeLine{1474 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1475 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1476 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(const) || \(\backslash\)}}
+\DoxyCodeLine{1477 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(2,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1478 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1479 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,11,0) || \(\backslash\)}}
+\DoxyCodeLine{1480 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1481 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1482 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1483 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1484 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1485 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1486 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1487 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1488 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1489 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1490 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1491 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1492 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1493 \textcolor{preprocessor}{    JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1494 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1495 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_CONST \_\_attribute\_\_((\_\_const\_\_))}}
+\DoxyCodeLine{1496 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1497 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,10,0)}}
+\DoxyCodeLine{1498 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_CONST \_Pragma("{}no\_side\_effect"{}})}
+\DoxyCodeLine{1499 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1500 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_CONST JSON\_HEDLEY\_PURE}}
+\DoxyCodeLine{1501 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1502 }
+\DoxyCodeLine{1503 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_RESTRICT)}}
+\DoxyCodeLine{1504 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_RESTRICT}}
+\DoxyCodeLine{1505 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1506 \textcolor{preprocessor}{\#if defined(\_\_STDC\_VERSION\_\_) \&\& (\_\_STDC\_VERSION\_\_ >= 199901L) \&\& !defined(\_\_cplusplus)}}
+\DoxyCodeLine{1507 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_RESTRICT restrict}}
+\DoxyCodeLine{1508 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1509 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1510 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(14,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1511 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1512 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1513 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1514 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1515 \textcolor{preprocessor}{    JSON\_HEDLEY\_PGI\_VERSION\_CHECK(17,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1516 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1517 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,2,4) || \(\backslash\)}}
+\DoxyCodeLine{1518 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(8,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1519 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1520 \textcolor{preprocessor}{    (JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,14,0) \&\& defined(\_\_cplusplus)) || \(\backslash\)}}
+\DoxyCodeLine{1521 \textcolor{preprocessor}{    JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1522 \textcolor{preprocessor}{    defined(\_\_clang\_\_) || \(\backslash\)}}
+\DoxyCodeLine{1523 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1524 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_RESTRICT \_\_restrict}}
+\DoxyCodeLine{1525 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,3,0) \&\& !defined(\_\_cplusplus)}}
+\DoxyCodeLine{1526 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_RESTRICT \_Restrict}}
+\DoxyCodeLine{1527 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1528 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_RESTRICT}}
+\DoxyCodeLine{1529 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1530 }
+\DoxyCodeLine{1531 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_INLINE)}}
+\DoxyCodeLine{1532 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_INLINE}}
+\DoxyCodeLine{1533 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1534 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1535 \textcolor{preprocessor}{    (defined(\_\_STDC\_VERSION\_\_) \&\& (\_\_STDC\_VERSION\_\_ >= 199901L)) || \(\backslash\)}}
+\DoxyCodeLine{1536 \textcolor{preprocessor}{    (defined(\_\_cplusplus) \&\& (\_\_cplusplus >= 199711L))}}
+\DoxyCodeLine{1537 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INLINE inline}}
+\DoxyCodeLine{1538 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1539 \textcolor{preprocessor}{    defined(JSON\_HEDLEY\_GCC\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1540 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(6,2,0)}}
+\DoxyCodeLine{1541 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INLINE \_\_inline\_\_}}
+\DoxyCodeLine{1542 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1543 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(12,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1544 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1545 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1546 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1547 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(3,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1548 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1549 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(8,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1550 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1551 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1552 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1553 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INLINE \_\_inline}}
+\DoxyCodeLine{1554 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1555 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_INLINE}}
+\DoxyCodeLine{1556 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1557 }
+\DoxyCodeLine{1558 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_ALWAYS\_INLINE)}}
+\DoxyCodeLine{1559 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_ALWAYS\_INLINE}}
+\DoxyCodeLine{1560 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1561 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1562 \textcolor{preprocessor}{  JSON\_HEDLEY\_HAS\_ATTRIBUTE(always\_inline) || \(\backslash\)}}
+\DoxyCodeLine{1563 \textcolor{preprocessor}{  JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1564 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1565 \textcolor{preprocessor}{  JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,11,0) || \(\backslash\)}}
+\DoxyCodeLine{1566 \textcolor{preprocessor}{  JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1567 \textcolor{preprocessor}{  JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1568 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1569 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1570 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1571 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1572 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1573 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1574 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1575 \textcolor{preprocessor}{  (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1576 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1577 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1578 \textcolor{preprocessor}{  JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1579 \textcolor{preprocessor}{  JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10) || \(\backslash\)}}
+\DoxyCodeLine{1580 \textcolor{preprocessor}{  JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,10,0)}}
+\DoxyCodeLine{1581 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_ALWAYS\_INLINE \_\_attribute\_\_((\_\_always\_inline\_\_)) JSON\_HEDLEY\_INLINE}}
+\DoxyCodeLine{1582 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1583 \textcolor{preprocessor}{  JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(12,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1584 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1585 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_ALWAYS\_INLINE \_\_forceinline}}
+\DoxyCodeLine{1586 \textcolor{preprocessor}{\#elif defined(\_\_cplusplus) \&\& \(\backslash\)}}
+\DoxyCodeLine{1587 \textcolor{preprocessor}{    ( \(\backslash\)}}
+\DoxyCodeLine{1588 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1589 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1590 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1591 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(6,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1592 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1593 \textcolor{preprocessor}{      JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) \(\backslash\)}}
+\DoxyCodeLine{1594 \textcolor{preprocessor}{    )}}
+\DoxyCodeLine{1595 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_ALWAYS\_INLINE \_Pragma("{}FUNC\_ALWAYS\_INLINE;"{}})}
+\DoxyCodeLine{1596 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{1597 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_ALWAYS\_INLINE \_Pragma("{}inline=forced"{}})}
+\DoxyCodeLine{1598 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1599 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_ALWAYS\_INLINE JSON\_HEDLEY\_INLINE}}
+\DoxyCodeLine{1600 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1601 }
+\DoxyCodeLine{1602 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_NEVER\_INLINE)}}
+\DoxyCodeLine{1603 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_NEVER\_INLINE}}
+\DoxyCodeLine{1604 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1605 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1606 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(noinline) || \(\backslash\)}}
+\DoxyCodeLine{1607 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1608 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1609 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,11,0) || \(\backslash\)}}
+\DoxyCodeLine{1610 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1611 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(10,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1612 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_VERSION\_CHECK(15,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1613 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(4,8,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1614 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_ARMCL\_VERSION\_CHECK(5,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1615 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1616 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL2000\_VERSION\_CHECK(6,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1617 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,0,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1618 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(4,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1619 \textcolor{preprocessor}{    (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1620 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) || \(\backslash\)}}
+\DoxyCodeLine{1621 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL7X\_VERSION\_CHECK(1,2,0) || \(\backslash\)}}
+\DoxyCodeLine{1622 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CLPRU\_VERSION\_CHECK(2,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1623 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10) || \(\backslash\)}}
+\DoxyCodeLine{1624 \textcolor{preprocessor}{    JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,10,0)}}
+\DoxyCodeLine{1625 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE \_\_attribute\_\_((\_\_noinline\_\_))}}
+\DoxyCodeLine{1626 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1627 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(13,10,0) || \(\backslash\)}}
+\DoxyCodeLine{1628 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1629 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE \_\_declspec(noinline)}}
+\DoxyCodeLine{1630 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PGI\_VERSION\_CHECK(10,2,0)}}
+\DoxyCodeLine{1631 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE \_Pragma("{}noinline"{}})}
+\DoxyCodeLine{1632 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(6,0,0) \&\& defined(\_\_cplusplus)}}
+\DoxyCodeLine{1633 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE \_Pragma("{}FUNC\_CANNOT\_INLINE;"{}})}
+\DoxyCodeLine{1634 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{1635 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE \_Pragma("{}inline=never"{}})}
+\DoxyCodeLine{1636 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_COMPCERT\_VERSION\_CHECK(3,2,0)}}
+\DoxyCodeLine{1637 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE \_\_attribute((noinline))}}
+\DoxyCodeLine{1638 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(9,0,0)}}
+\DoxyCodeLine{1639 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE \_\_declspec(noinline)}}
+\DoxyCodeLine{1640 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1641 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NEVER\_INLINE}}
+\DoxyCodeLine{1642 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1643 }
+\DoxyCodeLine{1644 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PRIVATE)}}
+\DoxyCodeLine{1645 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PRIVATE}}
+\DoxyCodeLine{1646 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1647 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_PUBLIC)}}
+\DoxyCodeLine{1648 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_PUBLIC}}
+\DoxyCodeLine{1649 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1650 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IMPORT)}}
+\DoxyCodeLine{1651 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_IMPORT}}
+\DoxyCodeLine{1652 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1653 \textcolor{preprocessor}{\#if defined(\_WIN32) || defined(\_\_CYGWIN\_\_)}}
+\DoxyCodeLine{1654 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PRIVATE}}
+\DoxyCodeLine{1655 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_PUBLIC   \_\_declspec(dllexport)}}
+\DoxyCodeLine{1656 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_IMPORT   \_\_declspec(dllimport)}}
+\DoxyCodeLine{1657 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1658 \textcolor{preprocessor}{\#  if \(\backslash\)}}
+\DoxyCodeLine{1659 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(visibility) || \(\backslash\)}}
+\DoxyCodeLine{1660 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1661 \textcolor{preprocessor}{    JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,11,0) || \(\backslash\)}}
+\DoxyCodeLine{1662 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1663 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1664 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(13,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1665 \textcolor{preprocessor}{    ( \(\backslash\)}}
+\DoxyCodeLine{1666 \textcolor{preprocessor}{      defined(\_\_TI\_EABI\_\_) \&\& \(\backslash\)}}
+\DoxyCodeLine{1667 \textcolor{preprocessor}{      ( \(\backslash\)}}
+\DoxyCodeLine{1668 \textcolor{preprocessor}{        (JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,2,0) \&\& defined(\_\_TI\_GNU\_ATTRIBUTE\_SUPPORT\_\_)) || \(\backslash\)}}
+\DoxyCodeLine{1669 \textcolor{preprocessor}{        JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(7,5,0) \(\backslash\)}}
+\DoxyCodeLine{1670 \textcolor{preprocessor}{      ) \(\backslash\)}}
+\DoxyCodeLine{1671 \textcolor{preprocessor}{    ) || \(\backslash\)}}
+\DoxyCodeLine{1672 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1673 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_PRIVATE \_\_attribute\_\_((\_\_visibility\_\_("{}hidden"{}})))}
+\DoxyCodeLine{1674 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_PUBLIC  \_\_attribute\_\_((\_\_visibility\_\_("{}default"{}})))}
+\DoxyCodeLine{1675 \textcolor{preprocessor}{\#  else}}
+\DoxyCodeLine{1676 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_PRIVATE}}
+\DoxyCodeLine{1677 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_PUBLIC}}
+\DoxyCodeLine{1678 \textcolor{preprocessor}{\#  endif}}
+\DoxyCodeLine{1679 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_IMPORT    extern}}
+\DoxyCodeLine{1680 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1681 }
+\DoxyCodeLine{1682 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_NO\_THROW)}}
+\DoxyCodeLine{1683 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_NO\_THROW}}
+\DoxyCodeLine{1684 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1685 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1686 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(nothrow) || \(\backslash\)}}
+\DoxyCodeLine{1687 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,3,0) || \(\backslash\)}}
+\DoxyCodeLine{1688 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1689 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1690 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_THROW \_\_attribute\_\_((\_\_nothrow\_\_))}}
+\DoxyCodeLine{1691 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1692 \textcolor{preprocessor}{    JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(13,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1693 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1694 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0)}}
+\DoxyCodeLine{1695 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_THROW \_\_declspec(nothrow)}}
+\DoxyCodeLine{1696 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1697 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NO\_THROW}}
+\DoxyCodeLine{1698 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1699 }
+\DoxyCodeLine{1700 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_FALL\_THROUGH)}}
+\DoxyCodeLine{1701 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_FALL\_THROUGH}}
+\DoxyCodeLine{1702 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1703 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1704 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(fallthrough) || \(\backslash\)}}
+\DoxyCodeLine{1705 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(7,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1706 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1707 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_FALL\_THROUGH \_\_attribute\_\_((\_\_fallthrough\_\_))}}
+\DoxyCodeLine{1708 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE\_NS(clang,fallthrough)}}
+\DoxyCodeLine{1709 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_FALL\_THROUGH JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[clang::fallthrough]])}}
+\DoxyCodeLine{1710 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE(fallthrough)}}
+\DoxyCodeLine{1711 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_FALL\_THROUGH JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_([[fallthrough]])}}
+\DoxyCodeLine{1712 \textcolor{preprocessor}{\#elif defined(\_\_fallthrough) }\textcolor{comment}{/* SAL */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{1713 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_FALL\_THROUGH \_\_fallthrough}}
+\DoxyCodeLine{1714 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1715 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_FALL\_THROUGH}}
+\DoxyCodeLine{1716 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1717 }
+\DoxyCodeLine{1718 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_RETURNS\_NON\_NULL)}}
+\DoxyCodeLine{1719 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_RETURNS\_NON\_NULL}}
+\DoxyCodeLine{1720 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1721 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1722 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_ATTRIBUTE(returns\_nonnull) || \(\backslash\)}}
+\DoxyCodeLine{1723 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,9,0) || \(\backslash\)}}
+\DoxyCodeLine{1724 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1725 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_RETURNS\_NON\_NULL \_\_attribute\_\_((\_\_returns\_nonnull\_\_))}}
+\DoxyCodeLine{1726 \textcolor{preprocessor}{\#elif defined(\_Ret\_notnull\_) }\textcolor{comment}{/* SAL */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{1727 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_RETURNS\_NON\_NULL \_Ret\_notnull\_}}
+\DoxyCodeLine{1728 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1729 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_RETURNS\_NON\_NULL}}
+\DoxyCodeLine{1730 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1731 }
+\DoxyCodeLine{1732 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_ARRAY\_PARAM)}}
+\DoxyCodeLine{1733 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_ARRAY\_PARAM}}
+\DoxyCodeLine{1734 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1735 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1736 \textcolor{preprocessor}{    defined(\_\_STDC\_VERSION\_\_) \&\& (\_\_STDC\_VERSION\_\_ >= 199901L) \&\& \(\backslash\)}}
+\DoxyCodeLine{1737 \textcolor{preprocessor}{    !defined(\_\_STDC\_NO\_VLA\_\_) \&\& \(\backslash\)}}
+\DoxyCodeLine{1738 \textcolor{preprocessor}{    !defined(\_\_cplusplus) \&\& \(\backslash\)}}
+\DoxyCodeLine{1739 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_PGI\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{1740 \textcolor{preprocessor}{    !defined(JSON\_HEDLEY\_TINYC\_VERSION)}}
+\DoxyCodeLine{1741 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ARRAY\_PARAM(name) (name)}}
+\DoxyCodeLine{1742 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1743 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_ARRAY\_PARAM(name)}}
+\DoxyCodeLine{1744 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1745 }
+\DoxyCodeLine{1746 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IS\_CONSTANT)}}
+\DoxyCodeLine{1747 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_IS\_CONSTANT}}
+\DoxyCodeLine{1748 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1749 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_REQUIRE\_CONSTEXPR)}}
+\DoxyCodeLine{1750 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_REQUIRE\_CONSTEXPR}}
+\DoxyCodeLine{1751 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1752 \textcolor{comment}{/* JSON\_HEDLEY\_IS\_CONSTEXPR\_ is for}}
+\DoxyCodeLine{1753 \textcolor{comment}{   HEDLEY INTERNAL USE ONLY.  API subject to change without notice. */}}
+\DoxyCodeLine{1754 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IS\_CONSTEXPR\_)}}
+\DoxyCodeLine{1755 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_IS\_CONSTEXPR\_}}
+\DoxyCodeLine{1756 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1757 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1758 \textcolor{preprocessor}{    JSON\_HEDLEY\_HAS\_BUILTIN(\_\_builtin\_constant\_p) || \(\backslash\)}}
+\DoxyCodeLine{1759 \textcolor{preprocessor}{    JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1760 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1761 \textcolor{preprocessor}{    JSON\_HEDLEY\_TINYC\_VERSION\_CHECK(0,9,19) || \(\backslash\)}}
+\DoxyCodeLine{1762 \textcolor{preprocessor}{    JSON\_HEDLEY\_ARM\_VERSION\_CHECK(4,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1763 \textcolor{preprocessor}{    JSON\_HEDLEY\_IBM\_VERSION\_CHECK(13,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1764 \textcolor{preprocessor}{    JSON\_HEDLEY\_TI\_CL6X\_VERSION\_CHECK(6,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1765 \textcolor{preprocessor}{    (JSON\_HEDLEY\_SUNPRO\_VERSION\_CHECK(5,10,0) \&\& !defined(\_\_cplusplus)) || \(\backslash\)}}
+\DoxyCodeLine{1766 \textcolor{preprocessor}{    JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(8,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1767 \textcolor{preprocessor}{    JSON\_HEDLEY\_MCST\_LCC\_VERSION\_CHECK(1,25,10)}}
+\DoxyCodeLine{1768 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IS\_CONSTANT(expr) \_\_builtin\_constant\_p(expr)}}
+\DoxyCodeLine{1769 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1770 \textcolor{preprocessor}{\#if !defined(\_\_cplusplus)}}
+\DoxyCodeLine{1771 \textcolor{preprocessor}{\#  if \(\backslash\)}}
+\DoxyCodeLine{1772 \textcolor{preprocessor}{       JSON\_HEDLEY\_HAS\_BUILTIN(\_\_builtin\_types\_compatible\_p) || \(\backslash\)}}
+\DoxyCodeLine{1773 \textcolor{preprocessor}{       JSON\_HEDLEY\_GCC\_VERSION\_CHECK(3,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1774 \textcolor{preprocessor}{       JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1775 \textcolor{preprocessor}{       JSON\_HEDLEY\_IBM\_VERSION\_CHECK(13,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1776 \textcolor{preprocessor}{       JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(8,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1777 \textcolor{preprocessor}{       JSON\_HEDLEY\_ARM\_VERSION\_CHECK(5,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1778 \textcolor{preprocessor}{       JSON\_HEDLEY\_TINYC\_VERSION\_CHECK(0,9,24)}}
+\DoxyCodeLine{1779 \textcolor{preprocessor}{\#if defined(\_\_INTPTR\_TYPE\_\_)}}
+\DoxyCodeLine{1780 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IS\_CONSTEXPR\_(expr) \_\_builtin\_types\_compatible\_p(\_\_typeof\_\_((1 ? (void*) ((\_\_INTPTR\_TYPE\_\_) ((expr) * 0)) : (int*) 0)), int*)}}
+\DoxyCodeLine{1781 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1782 \textcolor{preprocessor}{    \#include <stdint.h>}}
+\DoxyCodeLine{1783 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IS\_CONSTEXPR\_(expr) \_\_builtin\_types\_compatible\_p(\_\_typeof\_\_((1 ? (void*) ((intptr\_t) ((expr) * 0)) : (int*) 0)), int*)}}
+\DoxyCodeLine{1784 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1785 \textcolor{preprocessor}{\#  elif \(\backslash\)}}
+\DoxyCodeLine{1786 \textcolor{preprocessor}{       ( \(\backslash\)}}
+\DoxyCodeLine{1787 \textcolor{preprocessor}{          defined(\_\_STDC\_VERSION\_\_) \&\& (\_\_STDC\_VERSION\_\_ >= 201112L) \&\& \(\backslash\)}}
+\DoxyCodeLine{1788 \textcolor{preprocessor}{          !defined(JSON\_HEDLEY\_SUNPRO\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{1789 \textcolor{preprocessor}{          !defined(JSON\_HEDLEY\_PGI\_VERSION) \&\& \(\backslash\)}}
+\DoxyCodeLine{1790 \textcolor{preprocessor}{          !defined(JSON\_HEDLEY\_IAR\_VERSION)) || \(\backslash\)}}
+\DoxyCodeLine{1791 \textcolor{preprocessor}{       (JSON\_HEDLEY\_HAS\_EXTENSION(c\_generic\_selections) \&\& !defined(JSON\_HEDLEY\_IAR\_VERSION)) || \(\backslash\)}}
+\DoxyCodeLine{1792 \textcolor{preprocessor}{       JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,9,0) || \(\backslash\)}}
+\DoxyCodeLine{1793 \textcolor{preprocessor}{       JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(17,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1794 \textcolor{preprocessor}{       JSON\_HEDLEY\_IBM\_VERSION\_CHECK(12,1,0) || \(\backslash\)}}
+\DoxyCodeLine{1795 \textcolor{preprocessor}{       JSON\_HEDLEY\_ARM\_VERSION\_CHECK(5,3,0)}}
+\DoxyCodeLine{1796 \textcolor{preprocessor}{\#if defined(\_\_INTPTR\_TYPE\_\_)}}
+\DoxyCodeLine{1797 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IS\_CONSTEXPR\_(expr) \_Generic((1 ? (void*) ((\_\_INTPTR\_TYPE\_\_) ((expr) * 0)) : (int*) 0), int*: 1, void*: 0)}}
+\DoxyCodeLine{1798 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1799 \textcolor{preprocessor}{    \#include <stdint.h>}}
+\DoxyCodeLine{1800 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_IS\_CONSTEXPR\_(expr) \_Generic((1 ? (void*) ((intptr\_t) * 0) : (int*) 0), int*: 1, void*: 0)}}
+\DoxyCodeLine{1801 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1802 \textcolor{preprocessor}{\#  elif \(\backslash\)}}
+\DoxyCodeLine{1803 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_GCC\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1804 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_INTEL\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1805 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_TINYC\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1806 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_TI\_ARMCL\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1807 \textcolor{preprocessor}{       JSON\_HEDLEY\_TI\_CL430\_VERSION\_CHECK(18,12,0) || \(\backslash\)}}
+\DoxyCodeLine{1808 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_TI\_CL2000\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1809 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_TI\_CL6X\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1810 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_TI\_CL7X\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1811 \textcolor{preprocessor}{       defined(JSON\_HEDLEY\_TI\_CLPRU\_VERSION) || \(\backslash\)}}
+\DoxyCodeLine{1812 \textcolor{preprocessor}{       defined(\_\_clang\_\_)}}
+\DoxyCodeLine{1813 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_IS\_CONSTEXPR\_(expr) ( \(\backslash\)}}
+\DoxyCodeLine{1814 \textcolor{preprocessor}{        sizeof(void) != \(\backslash\)}}
+\DoxyCodeLine{1815 \textcolor{preprocessor}{        sizeof(*( \(\backslash\)}}
+\DoxyCodeLine{1816 \textcolor{preprocessor}{                  1 ? \(\backslash\)}}
+\DoxyCodeLine{1817 \textcolor{preprocessor}{                  ((void*) ((expr) * 0L) ) : \(\backslash\)}}
+\DoxyCodeLine{1818 \textcolor{preprocessor}{((struct \{ char v[sizeof(void) * 2]; \} *) 1) \(\backslash\)}}
+\DoxyCodeLine{1819 \textcolor{preprocessor}{                ) \(\backslash\)}}
+\DoxyCodeLine{1820 \textcolor{preprocessor}{              ) \(\backslash\)}}
+\DoxyCodeLine{1821 \textcolor{preprocessor}{                                            )}}
+\DoxyCodeLine{1822 \textcolor{preprocessor}{\#  endif}}
+\DoxyCodeLine{1823 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1824 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_IS\_CONSTEXPR\_)}}
+\DoxyCodeLine{1825 \textcolor{preprocessor}{    \#if !defined(JSON\_HEDLEY\_IS\_CONSTANT)}}
+\DoxyCodeLine{1826 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_IS\_CONSTANT(expr) JSON\_HEDLEY\_IS\_CONSTEXPR\_(expr)}}
+\DoxyCodeLine{1827 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1828 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_REQUIRE\_CONSTEXPR(expr) (JSON\_HEDLEY\_IS\_CONSTEXPR\_(expr) ? (expr) : (-\/1))}}
+\DoxyCodeLine{1829 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1830 \textcolor{preprocessor}{    \#if !defined(JSON\_HEDLEY\_IS\_CONSTANT)}}
+\DoxyCodeLine{1831 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_IS\_CONSTANT(expr) (0)}}
+\DoxyCodeLine{1832 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1833 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_REQUIRE\_CONSTEXPR(expr) (expr)}}
+\DoxyCodeLine{1834 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1835 }
+\DoxyCodeLine{1836 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_BEGIN\_C\_DECLS)}}
+\DoxyCodeLine{1837 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_BEGIN\_C\_DECLS}}
+\DoxyCodeLine{1838 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1839 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_END\_C\_DECLS)}}
+\DoxyCodeLine{1840 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_END\_C\_DECLS}}
+\DoxyCodeLine{1841 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1842 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_C\_DECL)}}
+\DoxyCodeLine{1843 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_C\_DECL}}
+\DoxyCodeLine{1844 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1845 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{1846 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_BEGIN\_C\_DECLS extern "{}C"{}} \{}
+\DoxyCodeLine{1847 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_END\_C\_DECLS \}}}
+\DoxyCodeLine{1848 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_C\_DECL extern "{}C"{}}}
+\DoxyCodeLine{1849 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1850 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_BEGIN\_C\_DECLS}}
+\DoxyCodeLine{1851 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_END\_C\_DECLS}}
+\DoxyCodeLine{1852 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_C\_DECL}}
+\DoxyCodeLine{1853 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1854 }
+\DoxyCodeLine{1855 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_STATIC\_ASSERT)}}
+\DoxyCodeLine{1856 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_STATIC\_ASSERT}}
+\DoxyCodeLine{1857 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1858 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1859 \textcolor{preprocessor}{  !defined(\_\_cplusplus) \&\& ( \(\backslash\)}}
+\DoxyCodeLine{1860 \textcolor{preprocessor}{      (defined(\_\_STDC\_VERSION\_\_) \&\& (\_\_STDC\_VERSION\_\_ >= 201112L)) || \(\backslash\)}}
+\DoxyCodeLine{1861 \textcolor{preprocessor}{      (JSON\_HEDLEY\_HAS\_FEATURE(c\_static\_assert) \&\& !defined(JSON\_HEDLEY\_INTEL\_CL\_VERSION)) || \(\backslash\)}}
+\DoxyCodeLine{1862 \textcolor{preprocessor}{      JSON\_HEDLEY\_GCC\_VERSION\_CHECK(6,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1863 \textcolor{preprocessor}{      JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1864 \textcolor{preprocessor}{      defined(\_Static\_assert) \(\backslash\)}}
+\DoxyCodeLine{1865 \textcolor{preprocessor}{    )}}
+\DoxyCodeLine{1866 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_STATIC\_ASSERT(expr, message) \_Static\_assert(expr, message)}}
+\DoxyCodeLine{1867 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1868 \textcolor{preprocessor}{  (defined(\_\_cplusplus) \&\& (\_\_cplusplus >= 201103L)) || \(\backslash\)}}
+\DoxyCodeLine{1869 \textcolor{preprocessor}{  JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(16,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1870 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1871 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_STATIC\_ASSERT(expr, message) JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_(static\_assert(expr, message))}}
+\DoxyCodeLine{1872 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1873 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_STATIC\_ASSERT(expr, message)}}
+\DoxyCodeLine{1874 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1875 }
+\DoxyCodeLine{1876 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_NULL)}}
+\DoxyCodeLine{1877 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_NULL}}
+\DoxyCodeLine{1878 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1879 \textcolor{preprocessor}{\#if defined(\_\_cplusplus)}}
+\DoxyCodeLine{1880 \textcolor{preprocessor}{    \#if \_\_cplusplus >= 201103L}}
+\DoxyCodeLine{1881 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_NULL JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_CPP98\_COMPAT\_WRAP\_(nullptr)}}
+\DoxyCodeLine{1882 \textcolor{preprocessor}{    \#elif defined(NULL)}}
+\DoxyCodeLine{1883 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_NULL NULL}}
+\DoxyCodeLine{1884 \textcolor{preprocessor}{    \#else}}
+\DoxyCodeLine{1885 \textcolor{preprocessor}{        \#define JSON\_HEDLEY\_NULL JSON\_HEDLEY\_STATIC\_CAST(void*, 0)}}
+\DoxyCodeLine{1886 \textcolor{preprocessor}{    \#endif}}
+\DoxyCodeLine{1887 \textcolor{preprocessor}{\#elif defined(NULL)}}
+\DoxyCodeLine{1888 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NULL NULL}}
+\DoxyCodeLine{1889 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1890 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_NULL ((void*) 0)}}
+\DoxyCodeLine{1891 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1892 }
+\DoxyCodeLine{1893 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_MESSAGE)}}
+\DoxyCodeLine{1894 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_MESSAGE}}
+\DoxyCodeLine{1895 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1896 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wunknown-\/pragmas"{}})}
+\DoxyCodeLine{1897 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_MESSAGE(msg) \(\backslash\)}}
+\DoxyCodeLine{1898 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{1899 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \(\backslash\)}}
+\DoxyCodeLine{1900 \textcolor{preprocessor}{    JSON\_HEDLEY\_PRAGMA(message msg) \(\backslash\)}}
+\DoxyCodeLine{1901 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_POP}}
+\DoxyCodeLine{1902 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1903 \textcolor{preprocessor}{  JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1904 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0)}}
+\DoxyCodeLine{1905 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_MESSAGE(msg) JSON\_HEDLEY\_PRAGMA(message msg)}}
+\DoxyCodeLine{1906 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_CRAY\_VERSION\_CHECK(5,0,0)}}
+\DoxyCodeLine{1907 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_MESSAGE(msg) JSON\_HEDLEY\_PRAGMA(\_CRI message msg)}}
+\DoxyCodeLine{1908 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_IAR\_VERSION\_CHECK(8,0,0)}}
+\DoxyCodeLine{1909 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_MESSAGE(msg) JSON\_HEDLEY\_PRAGMA(message(msg))}}
+\DoxyCodeLine{1910 \textcolor{preprocessor}{\#elif JSON\_HEDLEY\_PELLES\_VERSION\_CHECK(2,0,0)}}
+\DoxyCodeLine{1911 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_MESSAGE(msg) JSON\_HEDLEY\_PRAGMA(message(msg))}}
+\DoxyCodeLine{1912 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1913 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_MESSAGE(msg)}}
+\DoxyCodeLine{1914 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1915 }
+\DoxyCodeLine{1916 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_WARNING)}}
+\DoxyCodeLine{1917 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_WARNING}}
+\DoxyCodeLine{1918 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1919 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wunknown-\/pragmas"{}})}
+\DoxyCodeLine{1920 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_WARNING(msg) \(\backslash\)}}
+\DoxyCodeLine{1921 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{1922 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_DISABLE\_UNKNOWN\_PRAGMAS \(\backslash\)}}
+\DoxyCodeLine{1923 \textcolor{preprocessor}{    JSON\_HEDLEY\_PRAGMA(clang warning msg) \(\backslash\)}}
+\DoxyCodeLine{1924 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_POP}}
+\DoxyCodeLine{1925 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1926 \textcolor{preprocessor}{  JSON\_HEDLEY\_GCC\_VERSION\_CHECK(4,8,0) || \(\backslash\)}}
+\DoxyCodeLine{1927 \textcolor{preprocessor}{  JSON\_HEDLEY\_PGI\_VERSION\_CHECK(18,4,0) || \(\backslash\)}}
+\DoxyCodeLine{1928 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(13,0,0)}}
+\DoxyCodeLine{1929 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_WARNING(msg) JSON\_HEDLEY\_PRAGMA(GCC warning msg)}}
+\DoxyCodeLine{1930 \textcolor{preprocessor}{\#elif \(\backslash\)}}
+\DoxyCodeLine{1931 \textcolor{preprocessor}{  JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(15,0,0) || \(\backslash\)}}
+\DoxyCodeLine{1932 \textcolor{preprocessor}{  JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1933 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_WARNING(msg) JSON\_HEDLEY\_PRAGMA(message(msg))}}
+\DoxyCodeLine{1934 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1935 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_WARNING(msg) JSON\_HEDLEY\_MESSAGE(msg)}}
+\DoxyCodeLine{1936 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1937 }
+\DoxyCodeLine{1938 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_REQUIRE)}}
+\DoxyCodeLine{1939 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_REQUIRE}}
+\DoxyCodeLine{1940 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1941 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_REQUIRE\_MSG)}}
+\DoxyCodeLine{1942 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_REQUIRE\_MSG}}
+\DoxyCodeLine{1943 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1944 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_ATTRIBUTE(diagnose\_if)}}
+\DoxyCodeLine{1945 \textcolor{preprocessor}{\#  if JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wgcc-\/compat"{}})}
+\DoxyCodeLine{1946 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_REQUIRE(expr) \(\backslash\)}}
+\DoxyCodeLine{1947 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{1948 \textcolor{preprocessor}{    \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wgcc-\/compat\(\backslash\)"{}"{}}) \(\backslash\)}
+\DoxyCodeLine{1949     \_\_attribute\_\_((diagnose\_if(!(expr), \#expr, "{}error"{}))) \(\backslash\)}
+\DoxyCodeLine{1950     JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{1951 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_REQUIRE\_MSG(expr,msg) \(\backslash\)}}
+\DoxyCodeLine{1952 \textcolor{preprocessor}{    JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{1953 \textcolor{preprocessor}{    \_Pragma("{}clang diagnostic ignored \(\backslash\)"{}-\/Wgcc-\/compat\(\backslash\)"{}"{}}) \(\backslash\)}
+\DoxyCodeLine{1954     \_\_attribute\_\_((diagnose\_if(!(expr), msg, "{}error"{}))) \(\backslash\)}
+\DoxyCodeLine{1955     JSON\_HEDLEY\_DIAGNOSTIC\_POP}
+\DoxyCodeLine{1956 \textcolor{preprocessor}{\#  else}}
+\DoxyCodeLine{1957 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_REQUIRE(expr) \_\_attribute\_\_((diagnose\_if(!(expr), \#expr, "{}error"{}})))}
+\DoxyCodeLine{1958 \textcolor{preprocessor}{\#    define JSON\_HEDLEY\_REQUIRE\_MSG(expr,msg) \_\_attribute\_\_((diagnose\_if(!(expr), msg, "{}error"{}})))}
+\DoxyCodeLine{1959 \textcolor{preprocessor}{\#  endif}}
+\DoxyCodeLine{1960 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1961 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_REQUIRE(expr)}}
+\DoxyCodeLine{1962 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_REQUIRE\_MSG(expr,msg)}}
+\DoxyCodeLine{1963 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1964 }
+\DoxyCodeLine{1965 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_FLAGS)}}
+\DoxyCodeLine{1966 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_FLAGS}}
+\DoxyCodeLine{1967 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1968 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_HAS\_ATTRIBUTE(flag\_enum) \&\& (!defined(\_\_cplusplus) || JSON\_HEDLEY\_HAS\_WARNING("{}-\/Wbitfield-\/enum-\/conversion"{}}))}
+\DoxyCodeLine{1969 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_FLAGS \_\_attribute\_\_((\_\_flag\_enum\_\_))}}
+\DoxyCodeLine{1970 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1971 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_FLAGS}}
+\DoxyCodeLine{1972 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1973 }
+\DoxyCodeLine{1974 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_FLAGS\_CAST)}}
+\DoxyCodeLine{1975 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_FLAGS\_CAST}}
+\DoxyCodeLine{1976 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1977 \textcolor{preprocessor}{\#if JSON\_HEDLEY\_INTEL\_VERSION\_CHECK(19,0,0)}}
+\DoxyCodeLine{1978 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_FLAGS\_CAST(T, expr) (\_\_extension\_\_ (\{ \(\backslash\)}}
+\DoxyCodeLine{1979 \textcolor{preprocessor}{        JSON\_HEDLEY\_DIAGNOSTIC\_PUSH \(\backslash\)}}
+\DoxyCodeLine{1980 \textcolor{preprocessor}{        \_Pragma("{}warning(disable:188)"{}}) \(\backslash\)}
+\DoxyCodeLine{1981         ((T) (expr)); \(\backslash\)}
+\DoxyCodeLine{1982         JSON\_HEDLEY\_DIAGNOSTIC\_POP \(\backslash\)}
+\DoxyCodeLine{1983     \}))}
+\DoxyCodeLine{1984 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1985 \textcolor{preprocessor}{\#  define JSON\_HEDLEY\_FLAGS\_CAST(T, expr) JSON\_HEDLEY\_STATIC\_CAST(T, expr)}}
+\DoxyCodeLine{1986 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1987 }
+\DoxyCodeLine{1988 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_EMPTY\_BASES)}}
+\DoxyCodeLine{1989 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_EMPTY\_BASES}}
+\DoxyCodeLine{1990 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1991 \textcolor{preprocessor}{\#if \(\backslash\)}}
+\DoxyCodeLine{1992 \textcolor{preprocessor}{    (JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(19,0,23918) \&\& !JSON\_HEDLEY\_MSVC\_VERSION\_CHECK(20,0,0)) || \(\backslash\)}}
+\DoxyCodeLine{1993 \textcolor{preprocessor}{    JSON\_HEDLEY\_INTEL\_CL\_VERSION\_CHECK(2021,1,0)}}
+\DoxyCodeLine{1994 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_EMPTY\_BASES \_\_declspec(empty\_bases)}}
+\DoxyCodeLine{1995 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{1996 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_EMPTY\_BASES}}
+\DoxyCodeLine{1997 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{1998 }
+\DoxyCodeLine{1999 \textcolor{comment}{/* Remaining macros are deprecated. */}}
+\DoxyCodeLine{2000 }
+\DoxyCodeLine{2001 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_GCC\_NOT\_CLANG\_VERSION\_CHECK)}}
+\DoxyCodeLine{2002 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_GCC\_NOT\_CLANG\_VERSION\_CHECK}}
+\DoxyCodeLine{2003 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2004 \textcolor{preprocessor}{\#if defined(\_\_clang\_\_)}}
+\DoxyCodeLine{2005 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_NOT\_CLANG\_VERSION\_CHECK(major,minor,patch) (0)}}
+\DoxyCodeLine{2006 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{2007 \textcolor{preprocessor}{    \#define JSON\_HEDLEY\_GCC\_NOT\_CLANG\_VERSION\_CHECK(major,minor,patch) JSON\_HEDLEY\_GCC\_VERSION\_CHECK(major,minor,patch)}}
+\DoxyCodeLine{2008 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2009 }
+\DoxyCodeLine{2010 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CLANG\_HAS\_ATTRIBUTE)}}
+\DoxyCodeLine{2011 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CLANG\_HAS\_ATTRIBUTE}}
+\DoxyCodeLine{2012 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2013 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CLANG\_HAS\_ATTRIBUTE(attribute) JSON\_HEDLEY\_HAS\_ATTRIBUTE(attribute)}}
+\DoxyCodeLine{2014 }
+\DoxyCodeLine{2015 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CLANG\_HAS\_CPP\_ATTRIBUTE)}}
+\DoxyCodeLine{2016 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CLANG\_HAS\_CPP\_ATTRIBUTE}}
+\DoxyCodeLine{2017 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2018 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CLANG\_HAS\_CPP\_ATTRIBUTE(attribute) JSON\_HEDLEY\_HAS\_CPP\_ATTRIBUTE(attribute)}}
+\DoxyCodeLine{2019 }
+\DoxyCodeLine{2020 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CLANG\_HAS\_BUILTIN)}}
+\DoxyCodeLine{2021 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CLANG\_HAS\_BUILTIN}}
+\DoxyCodeLine{2022 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2023 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CLANG\_HAS\_BUILTIN(builtin) JSON\_HEDLEY\_HAS\_BUILTIN(builtin)}}
+\DoxyCodeLine{2024 }
+\DoxyCodeLine{2025 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CLANG\_HAS\_FEATURE)}}
+\DoxyCodeLine{2026 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CLANG\_HAS\_FEATURE}}
+\DoxyCodeLine{2027 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2028 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CLANG\_HAS\_FEATURE(feature) JSON\_HEDLEY\_HAS\_FEATURE(feature)}}
+\DoxyCodeLine{2029 }
+\DoxyCodeLine{2030 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CLANG\_HAS\_EXTENSION)}}
+\DoxyCodeLine{2031 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CLANG\_HAS\_EXTENSION}}
+\DoxyCodeLine{2032 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2033 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CLANG\_HAS\_EXTENSION(extension) JSON\_HEDLEY\_HAS\_EXTENSION(extension)}}
+\DoxyCodeLine{2034 }
+\DoxyCodeLine{2035 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CLANG\_HAS\_DECLSPEC\_DECLSPEC\_ATTRIBUTE)}}
+\DoxyCodeLine{2036 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CLANG\_HAS\_DECLSPEC\_DECLSPEC\_ATTRIBUTE}}
+\DoxyCodeLine{2037 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2038 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CLANG\_HAS\_DECLSPEC\_ATTRIBUTE(attribute) JSON\_HEDLEY\_HAS\_DECLSPEC\_ATTRIBUTE(attribute)}}
+\DoxyCodeLine{2039 }
+\DoxyCodeLine{2040 \textcolor{preprocessor}{\#if defined(JSON\_HEDLEY\_CLANG\_HAS\_WARNING)}}
+\DoxyCodeLine{2041 \textcolor{preprocessor}{    \#undef JSON\_HEDLEY\_CLANG\_HAS\_WARNING}}
+\DoxyCodeLine{2042 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{2043 \textcolor{preprocessor}{\#define JSON\_HEDLEY\_CLANG\_HAS\_WARNING(warning) JSON\_HEDLEY\_HAS\_WARNING(warning)}}
+\DoxyCodeLine{2044 }
+\DoxyCodeLine{2045 \textcolor{preprocessor}{\#endif }\textcolor{comment}{/* !defined(JSON\_HEDLEY\_VERSION) || (JSON\_HEDLEY\_VERSION < X) */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,84 @@
+\hypertarget{json__ref_8hpp_source}{}\doxysection{json\+\_\+ref.\+hpp}
+\label{json__ref_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/json\_ref.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/json\_ref.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <initializer\_list>}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#include <utility>}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <nlohmann/detail/abi\_macros.hpp>}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <nlohmann/detail/meta/type\_traits.hpp>}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{18 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{19 \{}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{keyword}{template}<\textcolor{keyword}{typename} BasicJsonType>}
+\DoxyCodeLine{22 \textcolor{keyword}{class }\mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}}
+\DoxyCodeLine{23 \{}
+\DoxyCodeLine{24   \textcolor{keyword}{public}:}
+\DoxyCodeLine{25     \textcolor{keyword}{using }value\_type = BasicJsonType;}
+\DoxyCodeLine{26 }
+\DoxyCodeLine{27     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}(value\_type\&\& value)}
+\DoxyCodeLine{28         : owned\_value(std::move(value))}
+\DoxyCodeLine{29     \{\}}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}(\textcolor{keyword}{const} value\_type\& value)}
+\DoxyCodeLine{32         : value\_ref(\&value)}
+\DoxyCodeLine{33     \{\}}
+\DoxyCodeLine{34 }
+\DoxyCodeLine{35     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}(std::initializer\_list<json\_ref> init)}
+\DoxyCodeLine{36         : owned\_value(init)}
+\DoxyCodeLine{37     \{\}}
+\DoxyCodeLine{38 }
+\DoxyCodeLine{39     \textcolor{keyword}{template} <}
+\DoxyCodeLine{40         \textcolor{keyword}{class}... Args,}
+\DoxyCodeLine{41         enable\_if\_t<std::is\_constructible<value\_type, Args...>\mbox{\hyperlink{namespacedetail_a47b1bb0bbd3596589ed9187059c312efa2063c1608d6e0baf80249c42e2be5804}{::value}}, \textcolor{keywordtype}{int}> = 0 >}
+\DoxyCodeLine{42     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}(Args \&\& ... args)}
+\DoxyCodeLine{43         : owned\_value(std::forward<Args>(args)...)}
+\DoxyCodeLine{44     \{\}}
+\DoxyCodeLine{45 }
+\DoxyCodeLine{46     \textcolor{comment}{// class should be movable only}}
+\DoxyCodeLine{47     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}(\mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}\&\&) \textcolor{keyword}{noexcept} = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{48     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{49     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}\& operator=(\textcolor{keyword}{const} \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{50     \mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}\& operator=(\mbox{\hyperlink{classdetail_1_1json__ref}{json\_ref}}\&\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{51     \mbox{\hyperlink{classdetail_1_1json__ref}{\string~json\_ref}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{52 }
+\DoxyCodeLine{53     value\_type moved\_or\_copied()\textcolor{keyword}{ const}}
+\DoxyCodeLine{54 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{55         \textcolor{keywordflow}{if} (value\_ref == \textcolor{keyword}{nullptr})}
+\DoxyCodeLine{56         \{}
+\DoxyCodeLine{57             \textcolor{keywordflow}{return} std::move(owned\_value);}
+\DoxyCodeLine{58         \}}
+\DoxyCodeLine{59         \textcolor{keywordflow}{return} *value\_ref;}
+\DoxyCodeLine{60     \}}
+\DoxyCodeLine{61 }
+\DoxyCodeLine{62     value\_type \textcolor{keyword}{const}\& operator*()\textcolor{keyword}{ const}}
+\DoxyCodeLine{63 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{64         \textcolor{keywordflow}{return} value\_ref ? *value\_ref : owned\_value;}
+\DoxyCodeLine{65     \}}
+\DoxyCodeLine{66 }
+\DoxyCodeLine{67     value\_type \textcolor{keyword}{const}* operator-\/>()\textcolor{keyword}{ const}}
+\DoxyCodeLine{68 \textcolor{keyword}{    }\{}
+\DoxyCodeLine{69         \textcolor{keywordflow}{return} \&** \textcolor{keyword}{this};}
+\DoxyCodeLine{70     \}}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72   \textcolor{keyword}{private}:}
+\DoxyCodeLine{73     \textcolor{keyword}{mutable} value\_type owned\_value = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{74     value\_type \textcolor{keyword}{const}* value\_ref = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{75 \};}
+\DoxyCodeLine{76 }
+\DoxyCodeLine{77 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{78 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

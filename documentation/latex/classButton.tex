@@ -1,0 +1,61 @@
+\hypertarget{classButton}{}\doxysection{Button Class Reference}
+\label{classButton}\index{Button@{Button}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classButton_ac5149dddbd1c3a2a287cc9d7277dcfee}\label{classButton_ac5149dddbd1c3a2a287cc9d7277dcfee}} 
+{\bfseries Button} (const std\+::string \&name, Rectangle bounds, bool enabled=true)
+\item 
+bool \mbox{\hyperlink{classButton_a11db7074128cffaf95b81ebe8f679558}{Update\+Button}} ()
+\item 
+void \mbox{\hyperlink{classButton_a6aaa2b781c933a296f41a8eca890eb1f}{Draw}} ()
+\item 
+void \mbox{\hyperlink{classButton_afa95ca0852d71fde80242e9d01477a76}{Set\+Enabled}} (bool enabled)
+\item 
+\mbox{\Hypertarget{classButton_a790f27e87bf15dc52d4ef2f8c356b60b}\label{classButton_a790f27e87bf15dc52d4ef2f8c356b60b}} 
+{\footnotesize template$<$typename T $>$ }\\void {\bfseries Set\+Callback} (T \&\&callback)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classButton_a6aaa2b781c933a296f41a8eca890eb1f}\label{classButton_a6aaa2b781c933a296f41a8eca890eb1f}} 
+\index{Button@{Button}!Draw@{Draw}}
+\index{Draw@{Draw}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{Draw()}{Draw()}}
+{\footnotesize\ttfamily void Button\+::\+Draw (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+If the button is enabled, draw it in the appropriate color, otherwise don\textquotesingle{}t draw it
+
+\begin{DoxyReturn}{Returns}
+A pointer to the \mbox{\hyperlink{classButton}{Button}} object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classButton_afa95ca0852d71fde80242e9d01477a76}\label{classButton_afa95ca0852d71fde80242e9d01477a76}} 
+\index{Button@{Button}!SetEnabled@{SetEnabled}}
+\index{SetEnabled@{SetEnabled}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{SetEnabled()}{SetEnabled()}}
+{\footnotesize\ttfamily void Button\+::\+Set\+Enabled (\begin{DoxyParamCaption}\item[{bool}]{enabled }\end{DoxyParamCaption})}
+
+Sets the enabled state of the button.
+
+
+\begin{DoxyParams}{Parameters}
+{\em enabled} & Whether or not the button is enabled. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classButton_a11db7074128cffaf95b81ebe8f679558}\label{classButton_a11db7074128cffaf95b81ebe8f679558}} 
+\index{Button@{Button}!UpdateButton@{UpdateButton}}
+\index{UpdateButton@{UpdateButton}!Button@{Button}}
+\doxysubsubsection{\texorpdfstring{UpdateButton()}{UpdateButton()}}
+{\footnotesize\ttfamily bool Button\+::\+Update\+Button (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+If the mouse is over the button, and the left mouse button is pressed, then the button is pressed. If the left mouse button is released, and the button is pressed, then the button is released, and the callback function is called
+
+\begin{DoxyReturn}{Returns}
+A boolean value. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+client/includes/button.\+hpp\item 
+client/src/button.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,67 @@
+\hypertarget{iterator__traits_8hpp_source}{}\doxysection{iterator\+\_\+traits.\+hpp}
+\label{iterator__traits_8hpp_source}\index{build/\_deps/json-\/src/include/nlohmann/detail/iterators/iterator\_traits.hpp@{build/\_deps/json-\/src/include/nlohmann/detail/iterators/iterator\_traits.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{comment}{//     \_\_ \_\_\_\_\_ \_\_\_\_\_ \_\_\_\_\_}}
+\DoxyCodeLine{2 \textcolor{comment}{//  \_\_|  |   \_\_|     |   | |  JSON for Modern C++}}
+\DoxyCodeLine{3 \textcolor{comment}{// |  |  |\_\_   |  |  | | | |  version 3.11.2}}
+\DoxyCodeLine{4 \textcolor{comment}{// |\_\_\_\_\_|\_\_\_\_\_|\_\_\_\_\_|\_|\_\_\_|  https://github.com/nlohmann/json}}
+\DoxyCodeLine{5 \textcolor{comment}{//}}
+\DoxyCodeLine{6 \textcolor{comment}{// SPDX-\/FileCopyrightText: 2013-\/2022 Niels Lohmann <https://nlohmann.me>}}
+\DoxyCodeLine{7 \textcolor{comment}{// SPDX-\/License-\/Identifier: MIT}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#pragma once}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#include <iterator>} \textcolor{comment}{// random\_access\_iterator\_tag}}
+\DoxyCodeLine{12 }
+\DoxyCodeLine{13 \textcolor{preprocessor}{\#include <nlohmann/detail/abi\_macros.hpp>}}
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#include <nlohmann/detail/meta/void\_t.hpp>}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#include <nlohmann/detail/meta/cpp\_future.hpp>}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 NLOHMANN\_JSON\_NAMESPACE\_BEGIN}
+\DoxyCodeLine{18 \textcolor{keyword}{namespace }\mbox{\hyperlink{namespacedetail}{detail}}}
+\DoxyCodeLine{19 \{}
+\DoxyCodeLine{20 }
+\DoxyCodeLine{21 \textcolor{keyword}{template}<\textcolor{keyword}{typename} It, \textcolor{keyword}{typename} = \textcolor{keywordtype}{void}>}
+\DoxyCodeLine{22 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1iterator__types}{iterator\_types}} \{\};}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{24 \textcolor{keyword}{template}<\textcolor{keyword}{typename} It>}
+\DoxyCodeLine{25 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1iterator__types}{iterator\_types}} <}
+\DoxyCodeLine{26     It,}
+\DoxyCodeLine{27     void\_t<typename It::difference\_type, typename It::value\_type, typename It::pointer,}
+\DoxyCodeLine{28     typename It::reference, typename It::iterator\_category >>}
+\DoxyCodeLine{29 \{}
+\DoxyCodeLine{30     \textcolor{keyword}{using }difference\_type = \textcolor{keyword}{typename} It::difference\_type;}
+\DoxyCodeLine{31     \textcolor{keyword}{using }value\_type = \textcolor{keyword}{typename} It::value\_type;}
+\DoxyCodeLine{32     \textcolor{keyword}{using }pointer = \textcolor{keyword}{typename} It::pointer;}
+\DoxyCodeLine{33     \textcolor{keyword}{using }reference = \textcolor{keyword}{typename} It::reference;}
+\DoxyCodeLine{34     \textcolor{keyword}{using }iterator\_category = \textcolor{keyword}{typename} It::iterator\_category;}
+\DoxyCodeLine{35 \};}
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{comment}{// This is required as some compilers implement std::iterator\_traits in a way that}}
+\DoxyCodeLine{38 \textcolor{comment}{// doesn't work with SFINAE. See https://github.com/nlohmann/json/issues/1341.}}
+\DoxyCodeLine{39 \textcolor{keyword}{template}<\textcolor{keyword}{typename} T, \textcolor{keyword}{typename} = \textcolor{keywordtype}{void}>}
+\DoxyCodeLine{40 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1iterator__traits}{iterator\_traits}}}
+\DoxyCodeLine{41 \{}
+\DoxyCodeLine{42 \};}
+\DoxyCodeLine{43 }
+\DoxyCodeLine{44 \textcolor{keyword}{template}<\textcolor{keyword}{typename} T>}
+\DoxyCodeLine{45 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1iterator__traits}{iterator\_traits}} < T, enable\_if\_t < !std::is\_pointer<T>::value >>}
+\DoxyCodeLine{46             : \mbox{\hyperlink{structdetail_1_1iterator__types}{iterator\_types}}<T>}
+\DoxyCodeLine{47 \{}
+\DoxyCodeLine{48 \};}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{50 \textcolor{keyword}{template}<\textcolor{keyword}{typename} T>}
+\DoxyCodeLine{51 \textcolor{keyword}{struct }\mbox{\hyperlink{structdetail_1_1iterator__traits}{iterator\_traits}}<T*, enable\_if\_t<std::is\_object<T>::value>>}
+\DoxyCodeLine{52 \{}
+\DoxyCodeLine{53     \textcolor{keyword}{using }iterator\_category = std::random\_access\_iterator\_tag;}
+\DoxyCodeLine{54     \textcolor{keyword}{using }value\_type = T;}
+\DoxyCodeLine{55     \textcolor{keyword}{using }difference\_type = ptrdiff\_t;}
+\DoxyCodeLine{56     \textcolor{keyword}{using }pointer = T*;}
+\DoxyCodeLine{57     \textcolor{keyword}{using }reference = T\&;}
+\DoxyCodeLine{58 \};}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{60 \}  \textcolor{comment}{// namespace detail}}
+\DoxyCodeLine{61 NLOHMANN\_JSON\_NAMESPACE\_END}
+
+\end{DoxyCode}

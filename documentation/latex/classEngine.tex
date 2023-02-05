@@ -1,0 +1,881 @@
+\hypertarget{classEngine}{}\doxysection{Engine Class Reference}
+\label{classEngine}\index{Engine@{Engine}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classEngine_a8c98683b0a3aa28d8ab72a8bcd0d52f2}{Engine}} ()
+\item 
+\mbox{\hyperlink{classEngine_aa1fb5d45140a051779cbd63e3321a6b9}{Engine}} (const std\+::string \&assets\+Path)
+\item 
+\mbox{\hyperlink{classEngine_a8ef7030a089ecb30bbfcb9e43094717a}{$\sim$\+Engine}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a4bef01c2e1d8156cf6bf7d1dc3211484}{load\+Assets}} (const std\+::string \&assets\+Path)
+\item 
+void \mbox{\hyperlink{classEngine_a34506ddc7d76898c3e519858d6cfce57}{load\+Shaders}} (json data)
+\item 
+void \mbox{\hyperlink{classEngine_a3b940106388632b2d336f649f72ac9e8}{load\+Textures}} (json data)
+\item 
+void \mbox{\hyperlink{classEngine_a40f9e2a3d99040babfa2f1ea4cbbba2c}{load\+Musics}} (json data)
+\item 
+void \mbox{\hyperlink{classEngine_a9fc17c80913c86df8d1fd67ac2f51f5b}{load\+Sounds}} (json data)
+\item 
+void \mbox{\hyperlink{classEngine_af45d76b2d6c103c630a0326ff54abd22}{load\+Objects}} (json data)
+\item 
+void \mbox{\hyperlink{classEngine_a7d0f7f60491096bf4a4b56703624e2e4}{unload\+Assets}} ()
+\item 
+void \mbox{\hyperlink{classEngine_ab0a6244400b20d1b53278de8852a7d02}{clear\+Sliders}} ()
+\item 
+void \mbox{\hyperlink{classEngine_ac535f1788ab5a79eace44bc4cc8d0c96}{clear\+Slider}} (const std\+::string \&name)
+\item 
+void \mbox{\hyperlink{classEngine_a5ff387fb17a255d99a0d966b055730c8}{clear\+Buttons}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a4aed4fe28bfe76c672344c3ec24a6ebb}{clear\+Enemies}} ()
+\item 
+bool \mbox{\hyperlink{classEngine_a181d40e823b85ae99d73fcaec8947bda}{update\+Sliders}} ()
+\item 
+bool \mbox{\hyperlink{classEngine_aeb163cf08d9b854acd535533d4e46e9c}{update\+Button}} (const std\+::string \&name)
+\item 
+void \mbox{\hyperlink{classEngine_a07547a7a41fc34db6c7049eaabb1a8c6}{update\+Music}} ()
+\item 
+void \mbox{\hyperlink{classEngine_ad2a2a7d9631675bba16a28ce695a7897}{update\+Particles}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a592331c20b68a1d93f6e53a53a12ed3a}{update\+Lights}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a75688f55f9807ee2538507b720903efd}{update\+Objects}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a784d7a56afa2b2b77b88b8ba6e9d3810}{update\+Camera}} ()
+\item 
+void \mbox{\hyperlink{classEngine_ac09aa48cf7996a905619f677fbf1e1b8}{update\+Shader\+Loc\+View}} (const std\+::string \&shader\+Name)
+\item 
+void \mbox{\hyperlink{classEngine_a4f1fad01df2adba991feaaa11b4fa7b6}{update\+Particles2D}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a0cd6b35be9531d9322916a1a30266ada}{update\+Bullets}} ()
+\item 
+void \mbox{\hyperlink{classEngine_ae573885911bf04fbfbf97a6ad27fd87d}{update\+Udp\+Client}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a3cc24aa5b07e2bca7573da7172b9ddc3}{update\+Enemies}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a8dbd25cc9b1eb0aa43301368a3cf93c5}{draw\+Object}} (const std\+::string \&name, Vector3 offset=Vector3\+Zero())
+\item 
+void \mbox{\hyperlink{classEngine_ac359e3fe07c0eabf7f05a09b20a87b2e}{draw\+Objects}} ()
+\item 
+void \mbox{\hyperlink{classEngine_abb38cdce6f210e19719775619962aafc}{draw\+Particles}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a3520e9eb6c5c10e3c044127fdbf8a94c}{draw\+Lights\+Spheres}} ()
+\item 
+void \mbox{\hyperlink{classEngine_ab385739e6f1861f147cddf9cd49bd7ce}{draw\+Bullets}} ()
+\item 
+void \mbox{\hyperlink{classEngine_ab7b7ce67ee2935f40294892f0f60fe36}{draw\+Particles2D}} ()
+\item 
+void \mbox{\hyperlink{classEngine_afe3044b31628f5f61e707ae97b1dfee1}{draw\+Sliders}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a66b0025191266dea5be1a85da69386bd}{draw\+Buttons}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a10de5b8224b7de2c31066311839ac6a6}{draw\+Enemies}} ()
+\item 
+void \mbox{\hyperlink{classEngine_a66e211c21b6468f3eaf1ed209bf14488}{play\+Music}} (const std\+::string \&name, float delay=0)
+\item 
+void \mbox{\hyperlink{classEngine_add9e1c59b93bf255422c24ade908fd04}{play\+Music}} (int index, float delay=0)
+\item 
+void \mbox{\hyperlink{classEngine_a089d46783407abf5e6c648461271e4d5}{play\+Sound}} (const std\+::string \&name)
+\item 
+void \mbox{\hyperlink{classEngine_a53c71aafab85f4a360184faef2a16538}{add\+Slider}} (const std\+::string \&name, Rectangle bounds, float $\ast$value, float min\+Value, float max\+Value, bool enabled=true)
+\item 
+void \mbox{\hyperlink{classEngine_a2684ba38807bdd0fb3395034d21f7360}{add\+Button}} (const std\+::string \&name, const std\+::string \&text, Rectangle bounds, bool enabled=true)
+\item 
+int \mbox{\hyperlink{classEngine_a2eca5b5fcf6ad47a4060e885905a5e04}{add\+Light}} (Vector3 position, float intensity=.\+2, Color color=WHITE)
+\item 
+void \mbox{\hyperlink{classEngine_a12dcf540fb9579ec3e069c9f0ed51452}{add\+Bullet}} (Vector3 position, Vector3 velocity)
+\item 
+void \mbox{\hyperlink{classEngine_aba788740fa7f45f17d6e812dad92d5a6}{add\+Particle2D}} (const std\+::string \&texture\+Name, Vector3 position, float rotation=0, float scale=-\/1)
+\item 
+void \mbox{\hyperlink{classEngine_a9064c987b1bf646c755f8deda188b4b1}{add\+Particle}} (Vector3 position, float scale=1, Color color=WHITE)
+\item 
+void \mbox{\hyperlink{classEngine_a52d4a4de901aab88c12e8e066afdb8aa}{add\+Enemy}} (int id, Vector3 position, Vector3 velocity, int hp)
+\item 
+\mbox{\hyperlink{classGameObject}{Game\+Object}} $\ast$ \mbox{\hyperlink{classEngine_ac8f5442fabc4b58c33dc459d47cfdf40}{get\+Object}} (const std\+::string \&name)
+\item 
+\mbox{\hyperlink{classGameObject}{Game\+Object}} $\ast$ \mbox{\hyperlink{classEngine_a4980a4a6b410a30738ad02790a9305d6}{get\+Player\+Ship}} ()
+\item 
+std\+::unordered\+\_\+map$<$ std\+::string, \mbox{\hyperlink{classGameObject}{Game\+Object}} $\ast$ $>$ \mbox{\hyperlink{classEngine_a4ab14144aca7a8f98babcb34ca2250ff}{get\+Objects}} ()
+\item 
+\mbox{\hyperlink{classLight}{Light}} $\ast$ \mbox{\hyperlink{classEngine_a0b85da7f9453d4619286181be870266a}{get\+Light}} (int index)
+\item 
+Camera3D $\ast$ \mbox{\hyperlink{classEngine_a275de1d9602c15e1d27b9b63b491c015}{get\+Camera}} ()
+\item 
+\mbox{\hyperlink{classButton}{Button}} $\ast$ \mbox{\hyperlink{classEngine_a7820ee4d1f63ae63df9fb0602e397151}{get\+Button}} (const std\+::string \&name)
+\item 
+\mbox{\hyperlink{classSlider}{Slider}} $\ast$ \mbox{\hyperlink{classEngine_ad53c6fd30fdbbf9d27a781334bfbb705}{get\+Slider}} (const std\+::string \&name)
+\item 
+\mbox{\hyperlink{classUdpClient}{Udp\+Client}} $\ast$ \mbox{\hyperlink{classEngine_a9b8cad4c0af2d8c58177173b4d74ada5}{get\+Udp\+Client}} ()
+\item 
+void \mbox{\hyperlink{classEngine_afd1f78bd9cca012340bca58cd414b4a2}{set\+Shader\+Mode}} (const std\+::string \&name)
+\item 
+void \mbox{\hyperlink{classEngine_a336d447831290320e3b522c05ed48bbd}{set\+Shader\+Object}} (const std\+::string \&name, const std\+::string \&shader\+Name)
+\item 
+void \mbox{\hyperlink{classEngine_ab1c98cc5e1e786c980bcdce0f34bdf0c}{set\+Music\+Volume}} (float volume)
+\item 
+void \mbox{\hyperlink{classEngine_ac6702b9cb8992fe2977dc0deeb2f548f}{set\+Sound\+Volume}} (float volume)
+\item 
+void \mbox{\hyperlink{classEngine_ad7549cb26b7425c3508c2b3545d7e8fa}{set\+Pause}} (bool pause)
+\item 
+void \mbox{\hyperlink{classEngine_a946d3c811087c8a8a68cd11a96471f39}{set\+Udp\+Client}} (\mbox{\hyperlink{classUdpClient}{Udp\+Client}} $\ast$udp\+Client)
+\item 
+bool \mbox{\hyperlink{classEngine_a82d3c6924ef07407f56411f86da56798}{is\+In\+Screen}} (Vector3 position, float offset=1000)
+\item 
+float $\ast$ \mbox{\hyperlink{classEngine_a07b5d0366584ec529bf6e0258c739423}{get\+Music\+Volume}} ()
+\item 
+float $\ast$ \mbox{\hyperlink{classEngine_a51f15840c5f05acf35a69c736b9868b4}{get\+Sound\+Volume}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{classEngine_a52aecc1acfad66142e3118421bdc791a}{draw\+Text}} (const std\+::string \&text, int font\+Size, Vector2 position, Color color=WHITE, bool centered=false)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classEngine_a8c98683b0a3aa28d8ab72a8bcd0d52f2}\label{classEngine_a8c98683b0a3aa28d8ab72a8bcd0d52f2}} 
+\index{Engine@{Engine}!Engine@{Engine}}
+\index{Engine@{Engine}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{Engine()}{Engine()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Engine\+::\+Engine (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It initializes the camera, loads the companion cube model, and initializes the music and sound volumes \mbox{\Hypertarget{classEngine_aa1fb5d45140a051779cbd63e3321a6b9}\label{classEngine_aa1fb5d45140a051779cbd63e3321a6b9}} 
+\index{Engine@{Engine}!Engine@{Engine}}
+\index{Engine@{Engine}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{Engine()}{Engine()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Engine\+::\+Engine (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{assets\+Path }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+It calls the default constructor, then calls the load\+Assets function
+
+
+\begin{DoxyParams}{Parameters}
+{\em assets\+Path} & The path to the assets folder. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a8ef7030a089ecb30bbfcb9e43094717a}\label{classEngine_a8ef7030a089ecb30bbfcb9e43094717a}} 
+\index{Engine@{Engine}!````~Engine@{$\sim$Engine}}
+\index{````~Engine@{$\sim$Engine}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{$\sim$Engine()}{~Engine()}}
+{\footnotesize\ttfamily Engine\+::$\sim$\+Engine (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It unloads all the assets, deletes the UDP client, and then calls the destructor for the base class 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classEngine_a12dcf540fb9579ec3e069c9f0ed51452}\label{classEngine_a12dcf540fb9579ec3e069c9f0ed51452}} 
+\index{Engine@{Engine}!addBullet@{addBullet}}
+\index{addBullet@{addBullet}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{addBullet()}{addBullet()}}
+{\footnotesize\ttfamily void Engine\+::add\+Bullet (\begin{DoxyParamCaption}\item[{Vector3}]{position,  }\item[{Vector3}]{velocity }\end{DoxyParamCaption})}
+
+It adds a bullet to the game
+
+
+\begin{DoxyParams}{Parameters}
+{\em position} & The position of the bullet \\
+\hline
+{\em velocity} & The velocity of the bullet. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a2684ba38807bdd0fb3395034d21f7360}\label{classEngine_a2684ba38807bdd0fb3395034d21f7360}} 
+\index{Engine@{Engine}!addButton@{addButton}}
+\index{addButton@{addButton}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{addButton()}{addButton()}}
+{\footnotesize\ttfamily void Engine\+::add\+Button (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{const std\+::string \&}]{text,  }\item[{Rectangle}]{bounds,  }\item[{bool}]{enabled = {\ttfamily true} }\end{DoxyParamCaption})}
+
+It adds a button to the engine
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the button. This is used to identify the button. \\
+\hline
+{\em text} & The text to display on the button. \\
+\hline
+{\em bounds} & The rectangle that the button will be drawn in. \\
+\hline
+{\em enabled} & Whether the button is enabled or not.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the button with the given name. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a52d4a4de901aab88c12e8e066afdb8aa}\label{classEngine_a52d4a4de901aab88c12e8e066afdb8aa}} 
+\index{Engine@{Engine}!addEnemy@{addEnemy}}
+\index{addEnemy@{addEnemy}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{addEnemy()}{addEnemy()}}
+{\footnotesize\ttfamily void Engine\+::add\+Enemy (\begin{DoxyParamCaption}\item[{int}]{id,  }\item[{Vector3}]{position,  }\item[{Vector3}]{velocity,  }\item[{int}]{hp }\end{DoxyParamCaption})}
+
+It adds an enemy to the game
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & The id of the enemy. \\
+\hline
+{\em position} & The position of the enemy. \\
+\hline
+{\em velocity} & The velocity of the enemy. \\
+\hline
+{\em hp} & the enemy\textquotesingle{}s health \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a2eca5b5fcf6ad47a4060e885905a5e04}\label{classEngine_a2eca5b5fcf6ad47a4060e885905a5e04}} 
+\index{Engine@{Engine}!addLight@{addLight}}
+\index{addLight@{addLight}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{addLight()}{addLight()}}
+{\footnotesize\ttfamily int Engine\+::add\+Light (\begin{DoxyParamCaption}\item[{Vector3}]{position,  }\item[{float}]{intensity = {\ttfamily .2},  }\item[{Color}]{color = {\ttfamily WHITE} }\end{DoxyParamCaption})}
+
+It adds a light to the scene
+
+
+\begin{DoxyParams}{Parameters}
+{\em position} & The position of the light in world space. \\
+\hline
+{\em intensity} & The intensity of the light. \\
+\hline
+{\em color} & The color of the light.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The index of the light in the \+\_\+lights vector. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a9064c987b1bf646c755f8deda188b4b1}\label{classEngine_a9064c987b1bf646c755f8deda188b4b1}} 
+\index{Engine@{Engine}!addParticle@{addParticle}}
+\index{addParticle@{addParticle}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{addParticle()}{addParticle()}}
+{\footnotesize\ttfamily void Engine\+::add\+Particle (\begin{DoxyParamCaption}\item[{Vector3}]{position,  }\item[{float}]{scale = {\ttfamily 1},  }\item[{Color}]{color = {\ttfamily WHITE} }\end{DoxyParamCaption})}
+
+It adds a particle to the particle list
+
+
+\begin{DoxyParams}{Parameters}
+{\em position} & The position of the particle. \\
+\hline
+{\em scale} & The size of the particle. \\
+\hline
+{\em color} & The color of the particle. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_aba788740fa7f45f17d6e812dad92d5a6}\label{classEngine_aba788740fa7f45f17d6e812dad92d5a6}} 
+\index{Engine@{Engine}!addParticle2D@{addParticle2D}}
+\index{addParticle2D@{addParticle2D}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{addParticle2D()}{addParticle2D()}}
+{\footnotesize\ttfamily void Engine\+::add\+Particle2D (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{texture\+Name,  }\item[{Vector3}]{position,  }\item[{float}]{rotation = {\ttfamily 0},  }\item[{float}]{scale = {\ttfamily -\/1} }\end{DoxyParamCaption})}
+
+It adds a particle to the front of the vector
+
+
+\begin{DoxyParams}{Parameters}
+{\em texture\+Name} & The name of the texture to use for the particle. \\
+\hline
+{\em position} & The position of the particle in 3D space. \\
+\hline
+{\em rotation} & The rotation of the particle in degrees. \\
+\hline
+{\em scale} & The scale of the particle. If it\textquotesingle{}s negative, the scale will be the same as the texture\textquotesingle{}s scale.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the texture. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a53c71aafab85f4a360184faef2a16538}\label{classEngine_a53c71aafab85f4a360184faef2a16538}} 
+\index{Engine@{Engine}!addSlider@{addSlider}}
+\index{addSlider@{addSlider}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{addSlider()}{addSlider()}}
+{\footnotesize\ttfamily void Engine\+::add\+Slider (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{Rectangle}]{bounds,  }\item[{float $\ast$}]{value,  }\item[{float}]{min\+Value,  }\item[{float}]{max\+Value,  }\item[{bool}]{enabled = {\ttfamily true} }\end{DoxyParamCaption})}
+
+It adds a new slider to the engine
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the slider. This is used to identify the slider. \\
+\hline
+{\em bounds} & The rectangle that the slider will occupy. \\
+\hline
+{\em value} & The value that the slider will modify. \\
+\hline
+{\em min\+Value} & The minimum value the slider can have. \\
+\hline
+{\em max\+Value} & The maximum value the slider can have. \\
+\hline
+{\em enabled} & Whether the slider is enabled or not.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the \mbox{\hyperlink{classSlider}{Slider}} object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a5ff387fb17a255d99a0d966b055730c8}\label{classEngine_a5ff387fb17a255d99a0d966b055730c8}} 
+\index{Engine@{Engine}!clearButtons@{clearButtons}}
+\index{clearButtons@{clearButtons}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{clearButtons()}{clearButtons()}}
+{\footnotesize\ttfamily void Engine\+::clear\+Buttons (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It deletes all the buttons in the map and then clears the map \mbox{\Hypertarget{classEngine_a4aed4fe28bfe76c672344c3ec24a6ebb}\label{classEngine_a4aed4fe28bfe76c672344c3ec24a6ebb}} 
+\index{Engine@{Engine}!clearEnemies@{clearEnemies}}
+\index{clearEnemies@{clearEnemies}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{clearEnemies()}{clearEnemies()}}
+{\footnotesize\ttfamily void Engine\+::clear\+Enemies (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It deletes all the enemies and clears the map \mbox{\Hypertarget{classEngine_ac535f1788ab5a79eace44bc4cc8d0c96}\label{classEngine_ac535f1788ab5a79eace44bc4cc8d0c96}} 
+\index{Engine@{Engine}!clearSlider@{clearSlider}}
+\index{clearSlider@{clearSlider}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{clearSlider()}{clearSlider()}}
+{\footnotesize\ttfamily void Engine\+::clear\+Slider (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+It deletes the slider with the given name from the map of sliders
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the slider. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_ab0a6244400b20d1b53278de8852a7d02}\label{classEngine_ab0a6244400b20d1b53278de8852a7d02}} 
+\index{Engine@{Engine}!clearSliders@{clearSliders}}
+\index{clearSliders@{clearSliders}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{clearSliders()}{clearSliders()}}
+{\footnotesize\ttfamily void Engine\+::clear\+Sliders (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It deletes all the sliders and clears the map \mbox{\Hypertarget{classEngine_ab385739e6f1861f147cddf9cd49bd7ce}\label{classEngine_ab385739e6f1861f147cddf9cd49bd7ce}} 
+\index{Engine@{Engine}!drawBullets@{drawBullets}}
+\index{drawBullets@{drawBullets}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawBullets()}{drawBullets()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Bullets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+For each bullet in the vector of bullets, draw the bullet. \mbox{\Hypertarget{classEngine_a66b0025191266dea5be1a85da69386bd}\label{classEngine_a66b0025191266dea5be1a85da69386bd}} 
+\index{Engine@{Engine}!drawButtons@{drawButtons}}
+\index{drawButtons@{drawButtons}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawButtons()}{drawButtons()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Buttons (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It loops through all the buttons in the \+\_\+buttons map and calls the Draw() function on each one \mbox{\Hypertarget{classEngine_a10de5b8224b7de2c31066311839ac6a6}\label{classEngine_a10de5b8224b7de2c31066311839ac6a6}} 
+\index{Engine@{Engine}!drawEnemies@{drawEnemies}}
+\index{drawEnemies@{drawEnemies}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawEnemies()}{drawEnemies()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Enemies (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It loops through all the enemies in the game and draws them \mbox{\Hypertarget{classEngine_a3520e9eb6c5c10e3c044127fdbf8a94c}\label{classEngine_a3520e9eb6c5c10e3c044127fdbf8a94c}} 
+\index{Engine@{Engine}!drawLightsSpheres@{drawLightsSpheres}}
+\index{drawLightsSpheres@{drawLightsSpheres}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawLightsSpheres()}{drawLightsSpheres()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Lights\+Spheres (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It draws the spheres that represent the lights in the scene \mbox{\Hypertarget{classEngine_a8dbd25cc9b1eb0aa43301368a3cf93c5}\label{classEngine_a8dbd25cc9b1eb0aa43301368a3cf93c5}} 
+\index{Engine@{Engine}!drawObject@{drawObject}}
+\index{drawObject@{drawObject}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawObject()}{drawObject()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Object (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{Vector3}]{offset = {\ttfamily Vector3Zero()} }\end{DoxyParamCaption})}
+
+If the object exists and is in the screen, draw it
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the object to draw. \\
+\hline
+{\em offset} & The offset of the object. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_ac359e3fe07c0eabf7f05a09b20a87b2e}\label{classEngine_ac359e3fe07c0eabf7f05a09b20a87b2e}} 
+\index{Engine@{Engine}!drawObjects@{drawObjects}}
+\index{drawObjects@{drawObjects}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawObjects()}{drawObjects()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Objects (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It draws all objects that are in the screen \mbox{\Hypertarget{classEngine_abb38cdce6f210e19719775619962aafc}\label{classEngine_abb38cdce6f210e19719775619962aafc}} 
+\index{Engine@{Engine}!drawParticles@{drawParticles}}
+\index{drawParticles@{drawParticles}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawParticles()}{drawParticles()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Particles (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+For each particle in the vector of particles, draw the model at the particle\textquotesingle{}s position, scale, and color. \mbox{\Hypertarget{classEngine_ab7b7ce67ee2935f40294892f0f60fe36}\label{classEngine_ab7b7ce67ee2935f40294892f0f60fe36}} 
+\index{Engine@{Engine}!drawParticles2D@{drawParticles2D}}
+\index{drawParticles2D@{drawParticles2D}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawParticles2D()}{drawParticles2D()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Particles2D (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+For each particle in the vector of particles, draw the particle using the camera. \mbox{\Hypertarget{classEngine_afe3044b31628f5f61e707ae97b1dfee1}\label{classEngine_afe3044b31628f5f61e707ae97b1dfee1}} 
+\index{Engine@{Engine}!drawSliders@{drawSliders}}
+\index{drawSliders@{drawSliders}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawSliders()}{drawSliders()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Sliders (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It draws all the sliders in the game \mbox{\Hypertarget{classEngine_a52aecc1acfad66142e3118421bdc791a}\label{classEngine_a52aecc1acfad66142e3118421bdc791a}} 
+\index{Engine@{Engine}!drawText@{drawText}}
+\index{drawText@{drawText}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{drawText()}{drawText()}}
+{\footnotesize\ttfamily void Engine\+::draw\+Text (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{text,  }\item[{int}]{font\+Size,  }\item[{Vector2}]{position,  }\item[{Color}]{color = {\ttfamily WHITE},  }\item[{bool}]{centered = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Draws text on the screen
+
+
+\begin{DoxyParams}{Parameters}
+{\em text} & The text to draw. \\
+\hline
+{\em font\+Size} & The size of the font. \\
+\hline
+{\em position} & The position of the text. \\
+\hline
+{\em color} & The color of the text. \\
+\hline
+{\em centered} & If true, the text will be centered on the position. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a7820ee4d1f63ae63df9fb0602e397151}\label{classEngine_a7820ee4d1f63ae63df9fb0602e397151}} 
+\index{Engine@{Engine}!getButton@{getButton}}
+\index{getButton@{getButton}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getButton()}{getButton()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classButton}{Button}} $\ast$ Engine\+::get\+Button (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+If the button exists, return it, otherwise return nullptr
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the button.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to a \mbox{\hyperlink{classButton}{Button}} object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a275de1d9602c15e1d27b9b63b491c015}\label{classEngine_a275de1d9602c15e1d27b9b63b491c015}} 
+\index{Engine@{Engine}!getCamera@{getCamera}}
+\index{getCamera@{getCamera}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getCamera()}{getCamera()}}
+{\footnotesize\ttfamily Camera3D $\ast$ Engine\+::get\+Camera (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Return a pointer to the camera object.
+
+\begin{DoxyReturn}{Returns}
+A pointer to the camera object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a0b85da7f9453d4619286181be870266a}\label{classEngine_a0b85da7f9453d4619286181be870266a}} 
+\index{Engine@{Engine}!getLight@{getLight}}
+\index{getLight@{getLight}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getLight()}{getLight()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classLight}{Light}} $\ast$ Engine\+::get\+Light (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})}
+
+It returns a pointer to the light with the given index
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & The index of the light to get.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the light object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a07b5d0366584ec529bf6e0258c739423}\label{classEngine_a07b5d0366584ec529bf6e0258c739423}} 
+\index{Engine@{Engine}!getMusicVolume@{getMusicVolume}}
+\index{getMusicVolume@{getMusicVolume}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getMusicVolume()}{getMusicVolume()}}
+{\footnotesize\ttfamily float $\ast$ Engine\+::get\+Music\+Volume (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+This function returns a pointer to the \+\_\+music\+Volume variable.
+
+\begin{DoxyReturn}{Returns}
+A pointer to the \+\_\+music\+Volume variable. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_ac8f5442fabc4b58c33dc459d47cfdf40}\label{classEngine_ac8f5442fabc4b58c33dc459d47cfdf40}} 
+\index{Engine@{Engine}!getObject@{getObject}}
+\index{getObject@{getObject}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getObject()}{getObject()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classGameObject}{Game\+Object}} $\ast$ Engine\+::get\+Object (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+If the object exists, return it, otherwise return nullptr
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the object to get.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to a \mbox{\hyperlink{classGameObject}{Game\+Object}}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a4ab14144aca7a8f98babcb34ca2250ff}\label{classEngine_a4ab14144aca7a8f98babcb34ca2250ff}} 
+\index{Engine@{Engine}!getObjects@{getObjects}}
+\index{getObjects@{getObjects}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getObjects()}{getObjects()}}
+{\footnotesize\ttfamily std\+::unordered\+\_\+map$<$ std\+::string, \mbox{\hyperlink{classGameObject}{Game\+Object}} $\ast$ $>$ Engine\+::get\+Objects (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It returns a copy of the private member variable \+\_\+objects
+
+\begin{DoxyReturn}{Returns}
+A reference to the unordered map of objects. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a4980a4a6b410a30738ad02790a9305d6}\label{classEngine_a4980a4a6b410a30738ad02790a9305d6}} 
+\index{Engine@{Engine}!getPlayerShip@{getPlayerShip}}
+\index{getPlayerShip@{getPlayerShip}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getPlayerShip()}{getPlayerShip()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classGameObject}{Game\+Object}} $\ast$ Engine\+::get\+Player\+Ship (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It returns a pointer to the player\textquotesingle{}s ship
+
+\begin{DoxyReturn}{Returns}
+The player\textquotesingle{}s ship. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_ad53c6fd30fdbbf9d27a781334bfbb705}\label{classEngine_ad53c6fd30fdbbf9d27a781334bfbb705}} 
+\index{Engine@{Engine}!getSlider@{getSlider}}
+\index{getSlider@{getSlider}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getSlider()}{getSlider()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classSlider}{Slider}} $\ast$ Engine\+::get\+Slider (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+If the slider exists, return it, otherwise return nullptr
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the slider.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the slider with the given name. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a51f15840c5f05acf35a69c736b9868b4}\label{classEngine_a51f15840c5f05acf35a69c736b9868b4}} 
+\index{Engine@{Engine}!getSoundVolume@{getSoundVolume}}
+\index{getSoundVolume@{getSoundVolume}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getSoundVolume()}{getSoundVolume()}}
+{\footnotesize\ttfamily float $\ast$ Engine\+::get\+Sound\+Volume (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+This function returns a pointer to the \+\_\+sound\+Volume variable.
+
+\begin{DoxyReturn}{Returns}
+A pointer to the \+\_\+sound\+Volume variable. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a9b8cad4c0af2d8c58177173b4d74ada5}\label{classEngine_a9b8cad4c0af2d8c58177173b4d74ada5}} 
+\index{Engine@{Engine}!getUdpClient@{getUdpClient}}
+\index{getUdpClient@{getUdpClient}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{getUdpClient()}{getUdpClient()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classUdpClient}{Udp\+Client}} $\ast$ Engine\+::get\+Udp\+Client (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It returns the \mbox{\hyperlink{classUdpClient}{Udp\+Client}} object.
+
+\begin{DoxyReturn}{Returns}
+The \mbox{\hyperlink{classUdpClient}{Udp\+Client}} object. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a82d3c6924ef07407f56411f86da56798}\label{classEngine_a82d3c6924ef07407f56411f86da56798}} 
+\index{Engine@{Engine}!isInScreen@{isInScreen}}
+\index{isInScreen@{isInScreen}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{isInScreen()}{isInScreen()}}
+{\footnotesize\ttfamily bool Engine\+::is\+In\+Screen (\begin{DoxyParamCaption}\item[{Vector3}]{position,  }\item[{float}]{offset = {\ttfamily 1000} }\end{DoxyParamCaption})}
+
+If the position is within the screen, return true
+
+
+\begin{DoxyParams}{Parameters}
+{\em position} & The position of the object in world space. \\
+\hline
+{\em offset} & The offset from the screen border.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A boolean value. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a4bef01c2e1d8156cf6bf7d1dc3211484}\label{classEngine_a4bef01c2e1d8156cf6bf7d1dc3211484}} 
+\index{Engine@{Engine}!loadAssets@{loadAssets}}
+\index{loadAssets@{loadAssets}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{loadAssets()}{loadAssets()}}
+{\footnotesize\ttfamily void Engine\+::load\+Assets (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{assets\+Path }\end{DoxyParamCaption})}
+
+It loads all the assets from the json file
+
+
+\begin{DoxyParams}{Parameters}
+{\em assets\+Path} & The path to the json file containing the assets. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a40f9e2a3d99040babfa2f1ea4cbbba2c}\label{classEngine_a40f9e2a3d99040babfa2f1ea4cbbba2c}} 
+\index{Engine@{Engine}!loadMusics@{loadMusics}}
+\index{loadMusics@{loadMusics}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{loadMusics()}{loadMusics()}}
+{\footnotesize\ttfamily void Engine\+::load\+Musics (\begin{DoxyParamCaption}\item[{json}]{data }\end{DoxyParamCaption})}
+
+It loads the musics from the json file and stores them in a map
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The JSON data that contains the music information. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_af45d76b2d6c103c630a0326ff54abd22}\label{classEngine_af45d76b2d6c103c630a0326ff54abd22}} 
+\index{Engine@{Engine}!loadObjects@{loadObjects}}
+\index{loadObjects@{loadObjects}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{loadObjects()}{loadObjects()}}
+{\footnotesize\ttfamily void Engine\+::load\+Objects (\begin{DoxyParamCaption}\item[{json}]{data }\end{DoxyParamCaption})}
+
+It loads objects from a json file
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & the json object containing the data \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a34506ddc7d76898c3e519858d6cfce57}\label{classEngine_a34506ddc7d76898c3e519858d6cfce57}} 
+\index{Engine@{Engine}!loadShaders@{loadShaders}}
+\index{loadShaders@{loadShaders}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{loadShaders()}{loadShaders()}}
+{\footnotesize\ttfamily void Engine\+::load\+Shaders (\begin{DoxyParamCaption}\item[{json}]{data }\end{DoxyParamCaption})}
+
+It loads shaders from a json file
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The JSON data that we loaded from the file. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a9fc17c80913c86df8d1fd67ac2f51f5b}\label{classEngine_a9fc17c80913c86df8d1fd67ac2f51f5b}} 
+\index{Engine@{Engine}!loadSounds@{loadSounds}}
+\index{loadSounds@{loadSounds}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{loadSounds()}{loadSounds()}}
+{\footnotesize\ttfamily void Engine\+::load\+Sounds (\begin{DoxyParamCaption}\item[{json}]{data }\end{DoxyParamCaption})}
+
+It loads sounds from the JSON file and stores them in a map
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The JSON data that was loaded from the file. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a3b940106388632b2d336f649f72ac9e8}\label{classEngine_a3b940106388632b2d336f649f72ac9e8}} 
+\index{Engine@{Engine}!loadTextures@{loadTextures}}
+\index{loadTextures@{loadTextures}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{loadTextures()}{loadTextures()}}
+{\footnotesize\ttfamily void Engine\+::load\+Textures (\begin{DoxyParamCaption}\item[{json}]{data }\end{DoxyParamCaption})}
+
+It loads textures from the json file and stores them in a map
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & The JSON data that was loaded from the file. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a66e211c21b6468f3eaf1ed209bf14488}\label{classEngine_a66e211c21b6468f3eaf1ed209bf14488}} 
+\index{Engine@{Engine}!playMusic@{playMusic}}
+\index{playMusic@{playMusic}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{playMusic()}{playMusic()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void Engine\+::play\+Music (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{float}]{delay = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+It plays a music
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the music to play. \\
+\hline
+{\em delay} & The delay in seconds before the music starts playing. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_add9e1c59b93bf255422c24ade908fd04}\label{classEngine_add9e1c59b93bf255422c24ade908fd04}} 
+\index{Engine@{Engine}!playMusic@{playMusic}}
+\index{playMusic@{playMusic}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{playMusic()}{playMusic()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void Engine\+::play\+Music (\begin{DoxyParamCaption}\item[{int}]{index,  }\item[{float}]{delay = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+It plays a music file by its index
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & The index of the music to play. \\
+\hline
+{\em delay} & The delay in seconds before the music starts playing. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a089d46783407abf5e6c648461271e4d5}\label{classEngine_a089d46783407abf5e6c648461271e4d5}} 
+\index{Engine@{Engine}!playSound@{playSound}}
+\index{playSound@{playSound}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{playSound()}{playSound()}}
+{\footnotesize\ttfamily void Engine\+::play\+Sound (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+If the sound exists, play it
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the sound to play. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_ab1c98cc5e1e786c980bcdce0f34bdf0c}\label{classEngine_ab1c98cc5e1e786c980bcdce0f34bdf0c}} 
+\index{Engine@{Engine}!setMusicVolume@{setMusicVolume}}
+\index{setMusicVolume@{setMusicVolume}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{setMusicVolume()}{setMusicVolume()}}
+{\footnotesize\ttfamily void Engine\+::set\+Music\+Volume (\begin{DoxyParamCaption}\item[{float}]{volume }\end{DoxyParamCaption})}
+
+It sets the music volume
+
+
+\begin{DoxyParams}{Parameters}
+{\em volume} & The volume of the music, between 0 and 100. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_ad7549cb26b7425c3508c2b3545d7e8fa}\label{classEngine_ad7549cb26b7425c3508c2b3545d7e8fa}} 
+\index{Engine@{Engine}!setPause@{setPause}}
+\index{setPause@{setPause}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{setPause()}{setPause()}}
+{\footnotesize\ttfamily void Engine\+::set\+Pause (\begin{DoxyParamCaption}\item[{bool}]{pause }\end{DoxyParamCaption})}
+
+It sets the pause state of the game, and enables/disables the pause menu buttons accordingly
+
+
+\begin{DoxyParams}{Parameters}
+{\em pause} & true if the game is paused, false if it\textquotesingle{}s not \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_afd1f78bd9cca012340bca58cd414b4a2}\label{classEngine_afd1f78bd9cca012340bca58cd414b4a2}} 
+\index{Engine@{Engine}!setShaderMode@{setShaderMode}}
+\index{setShaderMode@{setShaderMode}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{setShaderMode()}{setShaderMode()}}
+{\footnotesize\ttfamily void Engine\+::set\+Shader\+Mode (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+If the shader with the given name exists, then begin using it.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the shader to set. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a336d447831290320e3b522c05ed48bbd}\label{classEngine_a336d447831290320e3b522c05ed48bbd}} 
+\index{Engine@{Engine}!setShaderObject@{setShaderObject}}
+\index{setShaderObject@{setShaderObject}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{setShaderObject()}{setShaderObject()}}
+{\footnotesize\ttfamily void Engine\+::set\+Shader\+Object (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name,  }\item[{const std\+::string \&}]{shader }\end{DoxyParamCaption})}
+
+If the object and shader exist, set the shader for the object
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the object to set the shader for. \\
+\hline
+{\em shader} & The name of the shader to set. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_ac6702b9cb8992fe2977dc0deeb2f548f}\label{classEngine_ac6702b9cb8992fe2977dc0deeb2f548f}} 
+\index{Engine@{Engine}!setSoundVolume@{setSoundVolume}}
+\index{setSoundVolume@{setSoundVolume}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{setSoundVolume()}{setSoundVolume()}}
+{\footnotesize\ttfamily void Engine\+::set\+Sound\+Volume (\begin{DoxyParamCaption}\item[{float}]{volume }\end{DoxyParamCaption})}
+
+It sets the volume of all sounds to the given volume
+
+
+\begin{DoxyParams}{Parameters}
+{\em volume} & The volume to set the sound to. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a946d3c811087c8a8a68cd11a96471f39}\label{classEngine_a946d3c811087c8a8a68cd11a96471f39}} 
+\index{Engine@{Engine}!setUdpClient@{setUdpClient}}
+\index{setUdpClient@{setUdpClient}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{setUdpClient()}{setUdpClient()}}
+{\footnotesize\ttfamily void Engine\+::set\+Udp\+Client (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classUdpClient}{Udp\+Client}} $\ast$}]{udp\+Client }\end{DoxyParamCaption})}
+
+This function sets the \+\_\+udp\+Client member variable to the value of the udp\+Client parameter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em udp\+Client} & The \mbox{\hyperlink{classUdpClient}{Udp\+Client}} object that will be used to send the data to the server. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a7d0f7f60491096bf4a4b56703624e2e4}\label{classEngine_a7d0f7f60491096bf4a4b56703624e2e4}} 
+\index{Engine@{Engine}!unloadAssets@{unloadAssets}}
+\index{unloadAssets@{unloadAssets}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{unloadAssets()}{unloadAssets()}}
+{\footnotesize\ttfamily void Engine\+::unload\+Assets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It unloads all the assets \mbox{\Hypertarget{classEngine_a0cd6b35be9531d9322916a1a30266ada}\label{classEngine_a0cd6b35be9531d9322916a1a30266ada}} 
+\index{Engine@{Engine}!updateBullets@{updateBullets}}
+\index{updateBullets@{updateBullets}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateBullets()}{updateBullets()}}
+{\footnotesize\ttfamily void Engine\+::update\+Bullets (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It updates the bullets, checks if they are colliding with an enemy, if so, it adds an explosion particle and removes the bullet \mbox{\Hypertarget{classEngine_aeb163cf08d9b854acd535533d4e46e9c}\label{classEngine_aeb163cf08d9b854acd535533d4e46e9c}} 
+\index{Engine@{Engine}!updateButton@{updateButton}}
+\index{updateButton@{updateButton}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateButton()}{updateButton()}}
+{\footnotesize\ttfamily bool Engine\+::update\+Button (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name }\end{DoxyParamCaption})}
+
+If the button exists, update it
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & The name of the button.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A boolean value. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_a784d7a56afa2b2b77b88b8ba6e9d3810}\label{classEngine_a784d7a56afa2b2b77b88b8ba6e9d3810}} 
+\index{Engine@{Engine}!updateCamera@{updateCamera}}
+\index{updateCamera@{updateCamera}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateCamera()}{updateCamera()}}
+{\footnotesize\ttfamily void Engine\+::update\+Camera (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It updates the camera. \mbox{\Hypertarget{classEngine_a3cc24aa5b07e2bca7573da7172b9ddc3}\label{classEngine_a3cc24aa5b07e2bca7573da7172b9ddc3}} 
+\index{Engine@{Engine}!updateEnemies@{updateEnemies}}
+\index{updateEnemies@{updateEnemies}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateEnemies()}{updateEnemies()}}
+{\footnotesize\ttfamily void Engine\+::update\+Enemies (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It updates all the enemies in the game \mbox{\Hypertarget{classEngine_a592331c20b68a1d93f6e53a53a12ed3a}\label{classEngine_a592331c20b68a1d93f6e53a53a12ed3a}} 
+\index{Engine@{Engine}!updateLights@{updateLights}}
+\index{updateLights@{updateLights}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateLights()}{updateLights()}}
+{\footnotesize\ttfamily void Engine\+::update\+Lights (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It updates the lights in the scene and removes any lights that are no longer active \mbox{\Hypertarget{classEngine_a07547a7a41fc34db6c7049eaabb1a8c6}\label{classEngine_a07547a7a41fc34db6c7049eaabb1a8c6}} 
+\index{Engine@{Engine}!updateMusic@{updateMusic}}
+\index{updateMusic@{updateMusic}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateMusic()}{updateMusic()}}
+{\footnotesize\ttfamily void Engine\+::update\+Music (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It updates the music stream and checks if a new music is scheduled to be played \mbox{\Hypertarget{classEngine_a75688f55f9807ee2538507b720903efd}\label{classEngine_a75688f55f9807ee2538507b720903efd}} 
+\index{Engine@{Engine}!updateObjects@{updateObjects}}
+\index{updateObjects@{updateObjects}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateObjects()}{updateObjects()}}
+{\footnotesize\ttfamily void Engine\+::update\+Objects (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It loops through all the objects in the game and calls their update() function \mbox{\Hypertarget{classEngine_ad2a2a7d9631675bba16a28ce695a7897}\label{classEngine_ad2a2a7d9631675bba16a28ce695a7897}} 
+\index{Engine@{Engine}!updateParticles@{updateParticles}}
+\index{updateParticles@{updateParticles}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateParticles()}{updateParticles()}}
+{\footnotesize\ttfamily void Engine\+::update\+Particles (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+If the particle\textquotesingle{}s scale is less than or equal to zero, remove it from the vector. Otherwise, increment the iterator \mbox{\Hypertarget{classEngine_a4f1fad01df2adba991feaaa11b4fa7b6}\label{classEngine_a4f1fad01df2adba991feaaa11b4fa7b6}} 
+\index{Engine@{Engine}!updateParticles2D@{updateParticles2D}}
+\index{updateParticles2D@{updateParticles2D}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateParticles2D()}{updateParticles2D()}}
+{\footnotesize\ttfamily void Engine\+::update\+Particles2D (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+If the particle is enabled, update it, otherwise remove it from the list \mbox{\Hypertarget{classEngine_ac09aa48cf7996a905619f677fbf1e1b8}\label{classEngine_ac09aa48cf7996a905619f677fbf1e1b8}} 
+\index{Engine@{Engine}!updateShaderLocView@{updateShaderLocView}}
+\index{updateShaderLocView@{updateShaderLocView}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateShaderLocView()}{updateShaderLocView()}}
+{\footnotesize\ttfamily void Engine\+::update\+Shader\+Loc\+View (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{shader\+Name }\end{DoxyParamCaption})}
+
+It updates the shader\textquotesingle{}s view vector
+
+
+\begin{DoxyParams}{Parameters}
+{\em shader\+Name} & The name of the shader to update. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classEngine_a181d40e823b85ae99d73fcaec8947bda}\label{classEngine_a181d40e823b85ae99d73fcaec8947bda}} 
+\index{Engine@{Engine}!updateSliders@{updateSliders}}
+\index{updateSliders@{updateSliders}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateSliders()}{updateSliders()}}
+{\footnotesize\ttfamily bool Engine\+::update\+Sliders (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It loops through all the sliders in the map and calls the Update\+Slider() function for each one
+
+\begin{DoxyReturn}{Returns}
+A boolean value. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classEngine_ae573885911bf04fbfbf97a6ad27fd87d}\label{classEngine_ae573885911bf04fbfbf97a6ad27fd87d}} 
+\index{Engine@{Engine}!updateUdpClient@{updateUdpClient}}
+\index{updateUdpClient@{updateUdpClient}!Engine@{Engine}}
+\doxysubsubsection{\texorpdfstring{updateUdpClient()}{updateUdpClient()}}
+{\footnotesize\ttfamily void Engine\+::update\+Udp\+Client (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+It parses the messages received from the server and updates the game state accordingly
+
+\begin{DoxyReturn}{Returns}
+A pointer to the object with the given name. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+client/includes/engine.\+hpp\item 
+client/src/engine.\+cpp\end{DoxyCompactItemize}
