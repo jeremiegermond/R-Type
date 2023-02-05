@@ -10,4 +10,5 @@ add_executable(${SERVER}
     src/main.cpp
     src/UpdServer.cpp
     src/utils.cpp)
+target_link_libraries(${SERVER} PRIVATE raylib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)

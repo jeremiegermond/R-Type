@@ -15,5 +15,4 @@ BoundingBox GetBoundingBoxAroundPoint(Vector3 position, float scale) {
     // translate box to given position
     box.max = Vector3Add(box.max, scaleVector);
     return box;
-    // Better name for this function would be GetBoundingBoxAroundPoint
 }

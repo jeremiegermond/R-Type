@@ -11,7 +11,7 @@
       "path": "assets/models/ships/R9A2.obj",
       "tags": ["player"],
       "position": [
-        20,
+        100,
         0,
         0
       ],
@@ -22,7 +22,7 @@
       "path": "assets/models/ships/R9A3.obj",
       "tags": ["player"],
       "position": [
-        20,
+        100,
         0,
         0
       ],
@@ -33,7 +33,7 @@
       "path": "assets/models/ships/R9A4.obj",
       "tags": ["player"],
       "position": [
-        20,
+        100,
         0,
         0
       ],
@@ -65,7 +65,12 @@
         0,
         3,
         0
-      ]
+      ],
+        "position": [
+            100,
+            0,
+            0
+        ]
     },
     {
       "name": "corridor",

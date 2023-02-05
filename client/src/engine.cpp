@@ -147,21 +147,21 @@ void Engine::loadObjects(json data) {
         auto gameObject = new GameObject(path);
         // entity _position / rot / scale at 0
         if (object.contains("scale")) {
-            gameObject->SetScale(object["scale"]);
+            gameObject->setScale(object["scale"]);
             // set scale
         }
         if (object.contains("rotation") && object["rotation"].size() == 3) {
-            gameObject->SetRotation({object["rotation"][0], object["rotation"][1], object["rotation"][2]});
-            gameObject->SetRotationGoal(gameObject->GetRotation());
+            gameObject->setRotation({object["rotation"][0], object["rotation"][1], object["rotation"][2]});
+            gameObject->setRotationGoal(gameObject->getRotation());
             // set rotation
         }
         if (object.contains("position") && object["position"].size() == 3) {
-            gameObject->SetPosition({object["position"][0], object["position"][1], object["position"][2]});
+            gameObject->setPosition({object["position"][0], object["position"][1], object["position"][2]});
             // set position
         }
         if (object.contains("animation")) {
             std::string animationPath = object["animation"]["path"];
-            gameObject->SetAnimations(animationPath);
+            gameObject->setAnimations(animationPath);
             // add animation component and set animation
         }
         if (object.contains("textures")) {
@@ -173,22 +173,22 @@ void Engine::loadObjects(json data) {
                     materialIndex = texture["materialIndex"];
                 TraceLog(LOG_INFO, "Loading texture %s", pathTexture.c_str());
                 if (type == "diffuse") {
-                    gameObject->SetTexture(pathTexture, MATERIAL_MAP_DIFFUSE, materialIndex);
+                    gameObject->setTexture(pathTexture, MATERIAL_MAP_DIFFUSE, materialIndex);
                 } else if (type == "normal") {
-                    gameObject->SetTexture(pathTexture, MATERIAL_MAP_NORMAL, materialIndex);
+                    gameObject->setTexture(pathTexture, MATERIAL_MAP_NORMAL, materialIndex);
                 } else if (type == "metallic") {
-                    gameObject->SetTexture(pathTexture, MATERIAL_MAP_METALNESS, materialIndex);
+                    gameObject->setTexture(pathTexture, MATERIAL_MAP_METALNESS, materialIndex);
                 }
             }
         }
         if (object.contains("tags")) {
             for (auto &tag : object["tags"]) {
-                gameObject->SetTag(tag);
+                gameObject->addTag(tag);
             }
         }
-        gameObject->SetShader(_shaders["lighting"]);
+        gameObject->setShader(_shaders["lighting"]);
         _objects[name] = gameObject;
-        //_objects[name]->SetShader(_shaders["lighting"]);
+        //_objects[name]->setShader(_shaders["lighting"]);
     }
     TraceLog(LOG_INFO, "Loaded %d objects", _objects.size());
 }
@@ -197,6 +197,7 @@ void Engine::unloadAssets() {
     UnloadModel(_companionCube);
     clearSliders();
     clearButtons();
+    clearEnemies();
     _bullets.clear();
     _particles2D.clear();
     _particles.clear();
@@ -242,6 +243,13 @@ void Engine::clearButtons() {
         delete button.second;
     }
     _buttons.clear();
+}
+
+void Engine::clearEnemies() {
+    for (auto &enemy : _enemies) {
+        delete enemy.second;
+    }
+    _enemies.clear();
 }
 
 bool Engine::updateSliders() {
@@ -301,7 +309,7 @@ void Engine::updateLights() {
 
 void Engine::updateObjects() {
     for (auto &object : _objects) {
-        object.second->Update();
+        object.second->update();
     }
 }
 
@@ -324,28 +332,30 @@ void Engine::updateParticles2D() {
 
 void Engine::updateBullets() {
     for (auto it = _bullets.begin(); it != _bullets.end();) {
-        it->Update();
+        bool isColliding = false;
+        it->update();
         int lightIndex = it->GetLightIndex();
         if (!isInScreen(it->GetPosition(), 10)) {
             getLight(lightIndex)->setEnabled(false);
             it = _bullets.erase(it);
             continue;
         }
-        for (auto &object : _objects) {
-            if (object.second->IsTagged("enemy")) {
-                if (it->IsColliding(object.second->GetMyObjectBoundingBox())) {
-                    Vector3 position = it->GetPosition();
-                    position.z += 3;
+        for (auto &enemy : _enemies) {
+            if (it->isColliding(enemy.second->getBounds())) {
+                enemy.second->takeDamage(1);
+                Vector3 position = enemy.second->getPosition();
+                position.z += 1;
+                if (!enemy.second->isDead())
                     addParticle2D("explosion", position, float(sin(GetTime() * 10) * 90));
-                    getLight(lightIndex)->setEnabled(false);
-                    playSound("enemy_bomb");
-                    SetWindowTitle("Boooooooooooooom !");
-                    it = _bullets.erase(it);
-                    break;
-                }
+                getLight(lightIndex)->setEnabled(false);
+                playSound("enemy_bomb");
+                SetWindowTitle("Boooooooooooooom !");
+                it = _bullets.erase(it);
+                isColliding = true;
+                break;
             }
         }
-        if (it != _bullets.end()) {
+        if (!isColliding && it != _bullets.end()) {
             getLight(lightIndex)->setPosition(it->GetPosition());
             if (_particles.size() < 4500)
                 addParticle(it->GetPosition(), it->getSize(), it->getColor());
@@ -355,7 +365,7 @@ void Engine::updateBullets() {
 }
 
 void Engine::updateUdpClient() {
-    // std::cout << "Update UDP client" << std::endl;
+    // std::cout << "update UDP client" << std::endl;
     while (_udpClient->hasMessage()) {
         auto msg = _udpClient->receive();
         std::cout << "Message received: " << msg << std::endl;
@@ -363,50 +373,75 @@ void Engine::updateUdpClient() {
             _playerId = std::stoi(getMatch(msg, "id:([0-9]+)", 1));
             std::cout << "ID: " << _playerId << std::endl;
             auto ship = getPlayerShip();
-            ship->SetPosition({0, 0, 0});
+            ship->setPosition({0, 0, 0});
         } else if (isMatch(msg, "new:[0-9]+," NB_R "," NB_R)) {
             auto match = getMatches(msg, "new:([0-9]+)," NB_R "," NB_R);
-            auto id = std::stoi(match[1]);
-            auto x = std::stof(match[2]);
-            auto y = std::stof(match[3]);
-            std::cout << "New ship: " << id << " at " << x << " " << y << std::endl;
+            auto newShipId = std::stoi(match[1]);
+            auto newShipPosition = Vector3{std::stof(match[2]), std::stof(match[3]), 0};
+            std::cout << "New ship: " << newShipId << " at " << newShipPosition.x << " " << newShipPosition.y << std::endl;
             auto ship = getObject("R9A" + match[1]);
-            ship->SetPosition({x, y, 0});
+            ship->setPosition(newShipPosition);
         } else if (isMatch(msg, "move:[0-9]+," NB_R "," NB_R)) {
             auto match = getMatches(msg, "move:([0-9]+)," NB_R "," NB_R);
-            auto id = std::stoi(match[1]);
-            auto x = std::stof(match[2]);
-            auto y = std::stof(match[3]);
-            std::cout << "Move ship: " << id << " at " << x << " " << y << std::endl;
-            auto ship = getObject("R9A" + match[1]);
-            ship->SetPosition({x, y, 0});
+            auto shipId = match[1];
+            auto shipPosition = Vector3{std::stof(match[2]), std::stof(match[3]), 0};
+            std::cout << "Move ship: " << shipId << " at " << shipPosition.x << " " << shipPosition.y << std::endl;
+            auto ship = getObject("R9A" + shipId);
+            ship->setPosition(shipPosition);
         } else if (isMatch(msg, "del:[0-9]+")) {
-            auto match = getMatches(msg, "del:([0-9]+)");
-            auto id = std::stoi(match[1]);
-            std::cout << "Delete ship: " << id << std::endl;
-            auto ship = getObject("R9A" + match[1]);
-            ship->SetPosition({-100, -100, 0});
+            auto deletedShipId = getMatch(msg, "del:([0-9]+)", 1);
+            std::cout << "Delete ship: " << deletedShipId << std::endl;
+            auto ship = getObject("R9A" + deletedShipId);
+            ship->setPosition({-100, -100, 0});
+        } else if (isMatch(msg, "shoot:[0-9]+")) {
+            auto id = getMatch(msg, "shoot:([0-9]+)", 1);
+            std::cout << "Shoot ship: " << id << std::endl;
+            auto ship = getObject("R9A" + id);
+            auto bulletPosition = ship->getPosition();
+            bulletPosition.x += 1;
+            auto bulletVelocity = Vector3Zero();
+            bulletVelocity.x = 5;
+            addBullet(bulletPosition, bulletVelocity);
+        } else if (isMatch(msg, "spawn:[0-9]+," NB_R "," NB_R "," NB_R "," NB_R ",[0-9]+")) {
+            auto match = getMatches(msg, "spawn:([0-9]+)," NB_R "," NB_R "," NB_R "," NB_R ",([0-9]+)");
+            auto newEnemyId = std::stoi(match[1]);
+            auto newEnemyPosition = Vector3{std::stof(match[2]), std::stof(match[3]), 0};
+            auto newEnemyVelocity = Vector3{std::stof(match[4]), std::stof(match[5]), 0};
+            auto newEnemyLife = std::stoi(match[6]);
+            std::cout << "New enemy: " << newEnemyId << " at " << newEnemyPosition.x << " " << newEnemyPosition.y << std::endl;
+            addEnemy(newEnemyId, newEnemyPosition, newEnemyVelocity, newEnemyLife);
+        } else if (isMatch(msg, "dead:[0-9]+")) {
+            auto id = std::stoi(getMatch(msg, "dead:([0-9]+)", 1));
+            std::cout << "Dead enemy: " << id << std::endl;
+            if (_enemies.find(id) == _enemies.end())
+                return;
+            auto enemy = _enemies[id];
+            auto enemyPosition = enemy->getPosition();
+            enemyPosition.z += 1.5;
+            addParticle2D("explosion", enemyPosition, float(sin(GetTime() * 10) * 90), 4);
+            // erase pointer
+            delete enemy;
+            _enemies.erase(id);
         }
-        // else if (isMatch(msg, "fire:[0-9]+," NB_R "," NB_R)) {
-        //     auto match = getMatches(msg, "fire:([0-9]+)," NB_R "," NB_R);
-        //     auto id = std::stoi(match[1]);
-        //     auto x = std::stof(match[2]);
-        //     auto y = std::stof(match[3]);
-        // } else if (isMatch(msg, "hit:[0-9]+")) {
-        //     auto match = getMatches(msg, "hit:([0-9]+)");
+    }
+}
+
+void Engine::updateEnemies() {
+    for (auto &enemy : _enemies) {
+        enemy.second->update();
     }
 }
 
 void Engine::drawObject(const std::string &name, Vector3 offset) {
-    if (_objects.find(name) != _objects.end() && isInScreen(_objects[name]->GetPosition())) {
-        _objects[name]->Draw(offset);
+    if (_objects.find(name) != _objects.end() && isInScreen(_objects[name]->getPosition())) {
+        _objects[name]->draw(offset);
     }
 }
 
 void Engine::drawObjects() {
     for (auto &object : _objects) {
-        if (isInScreen(object.second->GetPosition()))
-            object.second->Draw();
+        if (isInScreen(object.second->getPosition()))
+            object.second->draw();
     }
 }
 
@@ -443,6 +478,12 @@ void Engine::drawSliders() {
 void Engine::drawButtons() {
     for (auto &button : _buttons) {
         button.second->Draw();
+    }
+}
+
+void Engine::drawEnemies() {
+    for (auto &enemy : _enemies) {
+        enemy.second->draw();
     }
 }
 
@@ -516,14 +557,26 @@ void Engine::addBullet(Vector3 position, Vector3 velocity) {
     _bullets.emplace_back(position, velocity, .11, idx, color);
 }
 
-void Engine::addParticle2D(const std::string &textureName, Vector3 position, float rotation) {
+void Engine::addParticle2D(const std::string &textureName, Vector3 position, float rotation, float scale) {
     if (_textures.find(textureName) == _textures.end())
         return;
     auto texture = &_textures[textureName];
-    _particles2D.emplace_back(texture, position, texture->scale, rotation);
+    auto scaleVector = scale < 0 ? texture->scale : Vector2{scale, scale};
+    //_particles2D.emplace_back(texture, position, scaleVector, rotation);
+    _particles2D.insert(_particles2D.begin(), Particle2D(texture, position, scaleVector, rotation));
 }
 
 void Engine::addParticle(Vector3 position, float scale, Color color) { _particles.emplace_back(Particle{position, scale, color}); }
+
+void Engine::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
+    if (_enemies.find(id) != _enemies.end()) {
+        _enemies[id]->setPosition(position);
+        _enemies[id]->setVelocity(velocity);
+        _enemies[id]->setHp(hp);
+    } else {
+        _enemies[id] = new Enemy(position, velocity, hp, getObject("E002"));
+    }
+}
 
 GameObject *Engine::getObject(const std::string &name) {
     if (_objects.find(name) != _objects.end()) {
@@ -573,7 +626,7 @@ void Engine::setShaderMode(const std::string &name) {
 
 void Engine::setShaderObject(const std::string &name, const std::string &shader) {
     if (_objects.find(name) != _objects.end() && _shaders.find(shader) != _shaders.end()) {
-        _objects[name]->SetShader(_shaders[shader]);
+        _objects[name]->setShader(_shaders[shader]);
     }
 }
 

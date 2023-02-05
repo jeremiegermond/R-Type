@@ -11,6 +11,7 @@ GameObject::GameObject()
     : _position(Vector3Zero()), _velocity(Vector3Zero()), _rotation(Vector3Zero()), _rotationGoal(Vector3Zero()), _scale(1), _animations(nullptr),
       _animationCount(0), _currentAnimation(0), _currentFrame(0), _playAnimation(false), _loopAnimation(false) {
     _model = {};
+    _boundingBox = getMyObjectBoundingBox();
 }
 
 GameObject::GameObject(const std::string &pathModel) : GameObject() { _model = LoadModel(pathModel.c_str()); }
@@ -29,6 +30,7 @@ GameObject::GameObject(GameObject *other) : GameObject() {
     _playAnimation = other->_playAnimation;
     _loopAnimation = other->_loopAnimation;
     _textures = other->_textures;
+    _tags = other->_tags;
 }
 
 GameObject::~GameObject() {
@@ -41,10 +43,11 @@ GameObject::~GameObject() {
     _textures.clear();
 }
 
-void GameObject::Draw(Vector3 offset) { DrawModel(_model, Vector3Add(_position, offset), _scale, WHITE); }
+void GameObject::draw(Vector3 offset) { DrawModel(_model, Vector3Add(_position, offset), _scale, WHITE); }
 
-void GameObject::Update() {
-    _position = Vector3Add(_position, _velocity);
+void GameObject::update() {
+    auto velocity = Vector3Scale(_velocity, GetFrameTime());
+    _position = Vector3Add(_position, velocity);
     _rotation = Vector3Lerp(_rotation, _rotationGoal, 0.1f);
     _model.transform = MatrixRotateXYZ(_rotation);
     if (_animationCount > 0 && _playAnimation && _animations != nullptr) {
@@ -59,9 +62,10 @@ void GameObject::Update() {
         }
         UpdateModelAnimation(_model, _animations[_currentAnimation], _currentFrame);
     }
+    _boundingBox = getMyObjectBoundingBox();
 }
 
-void GameObject::PlayAnimation(int index, bool loop) {
+void GameObject::playAnimation(int index, bool loop) {
     if (index >= _animationCount)
         return;
     _currentAnimation = index;
@@ -70,7 +74,7 @@ void GameObject::PlayAnimation(int index, bool loop) {
     _loopAnimation = loop;
 }
 
-void GameObject::SetTag(const std::string &tag) {
+void GameObject::addTag(const std::string &tag) {
     for (auto &t : _tags) {
         if (t == tag)
             return;
@@ -78,20 +82,20 @@ void GameObject::SetTag(const std::string &tag) {
     _tags.push_back(tag);
 }
 
-void GameObject::SetPosition(Vector3 position) { _position = position; }
+void GameObject::setPosition(Vector3 position) { _position = position; }
 
-void GameObject::SetVelocity(Vector3 velocity) { _velocity = velocity; }
+void GameObject::setVelocity(Vector3 velocity) { _velocity = velocity; }
 
-void GameObject::SetRotation(Vector3 rotation) {
+void GameObject::setRotation(Vector3 rotation) {
     _rotation = rotation;
     _model.transform = MatrixRotateXYZ(_rotation);
 }
 
-void GameObject::SetRotationGoal(Vector3 rotationGoal) { _rotationGoal = rotationGoal; }
+void GameObject::setRotationGoal(Vector3 rotationGoal) { _rotationGoal = rotationGoal; }
 
-void GameObject::SetScale(float scale) { _scale = scale; }
+void GameObject::setScale(float scale) { _scale = scale; }
 
-void GameObject::SetAnimations(const std::string &pathAnimations) {
+void GameObject::setAnimations(const std::string &pathAnimations) {
     if (_animations != nullptr)
         UnloadModelAnimations(_animations, _animationCount);
     _animations = LoadModelAnimations(pathAnimations.c_str(), &_animationCount);
@@ -99,42 +103,47 @@ void GameObject::SetAnimations(const std::string &pathAnimations) {
         UpdateModelAnimation(_model, _animations[_currentAnimation], _currentFrame);
 }
 
-void GameObject::SetShader(Shader shader) const {
+void GameObject::setShader(Shader shader) const {
     //_model.meshMaterial[0]
     for (int i = 0; i < _model.materialCount; i++)
         _model.materials[i].shader = shader;
 }
 
-void GameObject::SetTexture(const std::string &pathTexture, MaterialMapIndex mapIndex, int index) {
+void GameObject::setTexture(const std::string &pathTexture, MaterialMapIndex mapIndex, int index) {
     Texture2D texture = LoadTexture(pathTexture.c_str());
     _textures.push_back(&texture);
     if (index > 0 && index < _model.materialCount)
-        SetTextureMatIdx(texture, mapIndex, index);
+        setTextureMatIdx(texture, mapIndex, index);
     else
         for (int i = 0; i < _model.materialCount; i++)
-            SetTextureMatIdx(texture, mapIndex, i);
+            setTextureMatIdx(texture, mapIndex, i);
 }
 
-void GameObject::SetTextureMatIdx(Texture2D texture, MaterialMapIndex mapIndex, int index) const {
+void GameObject::setTextureMatIdx(Texture2D texture, MaterialMapIndex mapIndex, int index) const {
     _model.materials[index].maps[mapIndex].texture = texture;
 }
 
-BoundingBox GameObject::GetMyObjectBoundingBox(Vector3 scale) {
+bool GameObject::isTagged(const std::string &tag) {
+    if (std::ranges::any_of(_tags, [&tag](const std::string &t) { return t == tag; }))
+        return true;
+    return false;
+}
+
+BoundingBox GameObject::getBaseBoundingBox(Vector3 scale) {
     BoundingBox box = GetModelBoundingBox(_model);
     // scale box to match model size
     box.min = Vector3Scale(box.min, _scale);
     box.max = Vector3Scale(box.max, _scale);
-    // translate box to match model position
-    box.min = Vector3Add(box.min, _position);
-    box.max = Vector3Add(box.max, _position);
     // Add scale to box
     box.min = Vector3Subtract(box.min, scale);
     box.max = Vector3Add(box.max, scale);
     return box;
 }
 
-bool GameObject::IsTagged(const std::string &tag) {
-    if (std::ranges::any_of(_tags, [&tag](const std::string &t) { return t == tag; }))
-        return true;
-    return false;
+BoundingBox GameObject::getMyObjectBoundingBox(Vector3 scale) {
+    BoundingBox box = getBaseBoundingBox(scale);
+    // translate box to match model position
+    box.min = Vector3Add(box.min, _position);
+    box.max = Vector3Add(box.max, _position);
+    return box;
 }

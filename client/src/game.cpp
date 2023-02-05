@@ -18,8 +18,8 @@ std::string getPositionString(Vector3 position) { return floatToString(position.
 
 void moveSpaceship(GameObject *spaceship, UdpClient *client) {
     float speed = 0.1;
-    Vector3 position = spaceship->GetPosition();
-    Vector3 rotationGoal = spaceship->GetRotationGoal();
+    Vector3 position = spaceship->getPosition();
+    Vector3 rotationGoal = spaceship->getRotationGoal();
     if (IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_RIGHT) && position.x > -8) {
         position.x -= speed;
         client->send(std::string("move:left," + getPositionString(position)));
@@ -41,6 +41,6 @@ void moveSpaceship(GameObject *spaceship, UdpClient *client) {
     if (!IsKeyDown(KEY_UP) && !IsKeyDown(KEY_DOWN)) {
         rotationGoal.x = 0;
     }
-    spaceship->SetPosition(position);
-    spaceship->SetRotationGoal(rotationGoal);
+    spaceship->setPosition(position);
+    spaceship->setRotationGoal(rotationGoal);
 }

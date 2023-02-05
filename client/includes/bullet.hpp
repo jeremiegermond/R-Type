@@ -22,10 +22,10 @@ class Bullet {
   public:
     Bullet(Vector3 position, Vector3 velocity, float scale, int lightIndex, Color color);
     ~Bullet() = default;
-    void Update();
+    void update();
     // draw using the given model
     void Draw(Model model);
-    bool IsColliding(BoundingBox boundingBox);
+    bool isColliding(BoundingBox boundingBox);
     [[nodiscard]] Vector3 GetPosition() const;
     [[nodiscard]] int GetLightIndex() const;
     [[nodiscard]] float getSize() const;

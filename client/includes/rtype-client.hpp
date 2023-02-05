@@ -12,6 +12,7 @@
 #include "bullet.hpp"
 #include "button.hpp"
 #include "deps.hpp"
+#include "enemy.hpp"
 #include "game-object.hpp"
 #include "light.hpp"
 #include "network.hpp"
@@ -21,7 +22,7 @@
 // should always be included last
 #include "engine.hpp"
 
-// BoundingBox GetMyObjectBoundingBox(const GameObject &myObject, Vector3 scale = Vector3Zero());
+// BoundingBox getMyObjectBoundingBox(const GameObject &myObject, Vector3 scale = Vector3Zero());
 BoundingBox GetBoundingBoxAroundPoint(Vector3 position, float scale);
 void moveSpaceship(GameObject *spaceship, UdpClient *client);
 std::vector<std::string> split(const std::string &s, char delim);

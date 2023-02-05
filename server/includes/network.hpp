@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bullet.hpp"
+#include "enemy.hpp"
 #include "player.hpp"
 #include "utils.hpp"
 #include <set>
@@ -28,12 +30,27 @@ class UdpServer {
     udp::endpoint _sender_endpoint;
     std::array<char, 1024> _buffer{};
     std::thread _timer;
-    std::mutex _mutex;
+    std::thread _simulation;
+    // mutex for socket endpoint
+    std::mutex _socketMutex;
+    // bullets
+    std::vector<Bullet> _bullets;
+    // enemies
+    std::vector<Enemy> _enemies;
+    std::set<int> _enemyIds;
+    // timer for enemy spawn
+    std::chrono::time_point<std::chrono::system_clock> _enemySpawnTimer;
+    // frame time
+    std::chrono::time_point<std::chrono::system_clock> _lastFrame;
+    // stop variable
+    std::atomic<bool> _stopServer;
 
   public:
-    UdpServer() : _socket(_io_context, udp::endpoint(udp::v4(), 12345)) {
+    UdpServer() : _socket(_io_context, udp::endpoint(udp::v4(), 12345)), _stopServer(false) {
         for (int i = 1; i <= 4; i++)
             _ids.insert(i);
+        for (int i = 1; i <= 10; i++)
+            _enemyIds.insert(i);
     }
 
     ~UdpServer();
@@ -58,4 +75,7 @@ class UdpServer {
 
     // remove client from server
     void removeClient(const udp::endpoint &endpoint, bool erase = true);
+
+    // simulate game
+    void simulate();
 };

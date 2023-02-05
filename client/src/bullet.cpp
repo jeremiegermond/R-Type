@@ -12,17 +12,15 @@ Bullet::Bullet(Vector3 position, Vector3 velocity, float scale, int lightIndex, 
     : _position(position), _velocity(velocity), _scale(scale), _lightIndex(lightIndex), _boundingBox(GetBoundingBoxAroundPoint(position, scale)),
       _color(color) {}
 
-void Bullet::Update() {
-    _position = Vector3Add(_position, _velocity);
+void Bullet::update() {
+    auto velocity = Vector3Scale(_velocity, GetFrameTime());
+    _position = Vector3Add(_position, velocity);
     _boundingBox = GetBoundingBoxAroundPoint(_position, _scale);
 }
 
-bool Bullet::IsColliding(BoundingBox boundingBox) { return CheckCollisionBoxes(_boundingBox, boundingBox); }
+bool Bullet::isColliding(BoundingBox boundingBox) { return CheckCollisionBoxes(_boundingBox, boundingBox); }
 
-void Bullet::Draw(Model model) {
-    //
-    DrawModel(model, _position, _scale, _color);
-}
+void Bullet::Draw(Model model) { DrawModel(model, _position, _scale, _color); }
 
 Vector3 Bullet::GetPosition() const { return _position; }
 

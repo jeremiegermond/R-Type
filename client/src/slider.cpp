@@ -54,9 +54,9 @@ void Slider::Draw() {
         return;
     if (_dragging)
         color = _selectedColor;
-    // Draw slider base
+    // draw slider base
     DrawRectangleRec(_bounds, color);
-    // Draw slider ball
+    // draw slider ball
     float x = (*_value - _minValue) / (_maxValue - _minValue) * (_bounds.width - 4) + _bounds.x;
     float y = _bounds.y + 2;
     int width = 4;

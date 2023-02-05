@@ -42,7 +42,7 @@ std::string floatToString(float number, int precision) {
     return out.str();
 }
 
-std::string getPositionString(Vector2 position) { return floatToString(position.x) + "," + floatToString(position.y); }
+std::string vectorToString(Vector2 vector2) { return floatToString(vector2.x) + "," + floatToString(vector2.y); }
 
 std::vector<std::string> split(const std::string &s, char delim) {
     std::vector<std::string> elems;
@@ -52,4 +52,15 @@ std::vector<std::string> split(const std::string &s, char delim) {
         elems.push_back(item);
     }
     return elems;
+}
+
+BoundingBox GetBoundingBoxAroundPoint(Vector2 vector2, float scale) {
+    Vector3 position = {vector2.x, vector2.y, 0};
+    BoundingBox box = {position, position};
+    Vector3 scaleVector = {scale, scale, 0};
+    // scale box to the given scale
+    box.min = Vector3Subtract(box.min, scaleVector);
+    // translate box to given position
+    box.max = Vector3Add(box.max, scaleVector);
+    return box;
 }

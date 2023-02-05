@@ -36,10 +36,10 @@ int main(int ac, char *av[]) {
 
     RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
-    float speed = .01;
+    float speed = .5;
     float tp = 7.22;
 
-    float bulletSpeed = .2;
+    float bulletSpeed = 5;
 
     // load engine
     Engine engine;
@@ -106,8 +106,8 @@ int main(int ac, char *av[]) {
     engine.getSlider("sound_volume")->SetCallback([&engine](const float *value) { engine.setSoundVolume(*value); });
     engine.addLight(Vector3Zero());
 
-    engine.getObject("corridor")->SetVelocity(Vector3{-speed, 0, 0});
-    engine.getObject("E002")->PlayAnimation(0, true);
+    engine.getObject("corridor")->setVelocity(Vector3{-speed, 0, 0});
+    engine.getObject("E002")->playAnimation(0, true);
 
     // temp
     Ray ray;
@@ -123,28 +123,28 @@ int main(int ac, char *av[]) {
     bool sliderSelected;
 
     while (!quit && !WindowShouldClose()) {
-        Vector3 corridorPos = engine.getObject("corridor")->GetPosition();
+        Vector3 corridorPos = engine.getObject("corridor")->getPosition();
         if (corridorPos.x < -tp) {
             corridorPos.x = 0;
-            engine.getObject("corridor")->SetPosition(corridorPos);
+            engine.getObject("corridor")->setPosition(corridorPos);
         }
 
         // update sliders _request
         if (selectedMyObject != nullptr) {
-            selectedMyObjectPos = selectedMyObject->GetPosition();
-            selectedMyObjectRot = selectedMyObject->GetRotationGoal();
-            selectedMyObjectScale = selectedMyObject->GetScale();
+            selectedMyObjectPos = selectedMyObject->getPosition();
+            selectedMyObjectRot = selectedMyObject->getRotationGoal();
+            selectedMyObjectScale = selectedMyObject->getScale();
         }
 
-        // Update sliders
+        // update sliders
         sliderSelected = engine.updateSliders();
 
-        // Update pause menu
+        // update pause menu
         if (IsKeyPressed(KEY_ESCAPE)) {
             pause = !pause;
             engine.setPause(pause);
         }
-        // Update buttons
+        // update buttons
         engine.updateButton("resume_button");
         engine.updateButton("quit_button");
 
@@ -154,19 +154,19 @@ int main(int ac, char *av[]) {
             ray = GetMouseRay(mouse, *engine.getCamera());
             // cycle through all objects of the scene
             for (auto &object : engine.getObjects()) {
-                if (object.second->IsTagged("background")) {
+                if (object.second->isTagged("background")) {
                     continue;
                 }
                 // check if the ray hits the object
-                BoundingBox objectBox = object.second->GetMyObjectBoundingBox();
+                BoundingBox objectBox = object.second->getBoundingBox();
                 collision = GetRayCollisionBox(ray, objectBox);
                 if (collision.hit) {
                     std::cout << "hit " << object.first << std::endl;
                     selectedMyObjectName = object.first;
                     selectedMyObject = object.second;
-                    selectedMyObjectPos = selectedMyObject->GetPosition();
-                    selectedMyObjectRot = selectedMyObject->GetRotationGoal();
-                    selectedMyObjectScale = selectedMyObject->GetScale();
+                    selectedMyObjectPos = selectedMyObject->getPosition();
+                    selectedMyObjectRot = selectedMyObject->getRotationGoal();
+                    selectedMyObjectScale = selectedMyObject->getScale();
                     // update sliders
                     engine.getSlider("posX")->SetValue(&selectedMyObjectPos.x);
                     engine.getSlider("posY")->SetValue(&selectedMyObjectPos.y);
@@ -193,9 +193,9 @@ int main(int ac, char *av[]) {
 
         // update selected object
         if (selectedMyObject != nullptr) {
-            selectedMyObject->SetPosition(selectedMyObjectPos);
-            selectedMyObject->SetRotationGoal(selectedMyObjectRot);
-            selectedMyObject->SetScale(selectedMyObjectScale);
+            selectedMyObject->setPosition(selectedMyObjectPos);
+            selectedMyObject->setRotationGoal(selectedMyObjectRot);
+            selectedMyObject->setScale(selectedMyObjectScale);
         }
 
         if (!pause)
@@ -204,27 +204,27 @@ int main(int ac, char *av[]) {
         if (!pause && IsKeyPressed(KEY_SPACE)) {
             Vector3 bulletVelocity = Vector3Zero();
             bulletVelocity.x = bulletSpeed;
-            bulletVelocity.y = -engine.getPlayerShip()->GetRotation().x * bulletSpeed * .5f;
-            Vector3 bulletPos = engine.getPlayerShip()->GetPosition();
-            engine.addBullet(bulletPos, bulletVelocity);
+            // bulletVelocity.y = -engine.getPlayerShip()->getRotation().x * bulletSpeed * .5f;
+            Vector3 bulletPosition = engine.getPlayerShip()->getPosition();
+            bulletPosition.x += .5;
+            engine.getUdpClient()->send("shoot");
+            engine.addBullet(bulletPosition, bulletVelocity);
         }
 
-        // Update camera
+        // update camera
         engine.updateCamera();
 
-        // Update music
+        // update music
         engine.updateMusic();
 
-        if (!pause) {
-            // Update bullets / particles
-            engine.updateParticles2D();
-            engine.updateParticles();
-            engine.updateBullets();
-            // update GameObjects
-            engine.updateObjects();
-        }
+        // update bullets / particles
+        engine.updateParticles2D();
+        engine.updateParticles();
+        engine.updateBullets();
+        // update GameObjects
+        engine.updateObjects();
 
-        engine.getLight(0)->setPosition(Vector3Add(engine.getPlayerShip()->GetPosition(), {0, 2, 10}));
+        engine.getLight(0)->setPosition(Vector3Add(engine.getPlayerShip()->getPosition(), {0, 2, 10}));
         engine.updateLights();
 
         // update the light shader with the camera view position
@@ -234,10 +234,10 @@ int main(int ac, char *av[]) {
         // update requests
         engine.updateUdpClient();
 
-        // show requests
-        // engine.getUdpClient()->show_requests();
+        // update enemies
+        engine.updateEnemies();
 
-        // Draw normal for outline shader
+        // draw normal for outline shader
         BeginDrawing();
         BeginTextureMode(target);
         ClearBackground(WHITE);
@@ -256,7 +256,7 @@ int main(int ac, char *av[]) {
         EndMode3D();
         EndTextureMode();
 
-        // Draw the scene with lights
+        // draw the scene with lights
         ClearBackground(BLACK);
         BeginMode3D(*engine.getCamera());
         // set shaders
@@ -272,27 +272,30 @@ int main(int ac, char *av[]) {
         // draw GameObjects
         engine.drawObjects();
 
-        // Draw selected object bounding box
+        // draw enemies
+        engine.drawEnemies();
+
+        // draw selected object bounding box
         if (selectedMyObject != nullptr) {
-            DrawBoundingBox(selectedMyObject->GetMyObjectBoundingBox(), GREEN);
+            DrawBoundingBox(selectedMyObject->getBoundingBox(), GREEN);
         }
 
-        // Draw rotating corridor
+        // draw rotating corridor
         engine.drawObject("corridor", Vector3{-tp * 2, 0, 0});
         engine.drawObject("corridor", Vector3{-tp, 0, 0});
         engine.drawObject("corridor", Vector3{tp, 0, 0});
         engine.drawObject("corridor", Vector3{tp * 2, 0, 0});
 
-        // Draw light sphere
+        // draw light sphere
         engine.drawLightsSpheres();
 
-        // Draw particles
+        // draw particles
         engine.drawParticles();
 
-        // Draw bullets
+        // draw bullets
         engine.drawBullets();
 
-        // Draw particles2D
+        // draw particles2D
         engine.drawParticles2D();
         EndMode3D();
 
@@ -318,7 +321,7 @@ int main(int ac, char *av[]) {
         // draw buttons
         engine.drawButtons();
 
-        // Draw connection status flashing
+        // draw connection status flashing
         if (!engine.getUdpClient()->isConnected() && int(GetTime() * 2) % 2) {
             Engine::drawText("Connection lost", 40, center, RED, true);
         }

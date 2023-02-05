@@ -25,6 +25,7 @@ class Engine {
     std::vector<Bullet> _bullets;
     std::unordered_map<std::string, Slider *> _sliders;
     std::unordered_map<std::string, Button *> _buttons;
+    std::unordered_map<int, Enemy *> _enemies;
     std::string _musicPlaying;
     std::pair<float, std::string> _musicSheduled;
     Camera3D _camera{};
@@ -51,6 +52,7 @@ class Engine {
     void clearSliders();
     void clearSlider(const std::string &name);
     void clearButtons();
+    void clearEnemies();
 
     bool updateSliders();
     bool updateButton(const std::string &name);
@@ -63,6 +65,7 @@ class Engine {
     void updateParticles2D();
     void updateBullets();
     void updateUdpClient();
+    void updateEnemies();
 
     void drawObject(const std::string &name, Vector3 offset = Vector3Zero());
     void drawObjects();
@@ -72,6 +75,7 @@ class Engine {
     void drawParticles2D();
     void drawSliders();
     void drawButtons();
+    void drawEnemies();
     static void drawText(const std::string &text, int fontSize, Vector2 position, Color color = WHITE, bool centered = false);
 
     void playMusic(const std::string &name, float delay = 0);
@@ -82,8 +86,9 @@ class Engine {
     void addButton(const std::string &name, const std::string &text, Rectangle bounds, bool enabled = true);
     int addLight(Vector3 position, float intensity = .2, Color color = WHITE);
     void addBullet(Vector3 position, Vector3 velocity);
-    void addParticle2D(const std::string &textureName, Vector3 position, float rotation = 0);
+    void addParticle2D(const std::string &textureName, Vector3 position, float rotation = 0, float scale = -1);
     void addParticle(Vector3 position, float scale = 1, Color color = WHITE);
+    void addEnemy(int id, Vector3 position, Vector3 velocity, int hp);
 
     GameObject *getObject(const std::string &name);
     GameObject *getPlayerShip();
