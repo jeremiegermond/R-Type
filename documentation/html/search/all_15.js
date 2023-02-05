@@ -1,8 +1,0 @@
-var searchData=
-[
-  ['udpclient_0',['UdpClient',['../classUdpClient.html',1,'']]],
-  ['udpserver_1',['UdpServer',['../classUdpServer.html',1,'']]],
-  ['unflatten_2',['unflatten',['../classbasic__json.html#a91ef6a13e3205323b67700c3e5e672c9',1,'basic_json::unflatten() const'],['../classbasic__json.html#a91ef6a13e3205323b67700c3e5e672c9',1,'basic_json::unflatten() const']]],
-  ['uninitialized_3',['uninitialized',['../classdetail_1_1lexer__base.html#add65fa7a85aa15052963809fbcc04540a42dd1a73d072bb6bf3f494f22b15db8e',1,'detail::lexer_base::uninitialized()'],['../classdetail_1_1lexer__base.html#add65fa7a85aa15052963809fbcc04540a42dd1a73d072bb6bf3f494f22b15db8e',1,'detail::lexer_base::uninitialized()'],['../classdetail_1_1lexer__base.html#add65fa7a85aa15052963809fbcc04540a42dd1a73d072bb6bf3f494f22b15db8e',1,'detail::lexer_base::uninitialized()'],['../classdetail_1_1lexer__base.html#add65fa7a85aa15052963809fbcc04540a42dd1a73d072bb6bf3f494f22b15db8e',1,'detail::lexer_base::uninitialized()']]],
-  ['update_4',['update',['../classbasic__json.html#aa1c13ddcc1eb615dc56ebd7cb44791bd',1,'basic_json::update(const_reference j, bool merge_objects=false)'],['../classbasic__json.html#a2db7c9bf454f893d156a7396d527873b',1,'basic_json::update(const_iterator first, const_iterator last, bool merge_objects=false)'],['../classbasic__json.html#aa1c13ddcc1eb615dc56ebd7cb44791bd',1,'basic_json::update(const_reference j, bool merge_objects=false)'],['../classbasic__json.html#a2db7c9bf454f893d156a7396d527873b',1,'basic_json::update(const_iterator first, const_iterator last, bool merge_objects=false)']]]
-];

@@ -1,4 +1,0 @@
-var dir_0ac47b2fb6294f469739e5f9aae7a877 =
-[
-    [ "raylib", "dir_1152c951b08eb0c30b508d9330015229.html", "dir_1152c951b08eb0c30b508d9330015229" ]
-];
