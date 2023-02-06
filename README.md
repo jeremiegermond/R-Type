@@ -30,3 +30,7 @@ cd B-CPP-500-LIL-5-2-rtype-romain.leemans
 `./bin/client` to play the game as a client
 
 `./bin/server` to launch the server **(REQUIRED TO PLAY)**
+
+## Network Protocol
+
+Feel free to check how the server work [right here](server/Protocol.md)
