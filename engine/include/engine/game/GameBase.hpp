@@ -22,48 +22,48 @@ namespace Engine {
             GameBase();
 
             /**
-             * @brief Destroy the Game Base object
+             * @brief destroy the Game Base object
              */
             virtual ~GameBase();
 
             /**
-             * @brief Init the game
+             * @brief init the game
              */
-            void Init();
+            void init();
 
             /**
-             * @brief Update the game
+             * @brief update the game
              */
-            void Update();
+            void update();
 
             /**
-             * @brief Destroy the game
+             * @brief destroy the game
              */
-            void Destroy();
+            void destroy();
 
         protected:
             /**
              * @brief Register all engine components
              */
-            void RegisterComponents();
+            void registerComponents();
 
             /**
-             * @brief Init the game
+             * @brief init the game
              */
-            virtual void InitGame() = 0;
+            virtual void initGame() = 0;
 
             /**
-             * @brief Update the game
+             * @brief update the game
              */
-            virtual void UpdateGame() = 0;
+            virtual void updateGame() = 0;
             /**
-             * @brief Destroy the game
+             * @brief destroy the game
              */
-            virtual void DestroyGame() = 0;
+            virtual void destroyGame() = 0;
 
             /**
              * @brief Register all game components
              */
-            virtual void RegisterComponentsGame() = 0;
+            virtual void registerComponentsGame() = 0;
     };
 }

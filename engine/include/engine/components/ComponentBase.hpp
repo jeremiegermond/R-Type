@@ -23,35 +23,35 @@ namespace Engine {
             /**
              * @brief Initialize the component
              */
-            void Init();
+            void init();
 
             /**
-             * @brief Update the component
+             * @brief update the component
              */
-            void Update();
+            void update();
 
             /**
-             * @brief Destroy the component
+             * @brief destroy the component
              */
-            void Destroy();
+            void destroy();
 
             /**
              * @brief Set the component current state
              * @param active
              */
-            void SetActive(bool active);
+            void setActive(bool active);
 
             /**
              * @brief Get the component current state
              * @return bool
              */
-            [[nodiscard]] bool IsActive() const;
+            [[nodiscard]] bool isActive() const;
 
         protected:
             bool _active;
 
-            virtual void DoInit() {}
-            virtual void DoUpdate() {}
-            virtual void DoDestroy() {}
+            virtual void doInit() {}
+            virtual void doUpdate() {}
+            virtual void doDestroy() {}
     };
 }

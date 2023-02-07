@@ -11,9 +11,12 @@
 #include "engine/manager/Archetype.hpp"
 #include "engine/utils/Defines.hpp"
 
-#include "engine/components/CMovement.hpp"
+#include "engine/components/CObject.hpp"
 #include "engine/components/CPosition.hpp"
 #include "engine/components/CSprite.hpp"
+#include "engine/components/CVelocity.hpp"
+
+typedef std::unordered_map<std::string, Engine::EntityId> EntityMap;
 
 namespace Engine {
     class ECSManagerBase {
@@ -23,37 +26,65 @@ namespace Engine {
             virtual ~ECSManagerBase();
 
             /**
-             * @brief Init ECSManagerBase Archetypes
+             * @brief init ECSManagerBase Archetypes
              */
-            void Init();
+            void init();
 
             /**
-             * @brief Update the ECSManagerBase
+             * @brief update the ECSManagerBase
              */
-            void Update();
+            void update();
 
             /**
-             * @brief Destroy the ECSManagerBase
+             * @brief destroy the ECSManagerBase
              */
-            void Destroy();
+            void destroy();
+
+            /**
+             * @brief Add an Archetype to the ECSManagerBase
+             * @tparam Archetype
+             * @param name of the Archetype
+             * @return Archetype
+             */
+            template <typename Archetype>
+            Archetype *addArchetype(const std::string &name) {
+                auto archetype = std::make_unique<std::any>(new Archetype());
+                if (_archetypes.count(name) > 0)
+                    _archetypes[name] = std::move(archetype);
+                else
+                    _archetypes.insert({name, std::move(archetype)});
+                return getArchetype<Archetype>(name);
+            }
+
+            /**
+             * @brief Get an Archetype from the ECSManagerBase
+             * @param name of the Archetype
+             * @return Archetype
+             */
+            template <typename Archetype>
+            Archetype *getArchetype(const std::string &name) {
+                if (_archetypes.count(name) > 0)
+                    return std::any_cast<Archetype *>(*_archetypes[name]);
+                return nullptr;
+            }
 
         private:
-            Archetype<float, int> *_testManager;
+            std::unordered_map<std::string, std::unique_ptr<std::any>> _archetypes;
 
         protected:
             /**
-             * @brief Init game Archetypes
+             * @brief init game Archetypes
              */
-            virtual void InitGame() = 0;
+            virtual void initGame() = 0;
 
             /**
-             * @brief Update game Archetypes
+             * @brief update game Archetypes
              */
-            virtual void UpdateGame() = 0;
+            virtual void updateGame() = 0;
 
             /**
-             * @brief Destroy game Archetypes
+             * @brief destroy game Archetypes
              */
-            virtual void DestroyGame() = 0;
+            virtual void destroyGame() = 0;
     };
 }

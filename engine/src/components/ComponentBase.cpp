@@ -11,18 +11,18 @@ namespace Engine {
 
     ComponentBase::ComponentBase() : _active(false) {}
 
-    ComponentBase::~ComponentBase() { Destroy(); }
+    ComponentBase::~ComponentBase() { destroy(); }
 
-    void ComponentBase::Init() { DoInit(); }
+    void ComponentBase::init() { doInit(); }
 
-    void ComponentBase::Update() {
-        if (IsActive())
-            DoUpdate();
+    void ComponentBase::update() {
+        if (isActive())
+            doUpdate();
     }
 
-    void ComponentBase::Destroy() { DoDestroy(); }
+    void ComponentBase::destroy() { doDestroy(); }
 
-    void ComponentBase::SetActive(bool active) { _active = active; }
+    void ComponentBase::setActive(bool active) { _active = active; }
 
-    bool ComponentBase::IsActive() const { return _active; }
+    bool ComponentBase::isActive() const { return _active; }
 }

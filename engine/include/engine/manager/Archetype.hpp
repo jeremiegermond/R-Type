@@ -15,27 +15,14 @@ namespace Engine {
         public:
             Archetype() : nextEntityId(0), componentMaps(SparseMap<Components>()...), deletedEntities() {}
 
-            virtual ~Archetype() { Clear(); }
-
-            /**
-             * @brief delete all entities
-             */
-            void Clear() {
-                // DeleteComponent<Components...>(0);
-
-                (std::get<SparseMap<Components>>(componentMaps).Clear(), ...);
-                deletedEntities.clear();
-                nextEntityId = 0;
-            }
-
             /**
              * @brief create an entity
              * @param values of the component
              * @return id of this entity
              */
             template <typename... Component>
-            EntityId CreateEntity(Component &&...values) {
-                (AddComponent(nextEntityId, std::forward<Component>(values)), ...);
+            EntityId createEntity(Component &&...values) {
+                (addComponent(nextEntityId, std::forward<Component>(values)), ...);
                 return nextEntityId++;
             }
 
@@ -44,33 +31,33 @@ namespace Engine {
              * @param id of the entity
              */
             template <typename... Component>
-            void DeleteEntity(EntityId id) {
+            void deleteEntity(EntityId id) {
                 if (deletedEntities.count(id) > 0)
                     return;
                 deletedEntities.insert(id);
-                (DeleteComponent<Component>(id), ...);
+                (deleteComponent<Component>(id), ...);
             }
 
             template <typename Component>
-            void AddComponent(EntityId id, Component &&value) {
+            void addComponent(EntityId id, Component &&value) {
                 SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
-                map.Insert(id, std::forward<Component>(value));
+                map.insert(id, std::forward<Component>(value));
             }
 
             template <typename Component>
-            void DeleteComponent(EntityId id) {
+            void deleteComponent(EntityId id) {
                 SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
-                map.Erase(id);
+                map.erase(id);
             }
 
             /**
-             * @brief GetComponent entities components via their id
+             * @brief getComponent entities components via their id
              * @param id of the entity
-             * @return If you chose to GetComponent 1 ComponentBase, this function returns the reference to that component
+             * @return If you chose to getComponent 1 ComponentBase, this function returns the reference to that component
              * otherwise it returns a tuple of references to specified components
              */
             template <size_t... Ids>
-            decltype(auto) GetComponent(EntityId id) {
+            decltype(auto) getComponent(EntityId id) {
                 if constexpr (sizeof...(Ids) == 1) {
                     return std::get<Ids...>(componentMaps)[id];
                 } else {
@@ -79,13 +66,13 @@ namespace Engine {
             }
 
             /**
-             * @brief GetComponent entities components via their type
+             * @brief getComponent entities components via their type
              * @param id of the entity
-             * @return If you chose to GetComponent 1 ComponentBase, this function returns the reference to that component
+             * @return If you chose to getComponent 1 ComponentBase, this function returns the reference to that component
              * otherwise it returns a tuple of references to specified components
              */
             template <typename... Component>
-            decltype(auto) GetComponent(EntityId id) {
+            decltype(auto) getComponent(EntityId id) {
                 if constexpr (sizeof...(Component) == 1) {
                     return std::get<SparseMap<Component...>>(componentMaps)[id];
                 } else {
@@ -98,7 +85,7 @@ namespace Engine {
              * @param id
              * @return deleted entites
              */
-            std::set<EntityId> &GetDeletedEntities() { return deletedEntities; }
+            std::set<EntityId> &getDeletedEntities() { return deletedEntities; }
 
         private:
             EntityId nextEntityId;

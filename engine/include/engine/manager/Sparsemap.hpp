@@ -28,21 +28,21 @@ namespace Engine {
              * @param id of the entity
              * @return index in the block
              */
-            size_t InBlockIndex(EntityId id) { return id % BLOCK_SIZE; }
+            size_t inBlockIndex(EntityId id) { return id % BLOCK_SIZE; }
 
             /**
              * @brief get the block index
              * @param id of the entity
              * @return index of the block
              */
-            size_t BlockIndex(EntityId id) { return id / BLOCK_SIZE; }
+            size_t blockIndex(EntityId id) { return id / BLOCK_SIZE; }
 
             /**
              * @brief update the max value
              */
             void updateMax() {
                 for (auto i = _max; i > 0; --i) {
-                    if (_blocks[BlockIndex(i - 1)]->sparse[InBlockIndex(i - 1)] != NULL_ENTITY) {
+                    if (_blocks[blockIndex(i - 1)]->sparse[inBlockIndex(i - 1)] != NULL_ENTITY) {
                         this->_max = i - 1;
                         return;
                     }
@@ -53,38 +53,38 @@ namespace Engine {
         public:
             SparseMap() : _blocks({new Block()}), _size(0) {}
 
-            ~SparseMap() { Clear(); }
+            ~SparseMap() { clear(); }
 
             /**
              * @brief create a block containing his id and its value
              * @param id, value
              */
-            void Insert(EntityId id, const Component &value) {
-                size_t sparseIndex = InBlockIndex(id);
+            void insert(EntityId id, const Component &value) {
+                size_t sparseIndex = inBlockIndex(id);
 
                 if (id == _size && id == _blocks.size() * BLOCK_SIZE) {
                     _blocks.push_back(new Block());
                 }
-                Block *block = this->_blocks[BlockIndex(id)];
+                Block *block = this->_blocks[blockIndex(id)];
 
                 if (!block->sparse[sparseIndex]) {
                     this->_max = std::max(id, this->_max);
-                    this->_blocks[BlockIndex(this->_size)]->dense[InBlockIndex(this->_size)] = id;
-                    this->_blocks[BlockIndex(this->_size)]->components[InBlockIndex(this->_size)] = value;
+                    this->_blocks[blockIndex(this->_size)]->dense[inBlockIndex(this->_size)] = id;
+                    this->_blocks[blockIndex(this->_size)]->components[inBlockIndex(this->_size)] = value;
                     block->sparse[sparseIndex] = this->_size;
                     ++_size;
                 } else {
-                    this->_blocks[BlockIndex(block->sparse[sparseIndex])]->components[InBlockIndex(block->sparse[sparseIndex])] = value;
+                    this->_blocks[blockIndex(block->sparse[sparseIndex])]->components[inBlockIndex(block->sparse[sparseIndex])] = value;
                 }
             }
 
             /**
-             * @brief Erase an entity corresponding to the given id
+             * @brief erase an entity corresponding to the given id
              * @param id
              */
-            void Erase(EntityId id) {
-                size_t index = InBlockIndex(id);
-                Block *block = this->_blocks[BlockIndex(id)];
+            void erase(EntityId id) {
+                size_t index = inBlockIndex(id);
+                Block *block = this->_blocks[blockIndex(id)];
                 EntityId previousSparseValue = block->sparse[index];
 
                 if (id == this->_max) {
@@ -100,19 +100,19 @@ namespace Engine {
                 }
 
                 block->sparse[index] = block->dense[index];
-                EntityId *lastDensePtr = &this->_blocks[BlockIndex(this->_size - 1)]->dense[InBlockIndex(this->_size - 1)];
+                EntityId *lastDensePtr = &this->_blocks[blockIndex(this->_size - 1)]->dense[inBlockIndex(this->_size - 1)];
                 if (*lastDensePtr == id)
                     return;
                 block->dense[index] = *lastDensePtr;
                 *lastDensePtr = id;
-                block->sparse[InBlockIndex(*lastDensePtr)] = index;
+                block->sparse[inBlockIndex(*lastDensePtr)] = index;
                 --_size;
             }
 
             /**
-             * @brief Clear the SparseMap
+             * @brief clear the SparseMap
              */
-            void Clear() {
+            void clear() {
                 for (auto block : this->_blocks) {
                     delete block;
                 }
@@ -128,8 +128,8 @@ namespace Engine {
              * @return data of the block
              */
             Component &operator[](EntityId id) {
-                Block *block = this->_blocks[BlockIndex(id)];
-                size_t denseIndex = block->sparse[InBlockIndex(id)];
+                Block *block = this->_blocks[blockIndex(id)];
+                size_t denseIndex = block->sparse[inBlockIndex(id)];
                 return block->components[denseIndex];
             }
     };

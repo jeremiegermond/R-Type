@@ -7,32 +7,36 @@
 
 #include "manager/ECSManager.hpp"
 
-ECSManager::ECSManager() : _spriteFactory(nullptr) {}
-
-void ECSManager::InitGame() {
-    _spriteFactory = new Engine::Archetype<Engine::CSprite, Engine::CPosition, Engine::CMovement>();
-    auto entity = _spriteFactory->CreateEntity(Engine::CSprite("assets/sprites/boss.png"));
+void ECSManager::initGame() {
+    //    spriteFactory = new Engine::Archetype<Engine::CSprite, Engine::CPosition, Engine::CVelocity>();
+    auto spriteFactory = addArchetype<spriteArchetype>("spriteFactory");
+    auto entity = spriteFactory->createEntity(Engine::CSprite("assets/sprites/explosion-sprite-sheet.png"));
     _spriteMap["ship"] = entity;
-    _spriteFactory->AddComponent(entity, Engine::CPosition());
-    _spriteFactory->AddComponent(entity, Engine::CMovement());
+    spriteFactory->addComponent(entity, Engine::CPosition());
+    spriteFactory->addComponent(entity, Engine::CVelocity());
     // pointer to CPosition component
-    auto position = std::make_shared<Engine::CPosition>(_spriteFactory->GetComponent<Engine::CPosition>(entity));
-    _spriteFactory->GetComponent<Engine::CMovement>(entity).SetPosition(position);
-    _spriteFactory->GetComponent<Engine::CMovement>(entity).SetSpeed(Vector3{10, 10, 10});
-    _spriteFactory->GetComponent<Engine::CMovement>(entity).SetActive(true);
+    // spriteFactory->GetComponent<Engine::CVelocity>(entity).setPosition(spriteFactory->getComponent<Engine::CPosition
+    spriteFactory->getComponent<Engine::CVelocity>(entity).setSpeed(Vector3{10, 10, 10});
+    spriteFactory->getComponent<Engine::CVelocity>(entity).setActive(true);
 }
 
-void ECSManager::UpdateGame() {
+void ECSManager::updateGame() {
     // Draw cSprite
-    auto movement = _spriteFactory->GetComponent<Engine::CMovement>(_spriteMap["ship"]);
-    movement.Update();
-    auto [cSprite, cPosition] = _spriteFactory->GetComponent<Engine::CSprite, Engine::CPosition>(_spriteMap["ship"]);
-    cPosition.AddPosition(movement.GetSpeed());
-    auto position = cPosition.GetPosition();
-    std::cout << "ECSManager::UpdateGame: " << position.x << " " << position.y << std::endl;
-    if (cSprite.GetTexture() == nullptr)
+    auto spriteFactory = getArchetype<spriteArchetype>("spriteFactory");
+    // spriteFactory->getComponent<>()
+    auto movement = spriteFactory->getComponent<Engine::CVelocity>(_spriteMap["ship"]);
+    movement.update();
+    auto [cSprite, cPosition] = spriteFactory->getComponent<Engine::CSprite, Engine::CPosition>(_spriteMap["ship"]);
+    // cPosition.addPosition(movement.getSpeed());
+    auto position = cPosition.getPosition();
+    std::cout << "ECSManager::updateGame: " << position.x << " " << position.y << std::endl;
+    if (cSprite.getTexture() == nullptr)
         return;
-    DrawTexture(*cSprite.GetTexture(), position.x, position.y, WHITE);
+    DrawTexture(*cSprite.getTexture(), position.x, position.y, WHITE);
 }
 
-void ECSManager::DestroyGame() { DELETE_PTR(_spriteFactory); }
+void ECSManager::destroyGame() {
+    std::cout << "ECSManager::destroyGame" << std::endl;
+    auto spriteFactory = getArchetype<spriteArchetype>("spriteFactory");
+    spriteFactory->deleteComponent<Engine::CSprite>(_spriteMap["ship"]);
+}

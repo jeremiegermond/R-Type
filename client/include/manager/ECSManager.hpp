@@ -9,15 +9,19 @@
 
 #include "engine/manager/ECSManagerBase.hpp"
 
+typedef Engine::Archetype<Engine::CObject, Engine::CSprite, Engine::CPosition, Engine::CVelocity> spriteArchetype;
+// cameraArchetype
+typedef Engine::Archetype<Engine::CObject, Engine::CPosition, Engine::CVelocity> cameraArchetype;
+
 class ECSManager : public Engine::ECSManagerBase {
     public:
-        ECSManager();
+        ECSManager() = default;
 
-        void InitGame() override;
-        void UpdateGame() override;
-        void DestroyGame() override;
+        void initGame() override;
+        void updateGame() override;
+        void destroyGame() override;
 
     private:
-        Engine::Archetype<Engine::CSprite, Engine::CPosition, Engine::CMovement> *_spriteFactory;
-        std::unordered_map<std::string, Engine::EntityId> _spriteMap;
+        EntityMap _spriteMap;
+        EntityMap _cameraMap;
 };

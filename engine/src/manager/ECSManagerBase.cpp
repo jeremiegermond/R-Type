@@ -8,19 +8,13 @@
 #include "engine/manager/ECSManagerBase.hpp"
 
 namespace Engine {
-    ECSManagerBase::ECSManagerBase() : _testManager(nullptr) {}
+    ECSManagerBase::ECSManagerBase() {}
 
     ECSManagerBase::~ECSManagerBase() = default;
 
-    void ECSManagerBase::Init() {
-        _testManager = new Archetype<float, int>();
-        InitGame();
-    }
+    void ECSManagerBase::init() { initGame(); }
 
-    void ECSManagerBase::Update() { UpdateGame(); }
+    void ECSManagerBase::update() { updateGame(); }
 
-    void ECSManagerBase::Destroy() {
-        DELETE_PTR(_testManager);
-        DestroyGame();
-    }
+    void ECSManagerBase::destroy() { destroyGame(); }
 }

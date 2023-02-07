@@ -15,25 +15,25 @@ namespace Engine {
 
     GameBase::~GameBase() = default;
 
-    void GameBase::Init() {
+    void GameBase::init() {
         InitWindow(800, 450, "R-Type");
-        InitGame();
-        RegisterComponents();
+        initGame();
+        registerComponents();
     }
 
-    void GameBase::Update() {
+    void GameBase::update() {
         while (!WindowShouldClose()) {
             BeginDrawing();
             ClearBackground(BLACK);
-            UpdateGame();
+            updateGame();
             EndDrawing();
         }
     }
 
-    void GameBase::Destroy() {
-        DestroyGame();
+    void GameBase::destroy() {
+        destroyGame();
         CloseWindow();
     }
 
-    void GameBase::RegisterComponents() { RegisterComponentsGame(); }
+    void GameBase::registerComponents() { registerComponentsGame(); }
 }

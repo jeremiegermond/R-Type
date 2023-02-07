@@ -15,11 +15,11 @@ class Game : public Engine::GameBase {
     public:
         Game();
 
-        void InitGame() override;
-        void UpdateGame() override;
-        void DestroyGame() override;
+        void initGame() override;
+        void updateGame() override;
+        void destroyGame() override;
 
-        void RegisterComponentsGame() override;
+        void registerComponentsGame() override;
 
     private:
         ECSManager *_ecsManager;

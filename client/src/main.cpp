@@ -9,8 +9,8 @@
 
 int main(int, char **) {
     Game game;
-    game.Init();
-    game.Update();
-    game.Destroy();
+    game.init();
+    game.update();
+    game.destroy();
     return 0;
 }

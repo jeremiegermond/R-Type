@@ -10,9 +10,9 @@
 namespace Engine {
     CSprite::CSprite() : _texture(nullptr) {}
 
-    CSprite::CSprite(const std::string &texturePath) : CSprite() { SetTexture(texturePath); }
+    CSprite::CSprite(const std::string &texturePath) : CSprite() { setTexture(texturePath); }
 
-    void CSprite::DoDestroy() {
+    void CSprite::doDestroy() {
         if (_texture) {
             UnloadTexture(*_texture);
             _texture.reset();
@@ -20,7 +20,7 @@ namespace Engine {
         std::cout << "CSprite destroyed" << std::endl;
     }
 
-    void CSprite::SetTexture(const std::string &texturePath) {
+    void CSprite::setTexture(const std::string &texturePath) {
         if (texturePath.empty())
             return;
         if (_texture)
@@ -28,6 +28,6 @@ namespace Engine {
         if (!FileExists(texturePath.c_str()))
             return;
         _texture = std::make_shared<Texture2D>(LoadTexture(texturePath.c_str()));
-        Init();
+        init();
     }
 }

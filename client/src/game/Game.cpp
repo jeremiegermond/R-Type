@@ -9,16 +9,16 @@
 
 Game::Game() : _ecsManager(nullptr) {}
 
-void Game::InitGame() {
+void Game::initGame() {
     _ecsManager = new ECSManager();
-    _ecsManager->Init();
+    _ecsManager->init();
 }
 
-void Game::UpdateGame() { _ecsManager->Update(); }
+void Game::updateGame() { _ecsManager->update(); }
 
-void Game::DestroyGame() {
-    _ecsManager->Destroy();
+void Game::destroyGame() {
+    _ecsManager->destroy();
     DELETE_PTR(_ecsManager);
 }
 
-void Game::RegisterComponentsGame() {}
+void Game::registerComponentsGame() {}

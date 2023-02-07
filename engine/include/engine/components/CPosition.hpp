@@ -20,20 +20,20 @@ namespace Engine {
              * @brief Set the Position object
              * @param position
              */
-            void SetPosition(const Vector3 &position);
+            void setPosition(const Vector3 &position);
 
             /**
              * @brief Get the Position object
              * @return Vector3
              */
-            [[nodiscard]] Vector3 GetPosition() const;
+            [[nodiscard]] Vector3 getPosition() const;
 
             /**
              * @brief Add a Vector3 to the current position
              * @param position
              * @details This function will add the position to the current position
              */
-            void AddPosition(const Vector3 &position);
+            void addPosition(const Vector3 &position);
 
         private:
             Vector3 _position;
