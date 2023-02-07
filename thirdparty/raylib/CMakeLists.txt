@@ -3,11 +3,11 @@
 find_package(raylib ${raylib_VERSION} QUIET)
 if (NOT raylib_FOUND)
     # Download the library if it's not installed
-    message(STATUS "raylib ${raylib_version} not found: downloading and building it...")
+    message(STATUS "raylib ${raylib_VERSION} not found: downloading and building it...")
     include(FetchContent)
     FetchContent_Declare(
         raylib
-        URL https://github.com/raysan5/raylib/archive/refs/tags/${raylib_version}.tar.gz
+        URL https://github.com/raysan5/raylib/archive/refs/tags/${raylib_VERSION}.tar.gz
     )
     FetchContent_GetProperties(raylib)
     if (NOT raylib_POPULATED)
