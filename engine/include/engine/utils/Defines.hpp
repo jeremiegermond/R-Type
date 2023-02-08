@@ -18,6 +18,6 @@
 #define UNUSED(x) (void)(x)
 
 namespace Engine {
-using EntityId = uint32_t;
-const EntityId NULL_ENTITY = std::numeric_limits<EntityId>::max();
-} // namespace Engine
+    using EntityId = uint32_t;
+    const EntityId NULL_ENTITY = std::numeric_limits<EntityId>::max();
+}

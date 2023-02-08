@@ -11,50 +11,50 @@
 
 namespace Engine {
 
-class CSound : public ComponentBase {
-  public:
-    /**
-     * @brief Construct a new CSound object
-     */
-    CSound();
+    class CSound : public ComponentBase {
+      public:
+        /**
+         * @brief Construct a new CSound object
+         */
+        CSound();
 
-    /**
-     * @brief Destroy the CSound object
-     */
-    ~CSound() override;
+        /**
+         * @brief Destroy the CSound object
+         */
+        ~CSound() override;
 
-    /**
-     * @brief Unload the sound
-     */
-    void unload();
+        /**
+         * @brief Unload the sound
+         */
+        void unload();
 
-    /**
-     * @brief Get the sound
-     * @return Sound sound
-     */
-    [[nodiscard]] Sound getSound() const;
+        /**
+         * @brief Get the sound
+         * @return Sound sound
+         */
+        [[nodiscard]] Sound getSound() const;
 
-    /**
-     * @brief Set the sound
-     * @param string soundPath path to the sound
-     */
-    void setSound(const std::string &soundPath);
+        /**
+         * @brief Set the sound
+         * @param string soundPath path to the sound
+         */
+        void setSound(const std::string &soundPath);
 
-    /**
-     * @brief Set the sound volume
-     * @param float volume
-     */
-    void setVolume(float volume);
+        /**
+         * @brief Set the sound volume
+         * @param float volume
+         */
+        void setVolume(float volume);
 
-    /**
-     * @brief Get the sound volume
-     * @return float
-     */
-    [[nodiscard]] float getVolume() const;
+        /**
+         * @brief Get the sound volume
+         * @return float
+         */
+        [[nodiscard]] float getVolume() const;
 
-  private:
-    Sound _sound;
-    float _volume;
-    bool _loaded;
-};
-} // namespace Engine
+      private:
+        Sound _sound;
+        float _volume;
+        bool _loaded;
+    };
+}

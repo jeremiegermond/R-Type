@@ -10,15 +10,15 @@
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
-class CObject : public ComponentBase {
-  public:
-    CObject() = default;
+    class CObject : public ComponentBase {
+      public:
+        CObject() = default;
 
-    void setTag(const std::string &tag);
-    void removeTag(const std::string &tag);
-    bool hasTag(const std::string &tag) const;
+        void setTag(const std::string &tag);
+        void removeTag(const std::string &tag);
+        bool hasTag(const std::string &tag) const;
 
-  private:
-    std::unordered_set<std::string> _tags;
-};
-} // namespace Engine
+      private:
+        std::unordered_set<std::string> _tags;
+    };
+}
