@@ -24,6 +24,11 @@ namespace Engine {
         ~CAnimation() override;
 
         /**
+         * @brief Unload the animations
+         */
+        void unloadAnimations();
+
+        /**
          * @brief Get the pointer to the current animation
          * ////  return _animations.get()[_animationIndex];
          * @return  ModelAnimation
@@ -43,7 +48,7 @@ namespace Engine {
         void setAnimationIndex(unsigned int index);
 
       private:
-        std::shared_ptr<ModelAnimation> _animations;
+        ModelAnimation *_animations;
         unsigned int _animationCount;
         unsigned int _animationIndex;
     };

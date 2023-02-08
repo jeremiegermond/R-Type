@@ -23,6 +23,11 @@ namespace Engine {
         ~CMusic() override;
 
         /**
+         * @brief Unload the music
+         */
+        void unload();
+
+        /**
          * @brief Get the pointer to the music
          * @return std::shared_ptr<Music>
          */

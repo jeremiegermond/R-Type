@@ -9,7 +9,7 @@
 
 #include "engine/manager/ECSManagerBase.hpp"
 
-// typedef Engine::Archetype<Engine::CObject, Engine::CModel, Engine::CPosition, Engine::CRotation, Engine::CScale> ObjectArchetype;
+typedef Engine::Archetype<Engine::CObject, Engine::CModel, Engine::CPosition, Engine::CRotation, Engine::CScale, Engine::CAnimation> ObjectArchetype;
 
 class ECSManager : public Engine::ECSManagerBase {
   public:

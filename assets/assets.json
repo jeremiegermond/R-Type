@@ -1,4 +1,10 @@
 {
+  "animations": [
+    {
+      "name": "E002",
+      "path": "assets/models/enemies/E002.iqm"
+    }
+  ],
   "models": [
     {
       "name": "R9A1",
@@ -178,11 +184,11 @@
     },
     {
       "name": "window_open",
-      "path": "assets/sounds/ui/1005_c_window_open.ogg"
+      "path": "assets/sounds/ui/1005_window_open.ogg"
     },
     {
       "name": "window_close",
-      "path": "assets/sounds/ui/1006_c_window_close.ogg"
+      "path": "assets/sounds/ui/1006_window_close.ogg"
     },
     {
       "name": "shot",

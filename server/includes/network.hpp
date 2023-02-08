@@ -10,14 +10,14 @@ using namespace asio::ip;
 using namespace std::chrono;
 
 namespace std {
-template <>
-struct hash<udp::endpoint> {
-    std::size_t operator()(const udp::endpoint &endpoint) const noexcept {
-        std::size_t h1 = std::hash<std::string>()(endpoint.address().to_string());
-        std::size_t h2 = std::hash<unsigned short>()(endpoint.port());
-        return h1 ^ (h2 << 1);
-    }
-};
+    template <>
+    struct hash<udp::endpoint> {
+        std::size_t operator()(const udp::endpoint &endpoint) const noexcept {
+            std::size_t h1 = std::hash<std::string>()(endpoint.address().to_string());
+            std::size_t h2 = std::hash<unsigned short>()(endpoint.port());
+            return h1 ^ (h2 << 1);
+        }
+    };
 } // namespace std
 
 // udp server that can handle multiple clients

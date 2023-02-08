@@ -17,6 +17,8 @@
 #include "engine/components/CMusic.hpp"
 #include "engine/components/CObject.hpp"
 #include "engine/components/CPosition.hpp"
+#include "engine/components/CRotation.hpp"
+#include "engine/components/CScale.hpp"
 #include "engine/components/CShader.hpp"
 #include "engine/components/CSound.hpp"
 #include "engine/components/CTexture.hpp"

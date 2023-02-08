@@ -11,22 +11,28 @@ namespace Engine {
 
     CAnimation::CAnimation() : _animations(nullptr), _animationCount(0), _animationIndex(0) {}
 
-    CAnimation::~CAnimation() {
-        if (_animations && _animationCount > 0)
-            UnloadModelAnimations(_animations.get(), _animationCount);
+    CAnimation::~CAnimation() { unloadAnimations(); }
+
+    void CAnimation::unloadAnimations() {
+        if (_animations && _animationCount > 0) {
+            UnloadModelAnimations(_animations, _animationCount);
+            _animations = nullptr;
+            _animationCount = 0;
+            _animationIndex = 0;
+        }
     }
 
     ModelAnimation CAnimation::getAnimation() const {
         if (_animations && _animationCount > 0 && _animationIndex < _animationCount)
-            return _animations.get()[_animationIndex];
+            return _animations[_animationIndex];
         return {};
     }
 
     void CAnimation::setAnimation(const std::string &animationPath) {
-        if (_animations && _animationCount > 0)
-            UnloadModelAnimations(_animations.get(), _animationCount);
-        auto animations = LoadModelAnimations(animationPath.c_str(), &_animationCount);
-        _animations = std::make_shared<ModelAnimation>(*animations);
+        unloadAnimations();
+        if (!FileExists(animationPath.c_str()))
+            throw std::runtime_error("Animation file not found: " + animationPath);
+        _animations = LoadModelAnimations(animationPath.c_str(), &_animationCount);
     }
 
     void Engine::CAnimation::setAnimationIndex(unsigned int index) {

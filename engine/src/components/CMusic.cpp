@@ -10,21 +10,20 @@
 namespace Engine {
     CMusic::CMusic() : _music(nullptr) {}
 
-    CMusic::~CMusic() {
+    CMusic::~CMusic() { unload(); }
+
+    void CMusic::unload() {
         if (_music != nullptr) {
-            // StopMusicStream(*_music);
-            // UnloadMusicStream(*_music);
+            StopMusicStream(*_music);
+            UnloadMusicStream(*_music);
+            _music = nullptr;
         }
     }
 
     std::shared_ptr<Music> CMusic::getMusic() const { return _music; }
 
     void CMusic::setMusic(const std::string &musicPath) {
-        if (_music) {
-            StopMusicStream(*_music);
-            UnloadMusicStream(*_music);
-            _music = nullptr;
-        }
+        unload();
         if (!FileExists(musicPath.c_str()))
             throw std::runtime_error("Music file not found: " + musicPath);
         _music = std::make_shared<Music>(LoadMusicStream(musicPath.c_str()));

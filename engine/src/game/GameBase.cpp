@@ -52,7 +52,7 @@ namespace Engine {
         json data = json::parse(f);
         if (data.contains("shaders")) {
             drawTextCentered("Loading shaders...");
-            // loadShaders(data["shaders"]);
+            loadShaders(data["shaders"]);
         }
         if (data.contains("textures")) {
             drawTextCentered("Loading textures...");
@@ -178,7 +178,7 @@ namespace Engine {
         _textures.clear();
         _sounds.clear();
         _musics.clear();
-        _models.clear();
         _animations.clear();
+        _models.clear();
     }
 }

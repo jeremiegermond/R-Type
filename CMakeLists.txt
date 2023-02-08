@@ -11,3 +11,8 @@ conan_basic_setup()
 add_subdirectory(server)
 add_subdirectory(client)
 file(COPY assets DESTINATION ${PROJECT_SOURCE_DIR}/bin)
+add_custom_target(copy_assets ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/assets
+        ${PROJECT_SOURCE_DIR}/bin/assets
+)

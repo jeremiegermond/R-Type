@@ -7,7 +7,7 @@
 
 #include "manager/ECSManager.hpp"
 
-void ECSManager::initFactories() {}
+void ECSManager::initFactories() { addArchetype<ObjectArchetype>("Object"); }
 
 void ECSManager::updateGame() {}
 

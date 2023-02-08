@@ -22,6 +22,8 @@ class Game : public Engine::GameBase {
 
     void initSocket(const std::string &ip, unsigned short port);
 
+    void loadEntities(const std::string &path);
+
   private:
     std::shared_ptr<ECSManager> _ecsManager;
     std::shared_ptr<UdpClient> _udpClient;

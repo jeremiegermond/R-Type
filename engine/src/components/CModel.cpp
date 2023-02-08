@@ -8,9 +8,6 @@
 #include "engine/components/CModel.hpp"
 
 namespace Engine {
-    //    private:
-    // std::shared_ptr<Model> _model;
-
     CModel::CModel() : _model(nullptr) {}
 
     CModel::~CModel() {
