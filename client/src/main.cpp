@@ -308,8 +308,8 @@ int main(int ac, char *av[]) {
         EndMode3D();
 
         engine.setShaderMode("outline");
-        DrawTexturePro(target.texture, (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
-                       (Rectangle){0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
+        DrawTexturePro(target.texture, Rectangle{0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height)},
+                       Rectangle{0, 0, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height)}, Vector2Zero(), 0,
                        WHITE);
         EndShaderMode();
         DrawFPS(10, 10);

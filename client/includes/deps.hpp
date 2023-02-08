@@ -8,6 +8,20 @@
 #ifndef RTYPE_DEPS_HPP
 #define RTYPE_DEPS_HPP
 
+#if defined(_WIN32)           
+	#define NOGDI             // All GDI defines and routines
+	#define NOUSER            // All USER defines and routines
+#endif
+//include windwos headers here
+#include "raylib.h"
+#include "raymath.h"
+#include "rlgl.h"
+
+#if defined(_WIN32)           // raylib uses these names as function parameters
+	#undef near
+	#undef far
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -21,9 +35,5 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
-
-#include "raylib.h"
-#include "raymath.h"
-#include "rlgl.h"
 
 #endif // RTYPE_DEPS_HPP

@@ -3,15 +3,17 @@
 #include "deps.hpp"
 #include "utils.hpp"
 
-#include <arpa/inet.h>
+#ifdef _WIN32
+#else
+  #include <arpa/inet.h>
+#include <netinet/in.h>
+#endif
 #include <array>
 #include <asio.hpp>
 #include <cstring>
 #include <functional>
 #include <future>
 #include <iomanip>
-#include <netinet/in.h>
-#include <poll.h>
 #include <queue>
 #include <random>
 #include <string>
@@ -34,7 +36,7 @@ class UdpClient {
     std::mutex _mutex;
     std::condition_variable _cv;
     std::atomic<bool> _connected;
-    std::chrono::time_point<std::chrono::system_clock> _lastMessage;
+    std::chrono::time_point<std::chrono::steady_clock> _lastMessage;
 
   public:
     UdpClient(const std::string &ip, unsigned short port);

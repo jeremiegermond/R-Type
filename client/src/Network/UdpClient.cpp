@@ -93,7 +93,7 @@ void UdpClient::threadListener() {
         std::string msg(_buffer.data(), bytes_recvd);
         std::lock_guard<std::mutex> lock(_mutex);
         _messages.push(msg);
-        _lastMessage = std::chrono::system_clock::now();
+        _lastMessage = std::chrono::steady_clock::now();
         _connected = true;
         _cv.notify_one();
     }
@@ -118,7 +118,7 @@ void UdpClient::threadHeartbeat() {
 void UdpClient::threadTimeout() {
     while (true) {
         std::this_thread::sleep_for(5s);
-        if (std::chrono::system_clock::now() - _lastMessage > 3s) {
+        if (std::chrono::steady_clock::now() - _lastMessage > 3s) {
             std::cout << "Server timed out" << std::endl;
             std::lock_guard<std::mutex> lock(_mutex);
             _connected = false;

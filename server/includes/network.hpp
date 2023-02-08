@@ -39,9 +39,9 @@ class UdpServer {
     std::vector<Enemy> _enemies;
     std::set<int> _enemyIds;
     // timer for enemy spawn
-    std::chrono::time_point<std::chrono::system_clock> _enemySpawnTimer;
+    std::chrono::time_point<std::chrono::steady_clock> _enemySpawnTimer;
     // frame time
-    std::chrono::time_point<std::chrono::system_clock> _lastFrame;
+    std::chrono::time_point<std::chrono::steady_clock> _lastFrame;
     // stop variable
     std::atomic<bool> _stopServer;
 

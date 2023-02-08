@@ -21,7 +21,7 @@ void UdpServer::start() {
     });
     _timer.detach();
     _simulation = std::thread([this]() {
-        auto startTime = system_clock::now();
+        auto startTime = steady_clock::now();
         _enemySpawnTimer = startTime;
         _lastFrame = startTime;
         InitWindow(800, 450, "R-Type Server");
@@ -198,7 +198,7 @@ void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
 void UdpServer::simulate() {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // update frame time
-    auto tp = high_resolution_clock::now();
+    auto tp = steady_clock::now();
     auto deltaTime = float(duration_cast<milliseconds>(tp - _lastFrame).count()) / 1000.0f;
     _lastFrame = tp;
     // std::cout << "Delta time: " << deltaTime << std::endl;
@@ -252,7 +252,7 @@ void UdpServer::simulate() {
         }
     }
     if (!_enemyIds.empty()) {
-        auto now = std::chrono::system_clock::now();
+        auto now = std::chrono::steady_clock::now();
         if (now - _enemySpawnTimer > std::chrono::seconds(2)) {
             _enemySpawnTimer = now;
             auto id = *_enemyIds.begin();
