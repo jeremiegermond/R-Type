@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** rtype
 ** File description:
-** Defines.hpp by thibb1
+** Defines.hpp
 */
 
 #pragma once
@@ -15,7 +15,9 @@
         x = nullptr;                                                                                                                                 \
     }
 
+#define UNUSED(x) (void)(x)
+
 namespace Engine {
-    using EntityId = uint32_t;
-    const EntityId NULL_ENTITY = std::numeric_limits<EntityId>::max();
-}
+using EntityId = uint32_t;
+const EntityId NULL_ENTITY = std::numeric_limits<EntityId>::max();
+} // namespace Engine

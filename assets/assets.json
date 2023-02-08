@@ -1,176 +1,81 @@
 {
   "models": [
     {
-      "name": "spaceship1",
-      "path": "assets/models/lp_spaceship/spaceship.obj",
-      "rotation": [
-        0,
-        1.5,
-        0
-      ],
-      "scale": 0.1
+      "name": "R9A1",
+      "path": "assets/models/ships/R9A.obj",
+      "tags": ["player"],
+      "scale": 1.5
     },
     {
-      "animation": {
-        "path": "assets/models/e1116/enemies.iqm"
-      },
-      "tags": ["enemy"],
-      "name": "e1116",
-      "path": "assets/models/e1116/enemies.iqm",
+      "name": "R9A2",
+      "path": "assets/models/ships/R9A2.obj",
+      "tags": ["player"],
       "position": [
-        1,
+        100,
         0,
         0
       ],
-      "rotation": [
-        -1.5,
+      "scale": 1.5
+    },
+    {
+      "name": "R9A3",
+      "path": "assets/models/ships/R9A3.obj",
+      "tags": ["player"],
+      "position": [
+        100,
         0,
         0
       ],
-      "scale": 0.1,
+      "scale": 1.5
+    },
+    {
+      "name": "R9A4",
+      "path": "assets/models/ships/R9A4.obj",
+      "tags": ["player"],
+      "position": [
+        100,
+        0,
+        0
+      ],
+      "scale": 1.5
+    },
+    {
+      "name": "E002",
+      "path": "assets/models/enemies/E002.iqm",
+      "tags": ["enemy"],
+      "animation" : {
+        "path": "assets/models/enemies/E002.iqm"
+      },
       "textures": [
         {
-          "path": "assets/models/e1116/enemies.png",
+          "path": "assets/models/enemies/textures/E002_c.png",
           "type": "diffuse"
         },
         {
-          "path": "assets/models/e1116/enemies_normal.png",
+          "path": "assets/models/enemies/textures/E002_n.png",
           "type": "normal"
         },
         {
-          "path": "assets/models/e1116/enemies_metallic.png",
+          "path": "assets/models/enemies/textures/E002_m.png",
           "type": "metallic"
         }
-      ]
+      ],
+      "scale": 0.1,
+      "rotation": [
+        0,
+        3,
+        0
+      ],
+        "position": [
+            100,
+            0,
+            0
+        ]
     },
     {
       "name": "corridor",
       "tags": ["background"],
       "path": "assets/models/corridor/corridor.obj"
-    },
-    {
-      "name": "rock_01",
-      "path": "assets/models/space_debris/rock_01.obj",
-      "position": [
-        -4,
-        2,
-        0
-      ],
-      "scale": 0.2,
-      "textures": [
-        {
-          "path": "assets/models/space_debris/textures/st_space_debris_001_m.png",
-          "type": "metallic"
-        }
-      ]
-    },
-    {
-      "name": "rock_02",
-      "path": "assets/models/space_debris/rock_02.obj",
-      "position": [
-        -2,
-        2,
-        0
-      ],
-      "scale": 0.2,
-      "textures": [
-        {
-          "path": "assets/models/space_debris/textures/st_space_debris_wall_02_m.png",
-          "type": "metallic"
-        }
-      ]
-    },
-    {
-      "name": "space_debris_01",
-      "path": "assets/models/space_debris/space_debris_01.obj",
-      "position": [
-        2,
-        2,
-        0
-      ],
-      "scale": 0.2,
-      "textures": [
-        {
-          "materialIndex": 0,
-          "path": "assets/models/space_debris/textures/st_space_debris_wall_01_m.png",
-          "type": "metallic"
-        },
-        {
-          "materialIndex": 1,
-          "path": "assets/models/space_debris/textures/st_space_debris_wall_02_m.png",
-          "type": "metallic"
-        }
-      ]
-    },
-    {
-      "name": "space_debris_02",
-      "path": "assets/models/space_debris/space_debris_02.obj",
-      "position": [
-        4,
-        2,
-        0
-      ],
-      "scale": 0.2,
-      "textures": [
-        {
-          "path": "assets/models/space_debris/textures/st_space_debris_001_m.png",
-          "type": "metallic"
-        }
-      ]
-    },
-    {
-      "name": "space_debris_03",
-      "path": "assets/models/space_debris/space_debris_03.obj",
-      "position": [
-        -6,
-        -2,
-        0
-      ],
-      "scale": 0.2,
-      "textures": [
-        {
-          "path": "assets/models/space_debris/textures/st_space_debris_010_m.png",
-          "type": "metallic"
-        }
-      ]
-    },
-    {
-      "name": "space_debris_04",
-      "path": "assets/models/space_debris/space_debris_04.obj",
-      "position": [
-        -2,
-        -2,
-        0
-      ],
-      "scale": 0.2,
-      "textures": [
-        {
-          "path": "assets/models/space_debris/textures/st_space_debris_010_m.png",
-          "type": "metallic"
-        }
-      ]
-    },
-    {
-      "name": "space_debris_05",
-      "path": "assets/models/space_debris/space_debris_05.obj",
-      "position": [
-        2,
-        -2,
-        0
-      ],
-      "scale": 0.2,
-      "textures": [
-        {
-          "materialIndex": 0,
-          "path": "assets/models/space_debris/textures/st_space_debris_wall_02_m.png",
-          "type": "metallic"
-        },
-        {
-          "materialIndex": 1,
-          "path": "assets/models/space_debris/textures/st_space_debris_wall_03_m.png",
-          "type": "metallic"
-        }
-      ]
     }
   ],
   "musics": [

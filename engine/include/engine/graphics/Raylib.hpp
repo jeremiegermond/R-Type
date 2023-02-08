@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** rtype
 ** File description:
-** Raylib.hpp by thibb1
+** Raylib.hpp
 */
 
 #pragma once

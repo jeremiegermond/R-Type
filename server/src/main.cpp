@@ -1,13 +1,8 @@
-/*
-** EPITECH PROJECT, 2023
-** server
-** File description:
-** main.cpp by thibb1
-*/
+#include "network.hpp"
 
-#include <iostream>
-
-int main(int ac, char *av[]) {
-    std::cout << "hello world !" << std::endl;
+int main() {
+    asio::io_context _io_context;
+    UdpServer server;
+    server.start();
     return 0;
 }

@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** rtype
 ** File description:
-** Json.hpp by thibb1
+** Json.hpp
 */
 
 #pragma once
