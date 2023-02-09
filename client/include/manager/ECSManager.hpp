@@ -9,7 +9,9 @@
 
 #include "engine/manager/ECSManagerBase.hpp"
 
-typedef Engine::Archetype<Engine::CObject, Engine::CModel, Engine::CPosition, Engine::CRotation, Engine::CScale, Engine::CAnimation> ObjectArchetype;
+typedef std::shared_ptr<Engine::CModel> pModel;
+typedef std::shared_ptr<Engine::CAnimation> pAnimation;
+typedef Engine::Archetype<Engine::CObject, pModel, Engine::CPosition, Engine::CRotation, Engine::CScale, pAnimation> ObjectArchetype;
 
 class ECSManager : public Engine::ECSManagerBase {
   public:

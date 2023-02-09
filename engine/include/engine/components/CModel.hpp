@@ -24,10 +24,15 @@ namespace Engine {
         ~CModel() override;
 
         /**
-         * @brief Get the pointer to the model
-         * @return std::shared_ptr<Model>
+         * @brief Unload the model
          */
-        [[nodiscard]] std::shared_ptr<Model> getModel() const;
+        void unloadModel();
+
+        /**
+         * @brief Get the model
+         * @return Model
+         */
+        [[nodiscard]] Model getModel() const;
 
         /**
          * @brief Set the model
@@ -36,6 +41,7 @@ namespace Engine {
         void setModel(const std::string &modelPath);
 
       private:
-        std::shared_ptr<Model> _model;
+        Model _model;
+        bool _loaded;
     };
 }
