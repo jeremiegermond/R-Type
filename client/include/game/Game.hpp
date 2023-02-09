@@ -28,4 +28,5 @@ class Game : public Engine::GameBase {
     std::shared_ptr<ECSManager> _ecsManager;
     std::shared_ptr<UdpClient> _udpClient;
     EntityMap _gameEntities;
+    ObjectArchetype *_pObjectArchetype;
 };

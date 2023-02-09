@@ -18,7 +18,6 @@ namespace Engine {
     Vector3 CPosition::getPosition() const { return _position; }
 
     void CPosition::addPosition(const Vector3 &position) {
-        std::cout << "CPosition::addPosition" << std::endl;
         _position.x += position.x;
         _position.y += position.y;
         _position.z += position.z;

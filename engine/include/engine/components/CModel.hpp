@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "engine/components/CTexture.hpp"
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
@@ -40,8 +41,16 @@ namespace Engine {
          */
         void setModel(const std::string &modelPath);
 
+        /**
+         * @brief Set model texture
+         * @param string textureName path to the texture
+         * @param string texturePath name of the texture
+         */
+        void setModelTexture(const std::string &textureName, const std::string &texturePath);
+
       private:
         Model _model;
+        std::vector<Engine::CTexture> _textures;
         bool _loaded;
     };
 }

@@ -39,7 +39,12 @@
     {
       "name": "corridor",
       "model": "corridor",
-      "tags": ["background"]
+      "tags": ["background"],
+      "velocity": [
+        -0.5,
+        0,
+        0
+      ]
     }
   ]
 }

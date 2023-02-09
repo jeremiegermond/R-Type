@@ -18,6 +18,12 @@ namespace Engine {
         CRotation();
 
         /**
+         * @brief Construct a new CRotation object
+         * @param Vector3 rotation
+         */
+        explicit CRotation(const Vector3 &rotation);
+
+        /**
          * @brief Destroy the CRotation object
          */
         ~CRotation() override;

@@ -11,7 +11,8 @@
 
 typedef std::shared_ptr<Engine::CModel> pModel;
 typedef std::shared_ptr<Engine::CAnimation> pAnimation;
-typedef Engine::Archetype<Engine::CObject, pModel, Engine::CPosition, Engine::CRotation, Engine::CScale, pAnimation> ObjectArchetype;
+typedef Engine::Archetype<Engine::CObject, pModel, Engine::CPosition, Engine::CRotation, Engine::CScale, pAnimation, Engine::CVelocity>
+    ObjectArchetype;
 
 class ECSManager : public Engine::ECSManagerBase {
   public:

@@ -13,8 +13,10 @@ namespace Engine {
     CModel::~CModel() { unloadModel(); }
 
     void CModel::unloadModel() {
-        if (_loaded)
+        if (_loaded) {
             UnloadModel(_model);
+            _textures.clear();
+        }
         _loaded = false;
     }
 
@@ -24,8 +26,24 @@ namespace Engine {
         unloadModel();
         if (!FileExists(modelPath.c_str()))
             throw std::runtime_error("Model file not found: " + modelPath);
-        //_model = std::make_shared<Model>(LoadModel(modelPath.c_str()));
         _model = LoadModel(modelPath.c_str());
         _loaded = true;
+    }
+
+    void CModel::setModelTexture(const std::string &textureName, const std::string &texturePath) {
+        if (!_loaded)
+            throw std::runtime_error("Model not loaded");
+        if (!FileExists(texturePath.c_str()))
+            throw std::runtime_error("Texture file not found: " + texturePath);
+        _textures.emplace_back(texturePath.c_str());
+        if (textureName == "diffuse") {
+            _model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = *_textures.back().getTexture();
+        } else if (textureName == "normal") {
+            _model.materials[0].maps[MATERIAL_MAP_NORMAL].texture = *_textures.back().getTexture();
+        } else if (textureName == "metallic") {
+            _model.materials[0].maps[MATERIAL_MAP_METALNESS].texture = *_textures.back().getTexture();
+        } else {
+            throw std::runtime_error("Texture name not supported: " + textureName);
+        }
     }
 }

@@ -14,19 +14,41 @@ namespace Engine {
 
     class CVelocity : public ComponentBase {
       public:
+        /**
+         * @brief Construct a new CVelocity object
+         */
         CVelocity();
+
+        /**
+         * @brief Construct a new CVelocity object
+         * @param Vector3 speed
+         */
+        explicit CVelocity(const Vector3 &speed);
+
+        /**
+         * @brief Destroy the CVelocity object
+         */
         ~CVelocity() override = default;
 
+        /**
+         * @brief Update the velocity
+         */
         void doUpdate() override;
 
+        /**
+         * @brief Set the speed
+         * @param Vector3 speed
+         */
         void setSpeed(Vector3 speed);
-        [[nodiscard]] Vector3 getSpeed() const;
 
-        void setPosition(std::shared_ptr<CPosition> position);
+        /**
+         * @brief Get the speed
+         * @return Vector3
+         */
+        [[nodiscard]] Vector3 getSpeed() const;
 
       private:
         Vector3 _speed;
         Vector3 _frameSpeed;
-        std::shared_ptr<CPosition> _position;
     };
 }

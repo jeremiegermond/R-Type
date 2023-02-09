@@ -36,7 +36,7 @@ namespace Engine {
          *
          * @return a boolean value.
          */
-        static bool isNumber(const std::string &str) { return isMatch(str, "^[0-9]+$"); }
+        static bool isNumber(const std::string &str) { return isMatch(str, "^-?[0-9]\\.?[0-9]*$"); }
 
         /**
          * If the string is an IP address, return true, otherwise return false.

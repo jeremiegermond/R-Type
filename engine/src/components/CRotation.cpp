@@ -10,6 +10,8 @@
 namespace Engine {
     CRotation::CRotation() : _rotation(Vector3Zero()) {}
 
+    CRotation::CRotation(const Vector3 &rotation) : _rotation(rotation) {}
+
     CRotation::~CRotation() = default;
 
     Vector3 CRotation::getRotation() const { return _rotation; }

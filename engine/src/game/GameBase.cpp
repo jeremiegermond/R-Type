@@ -16,7 +16,7 @@ namespace Engine {
     GameBase::~GameBase() = default;
 
     void GameBase::init() {
-        InitWindow(800, 450, "R-Type");
+        InitWindow(1070, 600, "R-Type");
         InitAudioDevice();
         SetTargetFPS(60);
         drawTextCentered("Loading...");
@@ -157,6 +157,13 @@ namespace Engine {
             std::string name = model["name"];
             std::string path = model["path"];
             newModel->setModel(path);
+            if (model.contains("textures")) {
+                for (auto &texture : model["textures"]) {
+                    if (!texture.contains("name") || !texture.contains("path"))
+                        continue;
+                    newModel->setModelTexture(texture["name"], texture["path"]);
+                }
+            }
             _models[name] = newModel;
         }
     }

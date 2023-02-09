@@ -8,11 +8,13 @@
 #include "engine/components/CScale.hpp"
 
 namespace Engine {
-    CScale::CScale() : _scale(Vector3One()) {}
+    CScale::CScale() : _scale(0) {}
+
+    CScale::CScale(const float &scale) : _scale(scale) {}
 
     CScale::~CScale() = default;
 
-    Vector3 CScale::getScale() const { return _scale; }
+    float CScale::getScale() const { return _scale; }
 
-    void CScale::setScale(const Vector3 &scale) { _scale = scale; }
+    void CScale::setScale(const float &scale) { _scale = scale; }
 }

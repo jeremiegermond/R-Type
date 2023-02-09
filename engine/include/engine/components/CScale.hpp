@@ -18,23 +18,29 @@ namespace Engine {
         CScale();
 
         /**
+         * @brief Construct a new CScale object
+         * @param float scale
+         */
+        explicit CScale(const float &scale);
+
+        /**
          * @brief Destroy the CScale object
          */
         ~CScale() override;
 
         /**
          * @brief Get the scale
-         * @return Vector3
+         * @return float
          */
-        [[nodiscard]] Vector3 getScale() const;
+        [[nodiscard]] float getScale() const;
 
         /**
          * @brief Set the scale
          * @param Vector3 scale
          */
-        void setScale(const Vector3 &scale);
+        void setScale(const float &scale);
 
       private:
-        Vector3 _scale;
+        float _scale;
     };
 }
