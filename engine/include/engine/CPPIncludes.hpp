@@ -38,6 +38,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include "engine/graphics/Raylib.hpp"
+
 using json = nlohmann::json;
 using namespace std::chrono_literals;
 using namespace asio::ip;

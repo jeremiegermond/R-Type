@@ -25,6 +25,8 @@ class Game : public Engine::GameBase {
 
     void loadEntities(const std::string &path);
 
+    void movePlayer();
+
   private:
     std::shared_ptr<ECSManager> _ecsManager;
     std::shared_ptr<UdpClient> _udpClient;

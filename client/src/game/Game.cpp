@@ -27,41 +27,40 @@ void Game::updateNetwork() {
         std::cout << "Message received: " << msg << std::endl;
         if (Engine::Regex::isMatch(msg, "id:[0-9]+")) {
             _playerId = std::stoi(Engine::Regex::getMatch(msg, "id:([0-9]+)", 1));
-            // std::cout << "ID: " << _playerId << std::endl;
             auto name = "R9A" + std::to_string(_playerId);
             auto [shipPosition, ship] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(_gameEntities[name]);
             ship.setActive(true);
             shipPosition.setPosition(Vector3Zero());
-            //auto ship = getPlayerShip();
-            //ship->setPosition({0, 0, 0});
+            // auto ship = getPlayerShip();
+            // ship->setPosition({0, 0, 0});
         } else if (Engine::Regex::isMatch(msg, "new:[0-9]+," NB_R "," NB_R)) {
             auto match = Engine::Regex::getMatches(msg, "new:([0-9]+)," NB_R "," NB_R);
             auto newShipId = std::stoi(match[1]);
             auto newShipPosition = Vector3{std::stof(match[2]), std::stof(match[3]), 0};
             // std::cout << "New ship: " << newShipId << " at " << newShipPosition.x << " " << newShipPosition.y << std::endl;
-            //auto ship = getObject("R9A" + match[1]);
-            //ship->setPosition(newShipPosition);
+            // auto ship = getObject("R9A" + match[1]);
+            // ship->setPosition(newShipPosition);
         } else if (Engine::Regex::isMatch(msg, "move:[0-9]+," NB_R "," NB_R)) {
             auto match = Engine::Regex::getMatches(msg, "move:([0-9]+)," NB_R "," NB_R);
             auto shipId = match[1];
             auto shipPosition = Vector3{std::stof(match[2]), std::stof(match[3]), 0};
             // std::cout << "Move ship: " << shipId << " at " << shipPosition.x << " " << shipPosition.y << std::endl;
-            //auto ship = getObject("R9A" + shipId);
-            //ship->setPosition(shipPosition);
+            // auto ship = getObject("R9A" + shipId);
+            // ship->setPosition(shipPosition);
         } else if (Engine::Regex::isMatch(msg, "del:[0-9]+")) {
             auto deletedShipId = Engine::Regex::getMatch(msg, "del:([0-9]+)", 1);
             // std::cout << "Delete ship: " << deletedShipId << std::endl;
-            //auto ship = getObject("R9A" + deletedShipId);
-            //ship->setPosition({-100, -100, 0});
+            // auto ship = getObject("R9A" + deletedShipId);
+            // ship->setPosition({-100, -100, 0});
         } else if (Engine::Regex::isMatch(msg, "shoot:[0-9]+")) {
             auto id = Engine::Regex::getMatch(msg, "shoot:([0-9]+)", 1);
             // std::cout << "Shoot ship: " << id << std::endl;
-            //auto ship = getObject("R9A" + id);
-            //auto bulletPosition = ship->getPosition();
-            //bulletPosition.x += 1;
-            //auto bulletVelocity = Vector3Zero();
-            //bulletVelocity.x = 5;
-            //addBullet(bulletPosition, bulletVelocity);
+            // auto ship = getObject("R9A" + id);
+            // auto bulletPosition = ship->getPosition();
+            // bulletPosition.x += 1;
+            // auto bulletVelocity = Vector3Zero();
+            // bulletVelocity.x = 5;
+            // addBullet(bulletPosition, bulletVelocity);
         } else if (Engine::Regex::isMatch(msg, "spawn:[0-9]+," NB_R "," NB_R "," NB_R "," NB_R ",[0-9]+")) {
             auto match = Engine::Regex::getMatches(msg, "spawn:([0-9]+)," NB_R "," NB_R "," NB_R "," NB_R ",([0-9]+)");
             auto newEnemyId = std::stoi(match[1]);
@@ -69,18 +68,18 @@ void Game::updateNetwork() {
             auto newEnemyVelocity = Vector3{std::stof(match[4]), std::stof(match[5]), 0};
             auto newEnemyLife = std::stoi(match[6]);
             // std::cout << "New enemy: " << newEnemyId << " at " << newEnemyPosition.x << " " << newEnemyPosition.y << std::endl;
-            //addEnemy(newEnemyId, newEnemyPosition, newEnemyVelocity, newEnemyLife);
+            // addEnemy(newEnemyId, newEnemyPosition, newEnemyVelocity, newEnemyLife);
         } else if (Engine::Regex::isMatch(msg, "dead:[0-9]+")) {
             auto id = std::stoi(Engine::Regex::getMatch(msg, "dead:([0-9]+)", 1));
             // std::cout << "Dead enemy: " << id << std::endl;
-            //if (_enemies.find(id) == _enemies.end())
+            // if (_enemies.find(id) == _enemies.end())
             //    return;
-            //auto enemy = _enemies[id];
-            //auto enemyPosition = enemy->getPosition();
-            //enemyPosition.z += 1.5;
-            //addParticle2D("explosion", enemyPosition, float(sin(GetTime() * 10) * 90), 4);
+            // auto enemy = _enemies[id];
+            // auto enemyPosition = enemy->getPosition();
+            // enemyPosition.z += 1.5;
+            // addParticle2D("explosion", enemyPosition, float(sin(GetTime() * 10) * 90), 4);
             // erase pointer
-            //delete enemy;
+            // delete enemy;
             //_enemies.erase(id);
         }
     }
@@ -95,29 +94,33 @@ void Game::updateGame() {
     camera.up = {0, 1, 0};
     camera.fovy = 20;
     camera.projection = CAMERA_PERSPECTIVE;
+    movePlayer();
     BeginMode3D(camera);
     for (auto &entity : _gameEntities) {
         auto object = _pObjectArchetype->getComponent<Engine::CObject>(entity.second);
         if (!object.isActive())
             continue;
-        auto [model, position, scale, velocity] =
-            _pObjectArchetype->getComponent<pModel, Engine::CPosition, Engine::CScale, Engine::CVelocity>(entity.second);
+        auto [cModel, position, scale, velocity, rotation] =
+            _pObjectArchetype->getComponent<pModel, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation>(entity.second);
+        rotation.update();
         velocity.doUpdate();
         position.addPosition(velocity.getSpeed());
-        if (model != nullptr) {
+        if (cModel != nullptr) {
+            auto model = cModel->getModel();
+            model.transform = MatrixRotateXYZ(rotation.getRotation());
             auto v3 = position.getPosition();
-            DrawModel(model->getModel(), v3, scale.getScale(), WHITE);
+            DrawModel(model, v3, scale.getScale(), WHITE);
             if (entity.first == "corridor") {
                 if (v3.x < -7.22)
                     position.setPosition({0, v3.y, v3.z});
                 v3.x -= 7.22 * 2;
-                DrawModel(model->getModel(), v3, scale.getScale(), WHITE);
+                DrawModel(model, v3, scale.getScale(), WHITE);
                 v3.x += 7.22;
-                DrawModel(model->getModel(), v3, scale.getScale(), WHITE);
+                DrawModel(model, v3, scale.getScale(), WHITE);
                 v3.x += 7.22 * 2;
-                DrawModel(model->getModel(), v3, scale.getScale(), WHITE);
+                DrawModel(model, v3, scale.getScale(), WHITE);
                 v3.x += 7.22;
-                DrawModel(model->getModel(), v3, scale.getScale(), WHITE);
+                DrawModel(model, v3, scale.getScale(), WHITE);
             }
         }
     }
@@ -151,7 +154,7 @@ void Game::loadEntities(const std::string &path) {
             _gameEntities[name] = entity;
             auto [cObject, cPosition, cScale, cVelocity, cRotation] =
                 _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation>(entity);
-
+            cRotation.setActive(true);
             if (object.contains("model")) {
                 auto model = object["model"];
                 if (!_models.contains(model))
@@ -182,6 +185,7 @@ void Game::loadEntities(const std::string &path) {
                 auto animation = object["animation"];
                 if (!_animations.contains(animation))
                     continue;
+                _animations[animation]->setActive(true);
                 _pObjectArchetype->addComponent(entity, pAnimation(_animations[animation]));
             }
             if (object.contains("velocity") && object["velocity"].size() == 3) {

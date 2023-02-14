@@ -40,7 +40,25 @@ namespace Engine {
          */
         void setRotation(const Vector3 &rotation);
 
+        /**
+         * @brief Get the rotation goal
+         * @return Vector3
+         */
+        [[nodiscard]] Vector3 getRotationGoal() const;
+
+        /**
+         * @brief Set the rotation goal
+         * @param Vector3 rotation
+         */
+        void setRotationGoal(const Vector3 &rotation);
+
+        /**
+         * @brief Update the rotation
+         */
+        void doUpdate() override;
+
       private:
         Vector3 _rotation;
+        Vector3 _rotationGoal{};
     };
 }
