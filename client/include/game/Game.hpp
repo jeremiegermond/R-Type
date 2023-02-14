@@ -18,6 +18,7 @@ class Game : public Engine::GameBase {
 
     void initGame() override;
     void updateGame() override;
+    void updateNetwork();
     void destroyGame() override;
 
     void initSocket(const std::string &ip, unsigned short port);
@@ -29,4 +30,5 @@ class Game : public Engine::GameBase {
     std::shared_ptr<UdpClient> _udpClient;
     EntityMap _gameEntities;
     ObjectArchetype *_pObjectArchetype;
+    int _playerId;
 };

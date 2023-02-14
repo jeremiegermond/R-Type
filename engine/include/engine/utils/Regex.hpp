@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+#define NB_R "(-?[0-9]+\\.?[0-9]*)"
+
 namespace Engine {
     // static functions
     class Regex {
