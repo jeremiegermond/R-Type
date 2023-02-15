@@ -9,13 +9,13 @@
 
 namespace Engine {
 
-    CVelocity::CVelocity() : _speed(Vector3Zero()), _frameSpeed(Vector3Zero()) {}
+    CVelocity::CVelocity() : _velocity(Vector3Zero()), _frameSpeed(Vector3Zero()) {}
 
-    CVelocity::CVelocity(const Vector3 &speed) : _speed(speed), _frameSpeed(Vector3Zero()) {}
+    CVelocity::CVelocity(const Vector3 &velocity) : _velocity(velocity), _frameSpeed(Vector3Zero()) {}
 
-    void CVelocity::doUpdate() { _frameSpeed = Vector3Scale(_speed, GetFrameTime()); }
+    void CVelocity::doUpdate() { _frameSpeed = Vector3Scale(_velocity, GetFrameTime()); }
 
-    void CVelocity::setSpeed(Vector3 speed) { _speed = speed; }
+    void CVelocity::setVelocity(Vector3 velocity) { _velocity = velocity; }
 
-    Vector3 CVelocity::getSpeed() const { return _frameSpeed; }
+    Vector3 CVelocity::getVelocity() const { return _frameSpeed; }
 }

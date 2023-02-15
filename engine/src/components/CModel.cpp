@@ -46,4 +46,12 @@ namespace Engine {
             throw std::runtime_error("Texture name not supported: " + textureName);
         }
     }
+
+    void CModel::setModelShader(const std::shared_ptr<Shader> &shader) const {
+        if (!_loaded)
+            throw std::runtime_error("Model not loaded");
+        for (int i = 0; i < _model.materialCount; i++) {
+            _model.materials[i].shader = *shader;
+        }
+    }
 }

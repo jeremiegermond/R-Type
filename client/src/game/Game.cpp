@@ -19,6 +19,10 @@ void Game::initGame() {
     loadAssets("assets/assets.json");
     loadEntities("assets/levels/level_01.json");
     _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        _lightIds.insert(i);
+    }
+    addLight();
 }
 
 void Game::updateNetwork() {
@@ -100,30 +104,29 @@ void Game::updateGame() {
         auto object = _pObjectArchetype->getComponent<Engine::CObject>(entity.second);
         if (!object.isActive())
             continue;
-        auto [cModel, position, scale, velocity, rotation] =
-            _pObjectArchetype->getComponent<pModel, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation>(entity.second);
-        rotation.update();
-        velocity.doUpdate();
-        position.addPosition(velocity.getSpeed());
-        if (cModel != nullptr) {
-            auto model = cModel->getModel();
-            model.transform = MatrixRotateXYZ(rotation.getRotation());
-            auto v3 = position.getPosition();
-            DrawModel(model, v3, scale.getScale(), WHITE);
-            if (entity.first == "corridor") {
-                if (v3.x < -7.22)
-                    position.setPosition({0, v3.y, v3.z});
-                v3.x -= 7.22 * 2;
-                DrawModel(model, v3, scale.getScale(), WHITE);
-                v3.x += 7.22;
-                DrawModel(model, v3, scale.getScale(), WHITE);
-                v3.x += 7.22 * 2;
-                DrawModel(model, v3, scale.getScale(), WHITE);
-                v3.x += 7.22;
-                DrawModel(model, v3, scale.getScale(), WHITE);
-            }
-        }
+        ;
+        updateEntity(entity.second);
+        drawEntity(entity.second);
     }
+    if (_gameEntities.contains("corridor")) {
+        auto corridor = _gameEntities["corridor"];
+        auto cPosition = _pObjectArchetype->getComponent<Engine::CPosition>(corridor);
+        auto position = cPosition.getPosition();
+        if (position.x < -7.22) {
+            cPosition.setPosition({0, position.y, position.z});
+            std::cout << "Reset" << std::endl;
+        }
+        drawEntity(corridor, {-7.22 * 2, 0, 0});
+        drawEntity(corridor, {-7.22, 0, 0});
+        drawEntity(corridor, {7.22, 0, 0});
+        drawEntity(corridor, {7.22 * 2, 0, 0});
+    }
+    if (_shaders.contains("lighting")) {
+        auto playerPosition = _pObjectArchetype->getComponent<Engine::CPosition>(_gameEntities["R9A" + std::to_string(_playerId)]).getPosition();
+        playerPosition = Vector3Add(playerPosition, {0, 2, 10});
+        _lights[0].setPosition(playerPosition);
+    }
+    updateLights();
     EndMode3D();
 }
 
@@ -160,6 +163,8 @@ void Game::loadEntities(const std::string &path) {
                 if (!_models.contains(model))
                     continue;
                 _pObjectArchetype->addComponent(entity, pModel(_models[model]));
+                if (_shaders.contains("lighting"))
+                    _models[model]->setModelShader(_shaders["lighting"]->getShader());
             }
             if (object.contains("tags")) {
                 auto tags = object["tags"];
@@ -191,7 +196,8 @@ void Game::loadEntities(const std::string &path) {
             if (object.contains("velocity") && object["velocity"].size() == 3) {
                 auto velocityStr = object["velocity"];
                 auto velocity = Vector3{velocityStr[0], velocityStr[1], velocityStr[2]};
-                cVelocity.setSpeed(velocity);
+                cVelocity.setVelocity(velocity);
+                cVelocity.setActive(true);
             }
         }
     }

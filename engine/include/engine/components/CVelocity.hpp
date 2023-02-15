@@ -21,9 +21,9 @@ namespace Engine {
 
         /**
          * @brief Construct a new CVelocity object
-         * @param Vector3 speed
+         * @param Vector3 velocity
          */
-        explicit CVelocity(const Vector3 &speed);
+        explicit CVelocity(const Vector3 &velocity);
 
         /**
          * @brief Destroy the CVelocity object
@@ -36,19 +36,19 @@ namespace Engine {
         void doUpdate() override;
 
         /**
-         * @brief Set the speed
-         * @param Vector3 speed
+         * @brief Set the velocity
+         * @param Vector3 velocity
          */
-        void setSpeed(Vector3 speed);
+        void setVelocity(Vector3 velocity);
 
         /**
          * @brief Get the speed
          * @return Vector3
          */
-        [[nodiscard]] Vector3 getSpeed() const;
+        [[nodiscard]] Vector3 getVelocity() const;
 
       private:
-        Vector3 _speed;
+        Vector3 _velocity;
         Vector3 _frameSpeed;
     };
 }

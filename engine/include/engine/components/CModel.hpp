@@ -48,6 +48,12 @@ namespace Engine {
          */
         void setModelTexture(const std::string &textureName, const std::string &texturePath);
 
+        /**
+         * @brief Set model shader
+         * @param std::shared_ptr<Shader> shader
+         */
+        void setModelShader(const std::shared_ptr<Shader> &shader) const;
+
       private:
         Model _model;
         std::vector<Engine::CTexture> _textures;
