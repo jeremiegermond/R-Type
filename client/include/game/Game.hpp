@@ -28,6 +28,8 @@ class Game : public Engine::GameBase {
 
     void movePlayer();
 
+    void updatePlayer();
+
     void updateEntity(Engine::EntityId id);
 
     void drawEntity(Engine::EntityId id, Vector3 offset = Vector3Zero());
@@ -36,10 +38,14 @@ class Game : public Engine::GameBase {
 
     void updateLights();
 
+    void addBullet(Vector3 position, Vector3 velocity);
+
   private:
     std::shared_ptr<ECSManager> _ecsManager;
     std::shared_ptr<UdpClient> _udpClient;
     EntityMap _gameEntities;
+    std::vector<Engine::EntityId> _bullets;
+
     ObjectArchetype *_pObjectArchetype;
     int _playerId;
     std::vector<Light> _lights;

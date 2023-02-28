@@ -38,3 +38,18 @@ void Game::movePlayer() {
     cPosition.setPosition(position);
     cRotation.setRotationGoal(rotation);
 }
+
+void Game::updatePlayer() {
+    auto playerName = "R9A" + std::to_string(_playerId);
+    if (IsKeyPressed(KEY_SPACE) && _gameEntities.contains(playerName)) {
+        std::cout << "shoot" << std::endl;
+        auto playerEntity = _gameEntities[playerName];
+        auto cPosition = _pObjectArchetype->getComponent<Engine::CPosition>(playerEntity);
+        auto position = cPosition.getPosition();
+        position.x += 1;
+        auto velocity = Vector3Zero();
+        velocity.x = 5;
+        addBullet(position, velocity);
+        _udpClient->send(std::string("shoot"));
+    }
+}

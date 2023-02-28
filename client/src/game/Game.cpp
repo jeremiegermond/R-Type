@@ -41,30 +41,32 @@ void Game::updateNetwork() {
             auto match = Engine::Regex::getMatches(msg, "new:([0-9]+)," NB_R "," NB_R);
             auto newShipId = std::stoi(match[1]);
             auto newShipPosition = Vector3{std::stof(match[2]), std::stof(match[3]), 0};
-            // std::cout << "New ship: " << newShipId << " at " << newShipPosition.x << " " << newShipPosition.y << std::endl;
-            // auto ship = getObject("R9A" + match[1]);
-            // ship->setPosition(newShipPosition);
+            auto name = "R9A" + std::to_string(newShipId);
+            auto [shipPosition, ship] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(_gameEntities[name]);
+            ship.setActive(true);
+            shipPosition.setPosition(newShipPosition);
         } else if (Engine::Regex::isMatch(msg, "move:[0-9]+," NB_R "," NB_R)) {
             auto match = Engine::Regex::getMatches(msg, "move:([0-9]+)," NB_R "," NB_R);
             auto shipId = match[1];
             auto shipPosition = Vector3{std::stof(match[2]), std::stof(match[3]), 0};
-            // std::cout << "Move ship: " << shipId << " at " << shipPosition.x << " " << shipPosition.y << std::endl;
-            // auto ship = getObject("R9A" + shipId);
-            // ship->setPosition(shipPosition);
+            auto name = "R9A" + shipId;
+            auto [shipPos, ship] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(_gameEntities[name]);
+            shipPos.setPosition(shipPosition);
         } else if (Engine::Regex::isMatch(msg, "del:[0-9]+")) {
             auto deletedShipId = Engine::Regex::getMatch(msg, "del:([0-9]+)", 1);
-            // std::cout << "Delete ship: " << deletedShipId << std::endl;
-            // auto ship = getObject("R9A" + deletedShipId);
-            // ship->setPosition({-100, -100, 0});
+            auto name = "R9A" + deletedShipId;
+            auto [shipPosition, ship] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(_gameEntities[name]);
+            ship.setActive(false);
+            shipPosition.setPosition({-100, -100, 0});
         } else if (Engine::Regex::isMatch(msg, "shoot:[0-9]+")) {
             auto id = Engine::Regex::getMatch(msg, "shoot:([0-9]+)", 1);
-            // std::cout << "Shoot ship: " << id << std::endl;
-            // auto ship = getObject("R9A" + id);
-            // auto bulletPosition = ship->getPosition();
-            // bulletPosition.x += 1;
-            // auto bulletVelocity = Vector3Zero();
-            // bulletVelocity.x = 5;
-            // addBullet(bulletPosition, bulletVelocity);
+            auto name = "R9A" + id;
+            auto [shipPosition, ship] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(_gameEntities[name]);
+            auto bulletPosition = shipPosition.getPosition();
+            bulletPosition.x += 1;
+            auto bulletVelocity = Vector3Zero();
+            bulletVelocity.x = 5;
+            addBullet(bulletPosition, bulletVelocity);
         } else if (Engine::Regex::isMatch(msg, "spawn:[0-9]+," NB_R "," NB_R "," NB_R "," NB_R ",[0-9]+")) {
             auto match = Engine::Regex::getMatches(msg, "spawn:([0-9]+)," NB_R "," NB_R "," NB_R "," NB_R ",([0-9]+)");
             auto newEnemyId = std::stoi(match[1]);
@@ -99,22 +101,28 @@ void Game::updateGame() {
     camera.fovy = 20;
     camera.projection = CAMERA_PERSPECTIVE;
     movePlayer();
+    updatePlayer();
     BeginMode3D(camera);
     for (auto &entity : _gameEntities) {
         auto object = _pObjectArchetype->getComponent<Engine::CObject>(entity.second);
         if (!object.isActive())
             continue;
-        ;
         updateEntity(entity.second);
         drawEntity(entity.second);
     }
+    for (auto &bullet : _bullets) {
+        // auto [bulletPosition, bulletObject] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(bullet);
+        // auto position = bulletPosition.getPosition();
+        // position = Vector3Add(position, bulletVelocity);
+        // bulletPosition.setPosition(position);
+        drawEntity(bullet);
+    }
     if (_gameEntities.contains("corridor")) {
         auto corridor = _gameEntities["corridor"];
-        auto cPosition = _pObjectArchetype->getComponent<Engine::CPosition>(corridor);
+        auto [cPosition, cObject] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(corridor);
         auto position = cPosition.getPosition();
         if (position.x < -7.22) {
             cPosition.setPosition({0, position.y, position.z});
-            std::cout << "Reset" << std::endl;
         }
         drawEntity(corridor, {-7.22 * 2, 0, 0});
         drawEntity(corridor, {-7.22, 0, 0});
