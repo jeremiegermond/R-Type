@@ -43,6 +43,16 @@
     {
       "name": "corridor",
       "path": "assets/models/corridor/corridor.obj"
+    },
+    {
+      "name": "missile",
+      "path": "assets/models/objects/missile.obj",
+      "textures":[
+        {
+          "path": "assets/models/objects/item_missile_01_c.png",
+          "name": "diffuse"
+        }
+      ]
     }
   ],
   "musics": [
