@@ -47,9 +47,22 @@ namespace Engine {
          */
         void setAnimationIndex(unsigned int index);
 
+        /**
+         * @brief Get the current frame
+         * @return int
+         */
+        [[nodiscard]] int getCurrentFrame() const;
+
+        /**
+         * @brief Update the animation
+         */
+        void doUpdate() override;
+
       private:
         ModelAnimation *_animations;
         unsigned int _animationCount;
         unsigned int _animationIndex;
+        int _currentFrame;
+        double _lastUpdate;
     };
 }

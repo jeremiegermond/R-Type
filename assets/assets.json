@@ -51,6 +51,14 @@
         {
           "path": "assets/models/objects/item_missile_01_c.png",
           "name": "diffuse"
+        },
+        {
+          "path": "assets/models/objects/item_missile_01_n.png",
+          "name": "normal"
+        },
+        {
+          "path": "assets/models/objects/item_missile_01_m.png",
+          "name": "metallic"
         }
       ]
     }
@@ -162,7 +170,7 @@
       "path": "assets/sounds/ui/1006_window_close.ogg"
     },
     {
-      "name": "shot",
+      "name": "shoot",
       "path": "assets/sounds/ships/3000_h_shot.ogg"
     },
     {

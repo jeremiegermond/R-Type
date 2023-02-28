@@ -8,11 +8,18 @@
 #include "game/Game.hpp"
 
 void Game::updateEntity(Engine::EntityId id) {
-    // components must use tuple, or it will result in a copy of the component
-    auto [cPosition, cVelocity, cRotation] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CVelocity, Engine::CRotation>(id);
+    auto [cPosition, cVelocity, cRotation, cCollider] =
+        _pObjectArchetype->getComponent<Engine::CPosition, Engine::CVelocity, Engine::CRotation, CCollider>(id);
     cRotation.update();
     cVelocity.update();
     cPosition.addPosition(cVelocity.getVelocity());
+    cCollider.setPosition(cPosition.getPosition());
+    auto [pModel, pAnimation] = _pObjectArchetype->getComponent<std::shared_ptr<Engine::CModel>, std::shared_ptr<Engine::CAnimation>>(id);
+    if (pAnimation != nullptr) {
+        pAnimation->update();
+        auto animation = pAnimation->getAnimation();
+        UpdateModelAnimation(pModel->getModel(), animation, pAnimation->getCurrentFrame());
+    }
 }
 
 void Game::drawEntity(Engine::EntityId id, Vector3 offset) {
@@ -24,21 +31,9 @@ void Game::drawEntity(Engine::EntityId id, Vector3 offset) {
     auto scale = _pObjectArchetype->getComponent<Engine::CScale>(id).getScale();
     auto model = cModel->getModel();
     model.transform = MatrixRotateXYZ(rotation);
+    auto cCollider = _pObjectArchetype->getComponent<CCollider>(id);
+    DrawBoundingBox(cCollider.getBox(), RED);
     DrawModel(model, Vector3Add(position, offset), scale, WHITE);
-}
-
-void Game::addBullet(Vector3 position, Vector3 velocity) {
-    auto bullet = _pObjectArchetype->createEntity(Engine::CScale(0.1), Engine::CPosition(), Engine::CVelocity(), Engine::CObject(),
-                                                  Engine::CRotation(Vector3Zero()));
-    auto [cObject, cPosition, cVelocity] = _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CVelocity>(bullet);
-    cObject.setActive(true);
-    cPosition.setPosition(position);
-    cVelocity.setVelocity(velocity);
-    cVelocity.setActive(true);
-    if (_models.contains("missile")) {
-        _pObjectArchetype->addComponent(bullet, pModel(_models["missile"]));
-    }
-    _bullets.emplace_back(bullet);
 }
 
 void Game::loadEntities(const std::string &path) {
@@ -57,10 +52,13 @@ void Game::loadEntities(const std::string &path) {
             }
             std::string name = object["name"];
             auto entity = _pObjectArchetype->createEntity(Engine::CScale(1), Engine::CVelocity(Vector3Zero()), Engine::CObject(),
-                                                          Engine::CPosition(Vector3Zero()), Engine::CRotation(Vector3Zero()));
+                                                          Engine::CPosition(Vector3Zero()), Engine::CRotation(Vector3Zero()), CCollider());
             _gameEntities[name] = entity;
-            auto [cObject, cPosition, cScale, cVelocity, cRotation] =
-                _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation>(entity);
+            auto [cObject, cPosition, cScale, cVelocity, cRotation, cCollider] =
+                _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation, CCollider>(
+                    entity);
+            cCollider.setActive(true);
+            cCollider.setSize(1);
             cRotation.setActive(true);
             if (object.contains("model")) {
                 auto model = object["model"];
@@ -80,6 +78,7 @@ void Game::loadEntities(const std::string &path) {
                 auto positionStr = object["position"];
                 auto position = Vector3{positionStr[0], positionStr[1], positionStr[2]};
                 cPosition.setPosition(position);
+                cCollider.setPosition(position);
             }
             if (object.contains("rotation") && object["rotation"].size() == 3) {
                 auto rotationStr = object["rotation"];
@@ -89,6 +88,7 @@ void Game::loadEntities(const std::string &path) {
             if (object.contains("scale")) {
                 auto scale = object["scale"];
                 cScale.setScale(scale);
+                cCollider.setSize(Vector3{scale, scale, scale});
             }
             if (object.contains("animation")) {
                 auto animation = object["animation"];
@@ -105,4 +105,24 @@ void Game::loadEntities(const std::string &path) {
             }
         }
     }
+}
+
+void Game::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
+    auto enemy = _enemies.contains(id) ? _enemies[id]
+                                       : _pObjectArchetype->createEntity(Engine::CScale(0.1), Engine::CPosition(), Engine::CVelocity(),
+                                                                         Engine::CObject(), Engine::CRotation({0, 3, 0}), CHealth(), CCollider());
+    auto [cObject, cPosition, cVelocity, cHealth, cCollider] =
+        _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CVelocity, CHealth, CCollider>(enemy);
+    cObject.setActive(true);
+    cPosition.setPosition(position);
+    cVelocity.setVelocity(velocity);
+    cVelocity.setActive(true);
+    cHealth.setHealth(hp);
+    cCollider.setActive(true);
+    cCollider.setSize(1);
+    cCollider.setPosition(position);
+    if (_models.contains("E002")) {
+        _pObjectArchetype->addComponent(enemy, pModel(_models["E002"]));
+    }
+    _enemies[id] = enemy;
 }

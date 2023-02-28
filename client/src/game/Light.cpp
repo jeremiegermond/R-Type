@@ -22,7 +22,6 @@ void Game::updateLights() {
     for (auto &light : _lights) {
         light.UpdateLightValues(shader);
     }
-    // erase lights that are not active
     for (auto it = _lights.begin(); it != _lights.end();) {
         if (!it->isEnabled()) {
             _lightIds.emplace(it->getIndex());
@@ -31,5 +30,6 @@ void Game::updateLights() {
             ++it;
         }
     }
-    SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], &_camera.position, SHADER_UNIFORM_VEC3);
+    auto position = _pCameraArchetype->getComponent<CCamera>(_camera).getCamera().position;
+    SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], &position, SHADER_UNIFORM_VEC3);
 }

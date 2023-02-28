@@ -7,7 +7,10 @@
 
 #include "manager/ECSManager.hpp"
 
-void ECSManager::initFactories() { addArchetype<ObjectArchetype>("Object"); }
+void ECSManager::initFactories() {
+    addArchetype<ObjectArchetype>("Object");
+    addArchetype<CameraArchetype>("Camera");
+}
 
 void ECSManager::updateGame() {}
 

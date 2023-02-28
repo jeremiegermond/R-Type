@@ -55,7 +55,7 @@ namespace Engine {
         void setModelShader(const std::shared_ptr<Shader> &shader) const;
 
       private:
-        Model _model;
+        Model *_model;
         std::vector<Engine::CTexture> _textures;
         bool _loaded;
     };

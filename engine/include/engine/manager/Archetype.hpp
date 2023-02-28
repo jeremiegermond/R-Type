@@ -31,7 +31,7 @@ namespace Engine {
          * @param id of the entity
          */
         template <typename... Component>
-        void deleteEntity(EntityId id) {
+        void deleteComponent(EntityId id) {
             if (deletedEntities.count(id) > 0)
                 return;
             deletedEntities.insert(id);
@@ -45,7 +45,7 @@ namespace Engine {
         }
 
         template <typename Component>
-        void deleteComponent(EntityId id) {
+        void deleteEntity(EntityId id) {
             SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
             map.erase(id);
         }
@@ -80,11 +80,6 @@ namespace Engine {
             }
         }
 
-        /**
-         * @brief get deleted entities
-         * @param id
-         * @return deleted entites
-         */
         std::set<EntityId> &getDeletedEntities() { return deletedEntities; }
 
       private:

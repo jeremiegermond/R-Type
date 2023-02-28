@@ -42,15 +42,23 @@ class Game : public Engine::GameBase {
 
     void addBullet(Vector3 position, Vector3 velocity);
 
+    void updateBullets();
+
+    void addEnemy(int id, Vector3 position, Vector3 velocity, int hp);
+
+    void playSound(const std::string &name);
+
   private:
     std::shared_ptr<ECSManager> _ecsManager;
     std::shared_ptr<UdpClient> _udpClient;
     EntityMap _gameEntities;
     std::vector<Engine::EntityId> _bullets;
+    std::unordered_map<int, Engine::EntityId> _enemies;
 
     ObjectArchetype *_pObjectArchetype;
+    CameraArchetype *_pCameraArchetype;
     int _playerId;
     std::vector<Light> _lights;
     std::set<int> _lightIds;
-    Camera3D _camera;
+    Engine::EntityId _camera;
 };

@@ -9,7 +9,7 @@
 
 namespace Engine {
 
-    CAnimation::CAnimation() : _animations(nullptr), _animationCount(0), _animationIndex(0) {}
+    CAnimation::CAnimation() : _animations(nullptr), _animationCount(0), _animationIndex(0), _currentFrame(0), _lastUpdate(GetTime()) {}
 
     CAnimation::~CAnimation() { unloadAnimations(); }
 
@@ -35,8 +35,22 @@ namespace Engine {
         _animations = LoadModelAnimations(animationPath.c_str(), &_animationCount);
     }
 
-    void Engine::CAnimation::setAnimationIndex(unsigned int index) {
-        if (index < _animationCount)
+    void CAnimation::setAnimationIndex(unsigned int index) {
+        if (index < _animationCount) {
             _animationIndex = index;
+            _currentFrame = 0;
+        }
+    }
+
+    int CAnimation::getCurrentFrame() const { return _currentFrame; }
+
+    void CAnimation::doUpdate() {
+        if (GetTime() - _lastUpdate > 0.04) {
+            _currentFrame++;
+            if (_animations && _animationCount > 0 && _animationIndex < _animationCount && _currentFrame >= _animations[_animationIndex].frameCount) {
+                _currentFrame = 0;
+            }
+            _lastUpdate = GetTime();
+        }
     }
 }
