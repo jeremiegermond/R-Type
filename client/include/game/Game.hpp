@@ -22,6 +22,8 @@ class Game : public Engine::GameBase {
     void updateNetwork();
     void destroyGame() override;
 
+    void drawGame();
+
     void initSocket(const std::string &ip, unsigned short port);
 
     void loadEntities(const std::string &path);
@@ -50,4 +52,5 @@ class Game : public Engine::GameBase {
     int _playerId;
     std::vector<Light> _lights;
     std::set<int> _lightIds;
+    Camera3D _camera;
 };

@@ -18,8 +18,9 @@ int Game::addLight(Vector3 position, Color color, float intensity) {
 }
 
 void Game::updateLights() {
+    Shader shader = *_shaders["lighting"]->getShader();
     for (auto &light : _lights) {
-        light.UpdateLightValues(*_shaders["lighting"]->getShader());
+        light.UpdateLightValues(shader);
     }
     // erase lights that are not active
     for (auto it = _lights.begin(); it != _lights.end();) {
@@ -30,4 +31,5 @@ void Game::updateLights() {
             ++it;
         }
     }
+    SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], &_camera.position, SHADER_UNIFORM_VEC3);
 }
