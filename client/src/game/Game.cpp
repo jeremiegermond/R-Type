@@ -29,6 +29,7 @@ void Game::initGame() {
     camera.setProjection(CAMERA_PERSPECTIVE);
     loadAssets("assets/assets.json");
     loadEntities("assets/levels/menu.json");
+    playMusic("02-Main_Menu");
     for (int i = 0; i < MAX_LIGHTS; i++) {
         _lightIds.insert(i);
     }
@@ -49,6 +50,7 @@ void Game::updateGame() {
         updateGameplay();
         drawGame();
     }
+    updateMusic();
     drawUI();
 }
 
@@ -99,6 +101,7 @@ void Game::updateMenu() {
         loadEntities("assets/levels/level_01.json");
         _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
         _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
+        playMusic("01-Taking_off_again");
     }
     if (_uiElements.contains("player_input") && _uiElements.contains("play_button")) {
         auto [cObject, cText] = _pUIArchetype->getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
@@ -159,6 +162,7 @@ void Game::updateGameplay() {
         _uiElements.clear();
         loadEntities("assets/levels/menu.json");
         setGameState(GameState::MENU);
+        playMusic("02-Main_Menu");
     }
 }
 

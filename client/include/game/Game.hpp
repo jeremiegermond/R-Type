@@ -54,6 +54,10 @@ class Game : public Engine::GameBase {
 
     void playSound(const std::string &name);
 
+    void playMusic(const std::string &name);
+
+    void updateMusic();
+
     void setGameState(GameState state);
 
     void updateMenu();
@@ -61,6 +65,7 @@ class Game : public Engine::GameBase {
     void updateGameplay();
 
     void drawUI();
+
 
   private:
     /**
@@ -89,6 +94,7 @@ class Game : public Engine::GameBase {
     std::unordered_map<int, Engine::EntityId> _enemies;
     int _playerId;
     Engine::EntityId _camera;
+    std::string _currentMusic;
 
     /**
      * Various Archetypes used by the game to create and access entities
