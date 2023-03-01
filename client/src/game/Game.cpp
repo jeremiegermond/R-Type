@@ -29,6 +29,7 @@ void Game::initGame() {
     camera.setProjection(CAMERA_PERSPECTIVE);
     loadAssets("assets/assets.json");
     loadEntities("assets/levels/menu.json");
+    playMusic("02-Main_Menu");
     for (int i = 0; i < MAX_LIGHTS; i++) {
         _lightIds.insert(i);
     }
@@ -49,6 +50,7 @@ void Game::updateGame() {
         updateGameplay();
         drawGame();
     }
+    updateMusic();
     drawUI();
 }
 
@@ -99,6 +101,7 @@ void Game::updateMenu() {
         loadEntities("assets/levels/level_01.json");
         _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
         _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
+        playMusic("01-Taking_off_again");
     }
 }
 
@@ -130,6 +133,7 @@ void Game::updateGameplay() {
         _uiElements.clear();
         loadEntities("assets/levels/menu.json");
         setGameState(GameState::MENU);
+        playMusic("02-Main_Menu");
     }
 }
 
@@ -142,7 +146,6 @@ void Game::drawUI() {
         if (cObject.hasTag("text")) {
             int fontSize = int(screenSize.y * .001f * float(cText.getFontSize()));
             auto text = cText.getText().c_str();
-            std::cout << "Font size is " << fontSize << std::endl;
             position.x -= float(MeasureText(text, fontSize)) * .5f;
             DrawText(text, int(position.x), int(position.y), fontSize, WHITE);
         }

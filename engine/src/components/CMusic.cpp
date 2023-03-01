@@ -23,6 +23,7 @@ namespace Engine {
     std::shared_ptr<Music> CMusic::getMusic() const { return _music; }
 
     void CMusic::setMusic(const std::string &musicPath) {
+        std::cout << "musicPath: " << musicPath << std::endl;
         unload();
         if (!FileExists(musicPath.c_str()))
             throw std::runtime_error("Music file not found: " + musicPath);
