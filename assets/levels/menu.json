@@ -1,0 +1,44 @@
+{
+  "ui": [
+    {
+      "name": "player_header",
+      "type": "text",
+      "text": "Enter your name:",
+      "position": [50, 40],
+      "fontSize": 30
+    },
+    {
+      "name": "player_submit",
+      "type": "button",
+      "text": "Submit",
+      "position": [50, 80],
+      "size": [20, 10],
+      "fontSize": 20
+    },
+    {
+      "name": "player_input",
+      "type": "input",
+      "position": [50, 60],
+      "size": [20, 10],
+      "fontSize": 20,
+      "placeholder": "Enter your name here",
+      "text": "",
+      "max_length": 20
+    },
+    {
+      "name": "player_name",
+      "type": "text",
+      "text": "",
+      "position": [50, 10],
+      "fontSize": 15
+    },
+    {
+      "name": "play_button",
+      "type": "button",
+      "text": "Play",
+      "position": [50, 50],
+      "size": [20, 10],
+      "fontSize": 20
+    }
+  ]
+}

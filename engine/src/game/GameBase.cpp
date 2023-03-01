@@ -188,4 +188,14 @@ namespace Engine {
         _animations.clear();
         _models.clear();
     }
+
+    Vector2 GameBase::getWindowSize() {
+        if (!IsWindowReady())
+            return {0, 0};
+        if (IsWindowFullscreen()) {
+            auto monitor = GetCurrentMonitor();
+            return {float(GetMonitorWidth(monitor)), float(GetMonitorHeight(monitor))};
+        }
+        return {float(GetScreenWidth()), float(GetScreenHeight())};
+    }
 }

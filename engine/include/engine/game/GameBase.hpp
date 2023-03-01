@@ -47,6 +47,12 @@ namespace Engine {
          */
         static void drawTextCentered(const std::string &text, Color color = WHITE);
 
+        /**
+         * @brief Get the Window size
+         * @return Vector2
+         */
+        static Vector2 getWindowSize();
+
       protected:
         /**
          * @brief init the game
