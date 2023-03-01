@@ -11,8 +11,6 @@
  * It starts the server
  */
 void UdpServer::start() {
-    //std::ostream out(&_log_buffer);
-    //std::cout.rdbuf(out.rdbuf());
     log(LOG_INFO, "UDP server started on port " + std::to_string(_port));
     srand(time(nullptr));
     _timer = std::thread([this]() {
@@ -26,8 +24,6 @@ void UdpServer::start() {
         auto startTime = steady_clock::now();
         _enemySpawnTimer = startTime;
         _lastFrame = startTime;
-        //InitWindow(800, 450, "R-Type Server");
-        //SetTargetFPS(60);
         while (!_stopServer) 
             simulate();
         _stopServer = true;
@@ -69,6 +65,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
             auto id = *_ids.begin();
             _ids.erase(id);
             _clients[_sender_endpoint] = Player(id);
+            dynamic_cast<text*>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
             sendResponse(_sender_endpoint, "id:" + std::to_string(_clients[_sender_endpoint].getId()));
             sendAll("new:" + std::to_string(_clients[_sender_endpoint].getId()) + "," + vectorToString(_clients[_sender_endpoint].getPosition()),
                     false);
@@ -185,8 +182,10 @@ void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
     if (_clients.find(endpoint) != _clients.end()) {
         _ids.insert(_clients[endpoint].getId());
         sendAll("del:" + std::to_string(_clients[endpoint].getId()), true);
-        if (erase)
+        if (erase) {
             _clients.erase(endpoint);
+            dynamic_cast<text*>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
+        }
     }
 }
 

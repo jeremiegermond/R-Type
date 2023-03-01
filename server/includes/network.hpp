@@ -3,7 +3,7 @@
 #include "bullet.hpp"
 #include "enemy.hpp"
 #include "player.hpp"
-#include "utils.hpp"
+#include "uiElements.hpp"
 #include <set>
 
 using namespace asio::ip;
@@ -46,6 +46,8 @@ class UdpServer {
     std::atomic<bool> _stopServer;
     int _port;
     std::vector<std::pair<int, std::string>> _logs;
+    
+    interface _overlay;
 
   public:
     UdpServer(int port) : _socket(_io_context, udp::endpoint(udp::v4(), port)), _stopServer(false) {
@@ -54,6 +56,10 @@ class UdpServer {
             _ids.insert(i);
         for (int i = 1; i <= 10; i++)
             _enemyIds.insert(i);
+        _overlay.add(new text("Room : " + std::to_string(_port), {0, 30, 30, 2}, WHITE));
+        _overlay.add(new text("Players : ", {0, 50, 30, 2}, WHITE));
+        _overlay.add(new text(std::to_string(_clients.size()), {95, 50, 30, 2}, WHITE))->setId("players_nbr");
+        _overlay.add(new text("/ 4", {110, 50, 30, 2}, WHITE));
     }
 
     ~UdpServer();
@@ -104,5 +110,10 @@ class UdpServer {
     //get bullets
     std::vector<Bullet> getBullets() {
         return _bullets;
+    }
+
+    //get overlay
+    interface *getOverlay() {
+        return &_overlay;
     }
 };

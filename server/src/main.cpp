@@ -1,5 +1,6 @@
 #include "network.hpp"
 #include "utils.hpp"
+#include "serverEngine.hpp"
 #include <queue>
 
 std::unordered_map<int, Color> _log_colors = {
@@ -7,75 +8,12 @@ std::unordered_map<int, Color> _log_colors = {
     {LOG_ERROR, RED},
     {LOG_WARNING, YELLOW},
     {LOG_DEBUG, BLUE},
-};    
-
-class Room {
-    public:
-        Room(int port): server(port) {
-
-        font = LoadFont("./assets/fonts/console.otf");// moove
-            _port = port;
-            _thread = std::thread([this](){
-                running = true;
-                server.start();
-                running = false;
-            });
-        };
-        ~Room() {
-            if (running) {
-                _thread.join();
-            }
-        };
-        bool isRunning() {
-            return running;
-        };
-
-        void displayLog() {
-            float y = 0;
-            auto logs = server.getLog();
-            for (auto &log : *logs) {
-                DrawTextEx(font, log.second.c_str(), Vector2{10, y}, 20, 1, _log_colors[log.first]);
-                if (y > 380) {
-                    logs->erase(logs->begin());
-                } else
-                    y += 20;
-            }
-            logs->shrink_to_fit();
-        };
-
-        void displayPlayer() {
-            for (auto &client : server.getClients()) {
-                auto player = client.second;
-                auto position = player.getPosition();
-                DrawText("p", (position.x + 10) * 40, (-position.y + 5) * 40, 20, GREEN);
-            }
-        };
-
-        void displayEnemies() {
-            for (auto &enemy : server.getEnemies()) {
-                auto position = enemy.getPosition();
-                DrawText("x", (position.x + 10) * 40, (-position.y + 5) * 40, 20, RED);
-            }
-        };
-
-        void displayBullets() {
-            for (auto &bullet : server.getBullets()) {
-                auto position = bullet.getPosition();
-                DrawText("o", (position.x + 10) * 40, (-position.y + 5) * 40, 20, YELLOW);
-            }
-        };
-    private:
-        int _port;
-        bool running;
-        std::thread _thread;
-        UdpServer server;
-            Font font;//to moove
 };
+
 
 class RTypeServer{
     public:
         RTypeServer(){
-            font = LoadFont("./assets/fonts/console.otf");
         };
         ~RTypeServer(){
             for (auto &room : _rooms) {
@@ -126,7 +64,7 @@ class RTypeServer{
         void display_infos() {
             float y = 20;
             for (auto &log : _logs) {// duplicate code
-                DrawTextEx(font, log.second.c_str(), Vector2{200, y}, 20, 1, _log_colors[log.first]);
+                //DrawTextEx(font, log.second.c_str(), Vector2{200, y}, 20, 1, _log_colors[log.first]);
                 if (y > 380)
                     _logs.pop_back();
                 else
@@ -143,12 +81,8 @@ class RTypeServer{
         std::map<int, Room*> _rooms;
         Room *displayed_room = nullptr;
         std::vector<std::pair<int, std::string>> _logs;
-        Font font;
     
 };
-void customLog(int logType, const char *text, va_list args) {
-    
-}
 
 void handle_input(RTypeServer &_server, std::string input) { // moove to UdpServer class
     std::string command = input.substr(0, input.find(" "));
@@ -170,29 +104,7 @@ void handle_input(RTypeServer &_server, std::string input) { // moove to UdpServ
 }
 
 int main() {
-    asio::io_context _io_context;
-    std::queue<std::string> _input;
-        InitWindow(800, 450, "R-Type Server");
-        SetTraceLogCallback(customLog);
-        SetTargetFPS(60);
-    RTypeServer _server;
-    std::thread t([&](){
-        std::string tmp;
-        while (true) {
-            std::getline(std::cin, tmp);
-            _input.push(tmp);
-        }
-    });
-    while (!WindowShouldClose()) {
-        if (_input.size() > 0) {
-            handle_input(_server, _input.front());
-            _input.pop();
-        }
-        //_server.display_infos();
-        _server.display_current_room();
-    }
-
-
-    
+    server_engine server;
+    server.run();
     return 0;
 }
