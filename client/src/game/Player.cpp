@@ -40,15 +40,24 @@ void Game::movePlayer() {
 }
 
 void Game::updatePlayer() {
+    static float shotTimer = 0.0f;
+    const float SHOT_DELAY = 0.350f;
+
     auto playerName = "R9A" + std::to_string(_playerId);
-    if (IsKeyPressed(KEY_SPACE) && _gameEntities.contains(playerName)) {
+    if ((IsKeyPressed(KEY_SPACE) || IsKeyDown(KEY_SPACE)) && _gameEntities.contains(playerName)) {
         auto playerEntity = _gameEntities[playerName];
         auto cPosition = _pObjectArchetype->getComponent<Engine::CPosition>(playerEntity);
         auto position = cPosition.getPosition();
         position.x += .5;
-        auto velocity = Vector3Zero();
-        velocity.x = 5;
-        addBullet(position, velocity);
-        _udpClient->send(std::string("shoot"));
+
+        if (shotTimer >= SHOT_DELAY) {
+            auto velocity = Vector3Zero();
+            velocity.x = 5;
+            addBullet(position, velocity);
+            _udpClient->send(std::string("shoot"));
+            shotTimer = 0.0f;
+        }
     }
+    shotTimer += GetFrameTime();
 }
+
