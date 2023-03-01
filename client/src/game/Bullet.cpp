@@ -41,6 +41,7 @@ void Game::updateBullets() {
         }
         if (isColliding) {
             it = _bullets.erase(it);
+            playSound("enemy_bomb");
         } else {
             ++it;
         }
