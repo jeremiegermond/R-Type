@@ -101,6 +101,7 @@ void Game::loadUI(json &ui) {
         auto type = ui["type"];
         cObject.setTag(type);
         if (type == "button" || type == "input") {
+            cObject.setTag("text");
             _pUIArchetype->addComponent(entity, CBox());
             _pUIArchetype->addComponent(entity, CColor());
             auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(entity);
@@ -136,5 +137,11 @@ void Game::loadUI(json &ui) {
         auto size = Vector2{sizeStr[0], sizeStr[1]};
         auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(entity);
         cBox.setSize(size);
+    }
+    if (ui.contains("tags")) {
+        auto tags = ui["tags"];
+        for (auto &tag : tags) {
+            cObject.setTag(tag);
+        }
     }
 }

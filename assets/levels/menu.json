@@ -8,38 +8,25 @@
       "fontSize": 30
     },
     {
-      "name": "player_submit",
+      "name": "play_button",
       "type": "button",
-      "text": "Submit",
+      "text": "Play",
+      "color":  [50, 205, 50, 255],
       "position": [50, 80],
       "size": [20, 10],
-      "fontSize": 20
+      "fontSize": 60
     },
     {
       "name": "player_input",
       "type": "input",
       "position": [50, 60],
       "size": [20, 8],
-      "color": [0, 255, 255, 127],
+      "color": [0, 0, 128, 255],
       "fontSize": 20,
       "placeholder": "Enter your name here",
       "text": "",
+      "tags": ["selected"],
       "max_length": 20
-    },
-    {
-      "name": "player_name",
-      "type": "text",
-      "text": "",
-      "position": [50, 10],
-      "fontSize": 15
-    },
-    {
-      "name": "play_button",
-      "type": "button",
-      "text": "Play",
-      "position": [50, 50],
-      "size": [20, 10],
-      "fontSize": 20
     }
   ]
 }

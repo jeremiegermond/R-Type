@@ -100,6 +100,35 @@ void Game::updateMenu() {
         _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
         _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
     }
+    if (_uiElements.contains("player_input") && _uiElements.contains("play_button")) {
+        auto [cObject, cText] = _pUIArchetype->getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
+        auto [buttonObject, buttonColor] = _pUIArchetype->getComponent<Engine::CObject, CColor>(_uiElements["play_button"]);
+        if (cObject.hasTag("selected")) {
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
+                    cText.setText("");
+                } else {
+                    auto text = cText.getText();
+                    if (!text.empty()) {
+                        text.pop_back();
+                        cText.setText(text);
+                    }
+                }
+            } else {
+                int key = GetKeyPressed();
+                if (key >= 32 && key <= 125 && cText.getText().size() < 20) {
+                    cText.setText(cText.getText() + static_cast<char>(key));
+                }
+            }
+        }
+        if (cText.getText().empty()) {
+            buttonColor.setColor({175, 175, 175, 255});
+            buttonObject.setTag("disabled");
+        } else {
+            buttonColor.setColor({50, 205, 50, 255});
+            buttonObject.removeTag("disabled");
+        }
+    }
 }
 
 void Game::updateGameplay() {
@@ -135,26 +164,66 @@ void Game::updateGameplay() {
 
 void Game::drawUI() {
     DrawFPS(10, 10);
+    bool isMouseOverUI = false;
     for (auto &ui : _uiElements) {
         auto [cPosition, cObject, cText] = _pUIArchetype->getComponent<Engine::CPosition, Engine::CObject, CText>(ui.second);
         auto screenSize = getWindowSize();
         auto position = Vector3Multiply(Vector3Scale(cPosition.getPosition(), .01), {screenSize.x, screenSize.y, 1});
-        if (cObject.hasTag("text")) {
-            int fontSize = int(screenSize.y * .001f * float(cText.getFontSize()));
-            auto text = cText.getText().c_str();
-            std::cout << "Font size is " << fontSize << std::endl;
-            position.x -= float(MeasureText(text, fontSize)) * .5f;
-            DrawText(text, int(position.x), int(position.y), fontSize, WHITE);
-        }
         if (cObject.hasTag("input") || cObject.hasTag("button")) {
             auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(ui.second);
             auto box = cBox.getBox();
             auto color = cColor.getColor();
             box.width *= .01f * screenSize.x;
             box.height *= .01f * screenSize.y;
-            position.x -= box.width * .5f;
-            position.y -= box.height * .5f;
-            DrawRectangle(int(position.x), int(position.y), int(box.width), int(box.height), color);
+            auto boxPosition = Vector3Subtract(position, {box.width * .5f, box.height * .5f, 0});
+            auto boxFinal = Rectangle{boxPosition.x, boxPosition.y, box.width, box.height};
+            auto hover = !cObject.hasTag("disabled") && CheckCollisionPointRec(GetMousePosition(), boxFinal);
+            auto click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+            if (hover) {
+                isMouseOverUI = true;
+                if (!cObject.hasTag("hover")) {
+                    cObject.setTag("hover");
+                    cBox.setScale(1.15);
+                    playSound("decision");
+                }
+                if (click && !cObject.hasTag("selected")) {
+                    cObject.setTag("selected");
+                    playSound("level_decision");
+                }
+            } else if (click) {
+                if (cObject.hasTag("selected")) {
+                    cObject.removeTag("selected");
+                    playSound("cancel");
+                }
+                if (cObject.hasTag("hover")) {
+                    cObject.removeTag("hover");
+                    cBox.setScale(1);
+                }
+            } else {
+                if (cObject.hasTag("hover")) {
+                    cObject.removeTag("hover");
+                    cBox.setScale(1);
+                }
+            }
+            DrawRectangleRounded(boxFinal, 0.2f, 0, color);
         }
+        if (cObject.hasTag("text")) {
+            int fontSize = int(screenSize.y * .001f * float(cText.getFontSize()));
+            auto text = cText.getText().c_str();
+            position = Vector3Subtract(position, {float(MeasureText(text, fontSize)) * .5f, float(fontSize) * .5f, 0});
+            DrawText(text, int(position.x), int(position.y), fontSize, WHITE);
+            if (cObject.hasTag("input") && cObject.hasTag("selected")) {
+                auto cursorPosition = Vector3Add(position, {float(MeasureText(text, fontSize)), 0, 0});
+                cursorPosition.x += float(MeasureText("_", fontSize)) * .5f;
+                if (int(GetTime() * 2) % 2 == 0) {
+                    DrawRectangle(int(cursorPosition.x), int(cursorPosition.y), 2, fontSize, WHITE);
+                }
+            }
+        }
+    }
+    if (!isMouseOverUI) {
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+    } else {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
     }
 }
