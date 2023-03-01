@@ -93,32 +93,48 @@ void Game::loadUI(json &ui) {
         return;
     }
     std::string name = ui["name"];
-    // typedef Engine::Archetype<Engine::CObject, CText, Engine::CPosition, Engine::CScale, CHandler, CBox, CColor> UIArchetype;
 
-    auto entity = _pUIArchetype->createEntity(Engine::CObject(), Engine::CScale(1), Engine::CPosition(Vector3Zero()));
+    auto entity = _pUIArchetype->createEntity(Engine::CObject(), Engine::CScale(1), Engine::CPosition(Vector3Zero()), CText());
     _uiElements[name] = entity;
-    auto [cObject, cPosition, cScale] = _pUIArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CScale>(entity);
+    auto [cObject, cPosition, cScale, cText] = _pUIArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, CText>(entity);
     if (ui.contains("type")) {
         auto type = ui["type"];
         cObject.setTag(type);
-        if (type == "text") {
-            auto cText = CText();
-            cText.setActive(true);
-            if (ui.contains("text")) {
-                auto text = ui["text"];
-                cText.setText(text);
+        if (type == "button" || type == "input") {
+            _pUIArchetype->addComponent(entity, CBox());
+            _pUIArchetype->addComponent(entity, CColor());
+            auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(entity);
+            if (ui.contains("size") && ui["size"].size() == 2) {
+                auto sizeStr = ui["size"];
+                auto size = Vector2{sizeStr[0], sizeStr[1]};
+                cBox.setSize(size);
             }
-            if (ui.contains("fontSize")) {
-                auto fontSize = ui["fontSize"];
-                cText.setFontSize(fontSize);
+            if (ui.contains("color") && ui["color"].size() == 4) {
+                auto colorStr = ui["color"];
+                auto color = Color{colorStr[0], colorStr[1], colorStr[2], colorStr[3]};
+                cColor.setColor(color);
             }
-            _pUIArchetype->addComponent(entity, CText(cText));
         }
-        // TODO: add other types
+    }
+
+    if (ui.contains("text")) {
+        auto text = ui["text"];
+        cText.setText(text);
+        cText.setActive(true);
+    }
+    if (ui.contains("fontSize")) {
+        auto fontSize = ui["fontSize"];
+        cText.setFontSize(fontSize);
     }
     if (ui.contains("position") && ui["position"].size() == 2) {
         auto positionStr = ui["position"];
         auto position = Vector3{positionStr[0], positionStr[1], 0};
         cPosition.setPosition(position);
+    }
+    if (ui.contains("size") && ui["size"].size() == 2 && (cObject.hasTag("button") || cObject.hasTag("input"))) {
+        auto sizeStr = ui["size"];
+        auto size = Vector2{sizeStr[0], sizeStr[1]};
+        auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(entity);
+        cBox.setSize(size);
     }
 }

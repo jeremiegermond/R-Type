@@ -13,7 +13,7 @@ namespace Engine {
     template <typename Component>
     class SparseMap {
       private:
-        static const size_t BLOCK_SIZE = 1600;
+        static const size_t BLOCK_SIZE = 1600000;
         struct Block {
             Component components[BLOCK_SIZE];
             EntityId sparse[BLOCK_SIZE];

@@ -52,8 +52,8 @@ class CBox : public Engine::ComponentBase {
     [[nodiscard]] Rectangle getBox() const;
 
   private:
-    Vector2 _size{};
-    Vector2 _position{};
-    float _scale{};
-    Rectangle _box{};
+    Vector2 _size;
+    Vector2 _position;
+    float _scale;
+    Rectangle _box;
 };

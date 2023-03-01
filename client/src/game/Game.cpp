@@ -137,12 +137,24 @@ void Game::drawUI() {
     DrawFPS(10, 10);
     for (auto &ui : _uiElements) {
         auto [cPosition, cObject, cText] = _pUIArchetype->getComponent<Engine::CPosition, Engine::CObject, CText>(ui.second);
+        auto screenSize = getWindowSize();
+        auto position = Vector3Multiply(Vector3Scale(cPosition.getPosition(), .01), {screenSize.x, screenSize.y, 1});
         if (cObject.hasTag("text")) {
-            auto screenSize = getWindowSize();
-            auto position = Vector3Multiply(Vector3Scale(cPosition.getPosition(), .01), {screenSize.x, screenSize.y, 1});
-            position.x -= float(MeasureText(cText.getText().c_str(), cText.getFontSize())) * .5f;
-            auto text = cText.getText();
-            DrawText(text.c_str(), int(position.x), int(position.y), cText.getFontSize(), WHITE);
+            int fontSize = int(screenSize.y * .001f * float(cText.getFontSize()));
+            auto text = cText.getText().c_str();
+            std::cout << "Font size is " << fontSize << std::endl;
+            position.x -= float(MeasureText(text, fontSize)) * .5f;
+            DrawText(text, int(position.x), int(position.y), fontSize, WHITE);
+        }
+        if (cObject.hasTag("input") || cObject.hasTag("button")) {
+            auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(ui.second);
+            auto box = cBox.getBox();
+            auto color = cColor.getColor();
+            box.width *= .01f * screenSize.x;
+            box.height *= .01f * screenSize.y;
+            position.x -= box.width * .5f;
+            position.y -= box.height * .5f;
+            DrawRectangle(int(position.x), int(position.y), int(box.width), int(box.height), color);
         }
     }
 }

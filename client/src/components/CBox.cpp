@@ -7,7 +7,7 @@
 
 #include "components/CBox.hpp"
 
-CBox::CBox() = default;
+CBox::CBox() : _size({0, 0}), _position({0, 0}), _scale(1), _box({0, 0, 0, 0}) {}
 
 CBox::~CBox() = default;
 
