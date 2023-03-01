@@ -13,15 +13,15 @@
  * @param port The port to listen on.
  */
 UdpClient::UdpClient(const std::string &ip, unsigned short port)
-    : _socket(_io_context, udp::endpoint(udp::v4(), 0)), _endpoint(address::from_string(ip), port) {
-    start();
-}
+    : _socket(_io_context, udp::endpoint(udp::v4(), 0)), _endpoint(address::from_string(ip), port) {}
 
 /**
  * It stops the client
  * It sends a disconnect message to the server, then closes the socket
  */
 void UdpClient::stop() {
+    if (!isConnected())
+        return;
     send("disconnect");
     _connected = false;
     _stop = true;
@@ -43,6 +43,8 @@ void UdpClient::setEndpoint(const std::string &ip, unsigned short port) { _endpo
  */
 void UdpClient::start() {
     _stop = false;
+    if (!_socket.is_open())
+        _socket.open(udp::v4());
     _listener = std::thread([this]() { threadListener(); });
     _listener.detach();
     _heartbeat = std::thread([this]() { threadHeartbeat(); });
@@ -125,7 +127,7 @@ void UdpClient::threadListener() {
         std::lock_guard<std::mutex> lock(_mutex);
         _messages.push(msg);
         _lastMessage = std::chrono::steady_clock::now();
-        _connected = true;
+        _connected = !_stop;
         _cv.notify_one();
     }
 }

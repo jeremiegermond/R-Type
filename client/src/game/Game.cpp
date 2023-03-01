@@ -94,15 +94,6 @@ void Game::drawGame() {
 void Game::setGameState(GameState state) { _gameState = state; }
 
 void Game::updateMenu() {
-    if (IsKeyPressed(KEY_ENTER)) {
-        std::cout << "Starting game" << std::endl;
-        _uiElements.clear();
-        setGameState(GameState::GAME);
-        loadEntities("assets/levels/level_01.json");
-        _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
-        _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
-        playMusic("01-Taking_off_again");
-    }
     if (_uiElements.contains("player_input") && _uiElements.contains("play_button")) {
         auto [cObject, cText] = _pUIArchetype->getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
         auto [buttonObject, buttonColor] = _pUIArchetype->getComponent<Engine::CObject, CColor>(_uiElements["play_button"]);
@@ -120,6 +111,11 @@ void Game::updateMenu() {
             } else {
                 int key = GetKeyPressed();
                 if (key >= 32 && key <= 125 && cText.getText().size() < 20) {
+                    if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+                        key = toupper(key);
+                    } else {
+                        key = tolower(key);
+                    }
                     cText.setText(cText.getText() + static_cast<char>(key));
                 }
             }
@@ -130,6 +126,18 @@ void Game::updateMenu() {
         } else {
             buttonColor.setColor({50, 205, 50, 255});
             buttonObject.removeTag("disabled");
+        }
+        if (!buttonObject.hasTag("disabled") && (buttonObject.hasTag("selected") || IsKeyPressed(KEY_ENTER))) {
+            _playerName = cText.getText();
+            _uiElements.clear();
+            setGameState(GameState::GAME);
+            loadEntities("assets/levels/level_01.json");
+            _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
+            _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
+            playMusic("01-Taking_off_again");
+            if (_udpClient) {
+                _udpClient->start();
+            }
         }
     }
 }
@@ -163,6 +171,9 @@ void Game::updateGameplay() {
         loadEntities("assets/levels/menu.json");
         setGameState(GameState::MENU);
         playMusic("02-Main_Menu");
+        if (_udpClient) {
+            _udpClient->stop();
+        }
     }
 }
 

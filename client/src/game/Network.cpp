@@ -56,16 +56,9 @@ void Game::updateNetwork() {
             addEnemy(newEnemyId, newEnemyPosition, newEnemyVelocity, newEnemyLife);
         } else if (Engine::Regex::isMatch(msg, "dead:[0-9]+")) {
             auto id = std::stoi(Engine::Regex::getMatch(msg, "dead:([0-9]+)", 1));
-            // std::cout << "Dead enemy: " << id << std::endl;
-            // if (_enemies.find(id) == _enemies.end())
-            //    return;
-            // auto enemy = _enemies[id];
-            // auto enemyPosition = enemy->getPosition();
-            // enemyPosition.z += 1.5;
-            // addParticle2D("explosion", enemyPosition, float(sin(GetTime() * 10) * 90), 4);
-            // erase pointer
-            // delete enemy;
-            //_enemies.erase(id);
+            if (_enemies.find(id) == _enemies.end())
+                return;
+            _enemies.erase(id);
         }
     }
 }
