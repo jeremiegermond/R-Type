@@ -10,14 +10,14 @@ using namespace asio::ip;
 using namespace std::chrono;
 
 namespace std {
-template <>
-struct hash<udp::endpoint> {
-    std::size_t operator()(const udp::endpoint &endpoint) const noexcept {
-        std::size_t h1 = std::hash<std::string>()(endpoint.address().to_string());
-        std::size_t h2 = std::hash<unsigned short>()(endpoint.port());
-        return h1 ^ (h2 << 1);
-    }
-};
+    template <>
+    struct hash<udp::endpoint> {
+        std::size_t operator()(const udp::endpoint &endpoint) const noexcept {
+            std::size_t h1 = std::hash<std::string>()(endpoint.address().to_string());
+            std::size_t h2 = std::hash<unsigned short>()(endpoint.port());
+            return h1 ^ (h2 << 1);
+        }
+    };
 }
 
 // udp server that can handle multiple clients
@@ -46,7 +46,7 @@ class UdpServer {
     std::atomic<bool> _stopServer;
     int _port;
     std::vector<std::pair<int, std::string>> _logs;
-    
+
     interface _overlay;
 
   public:
@@ -88,32 +88,19 @@ class UdpServer {
     // simulate game
     void simulate();
 
-    void log(int type, const std::string &msg) {
-        _logs.emplace_back(type, msg);
-    };
+    void log(int type, const std::string &msg) { _logs.emplace_back(type, msg); };
 
-    
-    std::vector<std::pair<int, std::string>> *getLog(){
-        return &_logs;
-    }
+    std::vector<std::pair<int, std::string>> *getLog() { return &_logs; }
 
-    //get clients
-    std::unordered_map<udp::endpoint, Player> getClients() {
-        return _clients;
-    }
+    // get clients
+    std::unordered_map<udp::endpoint, Player> getClients() { return _clients; }
 
-    //get enemies
-    std::vector<Enemy> getEnemies() {
-        return _enemies;
-    }
+    // get enemies
+    std::vector<Enemy> getEnemies() { return _enemies; }
 
-    //get bullets
-    std::vector<Bullet> getBullets() {
-        return _bullets;
-    }
+    // get bullets
+    std::vector<Bullet> getBullets() { return _bullets; }
 
-    //get overlay
-    interface *getOverlay() {
-        return &_overlay;
-    }
+    // get overlay
+    interface *getOverlay() { return &_overlay; }
 };

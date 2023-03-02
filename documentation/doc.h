@@ -29,11 +29,13 @@
  * cd B-CPP-500-LIL-5-2-rtype-romain.leemans
  * ./windows_build
  * ```
- * 
+ *
  * @section sec_contrib Contributors
  * Made by :
  *  - Thibault Brumaire : <a href="https://www.linkedin.com/in/thibault-brumaire/">Linkedin</a> - <a href="https://github.com/Thibb1">Github</a>
- *  - Jeremie Germond : <a href="https://www.linkedin.com/in/jeremiegermond-984547211/">Linkedin</a> - <a href="https://github.com/jeremiegermond">Github</a>
- *  - Clemence Vanpouille : <a href="https://www.linkedin.com/in/clemence-vanpouille-8313821ab/">Linkedin</a> - <a href="https://github.com/ClemenceVan">Github</a>
+ *  - Jeremie Germond : <a href="https://www.linkedin.com/in/jeremiegermond-984547211/">Linkedin</a> - <a
+ * href="https://github.com/jeremiegermond">Github</a>
+ *  - Clemence Vanpouille : <a href="https://www.linkedin.com/in/clemence-vanpouille-8313821ab/">Linkedin</a> - <a
+ * href="https://github.com/ClemenceVan">Github</a>
  *  - Romain Leemans : <a href="https://www.linkedin.com/in/romain-leemans-86a343217/">Linkedin</a> - <a href="https://github.com/0xCurtis">Github</a>
  */

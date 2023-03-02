@@ -1,7 +1,6 @@
 #include "utils.hpp"
 
-
 class TcpServer {
-    public:
-    private:
+  public:
+  private:
 };

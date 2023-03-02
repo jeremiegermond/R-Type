@@ -355,7 +355,7 @@ function SearchBox(name, resultsPath, extension)
         createResults(resultsPath);
         document.getElementById("NoMatches").style.display="none";
       }
- 
+
       searchResults.Search(searchValue);
 
       if (domPopupSearchResultsWindow.style.display!='block')

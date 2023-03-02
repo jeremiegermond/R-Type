@@ -24,7 +24,7 @@ void UdpServer::start() {
         auto startTime = steady_clock::now();
         _enemySpawnTimer = startTime;
         _lastFrame = startTime;
-        while (!_stopServer) 
+        while (!_stopServer)
             simulate();
         _stopServer = true;
         CloseWindow();
@@ -46,10 +46,10 @@ UdpServer::~UdpServer() {
 
 /**
  * It handles a request from a client
- * 
+ *
  * @param ec error code
  * @param bytes_recvd The number of bytes received.
- * 
+ *
  * @return The return type is void.
  */
 void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
@@ -65,7 +65,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
             auto id = *_ids.begin();
             _ids.erase(id);
             _clients[_sender_endpoint] = Player(id);
-            dynamic_cast<text*>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
+            dynamic_cast<text *>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
             sendResponse(_sender_endpoint, "id:" + std::to_string(_clients[_sender_endpoint].getId()));
             sendAll("new:" + std::to_string(_clients[_sender_endpoint].getId()) + "," + vectorToString(_clients[_sender_endpoint].getPosition()),
                     false);
@@ -109,10 +109,10 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
 
 /**
  * "Send a message to the specified endpoint."
- * 
+ *
  * The first thing we do is lock the socket mutex. This is because we're going to be using the socket,
  * and we don't want another thread to be using it at the same time
- * 
+ *
  * @param endpoint The endpoint to send the message to.
  * @param msg The message to send.
  */
@@ -123,9 +123,9 @@ void UdpServer::sendResponse(const udp::endpoint &endpoint, const std::string &m
 
 /**
  * "When a request is received, handle it and then wait for the next request."
- * 
+ *
  * The first thing we do is check if the server has been stopped. If it has, we return immediately
- * 
+ *
  * @return a future that will receive the result of the asynchronous operation.
  */
 void UdpServer::receiveRequest() {
@@ -139,7 +139,7 @@ void UdpServer::receiveRequest() {
 
 /**
  * If a client hasn't sent a message in the last 5 seconds, remove it from the server
- * 
+ *
  * @return A pointer to the client
  */
 void UdpServer::checkAlive() {
@@ -161,7 +161,7 @@ void UdpServer::checkAlive() {
 
 /**
  * It sends a message to all clients except the sender
- * 
+ *
  * @param msg The message to send to all clients.
  * @param includeSender If true, the sender of the message will also receive the message.
  */
@@ -174,7 +174,7 @@ void UdpServer::sendAll(const std::string &msg, bool includeSender) {
 
 /**
  * It removes a client from the server
- * 
+ *
  * @param endpoint The endpoint of the client to remove.
  * @param erase if true, the client will be erased from the map.
  */
@@ -184,7 +184,7 @@ void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
         sendAll("del:" + std::to_string(_clients[endpoint].getId()), true);
         if (erase) {
             _clients.erase(endpoint);
-            dynamic_cast<text*>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
+            dynamic_cast<text *>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
         }
     }
 }

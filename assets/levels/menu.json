@@ -1,0 +1,31 @@
+{
+  "ui": [
+    {
+      "name": "player_header",
+      "type": "text",
+      "text": "Enter your name:",
+      "position": [50, 40],
+      "fontSize": 30
+    },
+    {
+      "name": "play_button",
+      "type": "button",
+      "text": "Play",
+      "color":  [50, 205, 50, 255],
+      "position": [50, 80],
+      "size": [20, 10],
+      "fontSize": 60
+    },
+    {
+      "name": "player_input",
+      "type": "input",
+      "position": [50, 60],
+      "size": [20, 8],
+      "color": [0, 0, 128, 255],
+      "fontSize": 20,
+      "text": "",
+      "tags": ["selected"],
+      "max_length": 20
+    }
+  ]
+}
