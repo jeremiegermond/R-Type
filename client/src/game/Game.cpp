@@ -171,6 +171,10 @@ void Game::updateGameplay() {
             _enemies.clear();
             _uiElements.clear();
             loadEntities("assets/levels/menu.json");
+            if (_uiElements.contains("player_input")) {
+                auto [pInput, cText] = _pUIArchetype->getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
+                cText.setText(_playerName);
+            }
             setGameState(GameState::MENU);
             playMusic("02-Main_Menu");
             if (_udpClient) {
