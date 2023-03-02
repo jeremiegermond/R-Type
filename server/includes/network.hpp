@@ -3,7 +3,7 @@
 #include "bullet.hpp"
 #include "enemy.hpp"
 #include "player.hpp"
-#include "utils.hpp"
+#include "uiElements.hpp"
 #include <set>
 
 using namespace asio::ip;
@@ -18,7 +18,7 @@ struct hash<udp::endpoint> {
         return h1 ^ (h2 << 1);
     }
 };
-} // namespace std
+}
 
 // udp server that can handle multiple clients
 class UdpServer {
@@ -44,13 +44,22 @@ class UdpServer {
     std::chrono::time_point<std::chrono::steady_clock> _lastFrame;
     // stop variable
     std::atomic<bool> _stopServer;
+    int _port;
+    std::vector<std::pair<int, std::string>> _logs;
+    
+    interface _overlay;
 
   public:
-    UdpServer() : _socket(_io_context, udp::endpoint(udp::v4(), 12345)), _stopServer(false) {
+    UdpServer(int port) : _socket(_io_context, udp::endpoint(udp::v4(), port)), _stopServer(false) {
+        _port = port;
         for (int i = 1; i <= 4; i++)
             _ids.insert(i);
         for (int i = 1; i <= 10; i++)
             _enemyIds.insert(i);
+        _overlay.add(new text("Room : " + std::to_string(_port), {0, 30, 30, 2}, WHITE));
+        _overlay.add(new text("Players : ", {0, 50, 30, 2}, WHITE));
+        _overlay.add(new text(std::to_string(_clients.size()), {95, 50, 30, 2}, WHITE))->setId("players_nbr");
+        _overlay.add(new text("/ 4", {110, 50, 30, 2}, WHITE));
     }
 
     ~UdpServer();
@@ -78,4 +87,33 @@ class UdpServer {
 
     // simulate game
     void simulate();
+
+    void log(int type, const std::string &msg) {
+        _logs.emplace_back(type, msg);
+    };
+
+    
+    std::vector<std::pair<int, std::string>> *getLog(){
+        return &_logs;
+    }
+
+    //get clients
+    std::unordered_map<udp::endpoint, Player> getClients() {
+        return _clients;
+    }
+
+    //get enemies
+    std::vector<Enemy> getEnemies() {
+        return _enemies;
+    }
+
+    //get bullets
+    std::vector<Bullet> getBullets() {
+        return _bullets;
+    }
+
+    //get overlay
+    interface *getOverlay() {
+        return &_overlay;
+    }
 };

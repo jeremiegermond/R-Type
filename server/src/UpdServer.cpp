@@ -11,7 +11,7 @@
  * It starts the server
  */
 void UdpServer::start() {
-    std::cout << "UDP server started on port 12345" << std::endl;
+    log(LOG_INFO, "UDP server started on port " + std::to_string(_port));
     srand(time(nullptr));
     _timer = std::thread([this]() {
         while (true) {
@@ -24,14 +24,8 @@ void UdpServer::start() {
         auto startTime = steady_clock::now();
         _enemySpawnTimer = startTime;
         _lastFrame = startTime;
-        InitWindow(800, 450, "R-Type Server");
-        SetTargetFPS(60);
-        while (!WindowShouldClose()) {
-            BeginDrawing();
-            ClearBackground(BLACK);
+        while (!_stopServer) 
             simulate();
-            EndDrawing();
-        }
         _stopServer = true;
         CloseWindow();
     });
@@ -44,7 +38,8 @@ void UdpServer::start() {
  * It closes the socket and cancels any pending asynchronous operations
  */
 UdpServer::~UdpServer() {
-    std::cout << "UDP server stopped" << std::endl;
+    _stopServer = true;
+    log(LOG_INFO, "UDP server stopped");
     _socket.cancel();
     _socket.close();
 }
@@ -60,8 +55,8 @@ UdpServer::~UdpServer() {
 void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
     if (!ec && bytes_recvd > 0) {
         std::string msg(_buffer.begin(), _buffer.begin() + bytes_recvd);
-        std::cout << "From: " << _sender_endpoint << " ";
-        std::cout << "Received: " << msg << std::endl;
+        log(LOG_INFO, "From: " + _sender_endpoint.address().to_string() + ":" + std::to_string(_sender_endpoint.port()));
+        log(LOG_INFO, "Received: " + msg);
         if (_clients.find(_sender_endpoint) == _clients.end()) {
             if (_ids.empty()) {
                 sendResponse(_sender_endpoint, "full");
@@ -70,6 +65,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
             auto id = *_ids.begin();
             _ids.erase(id);
             _clients[_sender_endpoint] = Player(id);
+            dynamic_cast<text*>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
             sendResponse(_sender_endpoint, "id:" + std::to_string(_clients[_sender_endpoint].getId()));
             sendAll("new:" + std::to_string(_clients[_sender_endpoint].getId()) + "," + vectorToString(_clients[_sender_endpoint].getPosition()),
                     false);
@@ -87,7 +83,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
             }
         }
         auto &player = _clients[_sender_endpoint];
-        std::cout << "Player: " << player.getId() << std::endl;
+        log(LOG_INFO, "Player: " + player.getId());
         if (msg == "ping") {
             sendResponse(_sender_endpoint, "pong");
             player.setAlive(true);
@@ -149,11 +145,11 @@ void UdpServer::receiveRequest() {
 void UdpServer::checkAlive() {
     if (_clients.empty())
         return;
-    std::cout << "Checking clients..." << std::endl;
+    log(LOG_INFO, "Checking clients...");
     auto it = _clients.begin();
     while (it != _clients.end()) {
         if (!it->second.isAlive()) {
-            std::cout << "Client: " << it->first << " is dead" << std::endl;
+            log(LOG_INFO, "Client: " + it->first.address().to_string() + ":" + std::to_string(it->first.port()) + " is dead");
             removeClient(it->first, false);
             it = _clients.erase(it);
         } else {
@@ -186,8 +182,10 @@ void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
     if (_clients.find(endpoint) != _clients.end()) {
         _ids.insert(_clients[endpoint].getId());
         sendAll("del:" + std::to_string(_clients[endpoint].getId()), true);
-        if (erase)
+        if (erase) {
             _clients.erase(endpoint);
+            dynamic_cast<text*>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
+        }
     }
 }
 
@@ -201,15 +199,11 @@ void UdpServer::simulate() {
     auto tp = steady_clock::now();
     auto deltaTime = float(duration_cast<milliseconds>(tp - _lastFrame).count()) / 1000.0f;
     _lastFrame = tp;
-    // std::cout << "Delta time: " << deltaTime << std::endl;
-    //  update enemies
     for (auto enemy = _enemies.begin(); enemy != _enemies.end();) {
         enemy->update(deltaTime);
         auto enemyPosition = enemy->getPosition();
-        DrawText("x", (enemyPosition.x + 10) * 40, (-enemyPosition.y + 5) * 40, 20, RED);
-        // std::cout << "Enemy: " << enemy->getId() << " " << enemyPosition.x << " " << enemyPosition.y << std::endl;
         if (enemyPosition.x < -10) {
-            std::cout << "Enemy: " << enemy->getId() << " out of bounds" << std::endl;
+            log(LOG_INFO, "Enemy: " + std::to_string(enemy->getId()) + " out of bounds");
             _enemyIds.insert(enemy->getId());
             enemy = _enemies.erase(enemy);
         } else {
@@ -220,13 +214,12 @@ void UdpServer::simulate() {
     for (auto bullet = _bullets.begin(); bullet != _bullets.end();) {
         bullet->update(deltaTime);
         auto bulletPosition = bullet->getPosition();
-        DrawText("o", (bulletPosition.x + 10) * 40, (-bulletPosition.y + 5) * 40, 20, ORANGE);
         bool bulletErased = false;
         for (auto enemy = _enemies.begin(); enemy != _enemies.end();) {
             if (bullet->isColliding(enemy->getBounds())) {
                 enemy->takeDamage(bullet->getDamage());
                 if (enemy->isDead()) {
-                    std::cout << "Enemy: " << enemy->getId() << " was killed" << std::endl;
+                    log(LOG_INFO, "Enemy: " + std::to_string(enemy->getId()) + " was killed");
                     sendAll("dead:" + std::to_string(enemy->getId()));
                     _enemyIds.insert(enemy->getId());
                     enemy = _enemies.erase(enemy);
@@ -266,6 +259,5 @@ void UdpServer::simulate() {
     for (auto &client : _clients) {
         auto player = client.second;
         auto position = player.getPosition();
-        DrawText("p", (position.x + 10) * 40, (-position.y + 5) * 40, 20, GREEN);
     }
 }

@@ -6,7 +6,7 @@ then
 fi
 
 mkdir -p build && cd build
-conan profile update settings.compiler.libcxx=libstdc++11 default
+conan profile update settings.compiler.libcxx=libstdc++11 defaultr
 conan install .. --build=missing -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True --profile ../conanprofile_linux.txt
 cmake .. -G "Unix Makefiles"
 cmake --build .
