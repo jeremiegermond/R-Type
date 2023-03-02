@@ -36,6 +36,28 @@ void Game::drawEntity(Engine::EntityId id, Vector3 offset) {
     DrawModel(model, Vector3Add(position, offset), scale, WHITE);
 }
 
+void Game::drawTexture(Engine::EntityId id, Vector3 offset) {
+    auto [cObject, cTexture, cAnimatedSprite, cPosition] = _pSpriteArchetype->getComponent<Engine::CObject, pTexture, CAnimatedSprite, Engine::CPosition>(id);
+    std::cout << "drawTexture" << std::endl;
+    // check if the object is valid
+    if (cObject.isActive()) {
+        // get the texture
+        auto texture = cTexture->getTexture();
+        // get the source rectangle
+        auto source = cAnimatedSprite.getSourceRec();
+        // get the scale
+        auto scale = cAnimatedSprite.getScale();
+        // get the rotation
+        auto rotation = cAnimatedSprite.getRotation();
+        // get the position
+        auto position = cPosition.getPosition();
+        // get the camera
+        auto camera = _pCameraArchetype->getComponent<CCamera>(_camera).getCamera();
+        // draw the billboard pro
+        DrawBillboardPro(camera, *texture, source, position, {0, 1, 0}, scale, Vector2Zero(), rotation, WHITE);
+    }
+}
+
 void Game::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
     auto enemy = _enemies.contains(id) ? _enemies[id]
                                        : _pObjectArchetype->createEntity(Engine::CScale(0.1), Engine::CPosition(), Engine::CVelocity(),
@@ -54,4 +76,31 @@ void Game::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
         _pObjectArchetype->addComponent(enemy, pModel(_models["E002"]));
     }
     _enemies[id] = enemy;
+}
+
+void Game::addAnimatedSprite(const std::string& name, Vector3 position) {
+    std::cout << "addAnimatedSprite" << " name: " << name << std::endl;
+    if (!_textures.contains(name))
+        return;
+    std::cout << "addAnimatedSprite" << std::endl;
+    auto textureP = _textures[name];
+    auto sprite = _pSpriteArchetype->createEntity(Engine::CObject(), Engine::CPosition(), CAnimatedSprite(), pTexture(textureP));
+    auto [cObject, cPosition, cAnimatedSprite] = _pSpriteArchetype->getComponent<Engine::CObject, Engine::CPosition, CAnimatedSprite>(sprite);
+    cObject.setActive(true);
+    cAnimatedSprite.setActive(true);
+    cPosition.setPosition(position);
+    auto texture = textureP->getTexture();
+    cAnimatedSprite.setTextureSize({(float)texture->width, (float)texture->height}, textureP->getRows(), textureP->getColumns());
+    _animatedSprites.push_back(sprite);
+}
+
+void Game::updateTextures() {
+    for (auto it = _animatedSprites.begin(); it != _animatedSprites.end();) {
+        auto [cObject, cAnimatedSprite] = _pSpriteArchetype->getComponent<Engine::CObject, CAnimatedSprite>(*it);
+        if (!cAnimatedSprite.getEnabled()) {
+            it = _animatedSprites.erase(it);
+        } else {
+            cAnimatedSprite.update();
+        }
+    }
 }

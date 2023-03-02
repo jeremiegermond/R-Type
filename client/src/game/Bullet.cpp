@@ -30,18 +30,21 @@ void Game::updateBullets() {
     for (auto it = _bullets.begin(); it != _bullets.end();) {
         updateEntity(*it);
         bool isColliding = false;
+        Vector3 position;
         auto bulletCollider = _pObjectArchetype->getComponent<CCollider>(*it);
         for (auto &enemy : _enemies) {
             auto [cCollider, cHealth] = _pObjectArchetype->getComponent<CCollider, CHealth>(enemy.second);
             if (bulletCollider.isColliding(cCollider)) {
                 cHealth.takeDamage(1);
                 isColliding = true;
+                position = _pObjectArchetype->getComponent<Engine::CPosition>(enemy.second).getPosition();
                 break;
             }
         }
         if (isColliding) {
             it = _bullets.erase(it);
             playSound("enemy_bomb");
+            addAnimatedSprite("explosion", position);
         } else {
             ++it;
         }

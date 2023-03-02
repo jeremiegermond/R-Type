@@ -10,6 +10,7 @@
 void ECSManager::initFactories() {
     addArchetype<ObjectArchetype>("Object");
     addArchetype<CameraArchetype>("Camera");
+    addArchetype<SpriteArchetype>("Sprite");
     addArchetype<UIArchetype>("UI");
 }
 

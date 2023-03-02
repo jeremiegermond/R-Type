@@ -114,12 +114,15 @@ namespace Engine {
 
     void GameBase::loadTextures(const json &textures) {
         for (auto &texture : textures) {
-            if (!texture.contains("name") || !texture.contains("path") || _textures.contains(texture["name"]))
+            if (!texture.contains("name") || !texture.contains("path"))
                 continue;
             auto newTexture = std::make_shared<Engine::CTexture>();
             std::string name = texture["name"];
             std::string path = texture["path"];
             newTexture->setTexture(path);
+            if (texture.contains("rows") && texture.contains("columns")) {
+                newTexture->setRowsAndColumns(texture["rows"], texture["columns"]);
+            }
             _textures[name] = newTexture;
         }
     }

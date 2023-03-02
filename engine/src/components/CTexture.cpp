@@ -30,4 +30,10 @@ namespace Engine {
         _texture = std::make_shared<Texture2D>(LoadTexture(texturePath.c_str()));
         init();
     }
+    void CTexture::setRowsAndColumns(int rows, int columns) {
+        _rows = rows;
+        _columns = columns;
+    }
+    int CTexture::getRows() const { return _rows; }
+    int CTexture::getColumns() const { return _columns; }
 }

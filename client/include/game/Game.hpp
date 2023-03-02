@@ -42,6 +42,12 @@ class Game : public Engine::GameBase {
 
     void drawEntity(Engine::EntityId id, Vector3 offset = Vector3Zero());
 
+    void drawTexture(Engine::EntityId id, Vector3 offset = Vector3Zero());
+
+    void updateTextures();
+
+    void addAnimatedSprite(const std::string &name, Vector3 position);
+
     int addLight(Vector3 position = Vector3Zero(), Color color = WHITE, float intensity = .2);
 
     void updateLights();
@@ -92,6 +98,7 @@ class Game : public Engine::GameBase {
     EntityMap _gameEntities;
     std::vector<Engine::EntityId> _bullets;
     std::unordered_map<int, Engine::EntityId> _enemies;
+    std::vector<Engine::EntityId> _animatedSprites;
     int _playerId;
     Engine::EntityId _camera;
     std::string _currentMusic;
@@ -101,6 +108,7 @@ class Game : public Engine::GameBase {
      */
     ObjectArchetype *_pObjectArchetype;
     CameraArchetype *_pCameraArchetype;
+    SpriteArchetype *_pSpriteArchetype;
     UIArchetype *_pUIArchetype;
 
     /**

@@ -179,7 +179,7 @@
       "volume": 2
     }
   ],
-  "sprites": [
+  "textures": [
     {
       "columns": 8,
       "name": "explosion",

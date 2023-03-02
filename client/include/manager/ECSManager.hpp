@@ -14,11 +14,13 @@
 #include "components/CHandler.hpp"
 #include "components/CHealth.hpp"
 #include "components/CText.hpp"
+#include "components/CAnimatedSprite.hpp"
 
 #include "engine/manager/ECSManagerBase.hpp"
 
 typedef std::shared_ptr<Engine::CModel> pModel;
 typedef std::shared_ptr<Engine::CAnimation> pAnimation;
+typedef std::shared_ptr<Engine::CTexture> pTexture;
 
 /**
  * The archetype of an object.
@@ -27,6 +29,13 @@ typedef std::shared_ptr<Engine::CAnimation> pAnimation;
 typedef Engine::Archetype<Engine::CObject, pModel, Engine::CPosition, Engine::CRotation, Engine::CScale, pAnimation, Engine::CVelocity, CHealth,
                           CCollider>
     ObjectArchetype;
+
+/**
+ * The archetype of a Sprite.
+ * Sprite are entities used for textures.
+ */
+
+typedef Engine::Archetype<Engine::CPosition, Engine::CObject, CAnimatedSprite, pTexture> SpriteArchetype;
 
 /**
  * The archetype of a camera.

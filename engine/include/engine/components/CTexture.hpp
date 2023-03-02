@@ -31,7 +31,27 @@ namespace Engine {
          */
         [[nodiscard]] std::shared_ptr<Texture2D> getTexture() const { return _texture; }
 
+        /**
+         * @brief Set rows and columns
+         * @param rows
+         * @param columns
+         */
+        void setRowsAndColumns(int rows, int columns);
+
+        /**
+         * @brief Get the rows
+         * @return int
+         */
+        [[nodiscard]] int getRows() const;
+
+        /**
+         * @brief Get the columns
+         * @return int
+         */
+        [[nodiscard]] int getColumns() const;
       private:
         std::shared_ptr<Texture2D> _texture;
+        int _rows;
+        int _columns;
     };
 }

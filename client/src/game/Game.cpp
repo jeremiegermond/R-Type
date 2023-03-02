@@ -7,7 +7,7 @@
 
 #include "game/Game.hpp"
 
-Game::Game() : _ecsManager(nullptr), _udpClient(nullptr), _pObjectArchetype(nullptr), _gameState(GameState::MENU), _playerId(1) {}
+Game::Game() : _ecsManager(nullptr), _udpClient(nullptr), _pObjectArchetype(nullptr), _pSpriteArchetype(nullptr), _gameState(GameState::MENU), _playerId(1) {}
 
 void Game::initGame() {
     BeginDrawing();
@@ -18,6 +18,7 @@ void Game::initGame() {
     _ecsManager->init();
     _pCameraArchetype = _ecsManager->getArchetype<CameraArchetype>("Camera");
     _pObjectArchetype = _ecsManager->getArchetype<ObjectArchetype>("Object");
+    _pSpriteArchetype = _ecsManager->getArchetype<SpriteArchetype>("Sprite");
     _pUIArchetype = _ecsManager->getArchetype<UIArchetype>("UI");
     _camera = _pCameraArchetype->createEntity(CCamera());
     auto [obj, camera] = _pCameraArchetype->getComponent<Engine::CObject, CCamera>(_camera);
@@ -88,6 +89,9 @@ void Game::drawGame() {
     for (auto &bullet : _bullets) {
         drawEntity(bullet);
     }
+    for (auto &animatedSprite : _animatedSprites) {
+        drawTexture(animatedSprite);
+    }
     EndMode3D();
 }
 
@@ -146,6 +150,7 @@ void Game::updateGameplay() {
     updateNetwork();
     movePlayer();
     updatePlayer();
+    updateTextures();
     for (auto it = _enemies.begin(); it != _enemies.end();) {
         updateEntity(it->second);
         auto [health, position] = _pObjectArchetype->getComponent<CHealth, Engine::CPosition>(it->second);
