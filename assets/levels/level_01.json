@@ -46,5 +46,16 @@
         0
       ]
     }
+  ],
+  "ui": [
+    {
+      "name": "disconnect_button",
+      "type": "button",
+      "text": "Disconnect",
+      "color":  [255, 50, 50, 200],
+      "position": [15, 3.5],
+      "size": [13, 4],
+      "fontSize": 40
+    }
   ]
 }

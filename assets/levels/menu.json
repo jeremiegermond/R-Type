@@ -23,7 +23,6 @@
       "size": [20, 8],
       "color": [0, 0, 128, 255],
       "fontSize": 20,
-      "placeholder": "Enter your name here",
       "text": "",
       "tags": ["selected"],
       "max_length": 20

@@ -7,7 +7,7 @@
 
 #include "game/Game.hpp"
 
-Game::Game() : _ecsManager(nullptr), _udpClient(nullptr), _pObjectArchetype(nullptr), _gameState(GameState::MENU) {}
+Game::Game() : _ecsManager(nullptr), _udpClient(nullptr), _pObjectArchetype(nullptr), _gameState(GameState::MENU), _playerId(1) {}
 
 void Game::initGame() {
     BeginDrawing();
@@ -163,16 +163,19 @@ void Game::updateGameplay() {
         _lights[0].setPosition(playerPosition);
     }
     updateLights();
-    if (IsKeyPressed(KEY_F1)) {
-        _gameEntities.clear();
-        _bullets.clear();
-        _enemies.clear();
-        _uiElements.clear();
-        loadEntities("assets/levels/menu.json");
-        setGameState(GameState::MENU);
-        playMusic("02-Main_Menu");
-        if (_udpClient) {
-            _udpClient->stop();
+    if (_uiElements.contains("disconnect_button")) {
+        auto cObject = _pUIArchetype->getComponent<Engine::CObject>(_uiElements["disconnect_button"]);
+        if (cObject.hasTag("selected")) {
+            _gameEntities.clear();
+            _bullets.clear();
+            _enemies.clear();
+            _uiElements.clear();
+            loadEntities("assets/levels/menu.json");
+            setGameState(GameState::MENU);
+            playMusic("02-Main_Menu");
+            if (_udpClient) {
+                _udpClient->stop();
+            }
         }
     }
 }
