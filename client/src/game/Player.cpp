@@ -60,4 +60,3 @@ void Game::updatePlayer() {
     }
     shotTimer += GetFrameTime();
 }
-
