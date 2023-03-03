@@ -26,6 +26,21 @@ void Game::loadEntities(const std::string &path) {
     }
 }
 
+void Game::loadAssetsGame(const json &assets) {
+    if (assets.contains("emitters")) {
+        for (auto &emitter : assets["emitters"]) {
+            if (!emitter.contains("name")) {
+                TraceLog(LOG_WARNING, "Failed to load emitter: missing name");
+                TraceLog(LOG_WARNING, "Skipping emitter: %s", emitter.dump().c_str());
+                continue;
+            }
+            std::string name = emitter["name"];
+            auto settings = loadParticleEmitterSettings(emitter);
+            _emitters[name] = CParticleEmitter(settings);
+        }
+    }
+}
+
 void Game::loadObject(json &object) {
     if (!object.contains("name")) {
         TraceLog(LOG_WARNING, "Failed to load object: missing name");
@@ -84,6 +99,22 @@ void Game::loadObject(json &object) {
         cVelocity.setVelocity(velocity);
         cVelocity.setActive(true);
     }
+    if (object.contains("emitterBase")) {
+        auto emitterName = object["emitterBase"];
+        if (!_emitters.contains(emitterName)) {
+            TraceLog(LOG_WARNING, "Failed to load emitter: missing name");
+            TraceLog(LOG_WARNING, "Skipping emitter: %s", object.dump().c_str());
+            return;
+        }
+        auto emitter = CParticleEmitter(_emitters[emitterName]);
+        if (object.contains("emitterSettings")) {
+            auto settings = loadParticleEmitterSettings(object["emitterSettings"], emitter.getSettings());
+            emitter.setSettings(settings);
+        }
+        emitter.setActive(true);
+        _pObjectArchetype->addComponent(entity, CParticleEmitter(emitter));
+        cObject.setTag("emitter");
+    }
 }
 
 void Game::loadUI(json &ui) {
@@ -117,7 +148,6 @@ void Game::loadUI(json &ui) {
             }
         }
     }
-
     if (ui.contains("text")) {
         auto text = ui["text"];
         cText.setText(text);
@@ -144,4 +174,54 @@ void Game::loadUI(json &ui) {
             cObject.setTag(tag);
         }
     }
+}
+
+ParticleEmitterSettings Game::loadParticleEmitterSettings(const json &emitter, ParticleEmitterSettings settings) {
+    if (emitter.contains("offset") && emitter["offset"].size() == 3) {
+        settings.offset = Vector3{emitter["offset"][0], emitter["offset"][1], emitter["offset"][2]};
+    }
+    if (emitter.contains("velocity") && emitter["velocity"].size() == 3) {
+        settings.velocity = Vector3{emitter["velocity"][0], emitter["velocity"][1], emitter["velocity"][2]};
+    }
+    if (emitter.contains("acceleration") && emitter["acceleration"].size() == 3) {
+        settings.acceleration = Vector3{emitter["acceleration"][0], emitter["acceleration"][1], emitter["acceleration"][2]};
+    }
+    if (emitter.contains("velocityVariation") && emitter["velocityVariation"].size() == 3) {
+        settings.velocityVariation = Vector3{emitter["velocityVariation"][0], emitter["velocityVariation"][1], emitter["velocityVariation"][2]};
+    }
+    if (emitter.contains("accelerationVariation") && emitter["accelerationVariation"].size() == 3) {
+        settings.accelerationVariation =
+            Vector3{emitter["accelerationVariation"][0], emitter["accelerationVariation"][1], emitter["accelerationVariation"][2]};
+    }
+    if (emitter.contains("offsetVariation") && emitter["offsetVariation"].size() == 3) {
+        settings.offsetVariation = Vector3{emitter["offsetVariation"][0], emitter["offsetVariation"][1], emitter["offsetVariation"][2]};
+    }
+    if (emitter.contains("spawnRate")) {
+        settings.spawnRate = emitter["spawnRate"];
+    }
+    if (emitter.contains("lifeTime")) {
+        settings.lifeTime = emitter["lifeTime"];
+    }
+    if (emitter.contains("lifeTimeVariation")) {
+        settings.lifeTimeVariation = emitter["lifeTimeVariation"];
+    }
+    if (emitter.contains("size")) {
+        settings.size = emitter["size"];
+    }
+    if (emitter.contains("sizeVariation")) {
+        settings.sizeVariation = emitter["sizeVariation"];
+    }
+    if (emitter.contains("color") && emitter["color"].size() == 4) {
+        settings.color = Color{emitter["color"][0], emitter["color"][1], emitter["color"][2], emitter["color"][3]};
+    }
+    if (emitter.contains("endColor") && emitter["endColor"].size() == 4) {
+        settings.endColor = Color{emitter["endColor"][0], emitter["endColor"][1], emitter["endColor"][2], emitter["endColor"][3]};
+    }
+    if (emitter.contains("maxParticles")) {
+        settings.maxParticles = emitter["maxParticles"];
+    }
+    if (emitter.contains("spawnAmount")) {
+        settings.spawnAmount = emitter["spawnAmount"];
+    }
+    return settings;
 }
