@@ -43,7 +43,7 @@ void Game::updateNetwork() {
             auto name = "R9A" + id;
             auto [shipPosition, ship] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(_gameEntities[name]);
             auto bulletPosition = shipPosition.getPosition();
-            bulletPosition.x += 1;
+            bulletPosition.x += .4;
             auto bulletVelocity = Vector3Zero();
             bulletVelocity.x = 5;
             addBullet(bulletPosition, bulletVelocity);

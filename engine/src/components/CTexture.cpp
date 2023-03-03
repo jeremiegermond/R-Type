@@ -36,4 +36,6 @@ namespace Engine {
     }
     int CTexture::getRows() const { return _rows; }
     int CTexture::getColumns() const { return _columns; }
+    void CTexture::setScale(const Vector2 &scale) { _scale = scale; }
+    Vector2 CTexture::getScale() const { return _scale; }
 }

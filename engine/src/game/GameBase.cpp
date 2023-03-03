@@ -123,6 +123,9 @@ namespace Engine {
             if (texture.contains("rows") && texture.contains("columns")) {
                 newTexture->setRowsAndColumns(texture["rows"], texture["columns"]);
             }
+            if (texture.contains("scale") && texture["scale"].size() == 2) {
+                newTexture->setScale({texture["scale"][0], texture["scale"][1]});
+            }
             _textures[name] = newTexture;
         }
     }

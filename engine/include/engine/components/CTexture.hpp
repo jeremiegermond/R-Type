@@ -49,9 +49,23 @@ namespace Engine {
          * @return int
          */
         [[nodiscard]] int getColumns() const;
+
+        /**
+         * @brief Set the scale of the texture
+         * @param Vector2 scale
+         */
+        void setScale(const Vector2 &scale);
+
+        /**
+         * @brief Get the scale of the texture
+         * @return Vector2 scale
+         */
+        [[nodiscard]] Vector2 getScale() const;
+
       private:
         std::shared_ptr<Texture2D> _texture;
         int _rows;
         int _columns;
+        Vector2 _scale;
     };
 }

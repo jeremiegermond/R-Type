@@ -47,9 +47,8 @@ void Game::drawEntity(Engine::EntityId id, Vector3 offset) {
 }
 
 void Game::drawTexture(Engine::EntityId id, Vector3 offset) {
-    auto [cObject, cTexture, cAnimatedSprite, cPosition] = _pSpriteArchetype->getComponent<Engine::CObject, pTexture, CAnimatedSprite, Engine::CPosition>(id);
-    std::cout << "drawTexture" << std::endl;
-    // check if the object is valid
+    auto [cObject, cTexture, cAnimatedSprite, cPosition] =
+        _pSpriteArchetype->getComponent<Engine::CObject, pTexture, CAnimatedSprite, Engine::CPosition>(id);
     if (cObject.isActive()) {
         // get the texture
         auto texture = cTexture->getTexture();
@@ -61,6 +60,7 @@ void Game::drawTexture(Engine::EntityId id, Vector3 offset) {
         auto rotation = cAnimatedSprite.getRotation();
         // get the position
         auto position = cPosition.getPosition();
+        position.z += 1;
         // get the camera
         auto camera = _pCameraArchetype->getComponent<CCamera>(_camera).getCamera();
         // draw the billboard pro
@@ -96,8 +96,9 @@ void Game::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
     _enemies[id] = enemy;
 }
 
-void Game::addAnimatedSprite(const std::string& name, Vector3 position) {
-    std::cout << "addAnimatedSprite" << " name: " << name << std::endl;
+void Game::addAnimatedSprite(const std::string &name, Vector3 position) {
+    std::cout << "addAnimatedSprite"
+              << " name: " << name << std::endl;
     if (!_textures.contains(name))
         return;
     std::cout << "addAnimatedSprite" << std::endl;
@@ -109,6 +110,7 @@ void Game::addAnimatedSprite(const std::string& name, Vector3 position) {
     cPosition.setPosition(position);
     auto texture = textureP->getTexture();
     cAnimatedSprite.setTextureSize({(float)texture->width, (float)texture->height}, textureP->getRows(), textureP->getColumns());
+    cAnimatedSprite.setScale(textureP->getScale());
     _animatedSprites.push_back(sprite);
 }
 
@@ -119,6 +121,7 @@ void Game::updateTextures() {
             it = _animatedSprites.erase(it);
         } else {
             cAnimatedSprite.update();
+            ++it;
         }
     }
 }

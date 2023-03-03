@@ -7,8 +7,8 @@
 
 #include "components/CAnimatedSprite.hpp"
 
-CAnimatedSprite::CAnimatedSprite() : _scale({1, 1}), _sourceRec({0, 0, 0, 0}), _rows(0),
-                                     _columns(0), _currentFrame(0), _enabled(true), _totalFrames(0), _width(0), _height(0) {}
+CAnimatedSprite::CAnimatedSprite()
+    : _scale({1, 1}), _sourceRec({0, 0, 0, 0}), _rows(0), _columns(0), _currentFrame(0), _enabled(true), _totalFrames(0), _width(0), _height(0) {}
 
 CAnimatedSprite::~CAnimatedSprite() = default;
 
@@ -22,32 +22,22 @@ void CAnimatedSprite::doUpdate() {
 }
 
 void CAnimatedSprite::setTextureSize(Vector2 size, int rows, int columns) {
-    setScale(size);
+    _width = size.x / columns;
+    _height = size.y / rows;
     _rows = rows;
     _columns = columns;
-    _sourceRec = {0, 0, _scale.x / (float) _columns, _scale.y / (float) _rows};
+    _sourceRec = {0, 0, float(_width), float(_height)};
+    _totalFrames = _rows * _columns;
 }
 
-Rectangle CAnimatedSprite::getSourceRec() const {
-    return _sourceRec;
-}
+Rectangle CAnimatedSprite::getSourceRec() const { return _sourceRec; }
 
-void CAnimatedSprite::setScale(Vector2 scale) {
-    _scale = scale;
-}
+void CAnimatedSprite::setScale(Vector2 scale) { _scale = scale; }
 
-Vector2 CAnimatedSprite::getScale() const {
-    return _scale;
-}
+Vector2 CAnimatedSprite::getScale() const { return _scale; }
 
-bool CAnimatedSprite::getEnabled() const {
-    return _enabled;
-}
+bool CAnimatedSprite::getEnabled() const { return _enabled; }
 
-void CAnimatedSprite::setRotation(float rotation) {
-    _rotation = rotation;
-}
+void CAnimatedSprite::setRotation(float rotation) { _rotation = rotation; }
 
-float CAnimatedSprite::getRotation() const {
-    return _rotation;
-}
+float CAnimatedSprite::getRotation() const { return _rotation; }
