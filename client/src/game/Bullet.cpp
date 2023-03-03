@@ -12,6 +12,12 @@ void Game::addBullet(Vector3 position, Vector3 velocity) {
                                                   Engine::CRotation(Vector3Zero()), CCollider());
     auto [cObject, cPosition, cVelocity, cCollider] =
         _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CVelocity, CCollider>(bullet);
+    if (_emitters.contains("bullet_trail")) {
+        auto emitter = CParticleEmitter(_emitters["bullet_trail"]);
+        emitter.setActive(true);
+        _pObjectArchetype->addComponent(bullet, CParticleEmitter(emitter));
+        cObject.setTag("emitter");
+    }
     cObject.setActive(true);
     cPosition.setPosition(position);
     cVelocity.setVelocity(velocity);

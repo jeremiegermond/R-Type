@@ -20,6 +20,11 @@ void Game::updateEntity(Engine::EntityId id) {
         auto animation = pAnimation->getAnimation();
         UpdateModelAnimation(pModel->getModel(), animation, pAnimation->getCurrentFrame());
     }
+    auto [cObject, cEmitter] = _pObjectArchetype->getComponent<Engine::CObject, CParticleEmitter>(id);
+    if (cObject.hasTag("emitter")) {
+        cEmitter.setPosition(cPosition.getPosition());
+        cEmitter.update();
+    }
 }
 
 void Game::drawEntity(Engine::EntityId id, Vector3 offset) {
@@ -33,6 +38,11 @@ void Game::drawEntity(Engine::EntityId id, Vector3 offset) {
     model.transform = MatrixRotateXYZ(rotation);
     auto cCollider = _pObjectArchetype->getComponent<CCollider>(id);
     DrawBoundingBox(cCollider.getBox(), RED);
+    auto cObject = _pObjectArchetype->getComponent<Engine::CObject>(id);
+    if (cObject.hasTag("emitter")) {
+        auto cEmitter = _pObjectArchetype->getComponent<CParticleEmitter>(id);
+        cEmitter.draw();
+    }
     DrawModel(model, Vector3Add(position, offset), scale, WHITE);
 }
 
@@ -64,6 +74,14 @@ void Game::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
                                                                          Engine::CObject(), Engine::CRotation({0, 3, 0}), CHealth(), CCollider());
     auto [cObject, cPosition, cVelocity, cHealth, cCollider] =
         _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CVelocity, CHealth, CCollider>(enemy);
+    if (!cObject.hasTag("emitter")) {
+        if (_emitters.contains("enemy_trail")) {
+            auto emitter = CParticleEmitter(_emitters["enemy_trail"]);
+            emitter.setActive(true);
+            _pObjectArchetype->addComponent(enemy, CParticleEmitter(emitter));
+            cObject.setTag("emitter");
+        }
+    }
     cObject.setActive(true);
     cPosition.setPosition(position);
     cVelocity.setVelocity(velocity);

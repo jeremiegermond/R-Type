@@ -13,6 +13,7 @@
 #include "components/CColor.hpp"
 #include "components/CHandler.hpp"
 #include "components/CHealth.hpp"
+#include "components/CParticleEmitter.hpp"
 #include "components/CText.hpp"
 #include "components/CAnimatedSprite.hpp"
 
@@ -27,7 +28,7 @@ typedef std::shared_ptr<Engine::CTexture> pTexture;
  * Objects are entities used for enemies, players, bullets, etc.
  */
 typedef Engine::Archetype<Engine::CObject, pModel, Engine::CPosition, Engine::CRotation, Engine::CScale, pAnimation, Engine::CVelocity, CHealth,
-                          CCollider>
+                          CCollider, CParticleEmitter>
     ObjectArchetype;
 
 /**

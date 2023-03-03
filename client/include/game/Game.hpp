@@ -72,6 +72,9 @@ class Game : public Engine::GameBase {
 
     void drawUI();
 
+    void loadAssetsGame(const json &assets) override;
+
+    ParticleEmitterSettings loadParticleEmitterSettings(const json &emitter, ParticleEmitterSettings settings = {});
 
   private:
     /**
@@ -122,4 +125,9 @@ class Game : public Engine::GameBase {
      */
     EntityMap _uiElements;
     std::string _playerName;
+
+    /**
+     * Emitters used by the game
+     */
+    std::unordered_map<std::string, CParticleEmitter> _emitters;
 };
