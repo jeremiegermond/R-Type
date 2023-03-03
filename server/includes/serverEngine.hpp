@@ -1,7 +1,8 @@
 #pragma once
 #include "uiElements.hpp"
 #include "network.hpp"
-/*#include "TcpServer.hpp"*/
+#include "MainServer.hpp"
+#include "room.hpp"
 
 /*
     TODO :
@@ -10,93 +11,22 @@
         - close room from dashboard
         - display log on dashboard
         - catch errors
+        - moove classes to files
 */
-
-class Room {
-    public:
-        Room(int port): server(port) {
-
-            _port = port;
-            _thread = std::thread([this](){
-                running = true;
-                server.start();
-                running = false;
-            });
-        };
-        ~Room() {
-            if (running) {
-                _thread.join();
-            }
-        };
-        bool isRunning() {
-            return running;
-        };
-
-        int get_port() {
-            return _port;
-        }
-
-        void displayLog() {
-            float y = 0;
-            auto logs = server.getLog();
-            for (auto &log : *logs) {
-                //DrawTextEx(font, log.second.c_str(), Vector2{10, y}, 20, 1, _log_colors[log.first]);
-                if (y > 380) {
-                    logs->erase(logs->begin());
-                } else
-                    y += 20;
-            }
-            logs->shrink_to_fit();
-        };
-
-        void displayOverlay() {
-            interface *overlay = server.getOverlay();
-            overlay->update();
-            overlay->draw();
-        };
-
-        void displayPlayer() {
-            for (auto &client : server.getClients()) {
-                auto player = client.second;
-                auto position = player.getPosition();
-                DrawText("p", (position.x + 10) * 40, (-position.y + 5) * 40, 20, GREEN);
-            }
-        };
-
-        void displayEnemies() {
-            for (auto &enemy : server.getEnemies()) {
-                auto position = enemy.getPosition();
-                DrawText("x", (position.x + 10) * 40, (-position.y + 5) * 40, 20, RED);
-            }
-        };
-
-        void displayBullets() {
-            for (auto &bullet : server.getBullets()) {
-                auto position = bullet.getPosition();
-                DrawText("o", (position.x + 10) * 40, (-position.y + 5) * 40, 20, YELLOW);
-            }
-        };
-
-        bool operator==(int port) {
-            return _port == port;
-        }
-    private:
-        int _port;
-        bool running;
-        std::thread _thread;
-        UdpServer server;
-           // Font font;//to moove
-};
 
 class server_engine {
     public:
         server_engine() {
-            exit(0);
             InitWindow(800, 450, "R-Type Server");
             //SetTraceLogCallback(customLog);
             SetTargetFPS(60);
             font = LoadFontEx("./assets/fonts/Poppins-Medium.ttf", 128, 0, 250);
             init_dashboard();
+            _server = std::thread([this](){
+                MainServer _server(4242);
+                _server.start(_rooms);
+            });
+            _server.detach();
         };
         ~server_engine() {
             running = false;
@@ -183,6 +113,6 @@ class server_engine {
         interface _interface;
         interface _overlay;
         std::vector<Room *> _rooms;
-        //TcpServer _server;
+        std::thread _server;
         Room *_current_room = nullptr;
 };
