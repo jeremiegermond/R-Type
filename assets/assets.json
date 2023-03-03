@@ -274,6 +274,53 @@
           230,
           0
         ]
+    },
+    {
+      "name": "enemy_trail",
+      "offset": [
+        0.5,
+        0,
+        0
+      ],
+      "velocity": [
+          2,
+          0,
+          0
+      ],
+      "acceleration": [
+          2,
+          0,
+          0
+      ],
+      "velocityVariation": [
+          0,
+          0.5,
+          0.5
+      ],
+      "accelerationVariation": [
+          1,
+          0,
+          0
+      ],
+      "spawnRate": 0.05,
+      "lifeTime": 0.5,
+      "lifeTimeVariation": 0.2,
+      "size": 0.02,
+      "sizeVariation": 0.05,
+      "maxParticles": 100,
+      "spawnAmount": 5,
+      "color": [
+        255,
+        0,
+        0,
+        255
+      ],
+      "endColor": [
+        255,
+        0,
+        0,
+        0
+      ]
     }
   ]
 }
