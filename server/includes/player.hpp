@@ -16,9 +16,10 @@ class Player {
     int _hp;
     bool _isAlive;
     int _id;
+    std::string _name;
 
   public:
-    Player() : _position({0, 0}), _hp(100), _isAlive(true), _id(0) { _bounds = GetBoundingBoxAroundPoint(_position, 0.5); }
+    Player() : _position({0, 0}), _hp(100), _isAlive(true), _id(0), _name("") { _bounds = GetBoundingBoxAroundPoint(_position, 0.5); }
     explicit Player(int id) : Player() { _id = id; }
     Vector2 getPosition();
     int getHp() const;
@@ -29,4 +30,7 @@ class Player {
     void setHp(int hp);
     void setAlive(bool alive);
     bool move(const std::string &direction, const Vector2 &position);
+
+    void setName(const std::string &name);
+    std::string getName();
 };

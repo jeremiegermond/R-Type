@@ -74,7 +74,16 @@ class Game : public Engine::GameBase {
 
     void loadAssetsGame(const json &assets) override;
 
-    ParticleEmitterSettings loadParticleEmitterSettings(const json &emitter, ParticleEmitterSettings settings = {});
+    static ParticleEmitterSettings loadParticleEmitterSettings(const json &emitter, ParticleEmitterSettings settings = {});
+
+    static void drawLetter3D(char letter, Vector3 position, float fontSize, Color tint = WHITE, Font font = GetFontDefault());
+
+    static void drawText3DPro(const std::string &text, Vector3 position, float fontSize, float fontSpacing, Color tint = WHITE,
+                              Font font = GetFontDefault());
+
+    static void drawText3D(const std::string &text, Vector3 position, float fontSize, Color tint = WHITE);
+
+    static Vector3 measureText3D(const std::string &text, float fontSize, Font font = GetFontDefault());
 
   private:
     /**
@@ -109,10 +118,10 @@ class Game : public Engine::GameBase {
     /**
      * Various Archetypes used by the game to create and access entities
      */
-    ObjectArchetype *_pObjectArchetype;
-    CameraArchetype *_pCameraArchetype;
-    SpriteArchetype *_pSpriteArchetype;
-    UIArchetype *_pUIArchetype;
+    ObjectArchetype _pObjectArchetype;
+    CameraArchetype _pCameraArchetype;
+    SpriteArchetype _pSpriteArchetype;
+    UIArchetype _pUIArchetype;
 
     /**
      * The list of lights in the game

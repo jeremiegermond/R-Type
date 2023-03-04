@@ -27,7 +27,7 @@ class Enemy {
     void update(float dt) {
         auto velocity = Vector2Scale(_velocity, dt);
         _position = Vector2Add(_position, velocity);
-        _boundingBox = GetBoundingBoxAroundPoint(_position, 0.65);
+        _boundingBox = GetBoundingBoxAroundPoint(_position, 0.5);
     }
 
     int getId() const { return _id; }

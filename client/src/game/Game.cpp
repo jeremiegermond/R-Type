@@ -7,21 +7,12 @@
 
 #include "game/Game.hpp"
 
-Game::Game() : _ecsManager(nullptr), _udpClient(nullptr), _pObjectArchetype(nullptr), _pSpriteArchetype(nullptr), _gameState(GameState::MENU), _playerId(1) {}
+Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(GameState::MENU), _playerId(1) {}
 
 void Game::initGame() {
-    BeginDrawing();
-    ClearBackground(BLACK);
-    EndDrawing();
     rlDisableBackfaceCulling();
-    _ecsManager = std::make_shared<ECSManager>();
-    _ecsManager->init();
-    _pCameraArchetype = _ecsManager->getArchetype<CameraArchetype>("Camera");
-    _pObjectArchetype = _ecsManager->getArchetype<ObjectArchetype>("Object");
-    _pSpriteArchetype = _ecsManager->getArchetype<SpriteArchetype>("Sprite");
-    _pUIArchetype = _ecsManager->getArchetype<UIArchetype>("UI");
-    _camera = _pCameraArchetype->createEntity(CCamera());
-    auto [obj, camera] = _pCameraArchetype->getComponent<Engine::CObject, CCamera>(_camera);
+    _camera = _pCameraArchetype.createEntity(CCamera());
+    auto [obj, camera] = _pCameraArchetype.getComponent<Engine::CObject, CCamera>(_camera);
     camera.setCamera(Camera3D{0});
     camera.setPosition({0, 0, 30});
     camera.setTarget(Vector3Zero());
@@ -55,18 +46,15 @@ void Game::updateGame() {
     drawUI();
 }
 
-void Game::destroyGame() {
-    _ecsManager->destroy();
-    _ecsManager = nullptr;
-}
+void Game::destroyGame() {}
 
 void Game::initSocket(const std::string &ip, unsigned short port) { _udpClient = std::make_shared<UdpClient>(ip, port); }
 
 void Game::drawGame() {
-    BeginMode3D(_pCameraArchetype->getComponent<CCamera>(_camera).getCamera());
+    BeginMode3D(_pCameraArchetype.getComponent<CCamera>(_camera).getCamera());
     if (_gameEntities.contains("corridor")) {
         auto corridor = _gameEntities["corridor"];
-        auto [cPosition, cObject] = _pObjectArchetype->getComponent<Engine::CPosition, Engine::CObject>(corridor);
+        auto [cPosition, cObject] = _pObjectArchetype.getComponent<Engine::CPosition, Engine::CObject>(corridor);
         auto position = cPosition.getPosition();
         if (position.x < -7.22) {
             cPosition.setPosition({0, position.y, position.z});
@@ -77,7 +65,7 @@ void Game::drawGame() {
         drawEntity(corridor, {7.22 * 2, 0, 0});
     }
     for (auto &entity : _gameEntities) {
-        auto object = _pObjectArchetype->getComponent<Engine::CObject>(entity.second);
+        auto object = _pObjectArchetype.getComponent<Engine::CObject>(entity.second);
         if (!object.isActive())
             continue;
         updateEntity(entity.second);
@@ -99,8 +87,8 @@ void Game::setGameState(GameState state) { _gameState = state; }
 
 void Game::updateMenu() {
     if (_uiElements.contains("player_input") && _uiElements.contains("play_button")) {
-        auto [cObject, cText] = _pUIArchetype->getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
-        auto [buttonObject, buttonColor] = _pUIArchetype->getComponent<Engine::CObject, CColor>(_uiElements["play_button"]);
+        auto [cObject, cText] = _pUIArchetype.getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
+        auto [buttonObject, buttonColor] = _pUIArchetype.getComponent<Engine::CObject, CColor>(_uiElements["play_button"]);
         if (cObject.hasTag("selected")) {
             if (IsKeyPressed(KEY_BACKSPACE)) {
                 if (IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) {
@@ -120,7 +108,10 @@ void Game::updateMenu() {
                     } else {
                         key = tolower(key);
                     }
-                    cText.setText(cText.getText() + static_cast<char>(key));
+                    std::string str;
+                    str = char(key);
+                    if ((!cText.getText().empty() && Engine::Regex::isMatch(str, " ")) || Engine::Regex::isMatch(str, "[a-zA-Z0-9]+"))
+                        cText.setText(cText.getText() + str);
                 }
             }
         }
@@ -136,11 +127,12 @@ void Game::updateMenu() {
             _uiElements.clear();
             setGameState(GameState::GAME);
             loadEntities("assets/levels/level_01.json");
-            _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
-            _pObjectArchetype->getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
+            _pObjectArchetype.getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
+            _pObjectArchetype.getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
             playMusic("01-Taking_off_again");
             if (_udpClient) {
                 _udpClient->start();
+                _udpClient->send("name:" + _playerName);
             }
         }
     }
@@ -153,9 +145,8 @@ void Game::updateGameplay() {
     updateTextures();
     for (auto it = _enemies.begin(); it != _enemies.end();) {
         updateEntity(it->second);
-        auto [health, position] = _pObjectArchetype->getComponent<CHealth, Engine::CPosition>(it->second);
+        auto [health, position] = _pObjectArchetype.getComponent<CHealth, Engine::CPosition>(it->second);
         if (health.getHealth() <= 0 || position.getPosition().x < -10) {
-            std::cout << "Enemy " << it->first << " died" << std::endl;
             it = _enemies.erase(it);
         } else {
             ++it;
@@ -163,13 +154,13 @@ void Game::updateGameplay() {
     }
     updateBullets();
     if (_shaders.contains("lighting")) {
-        auto playerPosition = _pObjectArchetype->getComponent<Engine::CPosition>(_gameEntities["R9A" + std::to_string(_playerId)]).getPosition();
+        auto playerPosition = _pObjectArchetype.getComponent<Engine::CPosition>(_gameEntities["R9A" + std::to_string(_playerId)]).getPosition();
         playerPosition = Vector3Add(playerPosition, {0, 2, 10});
         _lights[0].setPosition(playerPosition);
     }
     updateLights();
     if (_uiElements.contains("disconnect_button")) {
-        auto cObject = _pUIArchetype->getComponent<Engine::CObject>(_uiElements["disconnect_button"]);
+        auto cObject = _pUIArchetype.getComponent<Engine::CObject>(_uiElements["disconnect_button"]);
         if (cObject.hasTag("selected")) {
             _gameEntities.clear();
             _bullets.clear();
@@ -177,7 +168,7 @@ void Game::updateGameplay() {
             _uiElements.clear();
             loadEntities("assets/levels/menu.json");
             if (_uiElements.contains("player_input")) {
-                auto [pInput, cText] = _pUIArchetype->getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
+                auto [pInput, cText] = _pUIArchetype.getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
                 cText.setText(_playerName);
             }
             setGameState(GameState::MENU);
@@ -193,11 +184,11 @@ void Game::drawUI() {
     DrawFPS(10, 10);
     bool isMouseOverUI = false;
     for (auto &ui : _uiElements) {
-        auto [cPosition, cObject, cText] = _pUIArchetype->getComponent<Engine::CPosition, Engine::CObject, CText>(ui.second);
+        auto [cPosition, cObject, cText] = _pUIArchetype.getComponent<Engine::CPosition, Engine::CObject, CText>(ui.second);
         auto screenSize = getWindowSize();
         auto position = Vector3Multiply(Vector3Scale(cPosition.getPosition(), .01), {screenSize.x, screenSize.y, 1});
         if (cObject.hasTag("input") || cObject.hasTag("button")) {
-            auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(ui.second);
+            auto [cBox, cColor] = _pUIArchetype.getComponent<CBox, CColor>(ui.second);
             auto box = cBox.getBox();
             auto color = cColor.getColor();
             box.width *= .01f * screenSize.x;

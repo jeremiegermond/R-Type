@@ -30,6 +30,6 @@ void Game::updateLights() {
             ++it;
         }
     }
-    auto position = _pCameraArchetype->getComponent<CCamera>(_camera).getCamera().position;
+    auto position = _pCameraArchetype.getComponent<CCamera>(_camera).getCamera().position;
     SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], &position, SHADER_UNIFORM_VEC3);
 }

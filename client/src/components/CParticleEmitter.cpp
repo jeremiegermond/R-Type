@@ -7,7 +7,7 @@
 
 #include "components/CParticleEmitter.hpp"
 
-CParticleEmitter::CParticleEmitter() : _settings({}), _spawnTimer(0) { _generator.seed(std::random_device()()); }
+CParticleEmitter::CParticleEmitter() : _settings({0}), _spawnTimer(0) { _generator.seed(std::random_device()()); }
 
 CParticleEmitter::CParticleEmitter(const ParticleEmitterSettings &settings) : CParticleEmitter() { setSettings(settings); }
 
@@ -24,11 +24,12 @@ void CParticleEmitter::doUpdate() {
                 addParticle();
         }
     }
+    auto frameTime = GetFrameTime();
     for (auto it = _particles.begin(); it != _particles.end();) {
         if (it->lifeTimeLeft <= 0) {
             it = _particles.erase(it);
         } else {
-            updateParticle(*it);
+            updateParticle(frameTime, *it);
             it++;
         }
     }
@@ -40,8 +41,7 @@ void CParticleEmitter::draw() {
     }
 }
 
-void CParticleEmitter::updateParticle(Particle &particle) {
-    auto frameTime = GetFrameTime();
+void CParticleEmitter::updateParticle(float frameTime, Particle &particle) {
     particle.lifeTimeLeft -= frameTime;
     if (particle.lifeTimeLeft < 0)
         particle.lifeTimeLeft = 0;
