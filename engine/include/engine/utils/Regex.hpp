@@ -26,8 +26,8 @@ namespace Engine {
          *
          * @return A boolean value.
          */
-        static bool isMatch(const std::string &str, const std::string &patern) {
-            std::regex reg(patern);
+        static bool isMatch(const std::string &str, const std::string &pattern) {
+            std::regex reg(pattern);
             return std::regex_match(str, reg);
         }
 

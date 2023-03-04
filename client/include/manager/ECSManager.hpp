@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "components/CAnimatedSprite.hpp"
 #include "components/CBox.hpp"
 #include "components/CCamera.hpp"
 #include "components/CCollider.hpp"
@@ -15,7 +16,6 @@
 #include "components/CHealth.hpp"
 #include "components/CParticleEmitter.hpp"
 #include "components/CText.hpp"
-#include "components/CAnimatedSprite.hpp"
 
 #include "engine/manager/ECSManagerBase.hpp"
 
@@ -28,7 +28,7 @@ typedef std::shared_ptr<Engine::CTexture> pTexture;
  * Objects are entities used for enemies, players, bullets, etc.
  */
 typedef Engine::Archetype<Engine::CObject, pModel, Engine::CPosition, Engine::CRotation, Engine::CScale, pAnimation, Engine::CVelocity, CHealth,
-                          CCollider, CParticleEmitter>
+                          CCollider, CParticleEmitter, CText>
     ObjectArchetype;
 
 /**

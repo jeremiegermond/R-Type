@@ -48,18 +48,18 @@ void Game::loadObject(json &object) {
         return;
     }
     std::string name = object["name"];
-    auto entity = _pObjectArchetype->createEntity(Engine::CScale(1), Engine::CVelocity(Vector3Zero()), Engine::CObject(),
-                                                  Engine::CPosition(Vector3Zero()), Engine::CRotation(Vector3Zero()), CCollider());
+    auto entity = _pObjectArchetype.createEntity(Engine::CScale(1), Engine::CVelocity(Vector3Zero()), Engine::CObject(),
+                                                 Engine::CPosition(Vector3Zero()), Engine::CRotation(Vector3Zero()), CCollider());
     _gameEntities[name] = entity;
     auto [cObject, cPosition, cScale, cVelocity, cRotation, cCollider] =
-        _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation, CCollider>(entity);
+        _pObjectArchetype.getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation, CCollider>(entity);
     cCollider.setActive(true);
     cCollider.setSize(1);
     cRotation.setActive(true);
     if (object.contains("model")) {
         auto model = object["model"];
         if (_models.contains(model)) {
-            _pObjectArchetype->addComponent(entity, pModel(_models[model]));
+            _pObjectArchetype.addComponent(entity, pModel(_models[model]));
             if (_shaders.contains("lighting"))
                 _models[model]->setModelShader(_shaders["lighting"]->getShader());
         }
@@ -68,6 +68,13 @@ void Game::loadObject(json &object) {
         auto tags = object["tags"];
         for (auto &tag : tags) {
             cObject.setTag(tag);
+        }
+        if (cObject.hasTag("player")) {
+            CText cText;
+            cText.setFontSize(4);
+            cText.setOffset({0, 1, 0});
+            _pObjectArchetype.addComponent(entity, CText(cText));
+            cObject.setTag("named");
         }
     }
     if (object.contains("position") && object["position"].size() == 3) {
@@ -90,7 +97,7 @@ void Game::loadObject(json &object) {
         auto animation = object["animation"];
         if (_animations.contains(animation)) {
             _animations[animation]->setActive(true);
-            _pObjectArchetype->addComponent(entity, pAnimation(_animations[animation]));
+            _pObjectArchetype.addComponent(entity, pAnimation(_animations[animation]));
         }
     }
     if (object.contains("velocity") && object["velocity"].size() == 3) {
@@ -112,7 +119,7 @@ void Game::loadObject(json &object) {
             emitter.setSettings(settings);
         }
         emitter.setActive(true);
-        _pObjectArchetype->addComponent(entity, CParticleEmitter(emitter));
+        _pObjectArchetype.addComponent(entity, CParticleEmitter(emitter));
         cObject.setTag("emitter");
     }
 }
@@ -125,17 +132,17 @@ void Game::loadUI(json &ui) {
     }
     std::string name = ui["name"];
 
-    auto entity = _pUIArchetype->createEntity(Engine::CObject(), Engine::CScale(1), Engine::CPosition(Vector3Zero()), CText());
+    auto entity = _pUIArchetype.createEntity(Engine::CObject(), Engine::CScale(1), Engine::CPosition(Vector3Zero()), CText());
     _uiElements[name] = entity;
-    auto [cObject, cPosition, cScale, cText] = _pUIArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, CText>(entity);
+    auto [cObject, cPosition, cScale, cText] = _pUIArchetype.getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, CText>(entity);
     if (ui.contains("type")) {
         auto type = ui["type"];
         cObject.setTag(type);
         if (type == "button" || type == "input") {
             cObject.setTag("text");
-            _pUIArchetype->addComponent(entity, CBox());
-            _pUIArchetype->addComponent(entity, CColor());
-            auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(entity);
+            _pUIArchetype.addComponent(entity, CBox());
+            _pUIArchetype.addComponent(entity, CColor());
+            auto [cBox, cColor] = _pUIArchetype.getComponent<CBox, CColor>(entity);
             if (ui.contains("size") && ui["size"].size() == 2) {
                 auto sizeStr = ui["size"];
                 auto size = Vector2{sizeStr[0], sizeStr[1]};
@@ -165,7 +172,7 @@ void Game::loadUI(json &ui) {
     if (ui.contains("size") && ui["size"].size() == 2 && (cObject.hasTag("button") || cObject.hasTag("input"))) {
         auto sizeStr = ui["size"];
         auto size = Vector2{sizeStr[0], sizeStr[1]};
-        auto [cBox, cColor] = _pUIArchetype->getComponent<CBox, CColor>(entity);
+        auto [cBox, cColor] = _pUIArchetype.getComponent<CBox, CColor>(entity);
         cBox.setSize(size);
     }
     if (ui.contains("tags")) {

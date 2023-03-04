@@ -7,12 +7,16 @@
 
 #include "components/CText.hpp"
 
-CText::CText() = default;
+CText::CText() : _text(), _fontSize(20), _offset(Vector3Zero()) {}
 
 const std::string &CText::getText() const { return _text; }
 
 void CText::setText(const std::string &text) { _text = text; }
 
-int CText::getFontSize() const { return _fontSize; }
+float CText::getFontSize() const { return _fontSize; }
 
-void CText::setFontSize(int fontSize) { _fontSize = fontSize; }
+void CText::setFontSize(float fontSize) { _fontSize = fontSize; }
+
+void CText::setOffset(Vector3 offset) { _offset = offset; }
+
+Vector3 CText::getOffset() { return _offset; }

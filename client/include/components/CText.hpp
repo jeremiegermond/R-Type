@@ -37,15 +37,20 @@ class CText : public Engine::ComponentBase {
      * @brief Get the font size of the component
      * @return The font size of the component
      */
-    [[nodiscard]] int getFontSize() const;
+    [[nodiscard]] float getFontSize() const;
 
     /**
      * @brief Set the font size of the component
      * @param fontSize The font size to set
      */
-    void setFontSize(int fontSize);
+    void setFontSize(float fontSize);
+
+    void setOffset(Vector3 offset);
+
+    [[nodiscard]] Vector3 getOffset();
 
   private:
     std::string _text;
-    int _fontSize;
+    float _fontSize;
+    Vector3 _offset;
 };

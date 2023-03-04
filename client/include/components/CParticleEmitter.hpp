@@ -92,9 +92,10 @@ class CParticleEmitter : public Engine::ComponentBase {
 
     /**
      * @brief Update a particle
+     * @param float frameTime
      * @param Particle particle
      */
-    void updateParticle(Particle &particle);
+    void updateParticle(float frameTime, Particle &particle);
 
     /**
      * @brief Get random float

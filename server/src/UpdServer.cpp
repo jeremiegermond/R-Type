@@ -74,6 +74,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
                 if (client.first != _sender_endpoint) {
                     sendResponse(_sender_endpoint,
                                  "new:" + std::to_string(client.second.getId()) + "," + vectorToString(client.second.getPosition()));
+                    sendResponse(_sender_endpoint, "name:" + std::to_string(client.second.getId()) + "," + client.second.getName());
                 }
             }
             // send all enemies to new player
@@ -83,7 +84,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
             }
         }
         auto &player = _clients[_sender_endpoint];
-        log(LOG_INFO, "Player: " + player.getId());
+        log(LOG_INFO, "Player: " + std::to_string(player.getId()));
         if (msg == "ping") {
             sendResponse(_sender_endpoint, "pong");
             player.setAlive(true);
@@ -103,6 +104,10 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
             auto bulletVelocity = Vector2{5, 0};
             _bullets.emplace_back(bulletPosition, bulletVelocity, .1, player.getId());
             sendAll("shoot:" + std::to_string(player.getId()), false);
+        } else if (isMatch(msg, "^name:([a-zA-Z0-9 ]+)$")) {
+            auto name = getMatch(msg, "^name:([a-zA-Z0-9 ]+)$", 1);
+            player.setName(name);
+            sendAll("name:" + std::to_string(player.getId()) + "," + name);
         }
     }
 }
@@ -194,6 +199,7 @@ void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
  * the clients
  */
 void UdpServer::simulate() {
+    // lock the mutex
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // update frame time
     auto tp = steady_clock::now();
@@ -213,8 +219,7 @@ void UdpServer::simulate() {
     // update bullets
     for (auto bullet = _bullets.begin(); bullet != _bullets.end();) {
         bullet->update(deltaTime);
-        auto bulletPosition = bullet->getPosition();
-        bool bulletErased = false;
+        bool bulletHit = false;
         for (auto enemy = _enemies.begin(); enemy != _enemies.end();) {
             if (bullet->isColliding(enemy->getBounds())) {
                 enemy->takeDamage(bullet->getDamage());
@@ -222,23 +227,17 @@ void UdpServer::simulate() {
                     log(LOG_INFO, "Enemy: " + std::to_string(enemy->getId()) + " was killed");
                     sendAll("dead:" + std::to_string(enemy->getId()));
                     _enemyIds.insert(enemy->getId());
-                    enemy = _enemies.erase(enemy);
-                    _enemySpawnTimer += std::chrono::seconds(1);
+                    _enemies.erase(enemy);
                 } else {
                     sendAll("damaged:" + std::to_string(enemy->getId()) + "," + std::to_string(enemy->getHp()));
-                    ++enemy;
                 }
-                bullet = _bullets.erase(bullet);
-                bulletErased = true;
+                bulletHit = true;
                 break;
             } else {
                 ++enemy;
             }
         }
-        if (bulletErased) {
-            continue;
-        }
-        if (bullet->isOutOfBounds()) {
+        if (bulletHit || bullet->isOutOfBounds()) {
             bullet = _bullets.erase(bullet);
         } else {
             ++bullet;
@@ -251,7 +250,7 @@ void UdpServer::simulate() {
             auto id = *_enemyIds.begin();
             _enemyIds.erase(id);
             auto position = Vector2{11, (float)rand() / RAND_MAX * 8 - 4};
-            auto velocity = Vector2{-1, 0};
+            auto velocity = Vector2{-3, 0};
             _enemies.emplace_back(id, position, velocity, 2);
             sendAll("spawn:" + std::to_string(id) + "," + vectorToString(position) + "," + vectorToString(velocity) + ",2");
         }

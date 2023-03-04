@@ -8,16 +8,10 @@
 #include "game/Game.hpp"
 
 void Game::addBullet(Vector3 position, Vector3 velocity) {
-    auto bullet = _pObjectArchetype->createEntity(Engine::CScale(0.08), Engine::CPosition(), Engine::CVelocity(), Engine::CObject(),
-                                                  Engine::CRotation(Vector3Zero()), CCollider());
+    auto bullet = _pObjectArchetype.createEntity(Engine::CScale(0.08), Engine::CPosition(), Engine::CVelocity(), Engine::CObject(),
+                                                 Engine::CRotation({0}), CCollider());
     auto [cObject, cPosition, cVelocity, cCollider] =
-        _pObjectArchetype->getComponent<Engine::CObject, Engine::CPosition, Engine::CVelocity, CCollider>(bullet);
-    if (_emitters.contains("bullet_trail")) {
-        auto emitter = CParticleEmitter(_emitters["bullet_trail"]);
-        emitter.setActive(true);
-        _pObjectArchetype->addComponent(bullet, CParticleEmitter(emitter));
-        cObject.setTag("emitter");
-    }
+        _pObjectArchetype.getComponent<Engine::CObject, Engine::CPosition, Engine::CVelocity, CCollider>(bullet);
     cObject.setActive(true);
     cPosition.setPosition(position);
     cVelocity.setVelocity(velocity);
@@ -26,33 +20,33 @@ void Game::addBullet(Vector3 position, Vector3 velocity) {
     cCollider.setPosition(position);
     cCollider.setActive(true);
     if (_models.contains("missile")) {
-        _pObjectArchetype->addComponent(bullet, pModel(_models["missile"]));
+        _pObjectArchetype.addComponent(bullet, pModel(_models["missile"]));
     }
     _bullets.emplace_back(bullet);
     playSound("shoot");
 }
 
 void Game::updateBullets() {
-    for (auto it = _bullets.begin(); it != _bullets.end();) {
-        updateEntity(*it);
-        bool isColliding = false;
-        Vector3 position;
-        auto bulletCollider = _pObjectArchetype->getComponent<CCollider>(*it);
+    // loop through all bullets
+    for (auto bullet = _bullets.begin(); bullet != _bullets.end();) {
+        updateEntity(*bullet);
+        auto [bulletCollider, position] = _pObjectArchetype.getComponent<CCollider, Engine::CPosition>(*bullet);
+        auto bulletPosition = position.getPosition();
+        if (bulletPosition.y > 10 || bulletPosition.y < -10 || bulletPosition.x > 10 || bulletPosition.x < -10) {
+            bullet = _bullets.erase(bullet);
+            continue;
+        }
+        bool hit = false;
         for (auto &enemy : _enemies) {
-            auto [cCollider, cHealth] = _pObjectArchetype->getComponent<CCollider, CHealth>(enemy.second);
-            if (bulletCollider.isColliding(cCollider)) {
-                cHealth.takeDamage(1);
-                isColliding = true;
-                position = _pObjectArchetype->getComponent<Engine::CPosition>(enemy.second).getPosition();
+            auto enemyCollider = _pObjectArchetype.getComponent<CCollider>(enemy.second);
+            if (bulletCollider.isColliding(enemyCollider)) {
+                bullet = _bullets.erase(bullet);
+                hit = true;
                 break;
             }
         }
-        if (isColliding) {
-            it = _bullets.erase(it);
-            playSound("enemy_bomb");
-            addAnimatedSprite("explosion", position);
-        } else {
-            ++it;
-        }
+        if (hit)
+            continue;
+        bullet++;
     }
 }

@@ -89,3 +89,7 @@ bool Player::move(const std::string &direction, const Vector2 &position) {
         return false;
     return true;
 }
+
+void Player::setName(const std::string &name) { _name = name; }
+
+std::string Player::getName() { return _name; }
