@@ -1,5 +1,5 @@
-#include <iostream>
 #include <asio.hpp>
+#include <iostream>
 
 using asio::ip::tcp;
 
@@ -30,17 +30,14 @@ int main() {
         if (error == asio::error::eof) {
             // Connection closed by peer
             std::cout << "Connection closed by peer." << std::endl;
-        }
-        else if (error) {
+        } else if (error) {
             // Some other error occurred
             throw asio::system_error(error);
-        }
-        else {
+        } else {
             // Print the response from the server
             std::cout << "Response from server: " << std::string(buffer.data(), length) << std::endl;
         }
-    }
-    catch (std::exception& e) {
+    } catch (std::exception &e) {
         std::cerr << "Exception: " << e.what() << std::endl;
     }
 

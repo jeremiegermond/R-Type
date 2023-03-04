@@ -1,0 +1,121 @@
+{
+  "objects": [
+    {
+      "name": "R9A1",
+      "model": "R9A1",
+      "scale": 1.5,
+      "tags": ["player"],
+      "emitterBase": "engine_smoke",
+      "emitterSettings": {
+        "color": [
+          255,
+          0,
+          0,
+          255
+        ],
+        "endColor": [
+          255,
+          255,
+          255,
+          10
+        ]
+      }
+    },
+    {
+      "name": "R9A2",
+      "model": "R9A2",
+      "scale": 1.5,
+      "tags": ["player"],
+      "emitterBase": "engine_smoke",
+      "emitterSettings": {
+        "color": [
+          0,
+          255,
+          0,
+          255
+        ],
+        "endColor": [
+          255,
+          255,
+          255,
+          10
+        ]
+      }
+    },
+    {
+      "name": "R9A3",
+      "model": "R9A3",
+      "scale": 1.5,
+      "tags": ["player"],
+      "emitterBase": "engine_smoke",
+      "emitterSettings": {
+        "color": [
+          0,
+          0,
+          255,
+          255
+        ],
+        "endColor": [
+          255,
+          255,
+          255,
+          10
+        ]
+      }
+    },
+    {
+      "name": "R9A4",
+      "model": "R9A4",
+      "scale": 1.5,
+      "tags": ["player"],
+      "emitterBase": "engine_smoke",
+      "emitterSettings": {
+        "color": [
+          255,
+          255,
+          0,
+          255
+        ],
+        "endColor": [
+          255,
+          255,
+          255,
+          10
+        ]
+      }
+    },
+    {
+      "name": "E002",
+      "model": "E002",
+      "animation": "E002",
+      "scale": 0.1,
+      "tags": ["enemy"],
+      "rotation": [
+        0,
+        3,
+        0
+      ]
+    },
+    {
+      "name": "corridor",
+      "model": "corridor",
+      "tags": ["background"],
+      "velocity": [
+        -0.5,
+        0,
+        0
+      ]
+    }
+  ],
+  "ui": [
+    {
+      "name": "disconnect_button",
+      "type": "button",
+      "text": "Disconnect",
+      "color":  [255, 50, 50, 200],
+      "position": [15, 3.5],
+      "size": [13, 4],
+      "fontSize": 40
+    }
+  ]
+}

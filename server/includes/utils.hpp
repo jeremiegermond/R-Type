@@ -7,17 +7,17 @@
 
 #pragma once
 
-#if defined(_WIN32)           
-	#define NOGDI             // All GDI defines and routines
-	#define NOUSER            // All USER defines and routines
+#if defined(_WIN32)
+#define NOGDI  // All GDI defines and routines
+#define NOUSER // All USER defines and routines
 #endif
-//include windwos headers here
+// include windwos headers here
 #include "raylib.h"
 #include "raymath.h"
 
-#if defined(_WIN32)           // raylib uses these names as function parameters
-	#undef near
-	#undef far
+#if defined(_WIN32) // raylib uses these names as function parameters
+#undef near
+#undef far
 #endif
 
 #include <asio.hpp>
@@ -28,7 +28,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
 
 using namespace std::chrono;
 
