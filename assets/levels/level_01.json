@@ -116,6 +116,34 @@
       "position": [15, 3.5],
       "size": [13, 4],
       "fontSize": 40
+    },
+    {
+      "name": "score_1",
+      "type": "text",
+      "text": "",
+      "position": [12, 8],
+      "fontSize": 20
+    },
+    {
+      "name": "score_2",
+      "type": "text",
+      "text": "",
+      "position": [12, 12],
+      "fontSize": 20
+    },
+    {
+      "name": "score_3",
+      "type": "text",
+      "text": "",
+      "position": [12, 16],
+      "fontSize": 20
+    },
+    {
+      "name": "score_4",
+      "type": "text",
+      "text": "",
+      "position": [12, 20],
+      "fontSize": 20
     }
   ]
 }

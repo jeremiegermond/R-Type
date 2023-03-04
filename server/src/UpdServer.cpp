@@ -75,6 +75,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
                     sendResponse(_sender_endpoint,
                                  "new:" + std::to_string(client.second.getId()) + "," + vectorToString(client.second.getPosition()));
                     sendResponse(_sender_endpoint, "name:" + std::to_string(client.second.getId()) + "," + client.second.getName());
+                    sendResponse(_sender_endpoint, "score:" + std::to_string(client.second.getId()) + "," + std::to_string(client.second.getScore()));
                 }
             }
             // send all enemies to new player
@@ -102,7 +103,7 @@ void UdpServer::handleRequest(std::error_code ec, std::size_t bytes_recvd) {
             auto bulletPosition = player.getPosition();
             bulletPosition.x += 0.5;
             auto bulletVelocity = Vector2{5, 0};
-            _bullets.emplace_back(bulletPosition, bulletVelocity, .1, player.getId());
+            _bullets.emplace_back(bulletPosition, bulletVelocity, .25, player.getId());
             sendAll("shoot:" + std::to_string(player.getId()), false);
         } else if (isMatch(msg, "^name:([a-zA-Z0-9 ]+)$")) {
             auto name = getMatch(msg, "^name:([a-zA-Z0-9 ]+)$", 1);
@@ -232,6 +233,15 @@ void UdpServer::simulate() {
                     sendAll("damaged:" + std::to_string(enemy->getId()) + "," + std::to_string(enemy->getHp()));
                 }
                 bulletHit = true;
+                // score player increase
+                for (auto &client : _clients) {
+                    auto id = client.second.getId();
+                    if (id == bullet->getPlayerId()) {
+                        client.second.addScore(100);
+                        sendAll("score:" + std::to_string(id) + "," + std::to_string(client.second.getScore()));
+                        break;
+                    }
+                }
                 break;
             } else {
                 ++enemy;

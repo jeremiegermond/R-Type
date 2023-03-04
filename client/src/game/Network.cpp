@@ -78,6 +78,14 @@ void Game::updateNetwork() {
             enemyHealth.setHealth(health);
             playSound("enemy_bomb");
             addAnimatedSprite("explosion", enemyPos.getPosition());
+        } else if (Engine::Regex::isMatch(msg, "score:[0-9]+,[0-9]+")) {
+            auto match = Engine::Regex::getMatches(msg, "score:([0-9]+),([0-9]+)");
+            auto name = "score_" + match[1];
+            auto score = match[2];
+            if (_uiElements.contains(name) && _gameEntities.contains("R9A" + match[1])) {
+                auto playerName = _pObjectArchetype.getComponent<CText>(_gameEntities["R9A" + match[1]]).getText();
+                _pUIArchetype.getComponent<CText>(_uiElements[name]).setText("Player " + match[1] + ": " + score + " - " + playerName);
+            }
         }
     }
 }

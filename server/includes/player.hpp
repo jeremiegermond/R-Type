@@ -17,6 +17,7 @@ class Player {
     bool _isAlive;
     int _id;
     std::string _name;
+    int _score;
 
   public:
     Player() : _position({0, 0}), _hp(100), _isAlive(true), _id(0), _name("") { _bounds = GetBoundingBoxAroundPoint(_position, 0.5); }
@@ -33,4 +34,7 @@ class Player {
 
     void setName(const std::string &name);
     std::string getName();
+    void setScore(int score);
+    int getScore();
+    void addScore(int score);
 };

@@ -7,7 +7,7 @@
 
 #include "game/Game.hpp"
 
-Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(GameState::MENU), _playerId(1), _score(0), _timer(0) {}
+Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(GameState::MENU), _playerId(1) {}
 
 void Game::initGame() {
     rlDisableBackfaceCulling();
@@ -41,7 +41,6 @@ void Game::updateGame() {
     } else {
         updateGameplay();
         drawGame();
-        updateScore();
     }
     updateMusic();
     drawUI();
@@ -103,7 +102,7 @@ void Game::updateMenu() {
                 }
             } else {
                 int key = GetKeyPressed();
-                if (key >= 32 && key <= 125 && cText.getText().size() < 20) {
+                if (key >= 32 && key <= 125 && cText.getText().size() < 12) {
                     if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
                         key = toupper(key);
                     } else {
@@ -137,15 +136,6 @@ void Game::updateMenu() {
             }
         }
     }
-}
-
-void Game::updateScore() {
-    _timer += GetFrameTime();
-    if (_timer >= 1.0) {
-        _score++;
-        _timer = 0;
-    }
-    DrawText(("Score: " + std::to_string(_score)).c_str(), 10, 35, 20, WHITE);
 }
 
 void Game::updateGameplay() {
