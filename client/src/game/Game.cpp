@@ -7,7 +7,7 @@
 
 #include "game/Game.hpp"
 
-Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(GameState::MENU), _playerId(1) {}
+Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(GameState::MENU), _playerId(1), _score(0), _timer(0) {}
 
 void Game::initGame() {
     rlDisableBackfaceCulling();
@@ -41,6 +41,7 @@ void Game::updateGame() {
     } else {
         updateGameplay();
         drawGame();
+        updateScore();
     }
     updateMusic();
     drawUI();
@@ -136,6 +137,15 @@ void Game::updateMenu() {
             }
         }
     }
+}
+
+void Game::updateScore() {
+    _timer += GetFrameTime();
+    if (_timer >= 1.0) {
+        _score++;
+        _timer = 0;
+    }
+    DrawText(("Score: " + std::to_string(_score)).c_str(), 10, 35, 20, WHITE);
 }
 
 void Game::updateGameplay() {

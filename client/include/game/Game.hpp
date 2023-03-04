@@ -85,6 +85,8 @@ class Game : public Engine::GameBase {
 
     static Vector3 measureText3D(const std::string &text, float fontSize, Font font = GetFontDefault());
 
+    void updateScore();
+
   private:
     /**
      * The current state of the game.
@@ -114,6 +116,8 @@ class Game : public Engine::GameBase {
     int _playerId;
     Engine::EntityId _camera;
     std::string _currentMusic;
+    double _timer;
+    size_t _score;
 
     /**
      * Various Archetypes used by the game to create and access entities
