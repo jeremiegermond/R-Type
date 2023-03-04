@@ -24,7 +24,22 @@ class server_engine {
             init_dashboard();
             _server = std::thread([this](){
                 MainServer _server(4242);
-                _server.start(_rooms);
+                //_server.start(_rooms);
+                while (running) {
+                    std::string cmd = _server.getRequest();
+                    if (cmd == "getRooms") {
+                        std::string buffer;
+                        for (auto room : _rooms) {
+                            buffer += std::to_string(room->get_port()) + ":" + std::to_string(room->get_player_count()) + ',';
+                        }
+                        buffer.pop_back();
+                        _server.sendResponse(buffer);  // send list of rooms ports and infos
+                    } else if (cmd.substr(0, cmd.find_first_of(":")) == "createRoom") {
+                        int port = std::stoi(cmd.substr(cmd.find_first_of(":") + 1));
+                        Room *room = new Room(port);
+                        _server.sendResponse(std::to_string(port));  // send port of the new room
+                    }
+                }
             });
             _server.detach();
         };

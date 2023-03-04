@@ -21,40 +21,61 @@ class MainServer {
             _io_context.stop();
         }
 
-        void start(std::vector<Room *> &rooms) {
-            log(LOG_INFO, "UDP server started on port " + std::to_string(_port));
-            _rooms = &rooms;
-            receiveRequest();
-            _io_context.run();
-        }
+        // void start(std::vector<Room *> &rooms) {
+        //     log(LOG_INFO, "UDP server started on port " + std::to_string(_port));
+        //     _rooms = &rooms;
+        //     receiveRequest();
+        //     _io_context.run();
+        // }
 
-        void receiveRequest() {
+        int receiveRequest() {
             if (_stopServer)
-                return;
-            _socket.async_receive_from(asio::buffer(_buffer), _sender_endpoint, [this](std::error_code ec, std::size_t bytes_recvd) {
-                handleRequest(ec, bytes_recvd);
-                receiveRequest();
-            });
+                return 0;
+            return _socket.receive_from(asio::buffer(_buffer), _sender_endpoint);
         }
 
-        void sendResponse(const udp::endpoint &endpoint, const std::string &msg) {
+        void sendResponse(const std::string &msg) {
             std::lock_guard<std::mutex> lock(_socketMutex);
-            _socket.send_to(asio::buffer(msg), endpoint);
+            _socket.send_to(asio::buffer(msg), _sender_endpoint);
         }
 
-        void handleRequest(std::error_code ec, std::size_t bytes_recvd) {
-            if (!ec && bytes_recvd > 0) {
-                std::string msg(_buffer.begin(), _buffer.begin() + bytes_recvd);
-                log(LOG_INFO, "From: " + _sender_endpoint.address().to_string() + ":" + std::to_string(_sender_endpoint.port()));
-                log(LOG_INFO, "Received: " + msg);
-                std::string buffer;
-                for (auto room : *_rooms) {
-                    buffer += std::to_string(room->get_port()) + ":" + std::to_string(room->get_player_count()) + ',';
+        void createRoom(int port) { // duplicate
+            for (auto room: *_rooms)
+                if (*room == port) {
+                    std::cout << "Room " << port << " already exist" << std::endl;
+                    return;
                 }
-                buffer.pop_back();
-                sendResponse(_sender_endpoint, buffer);  // send list of rooms ports and infos
-            }
+            _rooms->push_back(new Room(port));
+            // _interface.add(new textButton({550, 50 + float(_rooms.size()) * 25, 200, 25}, Color{38, 38, 38, 255}, std::to_string(port), WHITE, [&](){
+            //     textButton *button = dynamic_cast<textButton *>(_interface.getFocused());
+            //     std::cout << "Switch to room " << button->getText() << std::endl;
+            //     for (auto room: _rooms)
+            //         if (*room == std::stoi(button->getText())) {
+            //             _current_room = room;
+            //             break;
+            //         }
+            // }));
+            std::cout << "Created room " << port << std::endl;
         }
+
+        std::string getRequest() {
+            int bytes_recvd = receiveRequest();
+            if (bytes_recvd <= 0)
+                return "";
+            std::string msg(_buffer.begin(), _buffer.begin() + bytes_recvd);
+            log(LOG_INFO, "From: " + _sender_endpoint.address().to_string() + ":" + std::to_string(_sender_endpoint.port()));
+            log(LOG_INFO, "Received: " + msg);
+            return msg;
+        }
+
+        // void handleRequest(std::error_code ec, std::size_t bytes_recvd) {
+        //     if (!ec && bytes_recvd > 0) {
+        //         std::string msg(_buffer.begin(), _buffer.begin() + bytes_recvd);
+        //         log(LOG_INFO, "From: " + _sender_endpoint.address().to_string() + ":" + std::to_string(_sender_endpoint.port()));
+        //         log(LOG_INFO, "Received: " + msg);
+                
+        //     }
+        // }
 
         void log(int type, const std::string &msg) {
             _logs.emplace_back(type, msg);
