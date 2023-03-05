@@ -11,8 +11,9 @@
 #include "engine/utils/Defines.hpp"
 
 namespace Engine {
-    /*
-     * @brief Base class for all games
+    /**
+     * @brief Class used for Base of the Game
+     * 
      */
     class GameBase {
       public:

@@ -12,6 +12,10 @@
 
 namespace Engine {
 
+    /**
+ * @brief Class used to handle CModel
+ * 
+ */
     class CModel : public ComponentBase {
       public:
         /**

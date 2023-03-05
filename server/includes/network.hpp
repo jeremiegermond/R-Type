@@ -20,7 +20,10 @@ namespace std {
     };
 }
 
-// udp server that can handle multiple clients
+/**
+ * @brief UDP server that handle multiple clients
+ * 
+ */
 class UdpServer {
   private:
     asio::io_context _io_context;
@@ -50,6 +53,11 @@ class UdpServer {
     interface _overlay;
 
   public:
+    /**
+     * @brief Construct a new Udp Server object
+     * 
+     * @param port 
+     */
     UdpServer(int port) : _socket(_io_context, udp::endpoint(udp::v4(), port)), _stopServer(false) {
         _port = port;
         for (int i = 1; i <= 4; i++)
@@ -61,38 +69,96 @@ class UdpServer {
         _overlay.add(new text(std::to_string(_clients.size()), {95, 50, 25, 1}, WHITE))->setId("players_nbr");
         _overlay.add(new text("/ 4", {110, 50, 25, 1}, WHITE));
     }
-
+    /**
+     * @brief Destroy the Udp Server object
+     * 
+     */
     ~UdpServer();
 
-    // start the server
+    /**
+     * @brief start the server
+     * 
+     */
     void start();
 
-    // handle request from client
+    /**
+     * @brief stop the server
+     * 
+     */
+    void stop(){ _io_context.stop(); _stopServer = true; }
+
+    /**
+     * @brief handle request from client
+     * 
+     * @param ec 
+     * @param bytes_recvd 
+     */
     void handleRequest(std::error_code ec, std::size_t bytes_recvd);
 
-    // send response to client
+    /**
+     * @brief send response to client
+     * 
+     * @param endpoint 
+     * @param msg 
+     */
     void sendResponse(const udp::endpoint &endpoint, const std::string &msg);
 
-    // receive request from client
+    /**
+     * @brief receive request from client
+     * 
+     */
     void receiveRequest();
 
-    // check if client still alive
+    /**
+     * @brief check if client still alive
+     * 
+     */
     void checkAlive();
 
-    // send message to all clients
+    /**
+     * @brief send message to all clients
+     * 
+     * @param msg 
+     * @param includeSender 
+     */
     void sendAll(const std::string &msg, bool includeSender = true);
 
-    // remove client from server
+    /**
+     * @brief remove client from server
+     * 
+     * @param endpoint 
+     * @param erase 
+     */
     void removeClient(const udp::endpoint &endpoint, bool erase = true);
 
-    // simulate game
+    /**
+     * @brief simulate game
+     * 
+     */
     void simulate();
 
+    /**
+     * @brief log the message -> msg
+     * 
+     * @param type 
+     * @param msg 
+     */
     void log(int type, const std::string &msg) { _logs.emplace_back(type, msg); };
-
+    /**
+     * @brief check if server is running
+     * 
+     * @return int 
+     */
+    int is_running() { return !_stopServer; }
+    /**
+     * @brief Create a log object
+     * 
+     * @param type 
+     * @param msg 
+     */
     void create_log(int type, const std::string &msg) {
         static float pos = 0;
-        _overlay.add(new text(msg, {0, 100 + pos, 18, 1}, type != LOG_INFO ? RED : GRAY))->addClass("log");
+        _overlay.add(new text(msg, { 0, 100 + pos, 18, 1 }, type != LOG_INFO ? RED : GRAY))->addClass("log");
         if (pos >= 320) {
             uiElement *elem = _overlay.getClass("log").front();
             _overlay.remove(elem);
@@ -100,24 +166,42 @@ class UdpServer {
                 elem->setPos({elem->getPos().x, elem->getPos().y - 14});
         } else
             pos += 14;
-        std::cout << pos << std::endl;
     };
-
+    /**
+     * @brief update the logs
+     * 
+     */
     void update_log() {
         for (auto log : _logs)
             create_log(log.first, log.second);
         _logs.clear();
     };
 
-    // get clients
+    /**
+     * @brief Get the Clients object
+     * 
+     * @return std::unordered_map<udp::endpoint, Player> 
+     */
     std::unordered_map<udp::endpoint, Player> getClients() { return _clients; }
 
-    // get enemies
+    /**
+     * @brief Get the Enemies object
+     * 
+     * @return std::vector<Enemy> 
+     */
     std::vector<Enemy> getEnemies() { return _enemies; }
 
-    // get bullets
+    /**
+     * @brief Get the Bullets object
+     * 
+     * @return std::vector<Bullet> 
+     */
     std::vector<Bullet> getBullets() { return _bullets; }
 
-    // get overlay
+    /**
+     * @brief Get the Overlay object
+     * 
+     * @return interface* 
+     */
     interface *getOverlay() { return &_overlay; }
 };

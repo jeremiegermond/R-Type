@@ -48,104 +48,133 @@ class server_engine {
     };
     ~server_engine() { running = false; };
     void init_dashboard() {
-        _interface.add(new textButton({25, 200, 175, 50}, WHITE, "Create Room", BLACK, [this]() {
+        _interface.add(new textButton({25, 200, 175, 50}, WHITE, "Create Room", BLACK, [this](){
             static uiElement *elem = nullptr;
-            std::cout << elem << std::endl;
             if (elem)
                 return;
-            std::cout << "Create Room" << std::endl;
-            elem = new textbox(
-                {215, 225, 150, 22}, DARKGRAY, WHITE,
-                [this](std::string tmp) {
-                    std::cout << tmp << std::endl;
-                    _interface.remove(elem);
-                    elem = nullptr;
-                    createRoom(std::stoi(tmp));
-                },
-                "Port : ");
-            elem->onUnfocus([this]() {
+            elem = new textbox({ 215, 225, 150, 22 }, DARKGRAY, WHITE, [this](std::string tmp){
+                _interface.remove(elem);
+                elem = nullptr;
+                createRoom(std::stoi(tmp));
+            }, "Port : ");
+            elem->onUnfocus([this](){
                 _interface.remove(elem);
                 elem = nullptr;
             });
             _interface.add(elem);
             _interface.focus(elem);
         }));
-        _interface.add(new textButton({25, 275, 175, 50}, RED, "Exit", WHITE, [this]() { running = false; }));
-        _interface.focus(_interface.add(new textbox(
-            {50, 425, 700, 22}, DARKGRAY, WHITE, [this](std::string tmp) { handle_input(tmp); }, "> ")));
+        _interface.add(new textButton({25, 275, 175, 50}, RED, "Exit", WHITE, [this](){
+            running = false;
+        }));
+        _interface.focus(_interface.add(new textbox({ 50, 425, 700, 22 }, DARKGRAY, WHITE, [this](std::string tmp){
+            handle_input(tmp);
+        }, "> ")));
         _interface.add(new text("/*** RType Server ***\\", {75, 0, 30, 1}, WHITE));
         _interface.add(new text("Available Rooms :", {550, 35, 25, 1}, WHITE));
 
-        _overlay.add(new textButton({0, 0, 30, 30}, BLACK, "<-", WHITE, [this]() { _current_room = nullptr; }));
+
+        _overlay.add(new textButton({0, 0, 30, 30}, BLACK, "<-", WHITE, [this](){
+            _current_room = nullptr;
+        }));
         createRoom(12345);
     };
     void run() {
         while (!WindowShouldClose() && running) {
-            BeginDrawing();
-            ClearBackground(Color{38, 38, 38, 255});
-            if (_current_room == nullptr) {
-                update_log();
-                _interface.update();
-                _interface.draw();
-            } else {
-                _current_room->displayLog();
-                _current_room->displayPlayer();
-                _current_room->displayEnemies();
-                _current_room->displayBullets();
-                _current_room->displayOverlay();
-                _overlay.update();
-                _overlay.draw();
+            try {
+                BeginDrawing();
+                ClearBackground(Color{38, 38, 38, 255});
+                if (_current_room == nullptr) {
+                    update_log();
+                    _interface.update();
+                    _interface.draw();
+                } else {
+                    if (!_current_room->isRunning())
+                        _current_room = nullptr;
+                    _current_room->displayLog();
+                    _current_room->displayPlayer();
+                    _current_room->displayEnemies();
+                    _current_room->displayBullets();
+                    _current_room->displayOverlay();
+                    _overlay.update();
+                    _overlay.draw();
+                }
+                EndDrawing();
+                for (auto room: _rooms)
+                    if (!room->isRunning())
+                        deleteRoom(room->get_port());
+            } catch (std::exception &e) {
+                log(LOG_ERROR, e.what());
             }
-            EndDrawing();
         }
     };
     void createRoom(int port) {
-        for (auto room : _rooms)
-            if (*room == port) {
-                std::cout << "Room " << port << " already exist" << std::endl;
+        for (auto room: _rooms)
+            if (*room == port) {// create exception
                 return;
             }
         _rooms.push_back(new Room(port));
-        _interface.add(new textButton({550, 50 + float(_rooms.size()) * 25, 200, 25}, Color{38, 38, 38, 255}, std::to_string(port), WHITE, [&]() {
+        _interface.add(new textButton({550, 50 + float(_rooms.size()) * 25, 200, 25}, Color{38, 38, 38, 255}, std::to_string(port), WHITE, [&](){
             textButton *button = dynamic_cast<textButton *>(_interface.getFocused());
-            std::cout << "Switch to room " << button->getText() << std::endl;
-            for (auto room : _rooms)
+            for (auto room: _rooms)
                 if (*room == std::stoi(button->getText())) {
                     _current_room = room;
                     break;
                 }
-        }));
+        }))->addClass(std::to_string(port));
         log(LOG_INFO, "Created room " + std::to_string(port));
     }
+    void deleteRoom(int port) {
+        for (auto room: _rooms)
+            if (*room == port) {
+                delete room;
+                _rooms.erase(std::find(_rooms.begin(), _rooms.end(), room));
+                _interface.remove(_interface.getClass(std::to_string(port))[0]);
+                log(LOG_INFO, "Deleted room " + std::to_string(port));
+                return;
+            }
+        log(LOG_ERROR, "Room " + std::to_string(port) + " not found");
+    }
     void listRooms() {
-        for (auto room : _rooms)
+        for (auto room: _rooms)
             std::cout << room->get_port() << std::endl;
     }
     void handle_input(std::string input) {
-        std::string command = input.substr(0, input.find(' '));
-        std::string ret;
+        std::string command = input.substr(0, input.find(" "));
+        std::string ret = "";
         if (input.substr(0, 4) == "exit")
             running = false;
         else if (input.substr(0, 10) == "createRoom") {
             createRoom(std::stoi(input.substr(11)));
         } else if (input.substr(0, 8) == "getRooms") {
             for (auto room : _rooms)
-                ret += std::to_string(room->get_port()) + ":" + std::to_string(room->get_player_count()) + ',';
-            ret.pop_back();
+                if(room->isRunning())
+                    ret += std::to_string(room->get_port()) + ":" + std::to_string(room->get_player_count()) + ',';
+            if (ret != "")
+                ret.pop_back();
+        } else if (input.substr(0, 10) == "deleteRoom") {
+            deleteRoom(std::stoi(input.substr(11)));
+        } else if (input.substr(0, 4) == "help") {
+            ret = "Available commands : \n";
+            ret += "exit : exit the server\n";
+            ret += "createRoom <port> : create a room on the specified port\n";
+            ret += "getRooms : get the list of rooms\n";
+            ret += "deleteRoom <port> : delete the room on the specified port\n";
+            ret += "clear : clear the log\n";
         } else if (input.substr(0, 5) == "clear") {
             for (auto elem : _interface.getClass("log"))
                 _interface.remove(elem);
         } else
             ret = "Unknown command";
-        if (!ret.empty())
-            log(LOG_INFO, ret);
+        if (ret != "")
+            log(LOG_WARNING, ret);
     }
-
+        
     void create_log(int type, const std::string &msg) {
         static float pos = 0;
         if (_interface.getClass("log").size() == 0)
             pos = 0;
-        _interface.add(new text(msg, {10, 40 + pos, 20, 1}, type != LOG_INFO ? RED : GRAY))->addClass("log");
+        _interface.add(new text(msg, { 10, 40 + pos, 20, 1 }, type != LOG_INFO ? RED : GRAY))->addClass("log");
         if (pos >= 130) {
             uiElement *elem = _interface.getClass("log").front();
             _interface.remove(elem);

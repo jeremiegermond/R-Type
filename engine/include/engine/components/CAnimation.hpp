@@ -10,7 +10,10 @@
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
-
+    /**
+    * @brief Class used to handle CAnimation
+    * 
+    */
     class CAnimation : public ComponentBase {
       public:
         /**
