@@ -39,7 +39,7 @@ class server_engine {
                         continue;
                     }
                     std::string p = cmd.substr(cmd.find_first_of(":") + 1);
-                    int port = p == cmd ? GetRandomValue(1001, 4000) : std::stoi(p);
+                    int port = p == cmd ? GetRandomValue(25000, 28000) : std::stoi(p);
                     createRoom(port);
                     _server.sendResponse(std::to_string(port)); // send port of the new room
                 } else if (cmd == "ping")
