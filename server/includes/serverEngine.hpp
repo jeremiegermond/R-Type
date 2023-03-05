@@ -34,7 +34,8 @@ class server_engine {
                     buffer.pop_back();
                     _server.sendResponse(buffer); // send list of rooms ports and infos
                 } else if (cmd.substr(0, cmd.find_first_of(":")) == "createRoom") {
-                    int port = std::stoi(cmd.substr(cmd.find_first_of(":") + 1));
+                    std::string p = cmd.substr(cmd.find_first_of(":") + 1);
+                    int port = p == cmd ? GetRandomValue(1000, 4000) : std::stoi(p);
                     createRoom(port);
                     _server.sendResponse(std::to_string(port)); // send port of the new room
                 } else if (cmd == "ping")
