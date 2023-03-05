@@ -1,4 +1,4 @@
-set(project_name client)
+set(project_name r-type_client)
 set(engine_path ${CMAKE_CURRENT_SOURCE_DIR}/../engine)
 
 project(${project_name})

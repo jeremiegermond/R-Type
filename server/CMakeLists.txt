@@ -1,4 +1,4 @@
-set(SERVER server)
+set(SERVER r-type_server)
 project(${SERVER})
 include_directories(includes)
 add_executable(${SERVER}
