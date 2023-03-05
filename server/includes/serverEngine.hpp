@@ -81,27 +81,31 @@ class server_engine {
     };
     void run() {
         while (!WindowShouldClose() && running) {
-            BeginDrawing();
-            ClearBackground(Color{38, 38, 38, 255});
-            if (_current_room == nullptr) {
-                update_log();
-                _interface.update();
-                _interface.draw();
-            } else {
-                if (!_current_room->isRunning())
-                    _current_room = nullptr;
-                _current_room->displayLog();
-                _current_room->displayPlayer();
-                _current_room->displayEnemies();
-                _current_room->displayBullets();
-                _current_room->displayOverlay();
-                _overlay.update();
-                _overlay.draw();
+            try {
+                BeginDrawing();
+                ClearBackground(Color{38, 38, 38, 255});
+                if (_current_room == nullptr) {
+                    update_log();
+                    _interface.update();
+                    _interface.draw();
+                } else {
+                    if (!_current_room->isRunning())
+                        _current_room = nullptr;
+                    _current_room->displayLog();
+                    _current_room->displayPlayer();
+                    _current_room->displayEnemies();
+                    _current_room->displayBullets();
+                    _current_room->displayOverlay();
+                    _overlay.update();
+                    _overlay.draw();
+                }
+                EndDrawing();
+                for (auto room: _rooms)
+                    if (!room->isRunning())
+                        deleteRoom(room->get_port());
+            } catch (std::exception &e) {
+                log(LOG_ERROR, e.what());
             }
-            EndDrawing();
-            for (auto room: _rooms)
-                if (!room->isRunning())
-                    deleteRoom(room->get_port());
         }
     };
     void createRoom(int port) {
