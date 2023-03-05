@@ -48,7 +48,12 @@ void Game::updateGame() {
 
 void Game::destroyGame() {}
 
-void Game::initSocket(const std::string &ip, unsigned short port) { _udpClient = std::make_shared<UdpClient>(ip, port); }
+void Game::initSocket(const std::string &ip, unsigned short port) {
+    _udpClient = std::make_shared<UdpClient>(ip, port); 
+    _udpClient->start();
+    _udpClient->send("getRooms");
+    std::cout << _udpClient->receive() << std::endl;
+}
 
 void Game::drawGame() {
     BeginMode3D(_pCameraArchetype.getComponent<CCamera>(_camera).getCamera());
@@ -83,9 +88,21 @@ void Game::drawGame() {
     EndMode3D();
 }
 
-void Game::setGameState(GameState state) { _gameState = state; }
+void Game::setGameState(GameState state) { 
+    if (state == GameState::MENU) {
+        _udpClient->stop();
+        _udpClient->setEndpoint("127.0.0.1", 4242);
+        _udpClient->start();
+        _udpClient->send("getRooms");
+    }
+    _gameState = state;
+}
 
 void Game::updateMenu() {
+    if (_udpClient->hasMessage()) {
+        std::string message = _udpClient->receive();
+        std::cout << message << std::endl;
+    }
     if (_uiElements.contains("player_input") && _uiElements.contains("play_button")) {
         auto [cObject, cText] = _pUIArchetype.getComponent<Engine::CObject, CText>(_uiElements["player_input"]);
         auto [buttonObject, buttonColor] = _pUIArchetype.getComponent<Engine::CObject, CColor>(_uiElements["play_button"]);
@@ -131,9 +148,18 @@ void Game::updateMenu() {
             _pObjectArchetype.getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
             playMusic("01-Taking_off_again");
             if (_udpClient) {
+                _udpClient->stop();
+                _udpClient->setEndpoint("127.0.0.1", 12345); // set to selected room
                 _udpClient->start();
                 _udpClient->send("name:" + _playerName);
             }
+        }
+    }
+    if (_uiElements.contains("refresh_rooms")) {
+        auto click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+        auto [button, bText] = _pUIArchetype.getComponent<Engine::CObject, CText>(_uiElements["refresh_rooms"]);
+        if (click && !button.hasTag("disabled") && button.hasTag("hover")) {
+            _udpClient->send("getRooms");
         }
     }
 }

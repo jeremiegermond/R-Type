@@ -4,14 +4,14 @@
       "name": "player_header",
       "type": "text",
       "text": "Enter your name:",
-      "position": [50, 30],
+      "position": [15, 10],
       "fontSize": 30
     },
     {
       "name": "room_header",
       "type": "text",
       "text": "Select a room:",
-      "position": [50, 50],
+      "position": [15, 30],
       "fontSize": 30
     },
     {
@@ -19,7 +19,7 @@
       "type": "button",
       "text": "Play",
       "color":  [50, 205, 50, 255],
-      "position": [50, 75],
+      "position": [85, 25],
       "size": [20, 10],
       "fontSize": 60
     },
@@ -28,14 +28,23 @@
       "type": "button",
       "text": "Refresh",
       "color":  [0, 172, 237, 255],
-      "position": [50, 90],
+      "position": [85, 40],
+      "size": [20, 10],
+      "fontSize": 60
+    },
+    {
+      "name": "create_room",
+      "type": "button",
+      "text": "New Room",
+      "color":  [0, 172, 237, 255],
+      "position": [85, 55],
       "size": [20, 10],
       "fontSize": 60
     },
     {
       "name": "player_input",
       "type": "input",
-      "position": [50, 40],
+      "position": [15, 20],
       "size": [20, 8],
       "color": [0, 0, 128, 255],
       "fontSize": 20,

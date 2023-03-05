@@ -116,6 +116,7 @@ class Game : public Engine::GameBase {
     int _playerId;
     Engine::EntityId _camera;
     std::string _currentMusic;
+    std::vector<Engine::EntityId> _rooms;
 
     /**
      * Various Archetypes used by the game to create and access entities
@@ -136,6 +137,7 @@ class Game : public Engine::GameBase {
      */
     EntityMap _uiElements;
     std::string _playerName;
+
 
     /**
      * Emitters used by the game

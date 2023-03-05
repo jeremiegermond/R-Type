@@ -37,7 +37,9 @@ class server_engine {
                         int port = std::stoi(cmd.substr(cmd.find_first_of(":") + 1));
                         createRoom(port);
                         _server.sendResponse(std::to_string(port));  // send port of the new room
-                    } else {
+                    } else if (cmd == "ping")
+                        _server.sendResponse("pong"); 
+                    else {
                         _server.sendResponse("error");
                     }
                 }
@@ -135,6 +137,9 @@ class server_engine {
                 for (auto room : _rooms)
                     ret += std::to_string(room->get_port()) + ":" + std::to_string(room->get_player_count()) + ',';
                 ret.pop_back();
+            } else if (input.substr(0, 5) == "clear") {
+                for (auto elem : _interface.getClass("log"))
+                    _interface.remove(elem);
             } else
                 ret = "Unknown command";
             if (ret != "")
@@ -143,6 +148,8 @@ class server_engine {
         
         void create_log(int type, const std::string &msg) {
             static float pos = 0;
+            if (_interface.getClass("log").size() == 0)
+                pos = 0;
             _interface.add(new text(msg, { 10, 40 + pos, 20, 1 }, type != LOG_INFO ? RED : GRAY))->addClass("log");
             if (pos >= 130) {
                 uiElement *elem = _interface.getClass("log").front();

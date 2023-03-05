@@ -15,7 +15,7 @@
  */
 std::pair<std::string, unsigned short> parseArgs(int ac, char *av[]) {
     std::string ip = "127.0.0.1";
-    int port = 12345;
+    int port = 4242;
     if (ac == 3 && Engine::Regex::isNumber(av[2])) {
         if (!Engine::Regex::isIp(av[1]))
             throw std::invalid_argument("Invalid IP");
