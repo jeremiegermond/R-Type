@@ -4,9 +4,17 @@
 #include "room.hpp"
 
 using asio::ip::tcp;
-
+/**
+ * @brief Class used to manage the udp connection
+ * 
+ */
 class EngineUdpServer {
     public:
+        /**
+         * @brief Construct a new Engine Udp Server object
+         * 
+         * @param port 
+         */
         EngineUdpServer(int port) : _socket(_io_context, udp::endpoint(udp::v4(), port)) {
             _port = port;
         }

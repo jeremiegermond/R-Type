@@ -10,6 +10,10 @@
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
+  /**
+ * @brief Class used to handle CObject
+ * 
+ */
     class CObject : public ComponentBase {
       public:
         CObject() = default;

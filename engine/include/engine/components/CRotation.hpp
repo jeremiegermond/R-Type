@@ -10,6 +10,10 @@
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
+  /**
+ * @brief Class used to handle CRotation
+ * 
+ */
     class CRotation : public ComponentBase {
       public:
         /**

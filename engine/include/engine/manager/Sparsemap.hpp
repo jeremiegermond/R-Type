@@ -11,6 +11,10 @@
 
 namespace Engine {
     template <typename Component>
+    /**
+ * @brief Class used for the SparseMap used in the ECS
+ * 
+ */
     class SparseMap {
       private:
         static const size_t BLOCK_SIZE = 1600000;

@@ -2,7 +2,10 @@
 #include "utils.hpp"
 
 inline Font font;
-
+/**
+ * @brief Class used to create an uiElement in the server
+ * 
+ */
 class uiElement {
   public:
     uiElement(Rectangle size) { _size = size; };

@@ -10,6 +10,10 @@
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
+    /**
+ * @brief Class used to handle CScale
+ * 
+ */
     class CScale : public ComponentBase {
       public:
         /**

@@ -10,7 +10,10 @@
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
-
+    /**
+ * @brief Class used to handle CSound
+ * 
+ */
     class CSound : public ComponentBase {
       public:
         /**

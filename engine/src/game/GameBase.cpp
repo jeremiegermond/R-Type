@@ -11,10 +11,20 @@
 
 namespace Engine {
 
+    /**
+     * GameBase::GameBase() = default;
+     */
     GameBase::GameBase() = default;
 
+    /**
+     * A destructor for the GameBase class.
+     */
     GameBase::~GameBase() = default;
 
+    /**
+     * It initializes the window, the audio device, the target FPS, draws the text "Loading...",
+     * initializes the game, and sets the trace log level to none
+     */
     void GameBase::init() {
         InitWindow(1070, 600, "R-Type");
         InitAudioDevice();
@@ -24,6 +34,9 @@ namespace Engine {
         SetTraceLogLevel(LOG_NONE);
     }
 
+    /**
+     * `update()` is a function that calls `updateGame()` while the window is open
+     */
     void GameBase::update() {
         while (!WindowShouldClose()) {
             BeginDrawing();
@@ -33,6 +46,10 @@ namespace Engine {
         }
     }
 
+    /**
+     * It destroys the game, unloads the assets, closes the audio device, closes the window, and logs
+     * the game closing
+     */
     void GameBase::destroy() {
         SetTraceLogLevel(LOG_INFO);
         destroyGame();
@@ -43,6 +60,11 @@ namespace Engine {
         TraceLog(LOG_INFO, "Game closed");
     }
 
+    /**
+     * It loads assets from a json file
+     * 
+     * @param path The path to the assets file.
+     */
     void GameBase::loadAssets(const std::string &path) {
         if (path.empty())
             throw std::runtime_error("Invalid path to assets file");
@@ -79,6 +101,12 @@ namespace Engine {
         f.close();
     }
 
+    /**
+     * It draws text centered on the screen
+     * 
+     * @param text The text to draw
+     * @param color The color of the text.
+     */
     void GameBase::drawTextCentered(const std::string &text, Color color) {
         BeginDrawing();
         ClearBackground(BLACK);
@@ -89,6 +117,11 @@ namespace Engine {
         EndDrawing();
     }
 
+    /**
+     * It loads shaders from a json file
+     * 
+     * @param shaders The json object containing the shaders
+     */
     void GameBase::loadShaders(const json &shaders) {
         for (auto &shader : shaders) {
             if (!shader.contains("name") || !shader.contains("path_fragment") || _shaders.contains(shader["name"]))
@@ -112,6 +145,11 @@ namespace Engine {
         }
     }
 
+    /**
+     * It loads textures from a json file
+     * 
+     * @param textures The json object that contains the textures.
+     */
     void GameBase::loadTextures(const json &textures) {
         for (auto &texture : textures) {
             if (!texture.contains("name") || !texture.contains("path"))
@@ -130,6 +168,11 @@ namespace Engine {
         }
     }
 
+    /**
+     * It loads sounds from a json file
+     * 
+     * @param sounds The json object that contains the sounds.
+     */
     void GameBase::loadSounds(const json &sounds) {
         for (auto &sound : sounds) {
             if (!sound.contains("name") || !sound.contains("path") || _sounds.contains(sound["name"]))
@@ -142,6 +185,11 @@ namespace Engine {
         }
     }
 
+    /**
+     * It loads musics from a json file
+     * 
+     * @param musics The json object that contains the musics to load.
+     */
     void GameBase::loadMusics(const json &musics) {
         for (auto &music : musics) {
             if (!music.contains("name") || !music.contains("path") || _musics.contains(music["name"]))
@@ -155,6 +203,11 @@ namespace Engine {
         }
     }
 
+    /**
+     * It loads models from a json file
+     * 
+     * @param models The JSON object containing the models to load.
+     */
     void GameBase::loadModels(const json &models) {
         for (auto &model : models) {
             if (!model.contains("name") || !model.contains("path") || _models.contains(model["name"]))
@@ -174,6 +227,11 @@ namespace Engine {
         }
     }
 
+    /**
+     * It loads animations from a json file
+     * 
+     * @param animations The json object that contains the animations.
+     */
     void GameBase::loadAnimations(const json &animations) {
         for (auto &animation : animations) {
             if (!animation.contains("name") || !animation.contains("path") || _animations.contains(animation["name"]))
@@ -186,6 +244,9 @@ namespace Engine {
         }
     }
 
+    /**
+     * It clears all the maps that hold the assets
+     */
     void GameBase::unloadAssets() {
         _shaders.clear();
         _textures.clear();
@@ -195,6 +256,12 @@ namespace Engine {
         _models.clear();
     }
 
+    /**
+     * If the window is ready, and if it's fullscreen, return the monitor's width and height, otherwise
+     * return the screen's width and height
+     * 
+     * @return A Vector2 object.
+     */
     Vector2 GameBase::getWindowSize() {
         if (!IsWindowReady())
             return {0, 0};

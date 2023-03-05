@@ -11,7 +11,10 @@
 #include "engine/components/ComponentBase.hpp"
 
 namespace Engine {
-
+    /**
+ * @brief Class used to handle CVelocity
+ * 
+ */
     class CVelocity : public ComponentBase {
       public:
         /**
