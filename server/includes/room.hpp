@@ -28,16 +28,7 @@ class Room {
         }
 
         void displayLog() {
-            float y = 0;
-            auto logs = server.getLog();
-            for (auto &log : *logs) {
-                //DrawTextEx(font, log.second.c_str(), Vector2{10, y}, 20, 1, _log_colors[log.first]);
-                if (y > 380) {
-                    logs->erase(logs->begin());
-                } else
-                    y += 20;
-            }
-            logs->shrink_to_fit();
+            server.update_log();
         };
 
         void displayOverlay() {

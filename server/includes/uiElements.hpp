@@ -34,6 +34,8 @@ class uiElement {
     void setId(std::string id) { _id = id; };
     std::vector<std::string> *getClass() { return &_class; };
     void addClass(std::string class_) { _class.push_back(class_); };
+    void setPos(Vector2 pos) { _size.x = pos.x; _size.y = pos.y; };
+    Vector2 getPos() { return {_size.x, _size.y}; };
 
   private:
     // interface *parent;
@@ -129,7 +131,7 @@ class text : public uiElement {
         _text = text;
     };
     ~text(){};
-    void draw() { DrawTextEx(font, _text.c_str(), Vector2{getSize().x, getSize().y}, 25, 1, _color); };
+    void draw() { DrawTextEx(font, _text.c_str(), Vector2{getSize().x, getSize().y}, getSize().width, getSize().height, _color); };
     void update(){};
     void setText(std::string text) { _text = text; };
 

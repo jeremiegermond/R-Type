@@ -78,24 +78,6 @@ class RTypeServer {
     std::vector<std::pair<int, std::string>> _logs;
 };
 
-void handle_input(RTypeServer &_server, std::string input) { // moove to UdpServer class
-    std::string command = input.substr(0, input.find(" "));
-    if (input.substr(0, 4) == "exit")
-        return;
-    else if (input.substr(0, 10) == "createRoom") {
-        _server.createRoom(std::stoi(input.substr(11)));
-        _server.display(std::stoi(input.substr(11)));
-    } else if (input.substr(0, 4) == "list")
-        _server.listRoom();
-    else if (input.substr(0, 7) == "display") {
-        _server.display_none();
-        if (input.size() > 8)
-            _server.display(std::stoi(input.substr(8)));
-    } else
-        std::cout << "Unknown command" << std::endl;
-    input = "";
-}
-
 int main() {
     server_engine server;
     server.run();

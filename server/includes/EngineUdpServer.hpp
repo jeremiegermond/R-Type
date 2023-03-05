@@ -3,30 +3,22 @@
 #include "utils.hpp"
 #include "room.hpp"
 
-/*
-    TODO:
-        - merge this class and UdpServer
-*/
-
 using asio::ip::tcp;
 
-class MainServer {
+class EngineUdpServer {
     public:
-        MainServer(int port) : _socket(_io_context, udp::endpoint(udp::v4(), port)) {
+        EngineUdpServer(int port) : _socket(_io_context, udp::endpoint(udp::v4(), port)) {
             _port = port;
         }
+        EngineUdpServer(int port, std::vector<std::pair<int, std::string>> &output) : _socket(_io_context, udp::endpoint(udp::v4(), port)) {
+            _port = port;
+            _output = &output;
+        }
 
-        ~MainServer() {
+        ~EngineUdpServer() {
             _stopServer = true;
             _io_context.stop();
         }
-
-        // void start(std::vector<Room *> &rooms) {
-        //     log(LOG_INFO, "UDP server started on port " + std::to_string(_port));
-        //     _rooms = &rooms;
-        //     receiveRequest();
-        //     _io_context.run();
-        // }
 
         int receiveRequest() {
             if (_stopServer)
@@ -46,15 +38,6 @@ class MainServer {
                     return;
                 }
             _rooms->push_back(new Room(port));
-            // _interface.add(new textButton({550, 50 + float(_rooms.size()) * 25, 200, 25}, Color{38, 38, 38, 255}, std::to_string(port), WHITE, [&](){
-            //     textButton *button = dynamic_cast<textButton *>(_interface.getFocused());
-            //     std::cout << "Switch to room " << button->getText() << std::endl;
-            //     for (auto room: _rooms)
-            //         if (*room == std::stoi(button->getText())) {
-            //             _current_room = room;
-            //             break;
-            //         }
-            // }));
             std::cout << "Created room " << port << std::endl;
         }
 
@@ -68,18 +51,11 @@ class MainServer {
             return msg;
         }
 
-        // void handleRequest(std::error_code ec, std::size_t bytes_recvd) {
-        //     if (!ec && bytes_recvd > 0) {
-        //         std::string msg(_buffer.begin(), _buffer.begin() + bytes_recvd);
-        //         log(LOG_INFO, "From: " + _sender_endpoint.address().to_string() + ":" + std::to_string(_sender_endpoint.port()));
-        //         log(LOG_INFO, "Received: " + msg);
-                
-        //     }
-        // }
-
         void log(int type, const std::string &msg) {
-            _logs.emplace_back(type, msg);
-            std::cout << msg << std::endl;
+            if (_output)
+                _output->emplace_back(type, msg);
+            else
+                std::cout << msg << std::endl;
         };
     private:
         asio::io_context _io_context;
@@ -91,6 +67,6 @@ class MainServer {
         std::mutex _socketMutex;
         // stop variable
         std::atomic<bool> _stopServer;
-        std::vector<std::pair<int, std::string>> _logs;
         std::vector<Room *> *_rooms;
+        std::vector<std::pair<int, std::string>> *_output;
 };

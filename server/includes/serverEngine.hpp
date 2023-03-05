@@ -1,7 +1,7 @@
 #pragma once
 #include "uiElements.hpp"
 #include "network.hpp"
-#include "MainServer.hpp"
+#include "EngineUdpServer.hpp"
 #include "room.hpp"
 
 /*
@@ -23,21 +23,22 @@ class server_engine {
             font = LoadFontEx("./assets/fonts/Poppins-Medium.ttf", 128, 0, 250);
             init_dashboard();
             _server = std::thread([this](){
-                MainServer _server(4242);
+                EngineUdpServer _server(4242, _logs);
                 //_server.start(_rooms);
                 while (running) {
                     std::string cmd = _server.getRequest();
                     if (cmd == "getRooms") {
                         std::string buffer;
-                        for (auto room : _rooms) {
+                        for (auto room : _rooms)
                             buffer += std::to_string(room->get_port()) + ":" + std::to_string(room->get_player_count()) + ',';
-                        }
                         buffer.pop_back();
                         _server.sendResponse(buffer);  // send list of rooms ports and infos
                     } else if (cmd.substr(0, cmd.find_first_of(":")) == "createRoom") {
                         int port = std::stoi(cmd.substr(cmd.find_first_of(":") + 1));
                         createRoom(port);
                         _server.sendResponse(std::to_string(port));  // send port of the new room
+                    } else {
+                        _server.sendResponse("error");
                     }
                 }
             });
@@ -69,11 +70,11 @@ class server_engine {
             _interface.add(new textButton({25, 275, 175, 50}, RED, "Exit", WHITE, [this](){
                 running = false;
             }));
-            _interface.add(new textbox({ 50, 425, 700, 22 }, DARKGRAY, WHITE, [this](std::string tmp){
-                std::cout << tmp << std::endl;
-            }, "> "));
-            _interface.add(new text("/*** RType Server ***\\", {20, 0, 40, 2}, WHITE));
-            _interface.add(new text("Available Rooms :", {550, 35, 30, 2}, WHITE));
+            _interface.focus(_interface.add(new textbox({ 50, 425, 700, 22 }, DARKGRAY, WHITE, [this](std::string tmp){
+                handle_input(tmp);
+            }, "> ")));
+            _interface.add(new text("/*** RType Server ***\\", {75, 0, 30, 1}, WHITE));
+            _interface.add(new text("Available Rooms :", {550, 35, 25, 1}, WHITE));
 
 
             _overlay.add(new textButton({0, 0, 30, 30}, BLACK, "<-", WHITE, [this](){
@@ -86,6 +87,7 @@ class server_engine {
                 BeginDrawing();
                 ClearBackground(Color{38, 38, 38, 255});
                 if (_current_room == nullptr) {
+                    update_log();
                     _interface.update();
                     _interface.draw();
                 } else {
@@ -116,12 +118,50 @@ class server_engine {
                         break;
                     }
             }));
-            std::cout << "Created room " << port << std::endl;
+            log(LOG_INFO, "Created room " + std::to_string(port));
         }
         void listRooms() {
             for (auto room: _rooms)
                 std::cout << room->get_port() << std::endl;
         }
+        void handle_input(std::string input) {
+            std::string command = input.substr(0, input.find(" "));
+            std::string ret = "";
+            if (input.substr(0, 4) == "exit")
+                running = false;
+            else if (input.substr(0, 10) == "createRoom") {
+                createRoom(std::stoi(input.substr(11)));
+            } else if (input.substr(0, 8) == "getRooms") {
+                for (auto room : _rooms)
+                    ret += std::to_string(room->get_port()) + ":" + std::to_string(room->get_player_count()) + ',';
+                ret.pop_back();
+            } else
+                ret = "Unknown command";
+            if (ret != "")
+                log(LOG_INFO, ret);
+        }
+        
+        void create_log(int type, const std::string &msg) {
+            static float pos = 0;
+            _interface.add(new text(msg, { 10, 40 + pos, 20, 1 }, type != LOG_INFO ? RED : GRAY))->addClass("log");
+            if (pos >= 130) {
+                uiElement *elem = _interface.getClass("log").front();
+                _interface.remove(elem);
+                for (auto elem : this->_interface.getClass("log"))
+                    elem->setPos({elem->getPos().x, elem->getPos().y - 17});
+            } else
+                pos += 17;
+        };
+
+        void log(int type, const std::string &msg) {
+            _logs.push_back(std::make_pair(type, msg));
+        };
+
+        void update_log() {
+            for (auto log : _logs)
+                create_log(log.first, log.second);
+            _logs.clear();
+        };
     private:
         bool running = true;
         asio::io_context _io_context;
@@ -130,4 +170,5 @@ class server_engine {
         std::vector<Room *> _rooms;
         std::thread _server;
         Room *_current_room = nullptr;
+        std::vector<std::pair<int, std::string>> _logs;
 };

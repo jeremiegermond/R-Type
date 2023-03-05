@@ -56,10 +56,10 @@ class UdpServer {
             _ids.insert(i);
         for (int i = 1; i <= 10; i++)
             _enemyIds.insert(i);
-        _overlay.add(new text("Room : " + std::to_string(_port), {0, 30, 30, 2}, WHITE));
-        _overlay.add(new text("Players : ", {0, 50, 30, 2}, WHITE));
-        _overlay.add(new text(std::to_string(_clients.size()), {95, 50, 30, 2}, WHITE))->setId("players_nbr");
-        _overlay.add(new text("/ 4", {110, 50, 30, 2}, WHITE));
+        _overlay.add(new text("Room : " + std::to_string(_port), {0, 30, 25, 1}, WHITE));
+        _overlay.add(new text("Players : ", {0, 50, 25, 1}, WHITE));
+        _overlay.add(new text(std::to_string(_clients.size()), {95, 50, 25, 1}, WHITE))->setId("players_nbr");
+        _overlay.add(new text("/ 4", {110, 50, 25, 1}, WHITE));
     }
 
     ~UdpServer();
@@ -90,7 +90,24 @@ class UdpServer {
 
     void log(int type, const std::string &msg) { _logs.emplace_back(type, msg); };
 
-    std::vector<std::pair<int, std::string>> *getLog() { return &_logs; }
+    void create_log(int type, const std::string &msg) {
+        static float pos = 0;
+        _overlay.add(new text(msg, { 0, 100 + pos, 18, 1 }, type != LOG_INFO ? RED : GRAY))->addClass("log");
+        if (pos >= 320) {
+            uiElement *elem = _overlay.getClass("log").front();
+            _overlay.remove(elem);
+            for (auto elem : this->_overlay.getClass("log"))
+                elem->setPos({elem->getPos().x, elem->getPos().y - 14});
+        } else
+            pos += 14;
+        std::cout << pos << std::endl;
+    };
+    
+    void update_log() {
+        for (auto log : _logs)
+            create_log(log.first, log.second);
+        _logs.clear();
+    };
 
     // get clients
     std::unordered_map<udp::endpoint, Player> getClients() { return _clients; }
