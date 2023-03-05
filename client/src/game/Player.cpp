@@ -8,6 +8,8 @@
 #include "game/Game.hpp"
 
 void Game::movePlayer() {
+    if (_gameOver)
+        return;
     float speed = 0.1;
     auto playerName = "R9A" + std::to_string(_playerId);
     auto playerEntity = _gameEntities[playerName];
@@ -40,6 +42,8 @@ void Game::movePlayer() {
 }
 
 void Game::updatePlayer() {
+    if (_gameOver)
+        return;
     static float shotTimer = 0.0f;
     const float SHOT_DELAY = 0.350f;
 

@@ -72,6 +72,8 @@ class Game : public Engine::GameBase {
 
     void drawUI();
 
+    bool drawUIEntity(Engine::EntityId id);
+
     void loadAssetsGame(const json &assets) override;
 
     static ParticleEmitterSettings loadParticleEmitterSettings(const json &emitter, ParticleEmitterSettings settings = {});
@@ -85,7 +87,9 @@ class Game : public Engine::GameBase {
 
     static Vector3 measureText3D(const std::string &text, float fontSize, Font font = GetFontDefault());
 
-    void updateScore();
+    void getRooms();
+
+    void addRoom(const std::string &room);
 
   private:
     /**
@@ -116,7 +120,10 @@ class Game : public Engine::GameBase {
     int _playerId;
     Engine::EntityId _camera;
     std::string _currentMusic;
+    std::vector<Engine::EntityId> _rooms;
     bool _gameOver;
+    unsigned short _selectedRoom;
+
     /**
      * Various Archetypes used by the game to create and access entities
      */

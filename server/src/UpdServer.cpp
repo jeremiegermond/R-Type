@@ -209,6 +209,30 @@ void UdpServer::simulate() {
     for (auto enemy = _enemies.begin(); enemy != _enemies.end();) {
         enemy->update(deltaTime);
         auto enemyPosition = enemy->getPosition();
+        auto enemyBounds = enemy->getBounds();
+        // check if enemy collide with player
+        bool collide = false;
+        for (auto &client : _clients) {
+            if (client.second.getHp() <= 0)
+                continue;
+            auto playerBounds = client.second.getBounds();
+            if (CheckCollisionBoxes(enemyBounds, playerBounds)) {
+                client.second.takeDamage(1);
+                if (client.second.getHp() <= 0) {
+                    log(LOG_INFO, "Player: " + client.first.address().to_string() + ":" + std::to_string(client.first.port()) + " was killed");
+                    sendAll("kill:" + std::to_string(client.second.getId()), true);
+                } else {
+                    sendResponse(client.first, "hit");
+                }
+                _enemyIds.insert(enemy->getId());
+                sendAll("dead:" + std::to_string(enemy->getId()), true);
+                enemy = _enemies.erase(enemy);
+                collide = true;
+                break;
+            }
+        }
+        if (collide)
+            continue;
         if (enemyPosition.x < -10) {
             log(LOG_INFO, "Enemy: " + std::to_string(enemy->getId()) + " out of bounds");
             _enemyIds.insert(enemy->getId());
@@ -264,9 +288,5 @@ void UdpServer::simulate() {
             _enemies.emplace_back(id, position, velocity, 2);
             sendAll("spawn:" + std::to_string(id) + "," + vectorToString(position) + "," + vectorToString(velocity) + ",2");
         }
-    }
-    for (auto &client : _clients) {
-        auto player = client.second;
-        auto position = player.getPosition();
     }
 }

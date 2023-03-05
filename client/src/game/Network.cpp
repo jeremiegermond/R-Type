@@ -107,3 +107,51 @@ void Game::updateNetwork() {
         }
     }
 }
+
+std::vector<std::string> split(const std::string &s, char delim) {
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+void Game::getRooms() {
+    while (_udpClient->hasMessage()) {
+        auto msg = _udpClient->receive();
+        // if message starts with "room:" then it's the list of rooms
+        if (Engine::Regex::isMatch(msg, "rooms:.+")) {
+            auto rooms = Engine::Regex::getMatch(msg, "rooms:(.+)", 1);
+            // use standard split function to get the list of rooms
+            auto roomsList = split(rooms, ',');
+            // clear the list of rooms
+            _rooms.clear();
+            // add the rooms to the list
+            for (auto &room : roomsList) {
+                addRoom(room);
+            }
+        }
+    }
+}
+
+void Game::addRoom(const std::string &room) {
+    std::cout << "Adding room: " << room << std::endl;
+    // create a new room
+    auto roomEntity = _pUIArchetype.createEntity(CText(), Engine::CObject(), CColor(), CBox(), Engine::CScale(1), Engine::CPosition(Vector3Zero()));
+    // add the room to the list of rooms
+    _rooms.push_back(roomEntity);
+    // get components
+    auto [text, object, color, box, scale, position] =
+        _pUIArchetype.getComponent<CText, Engine::CObject, CColor, CBox, Engine::CScale, Engine::CPosition>(roomEntity);
+    // set the position of the room depending on the number of rooms
+    position.setPosition(Vector3{10 + float(int(_rooms.size() / 6)) * 12, 40 + float(int(_rooms.size() - 1) % 5) * 12, 0});
+    text.setText(room);
+    text.setFontSize(30);
+    object.setActive(true);
+    box.setSize(Vector2{10, 10});
+    color.setColor({175, 175, 175, 255});
+    object.setTag("button");
+    object.setTag("text");
+}

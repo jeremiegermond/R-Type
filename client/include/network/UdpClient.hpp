@@ -38,6 +38,9 @@ class UdpClient {
     // set the ip and port of the endpoint
     void setEndpoint(const std::string &ip, unsigned short port);
 
+    // set the port of the endpoint
+    void setPort(unsigned short port);
+
     // send a message to the server
     void send(const std::string &msg);
 

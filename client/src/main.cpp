@@ -15,12 +15,16 @@
  */
 std::pair<std::string, unsigned short> parseArgs(int ac, char *av[]) {
     std::string ip = "127.0.0.1";
-    int port = 12345;
+    int port = 4242;
     if (ac == 3 && Engine::Regex::isNumber(av[2])) {
         if (!Engine::Regex::isIp(av[1]))
             throw std::invalid_argument("Invalid IP");
         ip = av[1];
         port = std::stoi(av[2]);
+    } else if (ac == 2 && Engine::Regex::isIp(av[1])) {
+        ip = av[1];
+    } else if (ac != 1) {
+        throw std::invalid_argument("Invalid arguments");
     }
     return {ip, port};
 }

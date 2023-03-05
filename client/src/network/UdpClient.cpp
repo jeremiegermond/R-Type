@@ -158,3 +158,11 @@ void UdpClient::threadTimeout() {
         }
     }
 }
+
+void UdpClient::setPort(unsigned short port) {
+    stop();
+    // wait for the threads to stop
+    std::this_thread::sleep_for(200ms);
+    setEndpoint(_endpoint.address().to_string(), port);
+    start();
+}

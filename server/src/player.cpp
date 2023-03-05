@@ -99,3 +99,5 @@ void Player::addScore(int score) { _score += score; }
 int Player::getScore() { return _score; }
 
 void Player::setScore(int score) { _score = score; }
+
+void Player::takeDamage(int damage) { _hp -= damage; }

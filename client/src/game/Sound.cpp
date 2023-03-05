@@ -25,7 +25,6 @@ void Game::playMusic(const std::string &name) {
     auto music = _musics[name]->getMusic();
     SetMusicVolume(*music, 0.5f);
     PlayMusicStream(*music);
-    std::cout << "playMusic: " << name << std::endl;
     _currentMusic = name;
 }
 
