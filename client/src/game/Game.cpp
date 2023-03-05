@@ -159,6 +159,18 @@ void Game::updateMenu() {
     if (_uiElements.contains("refresh_rooms")) {
         auto [button, bText] = _pUIArchetype.getComponent<Engine::CObject, CText>(_uiElements["refresh_rooms"]);
         if (!button.hasTag("disabled") && button.hasTag("selected")) {
+            _rooms.clear();
+            _udpClient->send("getRooms");
+            button.removeTag("selected");
+        }
+    }
+
+    if (_uiElements.contains("create_room")) {
+        auto [button, bText] = _pUIArchetype.getComponent<Engine::CObject, CText>(_uiElements["create_room"]);
+        if (!button.hasTag("disabled") && button.hasTag("selected")) {
+            _rooms.clear();
+            _udpClient->send("createRoom");
+            _rooms.clear();
             _udpClient->send("getRooms");
             button.removeTag("selected");
         }
