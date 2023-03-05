@@ -33,12 +33,10 @@ class EngineUdpServer {
 
         void createRoom(int port) { // duplicate
             for (auto room: *_rooms)
-                if (*room == port) {
-                    std::cout << "Room " << port << " already exist" << std::endl;
+                if (*room == port) {// create exception
                     return;
                 }
             _rooms->push_back(new Room(port));
-            std::cout << "Created room " << port << std::endl;
         }
 
         std::string getRequest() {

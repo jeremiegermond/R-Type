@@ -14,12 +14,12 @@ void UdpServer::start() {
     log(LOG_INFO, "UDP server started on port " + std::to_string(_port));
     srand(time(nullptr));
     _timer = std::thread([this]() {
-        while (true) {
+        while (!_stopServer) {
             std::this_thread::sleep_for(seconds(3));
             checkAlive();
         }
     });
-    _timer.detach();
+    //_timer.detach();
     _simulation = std::thread([this]() {
         auto startTime = steady_clock::now();
         _enemySpawnTimer = startTime;
@@ -27,9 +27,9 @@ void UdpServer::start() {
         while (!_stopServer)
             simulate();
         _stopServer = true;
-        CloseWindow();
+        //CloseWindow();
     });
-    _simulation.detach();
+    //_simulation.detach();
     receiveRequest();
     _io_context.run();
 }
@@ -39,11 +39,12 @@ void UdpServer::start() {
  */
 UdpServer::~UdpServer() {
     _stopServer = true;
-    log(LOG_INFO, "UDP server stopped");
-    _socket.cancel();
+    _io_context.stop();
+    _timer.join();
+    _simulation.join();
     _socket.close();
+    log(LOG_INFO, "UDP server stopped");
 }
-
 /**
  * It handles a request from a client
  *
@@ -191,6 +192,8 @@ void UdpServer::removeClient(const udp::endpoint &endpoint, bool erase) {
         if (erase) {
             _clients.erase(endpoint);
             dynamic_cast<text *>(_overlay.getId("players_nbr"))->setText(std::to_string(_clients.size()));
+            if (_clients.empty())
+                stop();
         }
     }
 }

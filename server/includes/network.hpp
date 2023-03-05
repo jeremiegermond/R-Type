@@ -67,6 +67,9 @@ class UdpServer {
     // start the server
     void start();
 
+    // stop the server
+    void stop(){ _io_context.stop(); _stopServer = true; }
+
     // handle request from client
     void handleRequest(std::error_code ec, std::size_t bytes_recvd);
 
@@ -90,6 +93,8 @@ class UdpServer {
 
     void log(int type, const std::string &msg) { _logs.emplace_back(type, msg); };
 
+    int is_running() { return !_stopServer; }
+
     void create_log(int type, const std::string &msg) {
         static float pos = 0;
         _overlay.add(new text(msg, { 0, 100 + pos, 18, 1 }, type != LOG_INFO ? RED : GRAY))->addClass("log");
@@ -100,7 +105,6 @@ class UdpServer {
                 elem->setPos({elem->getPos().x, elem->getPos().y - 14});
         } else
             pos += 14;
-        std::cout << pos << std::endl;
     };
     
     void update_log() {

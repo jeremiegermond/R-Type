@@ -6,21 +6,31 @@
 class Room {
     public:
         Room(int port): server(port) {
-
             _port = port;
             _thread = std::thread([this](){
                 running = true;
                 server.start();
-                running = false;
             });
+            _thread.detach();
         };
         ~Room() {
             if (running) {
-                _thread.join();
+                server.stop();
+                running = false;
             }
         };
         bool isRunning() {
+            if (!server.is_running())
+                running = false;
             return running;
+        };
+
+        void stop() {
+            if (running) {
+                _thread.join();
+                running = false;
+            }
+            delete this;
         };
 
         int get_port() {
