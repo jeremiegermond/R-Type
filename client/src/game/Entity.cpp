@@ -91,6 +91,7 @@ void Game::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
     CCollider enemyCollider;
     pModel enemyModel = nullptr;
     CParticleEmitter enemyEmitter;
+    pAnimation enemyAnimation = nullptr;
     enemyObject.setActive(true);
     enemyPosition.setPosition(position);
     enemyVelocity.setVelocity(velocity);
@@ -104,12 +105,16 @@ void Game::addEnemy(int id, Vector3 position, Vector3 velocity, int hp) {
     if (_models.contains("E002")) {
         enemyModel = _models["E002"];
     }
+    if (_animations.contains("E002")) {
+        enemyAnimation = _animations["E002"];
+        enemyAnimation->setActive(true);
+    }
     if (_emitters.contains("enemy_trail")) {
         enemyEmitter.setSettings(_emitters["enemy_trail"].getSettings());
         enemyEmitter.setActive(true);
         enemyObject.setTag("emitter");
     }
-    auto enemy = _objectArchetype.createEntity(enemyObject, enemyModel, enemyPosition, enemyRotation, enemyScale, nullptr, enemyVelocity,
+    auto enemy = _objectArchetype.createEntity(enemyObject, enemyModel, enemyPosition, enemyRotation, enemyScale, enemyAnimation, enemyVelocity,
                                                enemyHealth, enemyCollider, enemyEmitter, CText());
     _enemies[id] = enemy;
 }

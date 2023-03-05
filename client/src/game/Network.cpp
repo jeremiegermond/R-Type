@@ -143,7 +143,10 @@ void Game::addRoom(const std::string &room) {
     CText text;
     CBox box;
     CColor color;
-    position.setPosition(Vector3{10 + float(int(_rooms.size() / 6)) * 12, 40 + float(int(_rooms.size() - 1) % 5) * 12, 0});
+    Vector3 pos{};
+    pos.x = 10 + float(int(_rooms.size() / 5)) * 12;
+    pos.y = 40 + float(int(_rooms.size()) % 5) * 12;
+    position.setPosition(pos);
     text.setText(room);
     text.setFontSize(30);
     object.setActive(true);
