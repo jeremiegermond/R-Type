@@ -13,7 +13,7 @@ void Game::movePlayer() {
     float speed = 0.1;
     auto playerName = "R9A" + std::to_string(_playerId);
     auto playerEntity = _gameEntities[playerName];
-    auto [cPosition, cRotation] = _pObjectArchetype.getComponent<Engine::CPosition, Engine::CRotation>(playerEntity);
+    auto [cPosition, cRotation] = _objectArchetype.getComponent<Engine::CPosition, Engine::CRotation>(playerEntity);
     auto position = cPosition.getPosition();
     auto rotation = cRotation.getRotationGoal();
     if (IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_RIGHT) && position.x > -8) {
@@ -50,7 +50,7 @@ void Game::updatePlayer() {
     auto playerName = "R9A" + std::to_string(_playerId);
     if (IsKeyDown(KEY_SPACE) && _gameEntities.contains(playerName)) {
         auto playerEntity = _gameEntities[playerName];
-        auto cPosition = _pObjectArchetype.getComponent<Engine::CPosition>(playerEntity);
+        auto cPosition = _objectArchetype.getComponent<Engine::CPosition>(playerEntity);
         auto position = cPosition.getPosition();
         if (shotTimer >= SHOT_DELAY) {
             position.x += .5;

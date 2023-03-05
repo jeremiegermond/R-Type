@@ -7,84 +7,73 @@
 
 #pragma once
 
-#include "engine/manager/Sparsemap.hpp"
+#include "engine/CPPIncludes.hpp"
+
+typedef unsigned int EntityId;
 
 namespace Engine {
-    template <typename... Components>
+    template<typename... Components>
     class Archetype {
-      public:
-        Archetype() : nextEntityId(0), componentMaps(SparseMap<Components>()...), deletedEntities() {}
+    private:
+        std::unordered_map<EntityId, std::tuple<Components...>> _entities;
+        std::set<EntityId> _removedEntities;
+        EntityId _nextId = 0;
+    public:
+        Archetype() = default;
+        ~Archetype() = default;
 
         /**
-         * @brief create an entity
-         * @param values of the component
-         * @return id of this entity
+         * @brief add an entity to the archetype
+         * @param components of the entity
          */
-        template <typename... Component>
-        EntityId createEntity(Component &&...values) {
-            (addComponent(nextEntityId, std::forward<Component>(values)), ...);
-            return nextEntityId++;
-        }
-
-        /**
-         * @brief delete an entity
-         * @param id of the entity
-         */
-        template <typename... Component>
-        void deleteComponent(EntityId id) {
-            if (deletedEntities.count(id) > 0)
-                return;
-            deletedEntities.insert(id);
-            (deleteComponent<Component>(id), ...);
-        }
-
-        template <typename Component>
-        void addComponent(EntityId id, Component &&value) {
-            SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
-            map.insert(id, std::forward<Component>(value));
-        }
-
-        template <typename Component>
-        void deleteEntity(EntityId id) {
-            SparseMap<Component> &map = std::get<SparseMap<Component>>(componentMaps);
-            map.erase(id);
-        }
-
-        /**
-         * @brief getComponent entities components via their id
-         * @param id of the entity
-         * @return If you chose to getComponent 1 ComponentBase, this function returns the reference to that component
-         * otherwise it returns a tuple of references to specified components
-         */
-        template <size_t... Ids>
-        decltype(auto) getComponent(EntityId id) {
-            if constexpr (sizeof...(Ids) == 1) {
-                return std::get<Ids...>(componentMaps)[id];
+        EntityId createEntity(Components... components) {
+            EntityId id;
+            if (_removedEntities.empty()) {
+                id = _nextId++;
             } else {
-                return std::forward_as_tuple(std::get<Ids>(componentMaps)[id]...);
+                id = *_removedEntities.begin();
+                _removedEntities.erase(_removedEntities.begin());
+            }
+            _entities[id] = std::make_tuple(components...);
+            return id;
+        }
+
+        /**
+         * @brief remove an entity from the archetype
+         * @param id of the entity
+         */
+        void removeEntity(EntityId id) {
+            _entities.erase(id);
+            _removedEntities.insert(id);
+        }
+
+        /**
+         * @brief get the components of an entity
+         * @param id of the entity
+         * @return components of the entity
+         */
+        template<typename ...Args>
+        decltype(auto) getComponent(EntityId id) {
+            if constexpr (sizeof...(Args) == 1) {
+                return std::get<Args...>(_entities[id]);
+            } else {
+                return std::tie(std::get<Args>(_entities[id])...);
             }
         }
 
         /**
-         * @brief getComponent entities components via their type
-         * @param id of the entity
-         * @return If you chose to getComponent 1 ComponentBase, this function returns the reference to that component
-         * otherwise it returns a tuple of references to specified components
+         * @brief get the size of the archetype
+         * @return size of the archetype
          */
-        template <typename... Component>
-        decltype(auto) getComponent(EntityId id) {
-            if constexpr (sizeof...(Component) == 1) {
-                return std::get<SparseMap<Component...>>(componentMaps)[id];
-            } else {
-                return std::forward_as_tuple(std::get<SparseMap<Component>>(componentMaps)[id]...);
-            }
+        size_t size() {
+            return _entities.size();
         }
 
-        std::set<EntityId> &getDeletedEntities() { return deletedEntities; }
-
-      private:
-        EntityId nextEntityId;
-        std::tuple<SparseMap<Components>...> componentMaps;
-        std::set<EntityId> deletedEntities;
+        /**
+         * @brief delete all the entities in the archetype
+         */
+        void clear() {
+            _entities.clear();
+        }
     };
 }

@@ -11,7 +11,7 @@ Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(
 
 void Game::initGame() {
     rlDisableBackfaceCulling();
-    _camera = _pCameraArchetype.createEntity(CCamera());
+    _camera = _pCameraArchetype.createEntity(Engine::CObject(), CCamera());
     auto [obj, camera] = _pCameraArchetype.getComponent<Engine::CObject, CCamera>(_camera);
     camera.setCamera(Camera3D{0});
     camera.setPosition({0, 0, 30});
@@ -59,7 +59,7 @@ void Game::drawGame() {
     BeginMode3D(_pCameraArchetype.getComponent<CCamera>(_camera).getCamera());
     if (_gameEntities.contains("corridor")) {
         auto corridor = _gameEntities["corridor"];
-        auto [cPosition, cObject] = _pObjectArchetype.getComponent<Engine::CPosition, Engine::CObject>(corridor);
+        auto [cPosition, cObject] = _objectArchetype.getComponent<Engine::CPosition, Engine::CObject>(corridor);
         auto position = cPosition.getPosition();
         if (position.x < -7.22) {
             cPosition.setPosition({0, position.y, position.z});
@@ -70,7 +70,7 @@ void Game::drawGame() {
         drawEntity(corridor, {7.22 * 2, 0, 0});
     }
     for (auto &entity : _gameEntities) {
-        auto object = _pObjectArchetype.getComponent<Engine::CObject>(entity.second);
+        auto object = _objectArchetype.getComponent<Engine::CObject>(entity.second);
         if (!object.isActive())
             continue;
         updateEntity(entity.second);
@@ -151,14 +151,15 @@ void Game::updateMenu() {
             _uiElements.clear();
             setGameState(GameState::GAME);
             loadEntities("assets/levels/level_01.json");
-            _pObjectArchetype.getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
-            _pObjectArchetype.getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
+            _objectArchetype.getComponent<Engine::CObject>(_gameEntities["R9A1"]).setActive(true);
+            _objectArchetype.getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
             playMusic("01-Taking_off_again");
         }
     }
     if (_uiElements.contains("refresh_rooms")) {
         auto [button, bText] = _pUIArchetype.getComponent<Engine::CObject, CText>(_uiElements["refresh_rooms"]);
         if (!button.hasTag("disabled") && button.hasTag("selected")) {
+            _rooms.clear();
             _udpClient->send("getRooms");
             button.removeTag("selected");
         }
@@ -188,7 +189,7 @@ void Game::updateGameplay() {
     updateTextures();
     for (auto it = _enemies.begin(); it != _enemies.end();) {
         updateEntity(it->second);
-        auto [health, position] = _pObjectArchetype.getComponent<CHealth, Engine::CPosition>(it->second);
+        auto [health, position] = _objectArchetype.getComponent<CHealth, Engine::CPosition>(it->second);
         if (health.getHealth() <= 0 || position.getPosition().x < -10) {
             it = _enemies.erase(it);
         } else {
@@ -197,7 +198,7 @@ void Game::updateGameplay() {
     }
     updateBullets();
     if (_shaders.contains("lighting")) {
-        auto playerPosition = _pObjectArchetype.getComponent<Engine::CPosition>(_gameEntities["R9A" + std::to_string(_playerId)]).getPosition();
+        auto playerPosition = _objectArchetype.getComponent<Engine::CPosition>(_gameEntities["R9A" + std::to_string(_playerId)]).getPosition();
         playerPosition = Vector3Add(playerPosition, {0, 2, 10});
         _lights[0].setPosition(playerPosition);
     }

@@ -36,7 +36,7 @@ typedef Engine::Archetype<Engine::CObject, pModel, Engine::CPosition, Engine::CR
  * Sprite are entities used for textures.
  */
 
-typedef Engine::Archetype<Engine::CPosition, Engine::CObject, CAnimatedSprite, pTexture> SpriteArchetype;
+typedef Engine::Archetype<Engine::CObject, Engine::CPosition, CAnimatedSprite, pTexture> SpriteArchetype;
 
 /**
  * The archetype of a camera.

@@ -92,7 +92,7 @@ class UdpServer {
 
     void create_log(int type, const std::string &msg) {
         static float pos = 0;
-        _overlay.add(new text(msg, { 0, 100 + pos, 18, 1 }, type != LOG_INFO ? RED : GRAY))->addClass("log");
+        _overlay.add(new text(msg, {0, 100 + pos, 18, 1}, type != LOG_INFO ? RED : GRAY))->addClass("log");
         if (pos >= 320) {
             uiElement *elem = _overlay.getClass("log").front();
             _overlay.remove(elem);
@@ -102,7 +102,7 @@ class UdpServer {
             pos += 14;
         std::cout << pos << std::endl;
     };
-    
+
     void update_log() {
         for (auto log : _logs)
             create_log(log.first, log.second);

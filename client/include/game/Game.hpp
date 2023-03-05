@@ -127,7 +127,7 @@ class Game : public Engine::GameBase {
     /**
      * Various Archetypes used by the game to create and access entities
      */
-    ObjectArchetype _pObjectArchetype;
+    ObjectArchetype _objectArchetype;
     CameraArchetype _pCameraArchetype;
     SpriteArchetype _pSpriteArchetype;
     UIArchetype _pUIArchetype;

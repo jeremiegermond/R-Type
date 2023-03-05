@@ -48,20 +48,26 @@ void Game::loadObject(json &object) {
         return;
     }
     std::string name = object["name"];
-    auto entity = _pObjectArchetype.createEntity(Engine::CScale(1), Engine::CVelocity(Vector3Zero()), Engine::CObject(),
-                                                 Engine::CPosition(Vector3Zero()), Engine::CRotation(Vector3Zero()), CCollider());
-    _gameEntities[name] = entity;
-    auto [cObject, cPosition, cScale, cVelocity, cRotation, cCollider] =
-        _pObjectArchetype.getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, Engine::CVelocity, Engine::CRotation, CCollider>(entity);
-    cCollider.setActive(true);
-    cCollider.setSize(1);
-    cRotation.setActive(true);
+    Engine::CObject cObject;
+    pModel model = nullptr;
+    Engine::CPosition position;
+    Engine::CRotation rotation;
+    Engine::CScale scale(1);
+    pAnimation animation = nullptr;
+    Engine::CVelocity velocity;
+    CHealth health;
+    CCollider collider;
+    CParticleEmitter particleEmitter;
+    CText text;
+    collider.setActive(true);
+    collider.setSize(1);
+    rotation.setActive(true);
     if (object.contains("model")) {
-        auto model = object["model"];
-        if (_models.contains(model)) {
-            _pObjectArchetype.addComponent(entity, pModel(_models[model]));
+        auto modelStr = object["model"];
+        if (_models.contains(modelStr)) {
+            model = pModel(_models[modelStr]);
             if (_shaders.contains("lighting"))
-                _models[model]->setModelShader(_shaders["lighting"]->getShader());
+                model->setModelShader(_shaders["lighting"]->getShader());
         }
     }
     if (object.contains("tags")) {
@@ -70,41 +76,39 @@ void Game::loadObject(json &object) {
             cObject.setTag(tag);
         }
         if (cObject.hasTag("player")) {
-            CText cText;
-            cText.setFontSize(4);
-            cText.setOffset({0, 1, 0});
-            _pObjectArchetype.addComponent(entity, CText(cText));
+            text.setFontSize(4);
+            text.setOffset({0, 1, 0});
             cObject.setTag("named");
         }
     }
     if (object.contains("position") && object["position"].size() == 3) {
         auto positionStr = object["position"];
-        auto position = Vector3{positionStr[0], positionStr[1], positionStr[2]};
-        cPosition.setPosition(position);
-        cCollider.setPosition(position);
+        auto positionV3 = Vector3{positionStr[0], positionStr[1], positionStr[2]};
+        position.setPosition(positionV3);
+        collider.setPosition(positionV3);
     }
     if (object.contains("rotation") && object["rotation"].size() == 3) {
         auto rotationStr = object["rotation"];
-        auto rotation = Vector3{rotationStr[0], rotationStr[1], rotationStr[2]};
-        cRotation.setRotation(rotation);
+        auto rotationV3 = Vector3{rotationStr[0], rotationStr[1], rotationStr[2]};
+        rotation.setRotation(rotationV3);
     }
     if (object.contains("setScale")) {
-        auto scale = object["setScale"];
-        cScale.setScale(scale);
-        cCollider.setSize(Vector3{scale, scale, scale});
+        auto scaleStr = object["setScale"];
+        scale.setScale(scaleStr);
+        collider.setSize(scaleStr);
     }
     if (object.contains("animation")) {
-        auto animation = object["animation"];
-        if (_animations.contains(animation)) {
-            _animations[animation]->setActive(true);
-            _pObjectArchetype.addComponent(entity, pAnimation(_animations[animation]));
+        auto animationStr = object["animation"];
+        if (_animations.contains(animationStr)) {
+            _animations[animationStr]->setActive(true);
+            animation = _animations[animationStr];
         }
     }
     if (object.contains("velocity") && object["velocity"].size() == 3) {
         auto velocityStr = object["velocity"];
-        auto velocity = Vector3{velocityStr[0], velocityStr[1], velocityStr[2]};
-        cVelocity.setVelocity(velocity);
-        cVelocity.setActive(true);
+        auto velocityV3 = Vector3{velocityStr[0], velocityStr[1], velocityStr[2]};
+        velocity.setVelocity(velocityV3);
+        velocity.setActive(true);
     }
     if (object.contains("emitterBase")) {
         auto emitterName = object["emitterBase"];
@@ -113,15 +117,16 @@ void Game::loadObject(json &object) {
             TraceLog(LOG_WARNING, "Skipping emitter: %s", object.dump().c_str());
             return;
         }
-        auto emitter = CParticleEmitter(_emitters[emitterName]);
+        particleEmitter.setSettings(_emitters[emitterName].getSettings());
         if (object.contains("emitterSettings")) {
-            auto settings = loadParticleEmitterSettings(object["emitterSettings"], emitter.getSettings());
-            emitter.setSettings(settings);
+            auto settings = loadParticleEmitterSettings(object["emitterSettings"], particleEmitter.getSettings());
+            particleEmitter.setSettings(settings);
         }
-        emitter.setActive(true);
-        _pObjectArchetype.addComponent(entity, CParticleEmitter(emitter));
+        particleEmitter.setActive(true);
         cObject.setTag("emitter");
     }
+    auto entity = _objectArchetype.createEntity(cObject, model, position, rotation, scale, animation, velocity, health, collider, particleEmitter, text);
+    _gameEntities[name] = entity;
 }
 
 void Game::loadUI(json &ui) {
@@ -131,49 +136,49 @@ void Game::loadUI(json &ui) {
         return;
     }
     std::string name = ui["name"];
+    Engine::CObject cObject;
+    CText text;
+    Engine::CPosition position;
+    Engine::CScale scale;
+    CHandler handler;
+    CBox box;
+    CColor color;
 
-    auto entity = _pUIArchetype.createEntity(Engine::CObject(), Engine::CScale(1), Engine::CPosition(Vector3Zero()), CText());
-    _uiElements[name] = entity;
-    auto [cObject, cPosition, cScale, cText] = _pUIArchetype.getComponent<Engine::CObject, Engine::CPosition, Engine::CScale, CText>(entity);
     if (ui.contains("type")) {
         auto type = ui["type"];
         cObject.setTag(type);
         if (type == "button" || type == "input") {
             cObject.setTag("text");
-            _pUIArchetype.addComponent(entity, CBox());
-            _pUIArchetype.addComponent(entity, CColor());
-            auto [cBox, cColor] = _pUIArchetype.getComponent<CBox, CColor>(entity);
             if (ui.contains("size") && ui["size"].size() == 2) {
                 auto sizeStr = ui["size"];
                 auto size = Vector2{sizeStr[0], sizeStr[1]};
-                cBox.setSize(size);
+                box.setSize(size);
             }
             if (ui.contains("color") && ui["color"].size() == 4) {
                 auto colorStr = ui["color"];
-                auto color = Color{colorStr[0], colorStr[1], colorStr[2], colorStr[3]};
-                cColor.setColor(color);
+                auto colorC = Color{colorStr[0], colorStr[1], colorStr[2], colorStr[3]};
+                color.setColor(colorC);
             }
         }
     }
     if (ui.contains("text")) {
-        auto text = ui["text"];
-        cText.setText(text);
-        cText.setActive(true);
+        auto textStr = ui["text"];
+        text.setText(textStr);
+        text.setActive(true);
     }
     if (ui.contains("fontSize")) {
         auto fontSize = ui["fontSize"];
-        cText.setFontSize(fontSize);
+        text.setFontSize(fontSize);
     }
     if (ui.contains("position") && ui["position"].size() == 2) {
         auto positionStr = ui["position"];
-        auto position = Vector3{positionStr[0], positionStr[1], 0};
-        cPosition.setPosition(position);
+        auto positionV3 = Vector3{positionStr[0], positionStr[1], 0};
+        position.setPosition(positionV3);
     }
     if (ui.contains("size") && ui["size"].size() == 2 && (cObject.hasTag("button") || cObject.hasTag("input"))) {
         auto sizeStr = ui["size"];
         auto size = Vector2{sizeStr[0], sizeStr[1]};
-        auto [cBox, cColor] = _pUIArchetype.getComponent<CBox, CColor>(entity);
-        cBox.setSize(size);
+        box.setSize(size);
     }
     if (ui.contains("tags")) {
         auto tags = ui["tags"];
@@ -181,6 +186,8 @@ void Game::loadUI(json &ui) {
             cObject.setTag(tag);
         }
     }
+    auto entity = _pUIArchetype.createEntity(cObject, text, position, scale, handler, box, color);
+    _uiElements[name] = entity;
 }
 
 ParticleEmitterSettings Game::loadParticleEmitterSettings(const json &emitter, ParticleEmitterSettings settings) {

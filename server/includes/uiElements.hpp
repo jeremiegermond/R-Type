@@ -34,7 +34,10 @@ class uiElement {
     void setId(std::string id) { _id = id; };
     std::vector<std::string> *getClass() { return &_class; };
     void addClass(std::string class_) { _class.push_back(class_); };
-    void setPos(Vector2 pos) { _size.x = pos.x; _size.y = pos.y; };
+    void setPos(Vector2 pos) {
+        _size.x = pos.x;
+        _size.y = pos.y;
+    };
     Vector2 getPos() { return {_size.x, _size.y}; };
 
   private:
