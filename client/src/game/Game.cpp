@@ -7,7 +7,7 @@
 
 #include "game/Game.hpp"
 
-Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(GameState::MENU), _playerId(1) {}
+Game::Game() : _ecsManager(nullptr), _camera(), _udpClient(nullptr), _gameState(GameState::MENU), _playerId(1), _gameOver(false) {}
 
 void Game::initGame() {
     rlDisableBackfaceCulling();
@@ -131,6 +131,7 @@ void Game::updateMenu() {
             _pObjectArchetype.getComponent<Engine::CObject>(_gameEntities["corridor"]).setActive(true);
             playMusic("01-Taking_off_again");
             if (_udpClient) {
+                _gameOver = false;
                 _udpClient->start();
                 _udpClient->send("name:" + _playerName);
             }

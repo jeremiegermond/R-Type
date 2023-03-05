@@ -86,6 +86,24 @@ void Game::updateNetwork() {
                 auto playerName = _pObjectArchetype.getComponent<CText>(_gameEntities["R9A" + match[1]]).getText();
                 _pUIArchetype.getComponent<CText>(_uiElements[name]).setText("Player " + match[1] + ": " + score + " - " + playerName);
             }
+        } else if (msg == "hit") {
+            playSound("enemy_bomb");
+            auto [shipPosition, ship] =
+                _pObjectArchetype.getComponent<Engine::CPosition, Engine::CObject>(_gameEntities["R9A" + std::to_string(_playerId)]);
+            addAnimatedSprite("explosion", shipPosition.getPosition());
+        } else if (Engine::Regex::isMatch(msg, "kill:[0-9]+")) {
+            // player is dead
+            auto id = Engine::Regex::getMatch(msg, "kill:([0-9]+)", 1);
+            auto ship = "R9A" + id;
+            // disable ship
+            auto [shipPosition, shipObject] = _pObjectArchetype.getComponent<Engine::CPosition, Engine::CObject>(_gameEntities[ship]);
+            playSound("enemy_bomb");
+            addAnimatedSprite("explosion", shipPosition.getPosition());
+            shipObject.setActive(false);
+            if (id == std::to_string(_playerId)) {
+                // player is dead
+                _gameOver = true;
+            }
         }
     }
 }

@@ -116,7 +116,7 @@ class Game : public Engine::GameBase {
     int _playerId;
     Engine::EntityId _camera;
     std::string _currentMusic;
-
+    bool _gameOver;
     /**
      * Various Archetypes used by the game to create and access entities
      */
