@@ -12,6 +12,10 @@ std::unordered_map<int, Color> _log_colors = {
 
 int main() {
     server_engine server;
-    server.run();
+    try {
+        server.run();
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+    }
     return 0;
 }
