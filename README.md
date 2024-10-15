@@ -34,3 +34,6 @@ cd B-CPP-500-LIL-5-2-rtype-romain.leemans
 ## Network Protocol
 
 Feel free to check how the server work [right here](server/Protocol.md)
+
+
+**Grade A**
